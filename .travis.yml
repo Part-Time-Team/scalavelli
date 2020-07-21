@@ -1,0 +1,41 @@
+# Info about vm and jvm.
+language: scala # The project language.
+
+jdk:
+  - openjdk11 # Java version. Add other Java versions under this.
+
+install: true
+
+scala:
+  # 2.12.11 # Scala version. Add other Scala versions under this.
+  - 2.13.3 Last stable version
+
+git:
+  autocrlf: input
+
+# These directories are cached to S3 at the end of the build.
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
+    - $HOME/.sbt/launchers
+
+notifications:
+  email:
+    recipients:
+      - daniele.tentoni.1996@gmail.com
+    on_failure: always
+    on_success: change
+
+jobs:
+  include:
+    - stage: Run sbt with OpenJdk11
+      os: linux
+      script: sbt compile test
+    - stage: Run sbt with OpenJdk11
+      os: osx
+      script: sbt compile test
+
+stages:
+  - name: Run sbt with OpenJdk11
+    if: type IN (pull_request, push)
