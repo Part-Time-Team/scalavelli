@@ -42,7 +42,7 @@ class SuitSpec extends AnyFunSpec {
       assert(Suit string2suit "♥" equals Hearts())
     }
 
-    it("should raise RuntimeException for red effect") {
+    it("Should raise RuntimeException for s string") {
       assertThrows[RuntimeException] {
         Suit.string2suit("s")
       }
