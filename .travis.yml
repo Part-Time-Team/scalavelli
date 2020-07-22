@@ -29,6 +29,8 @@ notifications:
 
 jobs:
   include:
+    - stage: Call coverage report
+      script: bash <(curl -s https://codecov.io/bash)
     - stage: Run sbt with OpenJdk11
       os: linux
       script: sbt compile test
@@ -44,7 +46,6 @@ jobs:
         token: $GH_TOKEN
         keep_history: true
         local_dir: public
-      after_success: bash <(curl -s https://codecov.io/bash)
 
 stages:
   - name: Run sbt with OpenJdk11
