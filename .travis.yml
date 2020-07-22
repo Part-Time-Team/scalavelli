@@ -36,8 +36,18 @@ jobs:
       os: osx
       script: sbt compile test
     - stage: Generate coverage and scaladoc
-      script:
+      script: bash travis-scripts/deploy_to_pages.sh
+      deploy:
+        provider: pages
+        strategy: git
+        skip_cleanup: true
+        token: $GH_TOKEN
+        keep_history: true
+        local_dir: public
+      after_success: bash <(curl -s https://codecov.io/bash)
 
 stages:
   - name: Run sbt with OpenJdk11
     if: type IN (pull_request, push)
+  - name: Generate coverage and scaladoc
+    if: type = push AND branch IN (master, dev)
