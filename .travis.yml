@@ -31,13 +31,15 @@ jobs:
   include:
     - stage: Call coverage report
       os: linux
-      script: bash <(curl -s https://codecov.io/bash)
+      script:
+        - sbt coverage test coverageReport coverageAggregate
+        - bash <(curl -s https://codecov.io/bash)
     - stage: Run sbt with OpenJdk11
       os: linux
-      script: sbt compile test
+      script: sbt test
     - stage: Run sbt with OpenJdk11
       os: osx
-      script: sbt compile test
+      script: sbt test
     - stage: Generate coverage and scaladoc
       script: bash travis-scripts/deploy_to_pages.sh
       deploy:
