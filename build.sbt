@@ -20,7 +20,7 @@ lazy val osName = System.getProperty("os.name") match {
 // TESTS.
 // val scalatestV = "3.2.0"
 // val scalatest = "org.scalatest" %% "scalatest" % scalatestV % "test"
-val scalamock= "org.scalamock" %% "scalamock" % "4.4.0" % Test
+val scalamock = "org.scalamock" %% "scalamock" % "4.4.0" % Test
 val scalatest = "org.scalatest" %% "scalatest" % "3.1.0" % Test
 val scalacheck = "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
 
@@ -29,7 +29,7 @@ val scalafx = "org.scalafx" %% "scalafx" % "14-R19"
 
 // AKKA ACTORS.
 val akkaV = "2.6.4"
-val akkaTyped = "com.typesafe.akka"  %% "akka-actor-typed" % akkaV
+val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaV
 val akkaTest = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaV
 val akkaRemote = "com.typesafe.akka" %% "akka-remote" % akkaV
 
@@ -47,7 +47,7 @@ lazy val testDependencies = Seq(
 
 // Add JavaFX dependencies
 lazy val javaFXModules = Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
-lazy val scalaFXDep = javaFXModules.map( m=>
+lazy val scalaFXDep = javaFXModules.map(m =>
   "org.openjfx" % s"javafx-$m" % "14.0.1" classifier osName
 )
 
@@ -103,7 +103,7 @@ lazy val server = (project in file("server")).settings(
   settings,
   libraryDependencies ++= (
     akkaDependencies ++
-    testDependencies
+      testDependencies
     ),
   exportJars := true
 ).dependsOn(
