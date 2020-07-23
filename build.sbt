@@ -91,7 +91,9 @@ lazy val core = (project in file("core")).settings(
 lazy val commons = (project in file("commons")).settings(
   name := "commons",
   settings,
-  libraryDependencies ++= testDependencies
+  libraryDependencies ++= (
+    testDependencies :+ akkaTyped
+    )
 ).dependsOn(
   core
 )
