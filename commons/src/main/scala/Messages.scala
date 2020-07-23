@@ -1,7 +1,16 @@
+import akka.actor.ActorRef
 
 object Messages {
 
-  case class ConnectUser(userName: String)
+   //client requests
+  case class ConnectUser(userName: String, numberOfPlayers: Int)
+  case class ConnectUserToPrivateLobby(userName: String, privateLobbyCode: String)
+  case class RequestPrivateLobbyCreation(numberOfPlayers: Int)
+  case object LeaveLobby
+
+  // server responses
   case object UserConnectionAccepted
+  case class MatchFound(gameRoom: ActorRef)
+  case class PrivateLobbyCreated(lobbyCode: String)
 
 }
