@@ -10,7 +10,9 @@ object LobbyActor {
 class LobbyActor extends Actor {
 
   override def receive: Receive = {
-    case ConnectUser(_) => sender() ! UserConnectionAccepted
+    case ConnectUser(userName, numberOfPlayers) => {
+      sender() ! UserConnectionAccepted
+    }
   }
 
 }

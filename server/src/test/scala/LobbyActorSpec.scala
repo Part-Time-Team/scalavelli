@@ -12,7 +12,7 @@ class LobbyActorSpec extends TestKit(ActorSystem())
 
     "accept a user connection request" in {
       val lobbyActor = system.actorOf(LobbyActor.props())
-      lobbyActor ! ConnectUser("user")
+      lobbyActor ! ConnectUser("user", 2)
       expectMsg(UserConnectionAccepted)
     }
 
