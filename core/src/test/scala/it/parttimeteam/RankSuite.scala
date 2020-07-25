@@ -6,11 +6,11 @@ import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
 import org.scalatest.propspec.AnyPropSpec
 
-class RankSuite extends AnyFunSuite {
+object RankSuite extends AnyFunSuite {
   test("Check all ranks properties") {
     assert(Ace().name equals "Ace")
     assert(Ace().shortName equals "A")
-    assert(Ace().value equals 14)
+    assert(Ace().value equals 1)
 
     assert(Two().name equals "Two")
     assert(Two().shortName equals "2")
@@ -66,7 +66,7 @@ class RankSuite extends AnyFunSuite {
   }
 }
 
-class RankPropSpec
+object RankPropSpec
   extends AnyPropSpec
     with TableDrivenPropertyChecks
     with should.Matchers {
