@@ -14,7 +14,7 @@ class LobbyManagerActorSpec extends TestKit(ActorSystem())
 
   override protected def afterEach(): Unit = TestKit.shutdownActorSystem(system)
 
-  "a it.partitimeteam.lobby actor" should {
+  "a lobby actor" should {
 
     "accept a user connection request" in {
       val lobbyActor = system.actorOf(LobbyManagerActor.props())
@@ -23,7 +23,7 @@ class LobbyManagerActorSpec extends TestKit(ActorSystem())
     }
 
 
-    "reply with a it.partitimeteam.match found message on players number reached" in {
+    "reply with a match found message on players number reached" in {
       val lobbyActor = system.actorOf(LobbyManagerActor.props())
       val client1 = TestProbe("client1")
       val client2 = TestProbe("client2")

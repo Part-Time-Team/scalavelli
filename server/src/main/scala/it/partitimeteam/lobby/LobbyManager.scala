@@ -1,8 +1,9 @@
 package it.partitimeteam.lobby
 
 import akka.actor.ActorRef
+import it.partitimeteam.common.Referable
 
-trait LobbyManager {
+trait LobbyManager[T <: Referable] {
 
   /**
    *
@@ -11,20 +12,20 @@ trait LobbyManager {
    * @param actorRef  ActorRef of the client actor
    * @return
    */
-  def addClient(username: String, lobbyType: LobbyType, actorRef: ActorRef): LobbyManager
+  def addClient(username: String, lobbyType: LobbyType, actorRef: ActorRef): LobbyManager[T]
 
   /**
    *
    * @param username
    * @return
    */
-  def removeClient(username: String): LobbyManager
+  def removeClient(username: String): LobbyManager[T]
 
   /**
    *
    * @param lobbyType
    * @return the lobbing corresponding the the specified type, if present
    */
-  def getLobby(lobbyType: LobbyType): Option[Lobby]
+  def getLobby(lobbyType: LobbyType): Option[Lobby[T]]
 
 }

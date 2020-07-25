@@ -2,23 +2,18 @@ package it.partitimeteam.lobby
 
 import akka.actor.ActorRef
 import akka.japi.Pair
-
-object GameLobby {
-
-  def apply(numberOfPlayers: Int): GameLobby = new GameLobby(numberOfPlayers)
-
-}
+import it.partitimeteam.common.{Player, Referable}
 
 /**
  *
  * @param numberOfPlayers min number of players required to start a match
  */
-class GameLobby(numberOfPlayers: Int) extends Lobby {
+class GameLobby[T <: Referable](numberOfPlayers: Int) extends Lobby[T] {
 
   /**
    * @inheritdoc
    */
-  override val players: Seq[Pair[String, ActorRef]] = Seq()
+  override val players: Seq[Pair[String, T]] = Seq()
 
   /**
    * @inheritdoc
@@ -28,15 +23,16 @@ class GameLobby(numberOfPlayers: Int) extends Lobby {
   /**
    * @inheritdoc
    */
-  override def extractPlayersForMatch(): Pair[Lobby, Option[List[Pair[String, ActorRef]]]] = ???
+  override def extractPlayersForMatch(): Pair[Lobby[T], Option[List[Pair[String, T]]]] = ???
 
   /**
    * @inheritdoc
    */
-  override def addPlayer(username: String, actorRef: ActorRef): Lobby = ???
+  override def addPlayer(username: String, actorRef: T): Lobby[T] = ???
 
   /**
    * @inheritdoc
    */
-  override def removePlayer(username: String): Lobby = ???
+  override def removePlayer(username: String): Lobby[T] = ???
+
 }
