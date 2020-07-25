@@ -7,14 +7,47 @@ package it.parttimeteam
  * @param name      Name.
  * @param shortName Symbol.
  */
-abstract class Rank(val value: Int, val name: String, val shortName: String) extends Serializable
+sealed class Rank(val value: Int,
+                  val name: String,
+                  val shortName: String)
+    extends Comparable[Rank] {
+
+  /**
+   * Base compare between two ranks.
+   *
+   * @param t Rank to compare.
+   * @return Compare result.
+   */
+  override def compareTo(t: Rank): Int = value compareTo t.value
+
+  /**
+   * Check if value of rank is the same of another rank.
+   * @param obj Object to compare.
+   * @return True if have the same value. false anywhere.
+   */
+  override def equals(obj: Any): Boolean = obj match {
+    case obj: Rank if value equals obj.value => true
+    case _ => super.equals(obj)
+  }
+}
 
 object Rank {
 
   /**
    * The first rank.
    */
-  case class Ace() extends Rank(14, "Ace", "A")
+  case class Ace() extends Rank(1, "Ace", "A") {
+    /**
+     * Compare an Ace with another card.
+     *
+     * @param t Rank to compare.
+     * @return Compare result.
+     */
+    override def compareTo(t: Rank): Int = t match {
+      case t if t.value equals 13 => 1
+      case _ => super.compareTo(t)
+    }
+  }
 
   /**
    * The second rank.
@@ -59,7 +92,7 @@ object Rank {
   /**
    * The tenth rank.
    */
-  case class Ten() extends Rank(10, "Ten", "10")
+  case class Ten() extends Rank(10, "Ten", "0")
 
   /**
    * The eleventh rank.
@@ -74,7 +107,18 @@ object Rank {
   /**
    * The thirteenth rank.
    */
-  case class King() extends Rank(13, "King", "K")
+  case class King() extends Rank(13, "King", "K") {
+    /**
+     * Compare King with another card.
+     *
+     * @param t Rank to compare.
+     * @return Compare result.
+     */
+    override def compareTo(t: Rank): Int = t match {
+      case t if t.value equals 1 => -1
+      case _ => super.compareTo(t)
+    }
+  }
 
   /**
    * Get all ranks of the deck.
@@ -104,5 +148,22 @@ object Rank {
     case "Q" => Queen()
     case "K" => King()
     case _ => throw new RuntimeException(f"Unknown rank $s")
+  }
+
+  implicit def value2rank(v: Int): Rank = v match {
+    case 1 => Ace()
+    case 2 => Two()
+    case 3 => Three()
+    case 4 => Four()
+    case 5 => Five()
+    case 6 => Six()
+    case 7 => Seven()
+    case 8 => Eight()
+    case 9 => Nine()
+    case 10 => Ten()
+    case 11 => Jack()
+    case 12 => Queen()
+    case 13 => King()
+    case _ => throw new RuntimeException(f"Unknown rank $v")
   }
 }

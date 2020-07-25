@@ -1,14 +1,16 @@
 package it.parttimeteam
 
 import it.parttimeteam.Rank.{Ace, Eight, Five, Four, Jack, King, Nine, Queen, Seven, Six, Ten, Three, Two}
-import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should
+import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
+import org.scalatest.propspec.AnyPropSpec
 
-class RankSuite extends AnyFunSuite {
+object RankSuite extends AnyFunSuite {
   test("Check all ranks properties") {
     assert(Ace().name equals "Ace")
     assert(Ace().shortName equals "A")
-    assert(Ace().value equals 14)
+    assert(Ace().value equals 1)
 
     assert(Two().name equals "Two")
     assert(Two().shortName equals "2")
@@ -43,7 +45,7 @@ class RankSuite extends AnyFunSuite {
     assert(Nine().value equals 9)
 
     assert(Ten().name equals "Ten")
-    assert(Ten().shortName equals "10")
+    assert(Ten().shortName equals "0")
     assert(Ten().value equals 10)
 
     assert(Jack().name equals "Jack")
@@ -64,51 +66,46 @@ class RankSuite extends AnyFunSuite {
   }
 }
 
-class RankSpec extends AnyFunSpec {
-  describe("Rank conversions") {
-    it("Should be Ace") {
-      assert(Rank string2rank "A" equals Ace())
-    }
-    it("Should be Two") {
-      assert(Rank string2rank "2" equals Two())
-    }
-    it("Should be Three") {
-      assert(Rank string2rank "3" equals Three())
-    }
-    it("Should be Four") {
-      assert(Rank string2rank "4" equals Four())
-    }
-    it("Should be Five") {
-      assert(Rank string2rank "5" equals Five())
-    }
-    it("Should be Six") {
-      assert(Rank string2rank "6" equals Six())
-    }
-    it("Should be Seven") {
-      assert(Rank string2rank "7" equals Seven())
-    }
-    it("Should be Eight") {
-      assert(Rank string2rank "8" equals Eight())
-    }
-    it("Should be Nine") {
-      assert(Rank string2rank "9" equals Nine())
-    }
-    it("Should be Ten") {
-      assert(Rank string2rank "0" equals Ten())
-    }
-    it("Should be Jack") {
-      assert(Rank string2rank "J" equals Jack())
-    }
-    it("Should be Queen") {
-      assert(Rank string2rank "Q" equals Queen())
-    }
-    it("Should be King") {
-      assert(Rank string2rank "K" equals King())
-    }
+object RankPropSpec
+  extends AnyPropSpec
+    with TableDrivenPropertyChecks
+    with should.Matchers {
+  val examples: TableFor1[Rank] = Table(
+    "rank",
+    Ace(),
+    Two(),
+    Three(),
+    Four(),
+    Five(),
+    Six(),
+    Seven(),
+    Eight(),
+    Nine(),
+    Ten(),
+    Jack(),
+    Queen(),
+    King()
+  )
 
-    it("Should raise RuntimeException for s string") {
-      assertThrows[RuntimeException] {
-        Rank.string2rank("s")
+  val failures: TableFor1[String] = Table(
+    "rank",
+    "s",
+    "♣",
+    "♠",
+    "♦",
+    "♥"
+  )
+
+  property("string2rank must return shortName at name input") {
+    forAll(examples) { rank =>
+      (Rank string2rank rank.shortName).name should be(rank.name)
+    }
+  }
+
+  property("Invoking string2rank with other strings must return RuntimeException") {
+    forAll(failures) { fail =>
+      a[RuntimeException] should be thrownBy {
+        Rank string2rank fail
       }
     }
   }
