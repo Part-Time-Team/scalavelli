@@ -59,7 +59,7 @@ object Rank {
   /**
    * The tenth rank.
    */
-  case class Ten() extends Rank(10, "Ten", "10")
+  case class Ten() extends Rank(10, "Ten", "0")
 
   /**
    * The eleventh rank.

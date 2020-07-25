@@ -45,7 +45,7 @@ class RankSuite extends AnyFunSuite {
     assert(Nine().value equals 9)
 
     assert(Ten().name equals "Ten")
-    assert(Ten().shortName equals "10")
+    assert(Ten().shortName equals "0")
     assert(Ten().value equals 10)
 
     assert(Jack().name equals "Jack")
