@@ -1,3 +1,5 @@
+package it.parttimeteam.messages
+
 import akka.actor.ActorRef
 
 object Messages {

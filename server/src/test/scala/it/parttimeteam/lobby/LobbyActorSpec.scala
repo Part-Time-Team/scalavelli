@@ -1,6 +1,9 @@
-import Messages.{ConnectUser, MatchFound, UserConnectionAccepted}
+package it.parttimeteam.lobby
+
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
+import it.partitimeteam.LobbyActor
+import it.parttimeteam.messages.Messages.{ConnectUser, MatchFound, UserConnectionAccepted}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -11,7 +14,7 @@ class LobbyActorSpec extends TestKit(ActorSystem())
 
   override protected def afterEach(): Unit = TestKit.shutdownActorSystem(system)
 
-  "a lobby actor" should {
+  "a it.partitimeteam.lobby actor" should {
 
     "accept a user connection request" in {
       val lobbyActor = system.actorOf(LobbyActor.props())
@@ -20,7 +23,7 @@ class LobbyActorSpec extends TestKit(ActorSystem())
     }
 
 
-    "reply with a match found message on players number reached" in {
+    "reply with a it.partitimeteam.match found message on players number reached" in {
       val lobbyActor = system.actorOf(LobbyActor.props())
       val client1 = TestProbe("client1")
       val client2 = TestProbe("client2")

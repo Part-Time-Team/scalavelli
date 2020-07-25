@@ -1,5 +1,7 @@
-import Messages.{ConnectUser, UserConnectionAccepted}
+package it.partitimeteam
+
 import akka.actor.{Actor, Props}
+import it.parttimeteam.messages.Messages.{ConnectUser, UserConnectionAccepted}
 
 object LobbyActor {
 

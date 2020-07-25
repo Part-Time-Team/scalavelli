@@ -1,4 +1,4 @@
-package lobby
+package it.partitimeteam.lobby
 
 import akka.actor.ActorRef
 import akka.japi.Pair
