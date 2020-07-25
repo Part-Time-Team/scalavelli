@@ -1,24 +1,45 @@
 package it.parttimeteam
 
-case class Card(val rank: Rank, val suit: Suit) {
+import it.parttimeteam.Rank.{Ace, King}
+
+/**
+ * Card of deck.
+ *
+ * @param rank Value of the card.
+ * @param suit Suit.
+ */
+case class Card(rank: Rank, suit: Suit)
+  extends Comparable[Card] {
+  /**
+   * Get the full name of the card.
+   *
+   * @return Card full name.
+   */
   def name(): String = f"${rank.name} of ${suit.name}"
+
+  /**
+   * Get the short name of the card.
+   *
+   * @return Card short name.
+   */
   def shortName(): String = f"${rank.shortName}${suit.shortName}"
 
-  // TODO: This function is necessary? We need score calculation?
-  def score(): Int = {
-    (rank, suit) match {
-      case (Rank.Two(), Suit.Clubs()) => 2
-      case (Rank.Ten(), Suit.Diamonds()) => 3
-      case (Rank.Jack(), _) => 1
-      case (Rank.Ace(), _) => 1
-      case _ => 0
-    }
-  }
-
-  def canFish(other: Card) = {
-    if(rank == Rank.Jack()) true
-    else this == other
+  /**
+   * Check if the card is the successor of the other card.
+   *
+   * @param card Other card.
+   * @return True if is next, false anywhere.
+   */
+  def isNext(card: Card): Boolean = (rank, suit, card.rank, card.suit) match {
+    case (_, suit, _, cardSuite) if !(suit.name equals cardSuite.name) => false
+    case (Ace(), _, King(), _) => true
+    case _ => card.rank.value + 1 equals rank.value
   }
 
   override def toString(): String = shortName()
+
+  override def compareTo(t: Card): Int = (suit, t.suit) match {
+    case (suit, tSuit) if suit equals tSuit => this.rank compareTo t.rank
+    case _ => suit compareTo t.suit
+  }
 }
