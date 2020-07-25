@@ -6,36 +6,39 @@ package it.parttimeteam
  * @param name      Name.
  * @param shortName Symbol.
  */
-abstract class Suit(val name: String, val shortName: String) extends Serializable
+sealed class Suit(val name: String, val shortName: String, val order: Int)
+extends Comparable[Suit] {
+  override def compareTo(t: Suit): Int = order compareTo t.order
+}
 
 object Suit {
 
   /**
-   * The Club suit.
+   * The heart suit.
    */
-  case class Clubs() extends Suit("Clubs", "♣")
-
-  /**
-   * The spade suit.
-   */
-  case class Spades() extends Suit("Spades", "♠")
+  case class Hearts() extends Suit("Hearts", "♥", 0)
 
   /**
    * The diamond suit.
    */
-  case class Diamonds() extends Suit("Diamonds", "♦")
+  case class Diamonds() extends Suit("Diamonds", "♦", 1)
 
   /**
-   * The heart suit.
+   * The Club suit.
    */
-  case class Hearts() extends Suit("Hearts", "♥")
+  case class Clubs() extends Suit("Clubs", "♣", 2)
+
+  /**
+   * The spade suit.
+   */
+  case class Spades() extends Suit("Spades", "♠", 3)
 
   /**
    * Get all suits of the deck.
    *
    * @return A list with all suits.
    */
-  def all: List[Suit] = List(Clubs(), Spades(), Diamonds(), Hearts())
+  def all: List[Suit] = List(Hearts(), Diamonds(), Clubs(), Spades())
 
   /**
    * Transform a string in the matching suit.
@@ -44,10 +47,10 @@ object Suit {
    * @return Suit converted.
    */
   implicit def string2suit(s: String): Suit = s match {
+    case "♥" => Hearts()
+    case "♦" => Diamonds()
     case "♣" => Clubs()
     case "♠" => Spades()
-    case "♦" => Diamonds()
-    case "♥" => Hearts()
     case _ => throw new RuntimeException(f"Unknown suit $s")
   }
 }
