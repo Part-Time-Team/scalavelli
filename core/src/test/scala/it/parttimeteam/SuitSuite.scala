@@ -6,7 +6,7 @@ import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
 import org.scalatest.propspec.AnyPropSpec
 
-class SuitSuite extends AnyFunSuite {
+object SuitSuite extends AnyFunSuite {
   test("Check all suits properties") {
     assert(Clubs().name equals "Clubs")
     assert(Clubs().shortName equals "♣")
@@ -26,7 +26,7 @@ class SuitSuite extends AnyFunSuite {
   }
 }
 
-class SuitPropSpec
+object SuitPropSpec
   extends AnyPropSpec
     with TableDrivenPropertyChecks
     with should.Matchers {
