@@ -2,12 +2,12 @@ package it.parttimeteam.lobby
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
-import it.partitimeteam.LobbyActor
+import it.partitimeteam.lobby.LobbyManagerActor
 import it.parttimeteam.messages.Messages.{ConnectUser, MatchFound, UserConnectionAccepted}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class LobbyActorSpec extends TestKit(ActorSystem())
+class LobbyManagerActorSpec extends TestKit(ActorSystem())
   with ImplicitSender
   with AnyWordSpecLike
   with BeforeAndAfterEach {
@@ -17,14 +17,14 @@ class LobbyActorSpec extends TestKit(ActorSystem())
   "a it.partitimeteam.lobby actor" should {
 
     "accept a user connection request" in {
-      val lobbyActor = system.actorOf(LobbyActor.props())
+      val lobbyActor = system.actorOf(LobbyManagerActor.props())
       lobbyActor ! ConnectUser("user", 2)
       expectMsg(UserConnectionAccepted)
     }
 
 
     "reply with a it.partitimeteam.match found message on players number reached" in {
-      val lobbyActor = system.actorOf(LobbyActor.props())
+      val lobbyActor = system.actorOf(LobbyManagerActor.props())
       val client1 = TestProbe("client1")
       val client2 = TestProbe("client2")
       val client3 = TestProbe("client3")

@@ -1,15 +1,15 @@
-package it.partitimeteam
+package it.partitimeteam.lobby
 
 import akka.actor.{Actor, Props}
 import it.parttimeteam.messages.Messages.{ConnectUser, UserConnectionAccepted}
 
-object LobbyActor {
+object LobbyManagerActor {
 
-  def props() = Props(new LobbyActor())
+  def props() = Props(new LobbyManagerActor())
 
 }
 
-class LobbyActor extends Actor {
+class LobbyManagerActor extends Actor {
 
   override def receive: Receive = {
     case ConnectUser(userName, numberOfPlayers) => {
