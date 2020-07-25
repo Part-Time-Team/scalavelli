@@ -1,8 +1,10 @@
 package it.parttimeteam
 
 import it.parttimeteam.Suit.{Clubs, Diamonds, Hearts, Spades}
-import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should
+import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
+import org.scalatest.propspec.AnyPropSpec
 
 class SuitSuite extends AnyFunSuite {
   test("Check all suits properties") {
@@ -24,27 +26,39 @@ class SuitSuite extends AnyFunSuite {
   }
 }
 
-class SuitSpec extends AnyFunSpec {
-  describe("Suit conversions") {
-    it("Should be Clubs") {
-      assert(Suit string2suit "♣" equals Clubs())
-    }
+class SuitPropSpec
+  extends AnyPropSpec
+    with TableDrivenPropertyChecks
+    with should.Matchers {
 
-    it("Should be Spades") {
-      assert(Suit string2suit "♠" equals Spades())
-    }
+  // Property test for all suits.
+  val examples: TableFor1[Suit] = Table(
+    "suit",
+    Clubs(),
+    Spades(),
+    Diamonds(),
+    Hearts()
+  )
 
-    it("Should be Diamonds") {
-      assert(Suit string2suit "♦" equals Diamonds())
-    }
+  val failures: TableFor1[String] = Table(
+    "suit",
+    "s",
+    "A",
+    "J",
+    "Q",
+    "K"
+  )
 
-    it("Should be Hearts") {
-      assert(Suit string2suit "♥" equals Hearts())
+  property("string2suit must return shortName at name input") {
+    forAll(examples) { suit =>
+      (Suit string2suit suit.shortName).name should be(suit.name)
     }
+  }
 
-    it("Should raise RuntimeException for s string") {
-      assertThrows[RuntimeException] {
-        Suit.string2suit("s")
+  property("Invoking string2suit with other strings must return RuntimeException") {
+    forAll(failures) { fail =>
+      a[RuntimeException] should be thrownBy {
+        Suit string2suit fail
       }
     }
   }
