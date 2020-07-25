@@ -43,3 +43,17 @@ case class Card(rank: Rank, suit: Suit)
     case _ => suit compareTo t.suit
   }
 }
+
+object Card {
+  private val pattern = "^([AJKQ2-9])\\s*([♣♠♦♥])$".r
+
+  def fullDeck: List[Card] = for {
+    suit <- Suit.all
+    rank <- Rank.all
+  } yield Card(rank, suit)
+
+  implicit def string2card(s: String): Card = s match {
+    case pattern(rank, suit) => Card(rank, suit)
+    case _ => throw new RuntimeException(s"Invalid card string ${s}")
+  }
+}
