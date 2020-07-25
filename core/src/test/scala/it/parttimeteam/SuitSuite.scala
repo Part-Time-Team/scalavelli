@@ -3,6 +3,9 @@ package it.parttimeteam
 import it.parttimeteam.Suit.{Clubs, Diamonds, Hearts, Spades}
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should
+import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.propspec.AnyPropSpec
 
 class SuitSuite extends AnyFunSuite {
   test("Check all suits properties") {
@@ -21,6 +24,23 @@ class SuitSuite extends AnyFunSuite {
 
   test("Check all suits") {
     assert(Suit.all equals List(Clubs(), Spades(), Diamonds(), Hearts()))
+  }
+}
+
+class SuitPropSpec extends AnyPropSpec with TableDrivenPropertyChecks with should.Matchers {
+
+  val examples = Table(
+    "suit",
+    Clubs(),
+    Spades(),
+    Diamonds(),
+    Hearts()
+  )
+
+  property("string2suit must return shortName at name input") {
+    forAll(examples) { suit =>
+      Suit.string2suit(suit.shortName).name should be (suit.name)
+    }
   }
 }
 

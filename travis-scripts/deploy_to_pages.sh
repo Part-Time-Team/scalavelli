@@ -43,8 +43,6 @@ echo "************************************************"
 
 ls -lhRG
 
-
-
 cp -fr source/* public/
 
 # Copy scoverage report html files.
