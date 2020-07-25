@@ -1,7 +1,6 @@
 package it.parttimeteam
 
 import it.parttimeteam.Suit.{Clubs, Diamonds, Hearts, Spades}
-import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
@@ -60,16 +59,6 @@ class SuitPropSpec
     forAll(failures) { fail =>
       a[RuntimeException] should be thrownBy {
         Suit string2suit fail
-      }
-    }
-  }
-}
-
-class SuitSpec extends AnyFunSpec {
-  describe("Suit conversions") {
-    it("Should raise RuntimeException for s string") {
-      assertThrows[RuntimeException] {
-        Suit.string2suit("s")
       }
     }
   }
