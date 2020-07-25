@@ -43,7 +43,7 @@ echo "************************************************"
 
 ls -lhRG
 
-sbt clean coverage test coverageReport coverageAggregate doc package
+
 
 cp -fr source/* public/
 
