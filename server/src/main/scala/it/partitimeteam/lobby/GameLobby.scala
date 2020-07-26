@@ -1,19 +1,15 @@
 package it.partitimeteam.lobby
 
-import akka.actor.ActorRef
 import akka.japi.Pair
-import it.partitimeteam.common.{Player, Referable}
+import it.partitimeteam.common.Referable
 
 /**
  *
  * @param numberOfPlayers min number of players required to start a match
  */
-class GameLobby[T <: Referable](numberOfPlayers: Int) extends Lobby[T] {
+case class GameLobby[T <: Referable](numberOfPlayers: Int, override val players: Seq[Pair[String, T]] = Seq())
+  extends Lobby[T] {
 
-  /**
-   * @inheritdoc
-   */
-  override val players: Seq[Pair[String, T]] = Seq()
 
   /**
    * @inheritdoc
