@@ -5,7 +5,7 @@ import it.partitimeteam.common.Referable
 
 trait Lobby[T <: Referable] {
 
-  val players: Seq[Pair[String, T]]
+  val players: List[Pair[String, T]]
 
   /**
    * Check if the current lobby ha enough players to start a game
@@ -39,4 +39,5 @@ trait Lobby[T <: Referable] {
   def removePlayer(username: String): Lobby[T]
 
 }
+
 
