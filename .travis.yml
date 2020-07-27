@@ -41,8 +41,9 @@ jobs:
     - stage: Generate coverage and scaladoc
       script:
         - sbt clean coverage test coverageReport coverageAggregate doc package
-        - bash travis-scripts/deploy_to_pages.sh
         - bash <(curl -s https://codecov.io/bash)
+      before_deploy:
+        - bash travis-scripts/deploy_to_pages.sh
       deploy:
         provider: pages
         strategy: git
@@ -54,8 +55,7 @@ jobs:
           all_branches: true
 
 stages:
-  - name: Call coverage report
   - name: Run sbt with OpenJdk11
     if: type IN (pull_request, push)
   - name: Generate coverage and scaladoc
-    if: type = push AND branch IN (master, dev)
+    if: type IN (pull_request, push) AND branch IN (master, dev)
