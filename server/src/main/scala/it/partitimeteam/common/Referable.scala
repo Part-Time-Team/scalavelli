@@ -4,6 +4,6 @@ import akka.actor.ActorRef
 
 trait Referable {
 
-  def getActorRef: ActorRef
+  def actorRef: ActorRef
 
 }

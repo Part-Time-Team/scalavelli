@@ -1,14 +1,27 @@
 package it.partitimeteam.lobby
 
-import akka.actor.ActorRef
-import it.partitimeteam.common.Referable
+import it.partitimeteam.common.Player
 
-class LobbyManagerImpl[T <: Referable] extends LobbyManager[T] {
+class LobbyManagerImpl[T <: Player] extends LobbyManager[T] {
+  /**
+   *
+   * @param lobbyType type of the lobby
+   * @param
+   * @return
+   */
+  override def addPlayer(player: Player, lobbyType: LobbyType): LobbyManager[T] = ???
 
-  override def addClient(username: String, lobbyType: LobbyType, actorRef: ActorRef): LobbyManager[T] = ???
+  /**
+   *
+   *
+   * @return
+   */
+  override def removePlayer(playerId: String): LobbyManager[T] = ???
 
-  override def removeClient(username: String): LobbyManager[T] = ???
-
+  /**
+   *
+   * @param lobbyType
+   * @return the lobbing corresponding the the specified type, if present
+   */
   override def getLobby(lobbyType: LobbyType): Option[Lobby[T]] = ???
-
 }

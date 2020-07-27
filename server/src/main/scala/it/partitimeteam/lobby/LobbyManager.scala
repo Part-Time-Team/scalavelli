@@ -1,25 +1,23 @@
 package it.partitimeteam.lobby
 
-import akka.actor.ActorRef
-import it.partitimeteam.common.Referable
+import it.partitimeteam.common.Player
 
-trait LobbyManager[T <: Referable] {
+trait LobbyManager[T <: Player] {
 
   /**
    *
-   * @param username  username of the client to add
    * @param lobbyType type of the lobby
-   * @param actorRef  ActorRef of the client actor
+   * @param
    * @return
    */
-  def addClient(username: String, lobbyType: LobbyType, actorRef: ActorRef): LobbyManager[T]
+  def addPlayer(player: Player, lobbyType: LobbyType): LobbyManager[T]
 
   /**
    *
-   * @param username
+   *
    * @return
    */
-  def removeClient(username: String): LobbyManager[T]
+  def removePlayer(playerId: String): LobbyManager[T]
 
   /**
    *

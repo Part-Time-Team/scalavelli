@@ -1,13 +1,17 @@
 package it.partitimeteam.lobby
 
 import akka.japi.Pair
-import it.partitimeteam.common.Referable
+import it.partitimeteam.common.{GamePlayer, Player}
+
+object GameLobby {
+  def apply(numberOfPlayers: Int): GameLobby[GamePlayer] = new GameLobby(numberOfPlayers)
+}
 
 /**
  *
  * @param numberOfPlayers min number of players required to start a match
  */
-case class GameLobby[T <: Referable](numberOfPlayers: Int, override val players: List[Pair[String, T]] = List())
+case class GameLobby[T <: Player](numberOfPlayers: Int, override val players: List[T] = List())
   extends Lobby[T] {
 
 
@@ -19,7 +23,7 @@ case class GameLobby[T <: Referable](numberOfPlayers: Int, override val players:
   /**
    * @inheritdoc
    */
-  override def extractPlayersForMatch(): Pair[Lobby[T], Option[List[Pair[String, T]]]] =
+  override def extractPlayersForMatch(): Pair[Lobby[T], Option[List[T]]] =
     if (this.hasEnoughPlayers) {
       Pair(GameLobby(numberOfPlayers, players.drop(numberOfPlayers)), Some(players.take(numberOfPlayers)))
     } else {
@@ -29,15 +33,15 @@ case class GameLobby[T <: Referable](numberOfPlayers: Int, override val players:
   /**
    * @inheritdoc
    */
-  override def addPlayer(username: String, data: T): Lobby[T] =
-    GameLobby(numberOfPlayers, players appended Pair(username, data))
+  override def addPlayer(player: T): Lobby[T] =
+    GameLobby(numberOfPlayers, players appended player)
 
 
   /**
    * @inheritdoc
    */
-  override def removePlayer(username: String): Lobby[T] =
-    GameLobby(numberOfPlayers, players.filter(p => p.first != username))
+  override def removePlayer(playerId: String): Lobby[T] =
+    GameLobby(numberOfPlayers, players.filter(p => p.id != playerId))
 
 
 }
