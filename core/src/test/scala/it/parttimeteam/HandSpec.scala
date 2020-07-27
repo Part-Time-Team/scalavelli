@@ -35,6 +35,14 @@ class HandSpec extends AnyFunSuite{
     assert(hand.addTableCards(card3, card2) equals Hand(List(card4), List(card1, card3, card2)))
   }
 
+  test("Get player's hand"){
+    val card1: Card = Card(Rank.Ace(), Suit.Clubs())
+    val card2: Card = Card(Rank.Four(), Suit.Spades())
+
+    val hand : Hand = Hand(List(card1, card2), List())
+    assert(hand.getHand equals Hand(List(card1, card2), List()))
+  }
+
   test("Sort cards by value"){
     val card1: Card = Card(Rank.Ace(), Suit.Clubs())
     val card2: Card = Card(Rank.Four(), Suit.Spades())

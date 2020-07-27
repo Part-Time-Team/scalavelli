@@ -9,6 +9,15 @@ package it.parttimeteam
 case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List()) {
 
   /**
+   * Get player's hand
+   *
+   * @return player's hand
+   */
+  def getHand: Hand = {
+    Hand(playerCards, tableCards)
+  }
+
+  /**
    * Add card to the list playerCards
    *
    * @param card card to add
