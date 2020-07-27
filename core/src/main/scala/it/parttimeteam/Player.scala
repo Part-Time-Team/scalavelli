@@ -1,32 +1,53 @@
 package it.parttimeteam
 
 /**
- * Represent the name of a generic player
+ * Represent of a generic player
  */
 sealed trait Player{
 
   /**
    * Name of the player
    */
-  val name:String
+  val name: String
 
   /**
    * Id of the player
    */
-  val id:String
+  val id: String
 
   /**
    * Hand of the player
    */
-  val hand: Int // Hand
+  val hand: Hand
 }
 
 /**
  * Player class
- * @param name the name of the player
- * @param id the id of the player
- * @param hand the hand of the player
- */
+ *
+ * @param name name of the player
+ * @param id id of the player
+ * @param hand hand of the player
+*/
 case class ScalavelliPlayer(override val name:String,
                             override val id: String,
-                            override val hand: Int) extends Player
+                            override val hand: Hand) extends Player {
+
+  /**
+   * Get name of the player
+   *
+   * @return Player name
+   */
+  def getName: String = f"Player name: $name"
+
+  /**
+   * Get id of the player
+   *
+   * @return Id player
+   */
+  def getId: String = f"Player id: $id"
+
+  // TODO ha senso?
+  def updateHand(playerCards: List[Card], tableCards: List[Card]): Hand = {
+    Hand(playerCards, tableCards)
+  }
+}
