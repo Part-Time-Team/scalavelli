@@ -18,16 +18,6 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
   }
 
   /**
-   * Add card to the list playerCards
-   *
-   * @param card card to add
-   * @return new Hand with the updated playerCards list
-   */
-  def addPlayerCard(card: Card): Hand = {
-    Hand(playerCards :+ card, tableCards)
-  }
-
-  /**
    * Add cards to the list playerCards
    *
    * @param cards cards to add
@@ -35,16 +25,6 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
    */
   def addPlayerCards(cards: Card*): Hand = {
     Hand(playerCards ++ cards.toList, tableCards)
-  }
-
-  /**
-   * Add card to the list tableCards
-   *
-   * @param card card to add
-   * @return new Hand the updated tableCards list
-   */
-  def addTableCard(card :Card):Hand = {
-    Hand(playerCards, tableCards :+ card)
   }
 
   /**
