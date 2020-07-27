@@ -2,29 +2,24 @@ package it.partitimeteam.lobby
 
 import it.partitimeteam.common.Player
 
-object LobbyManager {
-  def apply(): LobbyManager[Player] = new LobbyManagerImpl[Player]()
-}
-
 
 trait LobbyManager[T <: Player] {
+
 
   /**
    * Add a player to the lobby system
    *
    * @param player    player to be added
    * @param lobbyType type of the lobby
-   * @return a new lobby manger with the updated lobby
    */
-  def addPlayer(player: Player, lobbyType: LobbyType): LobbyManager[T]
+  def addPlayer(player: T, lobbyType: LobbyType): Unit
 
   /**
    * Remove a player from the lobby system
    *
    * @param playerId the id of the player to remove
-   * @return a new lobbymanger without the specified player
    */
-  def removePlayer(playerId: String): LobbyManager[T]
+  def removePlayer(playerId: String): Unit
 
   /**
    *
@@ -36,21 +31,38 @@ trait LobbyManager[T <: Player] {
 }
 
 
-case class LobbyManagerImpl[T <: Player]() extends LobbyManager[T] {
+class LobbyManagerImpl[T <: Player] extends LobbyManager[T] {
+
+  private var playersToLobby: Map[String, LobbyType] = Map()
+  private var lobbies: Map[LobbyType, Lobby[T]] = Map()
 
   /**
    * @inheritdoc
    */
-  override def addPlayer(player: Player, lobbyType: LobbyType): LobbyManager[T] = ???
+  override def addPlayer(player: T, lobbyType: LobbyType): Unit = {
+    lobbies = lobbies.get(lobbyType) match {
+      case Some(lobby) => lobbies + (lobbyType -> lobby.addPlayer(player))
+      // TODO Cava modellare informazioni sul tipo di lobby
+      case None => lobbies + (lobbyType -> GameLobby(4).addPlayer(player))
+    }
+    playersToLobby = playersToLobby + (player.id -> lobbyType)
+  }
 
   /**
    * @inheritdoc
    */
-  override def removePlayer(playerId: String): LobbyManager[T] = ???
+  override def removePlayer(playerId: String): Unit = {
+    playersToLobby.get(playerId) match {
+      case Some(lobbyType) => lobbies.get(lobbyType) match {
+        case Some(lobby) => lobby.removePlayer(playerId)
+      }
+    }
+    playersToLobby = playersToLobby - playerId
+  }
 
   /**
    * @inheritdoc
    */
-  override def getLobby(lobbyType: LobbyType): Option[Lobby[T]] = ???
+  override def getLobby(lobbyType: LobbyType): Option[Lobby[T]] = lobbies.get(lobbyType)
 }
 

@@ -3,6 +3,10 @@ package it.partitimeteam.lobby
 import akka.japi.Pair
 import it.partitimeteam.common.{Player, Referable}
 
+object Lobby {
+  def apply(numberOfPlayers: Int): Lobby[Player] = GameLobby[Player](numberOfPlayers)
+}
+
 trait Lobby[T <: Player] {
 
   val players: List[T]

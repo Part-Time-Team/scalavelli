@@ -3,10 +3,6 @@ package it.partitimeteam.lobby
 import akka.japi.Pair
 import it.partitimeteam.common.{GamePlayer, Player}
 
-object GameLobby {
-  def apply(numberOfPlayers: Int): GameLobby[GamePlayer] = new GameLobby(numberOfPlayers)
-}
-
 /**
  *
  * @param numberOfPlayers min number of players required to start a match
