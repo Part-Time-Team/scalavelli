@@ -22,7 +22,7 @@ class SuitSuite extends AnyFunSuite {
   }
 
   test("Check all suits") {
-    assert(Suit.all equals List(Clubs(), Spades(), Diamonds(), Hearts()))
+    assert(Suit.all equals List(Hearts(), Diamonds(), Clubs(), Spades()))
   }
 }
 
@@ -60,6 +60,12 @@ class SuitPropSpec
       a[RuntimeException] should be thrownBy {
         Suit string2suit fail
       }
+    }
+  }
+
+  property("Check comparation between suits") {
+    forAll(examples) { suit =>
+      suit compareTo Diamonds() should be(suit.order compareTo Diamonds().order)
     }
   }
 }
