@@ -1,7 +1,7 @@
 package it.partitimeteam.lobby
 
-sealed class LobbyType
+sealed class LobbyType(val numberOfPlayers: Int)
 
-case class PlayerNumberLobby(numberOfPlayers: Int) extends LobbyType
+case class PlayerNumberLobby(override val numberOfPlayers: Int) extends LobbyType(numberOfPlayers)
 
-case class PrivateLobby(lobbyId: String) extends LobbyType
+case class PrivateLobby(lobbyId: String, override val numberOfPlayers: Int) extends LobbyType(numberOfPlayers)

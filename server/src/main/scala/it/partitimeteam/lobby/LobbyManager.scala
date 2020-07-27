@@ -42,8 +42,7 @@ class LobbyManagerImpl[T <: Player] extends LobbyManager[T] {
   override def addPlayer(player: T, lobbyType: LobbyType): Unit = {
     lobbies = lobbies.get(lobbyType) match {
       case Some(lobby) => lobbies + (lobbyType -> lobby.addPlayer(player))
-      // TODO Cava modellare informazioni sul tipo di lobby
-      case None => lobbies + (lobbyType -> GameLobby(4).addPlayer(player))
+      case None => lobbies + (lobbyType -> GameLobby(lobbyType.numberOfPlayers).addPlayer(player))
     }
     playersToLobby = playersToLobby + (player.id -> lobbyType)
   }
