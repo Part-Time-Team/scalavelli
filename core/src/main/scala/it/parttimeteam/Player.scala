@@ -46,8 +46,8 @@ case class ScalavelliPlayer(override val name:String,
    */
   def getId: String = f"Player id: $id"
 
-  // TODO ha senso?
-  def updateHand(playerCards: List[Card], tableCards: List[Card]): Hand = {
-    Hand(playerCards, tableCards)
+  def refreshHand(playerCards: List[Card], tableCards: List[Card]): Hand = {
+    val hand : Hand= Hand(playerCards, tableCards)
+    hand
   }
 }

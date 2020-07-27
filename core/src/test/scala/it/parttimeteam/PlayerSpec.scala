@@ -24,6 +24,6 @@ class PlayerSpec extends AnyFunSuite{
     val card2 : Card = Card(Rank.Seven(), Suit.Spades())
     val player : ScalavelliPlayer = ScalavelliPlayer("Lorenzo", "#d502", Hand(List(), List()))
 
-    assert(player updateHand(List(card1), List(card2)) equals Hand(List(card1), List(card2)))
+    assert(player refreshHand(List(card1), List(card2)) equals Hand(List(card1), List(card2)))
   }
 }
