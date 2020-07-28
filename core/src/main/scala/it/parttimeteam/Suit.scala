@@ -7,7 +7,7 @@ package it.parttimeteam
  * @param shortName Symbol.
  */
 sealed class Suit(val name: String, val shortName: String, val order: Int)
-extends Comparable[Suit] {
+  extends Comparable[Suit] {
   override def compareTo(t: Suit): Int = order compareTo t.order
 }
 
