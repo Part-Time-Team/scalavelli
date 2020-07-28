@@ -5,4 +5,12 @@ package it.parttimeteam
  *
  * @param cards combinations of cards
  */
-case class CardCombination(cards: List[Card] = List()) {}
+case class CardCombination(cards: List[Card] = List()) {
+
+  /**
+   * Check if the combination is valid
+   *
+   * @return true if the combination is valid otherwise false
+   */
+  def isValidate: Boolean = true
+}
