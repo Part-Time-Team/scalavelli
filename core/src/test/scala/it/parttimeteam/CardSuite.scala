@@ -31,6 +31,18 @@ class CardSuite extends AnyFunSuite {
     val h3: Card = Card(Rank.Three(), Suit.Hearts())
     assert(Card string2card h3.shortName() equals h3)
   }
+
+  test("Invoking toString on a card will produce the shortname") {
+    val c4: Card = Card(Rank.Four(), Suit.Clubs())
+    assert(c4.toString() equals c4.shortName())
+  }
+
+  test("Invoking string2card on currect value will produce RuntimeException") {
+    val s: String = "g1"
+    assertThrows[RuntimeException] {
+      Card string2card s
+    }
+  }
 }
 
 /*

@@ -130,7 +130,21 @@ class RankPropSpec
 
   property("value2rank must return Rank at value input") {
     forAll(examples) { rank =>
-      Rank value2rank rank.value should be (rank)
+      Rank value2rank rank.value should be(rank)
+    }
+  }
+
+  val int2fails: TableFor1[Int] = Table(
+    "rank",
+    -1,
+    14,
+  )
+
+  property("Invoking value2rank with other values must return RuntimeException") {
+    forAll(int2fails) { fail =>
+      a[RuntimeException] should be thrownBy {
+        Rank value2rank fail
+      }
     }
   }
 }
