@@ -8,7 +8,7 @@ package it.parttimeteam
  * @param currentPlayer current player in the round
  * @param gameBoard     game board
  */
-case class Game(players: List[Player], deck: Null, currentPlayer: Int, gameBoard: Null) {
+case class Game(players: List[Player], deck: Null, currentPlayer: Int, gameBoard: GameBoard) {
 
   /**
    * Gets the next player based on the turn
