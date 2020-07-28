@@ -1,7 +1,7 @@
 package it.partitimeteam.lobby
 
 import akka.actor.{Actor, Props}
-import it.parttimeteam.messages.Messages.{ConnectUser, UserConnectionAccepted}
+import it.parttimeteam.messages.Messages.{ConnectUserToPublicLobby, UserConnectionAccepted}
 
 object LobbyManagerActor {
 
@@ -12,7 +12,7 @@ object LobbyManagerActor {
 class LobbyManagerActor extends Actor {
 
   override def receive: Receive = {
-    case ConnectUser(userName, numberOfPlayers) => {
+    case ConnectUserToPublicLobby(userName, numberOfPlayers) => {
       sender() ! UserConnectionAccepted
     }
   }

@@ -3,7 +3,7 @@ package it.parttimeteam.lobby
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import it.partitimeteam.lobby.LobbyManagerActor
-import it.parttimeteam.messages.Messages.{ConnectUser, MatchFound, UserConnectionAccepted}
+import it.parttimeteam.messages.Messages.{ConnectUserToPublicLobby, MatchFound, UserConnectionAccepted}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -18,7 +18,7 @@ class LobbyManagerActorSpec extends TestKit(ActorSystem())
 
     "accept a user connection request" in {
       val lobbyActor = system.actorOf(LobbyManagerActor.props())
-      lobbyActor ! ConnectUser("user", 2)
+      lobbyActor ! ConnectUserToPublicLobby("user", 2)
       expectMsg(UserConnectionAccepted)
     }
 
