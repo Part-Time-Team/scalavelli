@@ -6,7 +6,7 @@ import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
 import org.scalatest.propspec.AnyPropSpec
 
-object RankSuite extends AnyFunSuite {
+class RankSuite extends AnyFunSuite {
   test("Check all ranks properties") {
     assert(Ace().name equals "Ace")
     assert(Ace().shortName equals "A")
@@ -61,12 +61,24 @@ object RankSuite extends AnyFunSuite {
     assert(King().value equals 13)
   }
 
+  test("Compare King and Ace ranks") {
+    assert(King() compareTo Queen() equals 1)
+    assert(King() compareTo King() equals 0)
+    assert(King() compareTo Ace() equals -1)
+  }
+
+  test("Compare Ace and King ranks") {
+    assert(Ace() compareTo King() equals 1)
+    assert(Ace() compareTo Ace() equals 0)
+    assert(Ace() compareTo Two() equals -1)
+  }
+
   test("Check all ranks") {
     assert(Rank.all equals List(Ace(), Two(), Three(), Four(), Five(), Six(), Seven(), Eight(), Nine(), Ten(), Jack(), Queen(), King()))
   }
 }
 
-object RankPropSpec
+class RankPropSpec
   extends AnyPropSpec
     with TableDrivenPropertyChecks
     with should.Matchers {
@@ -98,7 +110,7 @@ object RankPropSpec
 
   property("string2rank must return shortName at name input") {
     forAll(examples) { rank =>
-      (Rank string2rank rank.shortName).name should be(rank.name)
+      Rank string2rank rank.shortName should be(rank)
     }
   }
 
@@ -106,6 +118,32 @@ object RankPropSpec
     forAll(failures) { fail =>
       a[RuntimeException] should be thrownBy {
         Rank string2rank fail
+      }
+    }
+  }
+
+  property("Check comparation between suits") {
+    forAll(examples) { rank =>
+      rank compareTo Six() should be(rank.value compareTo Six().value)
+    }
+  }
+
+  property("value2rank must return Rank at value input") {
+    forAll(examples) { rank =>
+      Rank value2rank rank.value should be(rank)
+    }
+  }
+
+  val int2fails: TableFor1[Int] = Table(
+    "rank",
+    -1,
+    14,
+  )
+
+  property("Invoking value2rank with other values must return RuntimeException") {
+    forAll(int2fails) { fail =>
+      a[RuntimeException] should be thrownBy {
+        Rank value2rank fail
       }
     }
   }
