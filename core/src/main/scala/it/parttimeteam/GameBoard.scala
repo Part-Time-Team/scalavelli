@@ -14,6 +14,6 @@ case class GameBoard(combinationsList: List[CardCombination] = List()) {
    * @return updated game board
    */
   def addCombination(combinations: CardCombination*): GameBoard = {
-    GameBoard(combinationsList ++ combinations)
+    this.copy(combinationsList = combinationsList ++ combinations)
   }
 }
