@@ -6,45 +6,50 @@ import it.parttimeteam.view.startup.listeners.{CreatePrivateGameSceneListener, G
 import it.parttimeteam.view.startup.scenes.{CreatePrivateGameScene, GameWithPlayersScene, PrivateGameScene, SelectScene}
 import scalafx.application.JFXApp
 
-trait MachiavelliStartupPrimaryStage extends JFXApp.PrimaryStage with PrimaryStageListener
+case class MachiavelliStartupPrimaryStage(toControllerListener: StartupStageToControllerListener, windowWidth: Double, windowHeight: Double) extends JFXApp.PrimaryStage with PrimaryStageListener {
+  title = "Machiavelli"
+  resizable = true
+  width = windowWidth
+  height = windowHeight
+
+  val stage: MachiavelliStartupPrimaryStage = this
+
+
+  private val mainScene = new SelectScene(this, new SelectSceneListener {
+
+    override def onSelectedGameWithPlayers(): Unit = scene = new GameWithPlayersScene(stage, stage, onBackClick)
+
+    override def onSelectedGameWithCode(): Unit = scene = new PrivateGameScene(stage, stage, onBackClick)
+
+    override def onSelectedCreatePrivateGame(): Unit = scene = new CreatePrivateGameScene(stage, stage, onBackClick)
+  })
+
+  def onBackClick() {
+    scene = mainScene
+  }
+
+  scene = mainScene
+
+  onCloseRequest = _ => {
+    System.exit(0)
+  }
+
+  override def registerToPrivateGame(username: String, privateCode: String): Unit = toControllerListener.requestPrivateGame()
+
+  override def registerToGame(username: String, playersNumber: Int): Unit = toControllerListener.requestGameWithPlayers(username, playersNumber)
+
+  override def createPrivateGame(username: String, playersNumber: Int): Unit = toControllerListener.createPrivateGame()
+}
 
 /** Companion object */
 object MachiavelliStartupPrimaryStage {
+  val windowWidth: Double = 800d
+  val windowHeight: Double = 600d
 
-  def apply(listener: StartupStageToControllerListener,
-            windowWidth: Double = 800d,
-            windowHeight: Double = 600d): MachiavelliStartupPrimaryStage = new MachiavelliStartupPrimaryStageImpl(listener, windowWidth, windowHeight)
+  def apply(listener: StartupStageToControllerListener): MachiavelliStartupPrimaryStage = MachiavelliStartupPrimaryStage(listener, windowWidth, windowHeight)
 
 
-  class MachiavelliStartupPrimaryStageImpl(private val toControllerListener: StartupStageToControllerListener, private val windowWidth: Double, private val windowHeight: Double) extends MachiavelliStartupPrimaryStage {
-    title = "Machiavelli"
-    resizable = true
-    width = windowWidth
-    height = windowHeight
-
-    val stage: MachiavelliStartupPrimaryStage = this
-
-    private val mainScene = new SelectScene(this, new SelectSceneListener {
-
-      override def onSelectedGameWithPlayers(): Unit = scene = new GameWithPlayersScene(stage, stage)
-
-      override def onSelectedGameWithCode(): Unit = scene = new PrivateGameScene(stage, stage)
-
-      override def onSelectedCreatePrivateGame(): Unit = scene = new CreatePrivateGameScene(stage, stage)
-    })
-
-    scene = mainScene
-
-    onCloseRequest = _ => {
-      System.exit(0)
-    }
-
-    override def registerToPrivateGame(username: String, privateCode: String): Unit = toControllerListener.requestPrivateGame()
-
-    override def registerToGame(username: String, playersNumber: Int): Unit = toControllerListener.requestGameWithPlayers()
-
-    override def createPrivateGame(username: String, playersNumber: Int): Unit = toControllerListener.createPrivateGame()
-  }
+  def apply(): MachiavelliStartupPrimaryStage = MachiavelliStartupPrimaryStage(null, windowWidth, windowHeight)
 
 }
 

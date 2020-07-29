@@ -1,8 +1,7 @@
 package it.parttimeteam.controller.startup
 
 trait StartupStageToControllerListener {
-
-  def requestGameWithPlayers(): Unit
+  def requestGameWithPlayers(username: String, playersNumber: Int): Unit
 
   def requestPrivateGame(): Unit
 

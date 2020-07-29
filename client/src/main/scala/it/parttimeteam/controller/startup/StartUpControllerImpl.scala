@@ -7,8 +7,8 @@ class StartUpControllerImpl extends StartUpController {
     app.stage = MachiavelliStartupPrimaryStage(this)
   }
 
-  override def requestGameWithPlayers(): Unit = {
-    System.out.println("requestGameWithPlayers")
+  override def requestGameWithPlayers(username: String, playersNumber: Int): Unit = {
+    System.out.println(s"requestGameWithPlayers $username - $playersNumber")
   }
 
   override def requestPrivateGame(): Unit = {
@@ -16,6 +16,8 @@ class StartUpControllerImpl extends StartUpController {
   }
 
   override def createPrivateGame(): Unit = {
-    System.out.println("createPrivateGame")
+    System.out.println(s"createPrivateGame")
   }
+
+
 }
