@@ -6,7 +6,7 @@ import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
 import org.scalatest.propspec.AnyPropSpec
 
-object SuitSuite extends AnyFunSuite {
+class SuitSuite extends AnyFunSuite {
   test("Check all suits properties") {
     assert(Clubs().name equals "Clubs")
     assert(Clubs().shortName equals "♣")
@@ -22,11 +22,11 @@ object SuitSuite extends AnyFunSuite {
   }
 
   test("Check all suits") {
-    assert(Suit.all equals List(Clubs(), Spades(), Diamonds(), Hearts()))
+    assert(Suit.all equals List(Hearts(), Diamonds(), Clubs(), Spades()))
   }
 }
 
-object SuitPropSpec
+class SuitPropSpec
   extends AnyPropSpec
     with TableDrivenPropertyChecks
     with should.Matchers {
@@ -60,6 +60,12 @@ object SuitPropSpec
       a[RuntimeException] should be thrownBy {
         Suit string2suit fail
       }
+    }
+  }
+
+  property("Check comparation between suits") {
+    forAll(examples) { suit =>
+      suit compareTo Diamonds() should be(suit.order compareTo Diamonds().order)
     }
   }
 }

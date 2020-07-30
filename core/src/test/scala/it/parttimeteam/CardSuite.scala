@@ -2,7 +2,7 @@ package it.parttimeteam
 
 import org.scalatest.funsuite.AnyFunSuite
 
-object CardSuite extends AnyFunSuite {
+class CardSuite extends AnyFunSuite {
   test("Naming and ShortNaming") {
     val card: Card = Card(Rank.Ace(), Suit.Spades())
     assert(card.name() equals f"${Rank.Ace().name} of ${Suit.Spades().name}")
@@ -25,6 +25,23 @@ object CardSuite extends AnyFunSuite {
     val s1: Card = Card(Rank.Ace(), Suit.Spades())
     val sk: Card = Card(Rank.King(), Suit.Spades())
     assert(s1 isNext sk)
+  }
+
+  test("Try string2card from correct cards") {
+    val h3: Card = Card(Rank.Three(), Suit.Hearts())
+    assert(Card string2card h3.shortName() equals h3)
+  }
+
+  test("Invoking toString on a card will produce the shortname") {
+    val c4: Card = Card(Rank.Four(), Suit.Clubs())
+    assert(c4.toString() equals c4.shortName())
+  }
+
+  test("Invoking string2card on currect value will produce RuntimeException") {
+    val s: String = "g1"
+    assertThrows[RuntimeException] {
+      Card string2card s
+    }
   }
 }
 
