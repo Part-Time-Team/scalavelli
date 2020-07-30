@@ -1,5 +1,10 @@
 package it.partitimeteam.lobby
 
+object PrivateLobbyService {
+  def apply(): PrivateLobbyService = new PrivateLobbyServiceImpl()
+}
+
+
 /**
  * Manages the creation of private lobbies
  */

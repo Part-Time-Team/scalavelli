@@ -18,6 +18,8 @@ class LobbyManagerActor extends Actor with IdGenerator {
   private var connectedPlayers: Map[UserId, UserName] = Map()
   private val lobbyManger = new LobbyManagerImpl[GamePlayer]()
 
+  private val privateLobbyService: PrivateLobbyService = PrivateLobbyService()
+
 
   override def receive: Receive = {
     case JoinPublicLobby(username, numberOfPlayers) => {
@@ -27,13 +29,20 @@ class LobbyManagerActor extends Actor with IdGenerator {
 
     }
     case CreatePrivateLobby(username, numberOfPlayers) => {
-      val lobbyId = this.generateId
+      val lobby = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
       val playerId = this.generateId
-      this.lobbyManger.addPlayer(GamePlayer(playerId, username, sender()), PrivateLobby(lobbyId, numberOfPlayers))
-      sender() ! PrivateLobbyCreated(playerId, lobbyId)
+      this.lobbyManger.addPlayer(GamePlayer(playerId, username, sender()), lobby)
+      sender() ! PrivateLobbyCreated(playerId, lobby.lobbyId)
 
     }
-    case JoinPrivateLobby(userId, lobbyCode) =>
+    case JoinPrivateLobby(username, lobbyCode) => privateLobbyService.retrieveExistingLobby(lobbyCode) match {
+      case Some(lobby) => {
+        val player = GamePlayer(generateId, username, sender())
+        this.lobbyManger.addPlayer(player, lobby)
+        sender() ! UserAddedToLobby(player.id)
+      }
+      case None => sender() ! LobbyJoinError(s"Private lobby with code $lobbyCode does not exist")
+    }
 
     case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
 

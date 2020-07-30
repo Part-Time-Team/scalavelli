@@ -21,17 +21,13 @@ class LobbyManagerActorSpec extends TestKit(ActorSystem())
     "accept a public lobby connection" in {
       val lobbyActor = system.actorOf(LobbyManagerActor.props())
       lobbyActor ! JoinPublicLobby("user", NUMBER_OF_PLAYERS)
-      expectMsgPF() {
-        case UserAddedToLobby(_) =>
-      }
+      expectMsgType[UserAddedToLobby]
     }
 
     "create a new private lobby" in {
       val lobbyActor = system.actorOf(LobbyManagerActor.props())
       lobbyActor ! CreatePrivateLobby("user", NUMBER_OF_PLAYERS)
-      expectMsgPF() {
-        case PrivateLobbyCreated(_, _) =>
-      }
+      expectMsgType[PrivateLobbyCreated]
     }
 
     "acccept a private lobby connection request if private lobby exists" in {
