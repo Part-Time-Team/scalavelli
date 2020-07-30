@@ -3,6 +3,9 @@ package it.parttimeteam.lobby
 import it.partitimeteam.lobby.PrivateLobbyServiceImpl
 import org.scalatest.wordspec.AnyWordSpecLike
 
+/**
+ * @inheritdoc
+ */
 class PrivateLobbyServiceImplSpec extends AnyWordSpecLike {
 
   private val RANDOM_PLAYER_NUMBER = 4
