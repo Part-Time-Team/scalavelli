@@ -4,7 +4,7 @@ import java.util.UUID
 
 import akka.actor.{Actor, Props}
 import it.partitimeteam.common.GamePlayer
-import it.parttimeteam.messages.Messages.{Connect, ConnectUserToPrivateLobby, ConnectUserToPublicLobby, LeaveLobby, LobbyConnectionAccepted, PrivateLobbyCreated, RequestPrivateLobbyCreation, UserConnectionAccepted, UserConnectionRefused}
+import it.parttimeteam.messages.Messages._
 
 object LobbyManagerActor {
 
@@ -22,37 +22,25 @@ class LobbyManagerActor extends Actor {
 
 
   override def receive: Receive = {
-    case Connect(userName) => {
-      val userId = UUID.randomUUID().toString
-      connectedPlayers = connectedPlayers + (userId -> userName)
-      sender() ! UserConnectionAccepted(userId)
-    }
-    case ConnectUserToPublicLobby(userId, numberOfPlayers) => {
-      connectedPlayers.get(userId) match {
-        case Some(username) => {
-          this.lobbyManger.addPlayer(GamePlayer(userId, username, sender()), PlayerNumberLobby(numberOfPlayers))
-          sender() ! LobbyConnectionAccepted
-        }
-        case None => sender() ! UserConnectionRefused("Invalid user id")
-      }
+    case JoinPublicLobby(username, numberOfPlayers) => {
+      val playerId = this.generateId
+      this.lobbyManger.addPlayer(GamePlayer(playerId, username, sender()), PlayerNumberLobby(numberOfPlayers))
+      sender() ! UserAddedToLobby(playerId)
 
     }
-    case RequestPrivateLobbyCreation(userId, numberOfPlayers) => {
-      val lobbyId = UUID.randomUUID().toString
-      connectedPlayers.get(userId) match {
-        case Some(username) => {
-          this.lobbyManger.addPlayer(GamePlayer(userId, username, sender()), PrivateLobby(lobbyId, numberOfPlayers))
-          sender() ! PrivateLobbyCreated(lobbyId)
-
-        }
-        case None => 
-      }
+    case CreatePrivateLobby(username, numberOfPlayers) => {
+      val lobbyId = this.generateId
+      val playerId = this.generateId
+      this.lobbyManger.addPlayer(GamePlayer(playerId, username, sender()), PrivateLobby(lobbyId, numberOfPlayers))
+      sender() ! PrivateLobbyCreated(playerId, lobbyId)
 
     }
-    case ConnectUserToPrivateLobby(userId, lobbyCode) =>
+    case JoinPrivateLobby(userId, lobbyCode) =>
+
     case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
 
   }
 
+  private def generateId = UUID.randomUUID().toString
 
 }
