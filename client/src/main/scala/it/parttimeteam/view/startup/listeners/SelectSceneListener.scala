@@ -1,4 +1,4 @@
-package it.parttimeteam.view
+package it.parttimeteam.view.startup.listeners
 
 trait SelectSceneListener {
 

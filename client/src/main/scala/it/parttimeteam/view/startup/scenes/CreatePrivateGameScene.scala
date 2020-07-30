@@ -2,6 +2,7 @@ package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.view.BaseScene
 import it.parttimeteam.view.startup.listeners.CreatePrivateGameSceneListener
+import it.parttimeteam.view.utils.{AlertFactory, ButtonFactory}
 import javafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
@@ -10,8 +11,8 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
 import scalafx.stage.Stage
 
 class CreatePrivateGameScene(override val parentStage: Stage, val listener: CreatePrivateGameSceneListener, val onBack: () => Unit) extends BaseScene(parentStage) {
-  val btnBack: Button = new Button("<")
-  val btnSubmit: Button = new Button("Send")
+  val btnBack: Button = ButtonFactory.makeButton("<", onBack)
+  val btnSubmit: Button = ButtonFactory.makeButton("Send", submit)
 
   val usernameField: TextField = new TextField()
   usernameField.setPromptText("Username")
@@ -23,7 +24,7 @@ class CreatePrivateGameScene(override val parentStage: Stage, val listener: Crea
   comboBox.setPrefWidth(400)
 
   val borderPane: BorderPane = new BorderPane()
-  borderPane.setPadding(new Insets(20,20,20,20))
+  borderPane.setPadding(new Insets(20, 20, 20, 20))
   val center: VBox = new VBox()
   center.spacing = 10d
   val bottom: HBox = new HBox()
@@ -38,12 +39,12 @@ class CreatePrivateGameScene(override val parentStage: Stage, val listener: Crea
   center.getChildren.addAll(usernameField, comboBox)
   bottom.getChildren.add(btnSubmit)
 
-  val alert: Alert = new Alert(AlertType.Warning)
-  alert.setTitle("Input missing")
-  alert.setHeaderText(null)
-  alert.setContentText("You must enter a username and select players number.")
 
-  btnSubmit.onAction = _ => {
+  val alert: Alert = AlertFactory.makeAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
+
+  root = borderPane
+
+  def submit: () => Unit = _ => {
     val username: String = usernameField.getText
     val nPlayers: Int = comboBox.getValue
 
@@ -53,8 +54,4 @@ class CreatePrivateGameScene(override val parentStage: Stage, val listener: Crea
       alert.showAndWait()
     }
   }
-
-  btnBack.onAction = _ => onBack()
-
-  root = borderPane
 }

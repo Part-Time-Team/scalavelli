@@ -2,16 +2,17 @@ package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.view.BaseScene
 import it.parttimeteam.view.startup.listeners.PrivateGameSceneListener
+import it.parttimeteam.view.utils.{AlertFactory, ButtonFactory}
 import javafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.control.{Alert, Button, ComboBox, TextField}
+import scalafx.scene.control.{Alert, Button, TextField}
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
 import scalafx.stage.Stage
 
 class PrivateGameScene(override val parentStage: Stage, val listener: PrivateGameSceneListener, val onBack: () => Unit) extends BaseScene(parentStage) {
-  val btnBack: Button = new Button("<")
-  val btnSubmit: Button = new Button("Send")
+  val btnBack: Button = ButtonFactory.makeButton("<", onBack)
+  val btnSubmit: Button = ButtonFactory.makeButton("Send", submit)
 
   val usernameField: TextField = new TextField()
   usernameField.setPromptText("Username")
@@ -22,7 +23,7 @@ class PrivateGameScene(override val parentStage: Stage, val listener: PrivateGam
   codeField.setMaxWidth(400)
 
   val borderPane: BorderPane = new BorderPane()
-  borderPane.setPadding(new Insets(20,20,20,20))
+  borderPane.setPadding(new Insets(20, 20, 20, 20))
   val center: VBox = new VBox()
   center.spacing = 20d
   val bottom: HBox = new HBox()
@@ -37,12 +38,11 @@ class PrivateGameScene(override val parentStage: Stage, val listener: PrivateGam
   center.getChildren.addAll(usernameField, codeField)
   bottom.getChildren.add(btnSubmit)
 
-  val alert: Alert = new Alert(AlertType.Warning)
-  alert.setTitle("Input missing")
-  alert.setHeaderText(null)
-  alert.setContentText("You must enter a username and code.")
+  val alert: Alert = AlertFactory.makeAlert("Input missing", "You must enter username and code.", AlertType.Warning)
 
-  btnSubmit.onAction = _ => {
+  root = borderPane
+
+  def submit: () => Unit = _ => {
     val username: String = usernameField.getText
     val code: String = codeField.getText
 
@@ -52,8 +52,4 @@ class PrivateGameScene(override val parentStage: Stage, val listener: PrivateGam
       alert.showAndWait()
     }
   }
-
-  btnBack.onAction = _ => onBack()
-
-  root = borderPane
 }

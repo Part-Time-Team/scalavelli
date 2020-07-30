@@ -6,7 +6,6 @@ import scalafx.application.JFXApp
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
 trait View {
-  //def setController(controller: BaseController)
 
 }
 

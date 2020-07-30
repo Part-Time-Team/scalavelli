@@ -1,8 +1,7 @@
 package it.parttimeteam.view.startup
 
 import it.parttimeteam.controller.startup.StartupStageToControllerListener
-import it.parttimeteam.view.SelectSceneListener
-import it.parttimeteam.view.startup.listeners.{CreatePrivateGameSceneListener, GameWithPlayersSceneListener, PrivateGameSceneListener}
+import it.parttimeteam.view.startup.listeners.{CreatePrivateGameSceneListener, GameWithPlayersSceneListener, PrivateGameSceneListener, SelectSceneListener}
 import it.parttimeteam.view.startup.scenes.{CreatePrivateGameScene, GameWithPlayersScene, PrivateGameScene, SelectScene}
 import scalafx.application.JFXApp
 
@@ -41,7 +40,6 @@ case class MachiavelliStartupPrimaryStage(toControllerListener: StartupStageToCo
   override def createPrivateGame(username: String, playersNumber: Int): Unit = toControllerListener.createPrivateGame()
 }
 
-/** Companion object */
 object MachiavelliStartupPrimaryStage {
   val windowWidth: Double = 800d
   val windowHeight: Double = 600d

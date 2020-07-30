@@ -5,5 +5,4 @@ import scalafx.stage.Stage
 
 case class BaseScene(parentStage: Stage) extends Scene {
 
-
 }
