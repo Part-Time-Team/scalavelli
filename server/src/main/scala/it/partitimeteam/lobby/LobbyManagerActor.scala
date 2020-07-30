@@ -1,9 +1,7 @@
 package it.partitimeteam.lobby
 
-import java.util.UUID
-
 import akka.actor.{Actor, Props}
-import it.partitimeteam.common.GamePlayer
+import it.partitimeteam.common.{GamePlayer, IdGenerator}
 import it.parttimeteam.messages.Messages._
 
 object LobbyManagerActor {
@@ -12,7 +10,7 @@ object LobbyManagerActor {
 
 }
 
-class LobbyManagerActor extends Actor {
+class LobbyManagerActor extends Actor with IdGenerator {
 
   type UserName = String
   type UserId = String
@@ -40,7 +38,5 @@ class LobbyManagerActor extends Actor {
     case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
 
   }
-
-  private def generateId = UUID.randomUUID().toString
 
 }
