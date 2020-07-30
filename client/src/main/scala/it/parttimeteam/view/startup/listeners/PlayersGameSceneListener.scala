@@ -1,5 +1,5 @@
 package it.parttimeteam.view.startup.listeners
 
-trait GameWithPlayersSceneListener {
+trait PlayersGameSceneListener {
   def registerToGame(username: String, playersNumber: Int)
 }

@@ -3,10 +3,10 @@ package it.parttimeteam.view.startup.scenes
 import it.parttimeteam.view.BaseScene
 import it.parttimeteam.view.startup.listeners.CreatePrivateGameSceneListener
 import it.parttimeteam.view.utils.{AlertFactory, ButtonFactory}
-import javafx.geometry.Insets
+import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.control.{Alert, Button, ComboBox, TextField}
+import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
 import scalafx.stage.Stage
 
@@ -24,7 +24,7 @@ class CreatePrivateGameScene(override val parentStage: Stage, val listener: Crea
   comboBox.setPrefWidth(400)
 
   val borderPane: BorderPane = new BorderPane()
-  borderPane.setPadding(new Insets(20, 20, 20, 20))
+  borderPane.setPadding(Insets(20, 20, 20, 20))
   val center: VBox = new VBox()
   center.spacing = 10d
   val bottom: HBox = new HBox()
@@ -36,20 +36,26 @@ class CreatePrivateGameScene(override val parentStage: Stage, val listener: Crea
   borderPane.top = btnBack
   borderPane.bottom = bottom
 
+  override val progress: ProgressIndicator = new ProgressIndicator()
+  progress.prefHeight <== bottom.height
+  hideLoading()
+
   center.getChildren.addAll(usernameField, comboBox)
-  bottom.getChildren.add(btnSubmit)
+  bottom.getChildren.addAll(progress, btnSubmit)
 
 
   val alert: Alert = AlertFactory.makeAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
 
   root = borderPane
 
-  def submit: () => Unit = _ => {
+  def submit(): Unit = {
     val username: String = usernameField.getText
     val nPlayers: Int = comboBox.getValue
 
     if (!username.isEmpty && nPlayers > 2) {
       listener.createPrivateGame(username, nPlayers)
+      showLoading()
+      btnSubmit.setDisable(true)
     } else {
       alert.showAndWait()
     }
