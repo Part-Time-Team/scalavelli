@@ -1,4 +1,4 @@
-package it.partitimeteam.common
+package it.parttimeteam
 
 trait Identifiable {
 

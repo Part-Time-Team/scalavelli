@@ -1,6 +1,6 @@
 package it.partitimeteam.lobby
 
-import it.partitimeteam.common.Player
+import it.parttimeteam.Player
 
 
 trait LobbyManager[T <: Player] {

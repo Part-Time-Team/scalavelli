@@ -1,6 +1,6 @@
 package it.parttimeteam.messages
 
-import it.parttimeteam.GameState
+import it.parttimeteam.{GamePlayer, GameState}
 
 object GameMessage {
 
@@ -9,7 +9,7 @@ object GameMessage {
    *
    * @param players players to add to the match
    */
-  case class GamePlayers(players: GamePlayers*)
+  case class GamePlayers(players: Seq[GamePlayer])
 
   /**
    * Message sent to the clients to notify the match start

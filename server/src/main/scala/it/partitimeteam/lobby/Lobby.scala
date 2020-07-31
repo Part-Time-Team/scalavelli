@@ -1,7 +1,7 @@
 package it.partitimeteam.lobby
 
 import akka.japi.Pair
-import it.partitimeteam.common.{Player, Referable}
+import it.parttimeteam.{Player, Referable}
 
 object Lobby {
   def apply(numberOfPlayers: Int): Lobby[Player] = GameLobby[Player](numberOfPlayers)
