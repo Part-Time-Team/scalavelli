@@ -1,13 +1,12 @@
 package it.partitimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props}
-import it.partitimeteam.common.GamePlayer
 
 object GameMatchActor {
-  def props(numberOfPlayers: Int, players: Seq[GamePlayer]): Props = Props(new GameMatchActor(numberOfPlayers, players))
+  def props(numberOfPlayers: Int): Props = Props(new GameMatchActor(numberOfPlayers))
 }
 
-class GameMatchActor(numberOfPlayers: Int, players: Seq[GamePlayer]) extends Actor with ActorLogging {
+class GameMatchActor(numberOfPlayers: Int) extends Actor with ActorLogging {
 
   override def receive: Receive = initializing
 
