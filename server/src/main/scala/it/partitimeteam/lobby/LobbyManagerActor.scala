@@ -2,7 +2,7 @@ package it.partitimeteam.lobby
 
 import akka.actor.{Actor, Props}
 import it.partitimeteam.common.{GamePlayer, IdGenerator}
-import it.parttimeteam.messages.Messages._
+import it.parttimeteam.messages.LobbyMessages._
 
 object LobbyManagerActor {
 
