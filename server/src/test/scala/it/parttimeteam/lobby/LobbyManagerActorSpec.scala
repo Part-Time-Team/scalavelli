@@ -18,39 +18,34 @@ class LobbyManagerActorSpec extends TestKit(ActorSystem())
 
   "a lobby actor" should {
 
-    "accept a user connection request" in {
-      val lobbyActor = system.actorOf(LobbyManagerActor.props())
-      lobbyActor ! Connect("user")
-      expectMsgPF() {
-        case UserConnectionAccepted(userId) => assert(!userId.isEmpty)
-      }
-    }
-
     "accept a public lobby connection" in {
       val lobbyActor = system.actorOf(LobbyManagerActor.props())
-      lobbyActor ! Connect("user")
-      expectMsgPF() {
-        case UserConnectionAccepted(userId) =>
-          lobbyActor ! ConnectUserToPublicLobby(userId, NUMBER_OF_PLAYERS)
-          expectMsg(LobbyConnectionAccepted)
-      }
+      lobbyActor ! JoinPublicLobby("user", NUMBER_OF_PLAYERS)
+      expectMsgType[UserAddedToLobby]
     }
 
     "create a new private lobby" in {
       val lobbyActor = system.actorOf(LobbyManagerActor.props())
-      lobbyActor ! Connect("user")
+      lobbyActor ! CreatePrivateLobby("user", NUMBER_OF_PLAYERS)
+      expectMsgType[PrivateLobbyCreated]
+    }
+
+    "acccept a private lobby connection request if private lobby exists" in {
+      val lobbyActor = system.actorOf(LobbyManagerActor.props())
+      lobbyActor ! CreatePrivateLobby("user", NUMBER_OF_PLAYERS)
+      val secondPlayer = TestProbe()
       expectMsgPF() {
-        case UserConnectionAccepted(userId) => {
-          lobbyActor ! RequestPrivateLobbyCreation(userId, NUMBER_OF_PLAYERS)
-          expectMsgPF() {
-            case PrivateLobbyCreated(lobbyCode) => assert(!lobbyCode.isEmpty)
-          }
+        case PrivateLobbyCreated(_, lobbyCode) => {
+          secondPlayer.send(lobbyActor, JoinPrivateLobby("secondPlayer", lobbyCode))
+          secondPlayer.expectMsgType[UserAddedToLobby]
         }
       }
     }
 
-    "acccept a private lobby connection request" in {
-
+    "send an error message when user tries to join to an unexisting private lobby" in {
+      val lobbyActor = system.actorOf(LobbyManagerActor.props())
+      lobbyActor ! JoinPrivateLobby("user", "jfhsjkdfhsjkadl")
+      expectMsgType[LobbyJoinError]
     }
 
 
