@@ -1,7 +1,7 @@
 package it.parttimeteam.lobby
 
 import it.partitimeteam.lobby.{LobbyManagerImpl, PlayerNumberLobby}
-import it.parttimeteam.GamePlayer
+import it.parttimeteam.entities.GamePlayer
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.wordspec.AnyWordSpecLike
 

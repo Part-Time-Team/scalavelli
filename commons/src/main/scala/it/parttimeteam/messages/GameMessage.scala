@@ -1,6 +1,7 @@
 package it.parttimeteam.messages
 
-import it.parttimeteam.{GamePlayer, GameState}
+import it.parttimeteam.GameState
+import it.parttimeteam.entities.GamePlayer
 
 object GameMessage {
 

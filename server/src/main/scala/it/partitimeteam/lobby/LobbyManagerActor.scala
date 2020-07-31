@@ -2,8 +2,8 @@ package it.partitimeteam.lobby
 
 import akka.actor.{Actor, Props}
 import it.partitimeteam.common.IdGenerator
-import it.parttimeteam
-import it.parttimeteam.GamePlayer
+import it.parttimeteam.entities
+import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.messages.LobbyMessages._
 
 object LobbyManagerActor {
@@ -26,20 +26,20 @@ class LobbyManagerActor extends Actor with IdGenerator {
   override def receive: Receive = {
     case JoinPublicLobby(username, numberOfPlayers) => {
       val playerId = this.generateId
-      this.lobbyManger.addPlayer(parttimeteam.GamePlayer(playerId, username, sender()), PlayerNumberLobby(numberOfPlayers))
+      this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, sender()), PlayerNumberLobby(numberOfPlayers))
       sender() ! UserAddedToLobby(playerId)
 
     }
     case CreatePrivateLobby(username, numberOfPlayers) => {
       val lobby = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
       val playerId = this.generateId
-      this.lobbyManger.addPlayer(parttimeteam.GamePlayer(playerId, username, sender()), lobby)
+      this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, sender()), lobby)
       sender() ! PrivateLobbyCreated(playerId, lobby.lobbyId)
 
     }
     case JoinPrivateLobby(username, lobbyCode) => privateLobbyService.retrieveExistingLobby(lobbyCode) match {
       case Some(lobby) => {
-        val player = parttimeteam.GamePlayer(generateId, username, sender())
+        val player = entities.GamePlayer(generateId, username, sender())
         this.lobbyManger.addPlayer(player, lobby)
         sender() ! UserAddedToLobby(player.id)
       }

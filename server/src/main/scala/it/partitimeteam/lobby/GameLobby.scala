@@ -1,7 +1,7 @@
 package it.partitimeteam.lobby
 
 import akka.japi.Pair
-import it.parttimeteam.Player
+import it.parttimeteam.entities.Player
 
 /**
  *

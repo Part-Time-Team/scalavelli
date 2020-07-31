@@ -1,4 +1,4 @@
-package it.parttimeteam
+package it.parttimeteam.entities
 
 import akka.actor.ActorRef
 
