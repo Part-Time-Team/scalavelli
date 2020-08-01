@@ -3,7 +3,7 @@ package it.partitimeteam.lobby
 import akka.actor.{Actor, Props}
 import it.partitimeteam.common.IdGenerator
 import it.parttimeteam.entities
-import it.parttimeteam.entities.GamePlayer
+import it.parttimeteam.entities.{GamePlayer, Player}
 import it.parttimeteam.messages.LobbyMessages._
 
 object LobbyManagerActor {
@@ -18,7 +18,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
   type UserId = String
 
   private var connectedPlayers: Map[UserId, UserName] = Map()
-  private val lobbyManger = new LobbyManagerImpl[GamePlayer]()
+  private val lobbyManger: LobbyManager[GamePlayer] = new LobbyManagerImpl[GamePlayer]()
 
   private val privateLobbyService: PrivateLobbyService = PrivateLobbyService()
 
