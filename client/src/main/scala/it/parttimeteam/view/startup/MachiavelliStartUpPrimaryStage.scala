@@ -3,8 +3,11 @@ package it.parttimeteam.view.startup
 import it.parttimeteam.controller.startup.GameStartUpListener
 import it.parttimeteam.view.startup.listeners._
 import it.parttimeteam.view.startup.scenes._
+import it.parttimeteam.view.utils.MachiavelliAlert
 import it.parttimeteam.view.{ViewConfig, ViewEvent}
 import scalafx.application.JFXApp
+import scalafx.scene.control.Alert
+import scalafx.scene.control.Alert.AlertType
 
 
 /**
@@ -14,6 +17,8 @@ trait MachiavelliStartUpPrimaryStage extends JFXApp.PrimaryStage with PrimarySta
   def notifyPrivateCode(privateCode: String): Unit
 
   def notifyLobbyJoined(): Unit
+
+  def notifyError(result:String): Unit
 }
 
 /**
@@ -73,6 +78,11 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
 
   override def notifyLobbyJoined(): Unit = {
     currentInnerScene.showMessage("Waiting for other players")
+  }
+
+  override def notifyError(result:String): Unit = {
+    val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
+    alert.showAndWait()
   }
 }
 

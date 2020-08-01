@@ -1,10 +1,11 @@
 package it.parttimeteam.controller.startup
 
 import akka.actor.{ActorRef, ActorSystem}
+import it.parttimeteam.messages.Messages.{CreatePrivateLobby, JoinPrivateLobby, JoinPublicLobby, LeaveLobby}
 import it.parttimeteam.model.actors.StartUpActor
-import it.parttimeteam.model.{GameStartUpEvent, GameStarted, LobbyJoinedEvent, PrivateLobbyCreated}
+import it.parttimeteam.model._
 import it.parttimeteam.view.startup.MachiavelliStartUpPrimaryStage
-import it.parttimeteam.view.{CreatePrivateGameSubmitViewEvent, PrivateGameSubmitViewEvent, PublicGameSubmitViewEvent, ViewEvent}
+import it.parttimeteam.view._
 import scalafx.application.JFXApp
 
 class StartUpControllerImpl extends StartUpController {
@@ -20,17 +21,20 @@ class StartUpControllerImpl extends StartUpController {
   override def onViewEvent(viewEvent: ViewEvent): Unit = viewEvent match {
     case PublicGameSubmitViewEvent(username, playersNumber) => {
       System.out.println(s"PublicGameSubmitViewEvent $username - $playersNumber")
-      // TODO: Send message to actor - actorRef ! Message(username, playersNumber)
+      actorRef ! JoinPublicLobby(username, playersNumber)
     }
     case PrivateGameSubmitViewEvent(username, code) => {
       System.out.println(s"PrivateGameSubmitViewEvent $username - $code")
-      // TODO: Send message to actor - actorRef ! Message(username, code)
+      actorRef ! JoinPrivateLobby(username, code)
 
     }
     case CreatePrivateGameSubmitViewEvent(username, playersNumber) => {
       System.out.println(s"CreatePrivateGameSubmitViewEvent $username - $playersNumber")
-      // TODO: Send message to actor - actorRef ! Message(username, playersNumber)
-
+      actorRef ! CreatePrivateLobby(username, playersNumber)
+    }
+    case LeaveLobbyViewEvent(userId) => {
+      System.out.println(s"LeaveLobbyViewEvent $userId")
+      actorRef ! LeaveLobby(userId)
     }
     case _ =>
   }
@@ -39,12 +43,18 @@ class StartUpControllerImpl extends StartUpController {
     case LobbyJoinedEvent(userId: String) => {
       startUpStage.notifyLobbyJoined()
     }
-    case PrivateLobbyCreated(userId: String, privateCode: String) => {
+    case PrivateLobbyCreatedEvent(userId: String, privateCode: String) => {
       startUpStage.notifyPrivateCode(privateCode)
       startUpStage.notifyLobbyJoined()
     }
-
-    case GameStarted(gameActorRef: ActorRef) => ??? // TODO: Menage game start
+    case PrivateLobbyCreatedEvent(userId: String, privateCode: String) => {
+      startUpStage.notifyPrivateCode(privateCode)
+      startUpStage.notifyLobbyJoined()
+    }
+    case LobbyJoinErrorEvent(result: String) => {
+      startUpStage.notifyError(result)
+    }
+    case GameStartedEvent(gameActorRef: ActorRef) => ??? // TODO: Menage game start
     case _ => ???
 
   }
