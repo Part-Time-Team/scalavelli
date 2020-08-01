@@ -1,9 +1,9 @@
 package it.parttimeteam.view.startup
 
 import it.parttimeteam.controller.startup.GameStartUpListener
-import it.parttimeteam.view.{ViewConfig, ViewEvent}
 import it.parttimeteam.view.startup.listeners._
-import it.parttimeteam.view.startup.scenes.{CreatePrivateGameSceneImpl, PrivateGameScene, PublicGameScene, SelectScene}
+import it.parttimeteam.view.startup.scenes._
+import it.parttimeteam.view.{ViewConfig, ViewEvent}
 import scalafx.application.JFXApp
 
 
@@ -11,7 +11,9 @@ import scalafx.application.JFXApp
   * Stage for startup scenes.
   */
 trait MachiavelliStartUpPrimaryStage extends JFXApp.PrimaryStage with PrimaryStageListener{
-  def setReceivedCode(code: String): Unit
+  def notifyPrivateCode(privateCode: String): Unit
+
+  def notifyLobbyJoined(): Unit
 }
 
 /**
@@ -28,25 +30,34 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
   height = windowHeight
 
   val stage: MachiavelliStartUpPrimaryStage = this
-  val publicGameScene: PublicGameScene = new PublicGameScene(this)
-  val privateGameScene: PrivateGameScene = new PrivateGameScene(this)
-  val createPrivateGame: CreatePrivateGameSceneImpl = new CreatePrivateGameSceneImpl(this)
+  val publicGameScene: PublicGameStartUpScene = new PublicGameStartUpScene(this)
+  val privateGameScene: PrivateGameStartUpScene = new PrivateGameStartUpScene(this)
+  val createPrivateGame: CreatePrivateGameStartUpSceneImpl = new CreatePrivateGameStartUpSceneImpl(this)
+
+  var currentInnerScene: BaseStartUpScene = _
 
   private val mainScene = new SelectScene(this, new SelectSceneListener {
 
-    override def onSelectedPublicGame(): Unit = scene = publicGameScene
+    override def onSelectedPublicGame(): Unit = setCurrentScene(publicGameScene)
 
-    override def onSelectedPrivateGame(): Unit = scene = privateGameScene
+    override def onSelectedPrivateGame(): Unit = setCurrentScene(privateGameScene)
 
-    override def onSelectedCreatePrivateGame(): Unit = scene = createPrivateGame
+    override def onSelectedCreatePrivateGame(): Unit = setCurrentScene(createPrivateGame)
   })
 
   scene = mainScene
+
 
   onCloseRequest = _ => {
     System.exit(0)
   }
 
+  def setCurrentScene(newScene: BaseStartUpScene): Unit = {
+    scene = newScene
+    currentInnerScene = newScene
+  }
+
+  // View actions
   override def onBackPressed(): Unit = {
     scene = mainScene
   }
@@ -55,9 +66,13 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
     gameStartUpListener.onViewEvent(viewEvent)
   }
 
-  override def setReceivedCode(code: String): Unit = {
-    createPrivateGame.showCode(code)
-    System.out.println("Stage - onCodeReceived")
+  // Controller actions
+  override def notifyPrivateCode(privateCode: String): Unit = {
+    createPrivateGame.showCode(privateCode)
+  }
+
+  override def notifyLobbyJoined(): Unit = {
+    currentInnerScene.showMessage("Waiting for other players")
   }
 }
 
