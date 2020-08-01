@@ -1,7 +1,10 @@
 package it.partitimeteam.lobby
 
-import it.partitimeteam.common.Player
+import it.parttimeteam.entities.{GamePlayer, Player}
 
+object LobbyManager {
+  def apply(): LobbyManager[GamePlayer] = new LobbyManagerImpl[GamePlayer]()
+}
 
 trait LobbyManager[T <: Player] {
 
@@ -28,13 +31,21 @@ trait LobbyManager[T <: Player] {
    */
   def getLobby(lobbyType: LobbyType): Option[Lobby[T]]
 
+  /**
+   * Tries to extract player from the lobby manager to start a match
+   *
+   * @param lobbyType type of the lobby
+   * @return the list of player to be added to the game
+   */
+  def attemptExtractPlayerForMatch(lobbyType: LobbyType): Option[Seq[T]]
+
 }
 
 
 class LobbyManagerImpl[T <: Player] extends LobbyManager[T] {
 
-  private var playersToLobby: Map[String, LobbyType] = Map()
-  private var lobbies: Map[LobbyType, Lobby[T]] = Map()
+  private var playersToLobby: Map[String, LobbyType] = Map.empty
+  private var lobbies: Map[LobbyType, Lobby[T]] = Map.empty
 
   /**
    * @inheritdoc
@@ -63,5 +74,15 @@ class LobbyManagerImpl[T <: Player] extends LobbyManager[T] {
    * @inheritdoc
    */
   override def getLobby(lobbyType: LobbyType): Option[Lobby[T]] = lobbies.get(lobbyType)
+
+  /**
+   * @inheritdoc
+   */
+  override def attemptExtractPlayerForMatch(lobbyType: LobbyType): Option[Seq[T]] =
+    this.getLobby(lobbyType).flatMap(lobby => {
+      val updatedLobby = lobby.extractPlayersForMatch()
+      lobbies = lobbies + (lobbyType -> updatedLobby.first)
+      updatedLobby.second
+    })
 }
 

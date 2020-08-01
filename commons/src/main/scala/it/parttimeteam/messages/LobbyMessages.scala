@@ -2,7 +2,7 @@ package it.parttimeteam.messages
 
 import akka.actor.ActorRef
 
-object Messages {
+object LobbyMessages {
 
   /**
    * Message sent by the client to join a public lobby for a match with the given number of players
