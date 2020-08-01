@@ -61,6 +61,17 @@ class LobbySpec extends AnyWordSpecLike with MockFactory {
       assertResult(1)(result.first.players.length)
     }
 
+    "return nothig on the second extraction player if players are not enough" in {
+      var lobby = create2PlayersLobby
+      lobby = lobby.addPlayer(mock[Player])
+      lobby = lobby.addPlayer(mock[Player])
+      lobby = lobby.addPlayer(mock[Player])
+      val result = lobby.extractPlayersForMatch()
+      assert(result.second.isDefined && result.second.get.length == 2)
+      assertResult(1)(result.first.players.length)
+      assert(result.first.extractPlayersForMatch().second.isEmpty)
+    }
+
 
   }
 
