@@ -1,8 +1,9 @@
 package it.parttimeteam.view.startup.scenes
 
+import it.parttimeteam.GamePreferences
 import it.parttimeteam.view.startup.listeners.StartUpSceneListener
-import it.parttimeteam.view.utils.{BasicAlert, SimpleButton}
-import it.parttimeteam.view.{BaseScene, PublicGameSubmitViewEvent}
+import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliButton, MachiavelliLabel, MachiavelliTextField}
+import it.parttimeteam.view.{BaseScene, PublicGameSubmitViewEvent, ViewConfig}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
@@ -15,30 +16,34 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
   * @param listener to interact with parent stage
   */
 class PublicGameScene(val listener: StartUpSceneListener) extends BaseScene() {
-  val btnBack: Button = SimpleButton("<", listener.onBackPressed)
-  val btnSubmit: Button = SimpleButton("Send", submit)
+  val btnBack: Button = MachiavelliButton("<", listener.onBackPressed)
+  val btnSubmit: Button = MachiavelliButton("Send", submit)
 
-  val usernameField: TextField = new TextField()
-  usernameField.setPromptText("Username")
-  usernameField.setMaxWidth(400)
+  val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
+  val usernameField: TextField = MachiavelliTextField("Username")
 
-  val options: Range = 2 to 6 by 1
+  val options: Range = GamePreferences.MIN_PLAYERS_NUM to GamePreferences.MAX_PLAYERS_NUM by 1
 
-  val selectPlayersLabel: Label = new Label("Select players number")
-  selectPlayersLabel.setPrefWidth(400)
+  val selectPlayersLabel: Label = MachiavelliLabel("Select players number", ViewConfig.formLabelFontSize)
   val comboBox = new ComboBox(options)
-  comboBox.setPrefWidth(400)
-  comboBox.setValue(4)
+  comboBox.setValue(GamePreferences.MIN_PLAYERS_NUM)
 
-  val borderPane: BorderPane = new BorderPane()
-  borderPane.setPadding(Insets(20, 20, 20, 20))
   val center: VBox = new VBox()
-  center.spacing = 10d
+  center.spacing = ViewConfig.formSpacing
+  center.maxWidth = ViewConfig.formWidth
+
+  selectPlayersLabel.maxWidth <== center.width
+  usernameLabel.maxWidth <== center.width
+
+  comboBox.maxWidth <== center.width
+
   val bottom: HBox = new HBox()
 
   center.alignment = Center
   bottom.alignment = BottomRight
 
+  val borderPane: BorderPane = new BorderPane()
+  borderPane.setPadding(Insets(ViewConfig.screenPadding))
   borderPane.center = center
   borderPane.top = btnBack
   borderPane.bottom = bottom
@@ -47,10 +52,10 @@ class PublicGameScene(val listener: StartUpSceneListener) extends BaseScene() {
   progress.prefHeight <== bottom.height
   hideLoading()
 
-  center.getChildren.addAll(usernameField, selectPlayersLabel, comboBox)
+  center.getChildren.addAll(usernameLabel, usernameField, selectPlayersLabel, comboBox)
   bottom.getChildren.addAll(progress, btnSubmit)
 
-  val alert: Alert = BasicAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
+  val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
 
   root = borderPane
 
@@ -58,7 +63,7 @@ class PublicGameScene(val listener: StartUpSceneListener) extends BaseScene() {
     val username: String = usernameField.getText
     val nPlayers: Int = comboBox.getValue
 
-    if (!username.isEmpty && nPlayers > 2) {
+    if (!username.isEmpty && nPlayers >= GamePreferences.MIN_PLAYERS_NUM) {
       listener.onSubmit(PublicGameSubmitViewEvent(username, nPlayers))
       showLoading()
       btnSubmit.setDisable(true)

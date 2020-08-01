@@ -4,6 +4,7 @@ import scalafx.scene.Scene
 import scalafx.scene.control.ProgressIndicator
 
 trait BaseScene extends Scene {
+
   val progress: ProgressIndicator
 
   def showLoading(): Unit = {

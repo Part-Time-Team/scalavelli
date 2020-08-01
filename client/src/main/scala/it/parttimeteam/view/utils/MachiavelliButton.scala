@@ -2,7 +2,10 @@ package it.parttimeteam.view.utils
 
 import scalafx.scene.control.Button
 
-object SimpleButton {
+/**
+  * Builder for a default Button
+  */
+object MachiavelliButton {
 
   def apply(text: String, onClick: () => Unit): Button = {
     val btn: Button = new Button(text)

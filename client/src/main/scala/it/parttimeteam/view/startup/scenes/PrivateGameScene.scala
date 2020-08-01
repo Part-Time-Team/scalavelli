@@ -1,12 +1,12 @@
 package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.view.startup.listeners.StartUpSceneListener
-import it.parttimeteam.view.utils.{BasicAlert, SimpleButton}
-import it.parttimeteam.view.{BaseScene, PrivateGameSubmitViewEvent}
+import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliButton, MachiavelliLabel, MachiavelliTextField}
+import it.parttimeteam.view.{BaseScene, PrivateGameSubmitViewEvent, ViewConfig}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.control.{Alert, Button, ProgressIndicator, TextField}
+import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
 
 /**
@@ -15,21 +15,28 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
   * @param listener to interact with parent stage
   */
 class PrivateGameScene(val listener: StartUpSceneListener) extends BaseScene() {
-  val btnBack: Button = SimpleButton("<", listener.onBackPressed)
-  val btnSubmit: Button = SimpleButton("Send", submit)
+  val btnBack: Button = MachiavelliButton("<", listener.onBackPressed)
+  val btnSubmit: Button = MachiavelliButton("Send", submit)
 
-  val usernameField: TextField = new TextField()
-  usernameField.setPromptText("Username")
-  usernameField.setMaxWidth(400)
+  val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
+  val usernameField: TextField = MachiavelliTextField("Username")
 
-  val codeField: TextField = new TextField()
-  codeField.setPromptText("Code")
-  codeField.setMaxWidth(400)
+  val codeLabel: Label = MachiavelliLabel("Code", ViewConfig.formLabelFontSize)
+  val codeField: TextField = MachiavelliTextField("Code")
+
 
   val borderPane: BorderPane = new BorderPane()
-  borderPane.setPadding(Insets(20, 20, 20, 20))
+  borderPane.setPadding(Insets(ViewConfig.screenPadding))
+
   val center: VBox = new VBox()
-  center.spacing = 20d
+  center.spacing = ViewConfig.formSpacing
+  center.maxWidth = ViewConfig.formWidth
+
+  usernameLabel.maxWidth <== center.width
+  usernameField.maxWidth <== center.width
+  codeLabel.maxWidth <== center.width
+  codeField.maxWidth <== center.width
+
   val bottom: HBox = new HBox()
 
   center.alignment = Center
@@ -43,10 +50,10 @@ class PrivateGameScene(val listener: StartUpSceneListener) extends BaseScene() {
   progress.prefHeight <== bottom.height
   hideLoading()
 
-  center.getChildren.addAll(usernameField, codeField)
+  center.getChildren.addAll(usernameLabel, usernameField, codeLabel, codeField)
   bottom.getChildren.addAll(progress, btnSubmit)
 
-  val alert: Alert = BasicAlert("Input missing", "You must enter username and code.", AlertType.Warning)
+  val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and code.", AlertType.Warning)
 
   root = borderPane
 

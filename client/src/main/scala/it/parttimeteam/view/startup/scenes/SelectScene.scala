@@ -1,7 +1,8 @@
 package it.parttimeteam.view.startup.scenes
 
+import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.listeners.SelectSceneListener
-import it.parttimeteam.view.utils.SimpleButton
+import it.parttimeteam.view.utils.MachiavelliButton
 import scalafx.geometry.Pos.Center
 import scalafx.scene.Scene
 import scalafx.scene.control.Button
@@ -11,8 +12,9 @@ import scalafx.stage.Stage
 
 /**
   * Scene which allows to select the start up modality.
+  *
   * @param parentStage the stage which contains the scene
-  * @param listener the listener which allow to select the modality
+  * @param listener    the listener which allow to select the modality
   */
 class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) extends Scene() {
   val background: ImageView = new ImageView(new Image("/images/background.png")) {
@@ -25,21 +27,25 @@ class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) ext
     preserveRatio = true
   }
 
-  val btnPlayersNum: Button = SimpleButton("Start new game", listener.onSelectedPublicGame, 200d)
-  val btnCode: Button = SimpleButton("Participate with a code", listener.onSelectedPrivateGame, 200d)
-  val btnNewCode: Button = SimpleButton("Create new code", listener.onSelectedCreatePrivateGame, 200d)
+  val center: VBox = new VBox()
+  center.alignment = Center
+  center.spacing = ViewConfig.formSpacing
+  center.setMaxWidth(ViewConfig.formWidth)
+
+  val btnPublicGame: Button = MachiavelliButton("Start new game", listener.onSelectedPublicGame)
+  val btnPrivateGame: Button = MachiavelliButton("Participate with a code", listener.onSelectedPrivateGame)
+  val btnCreatePrivateGame: Button = MachiavelliButton("Create new code", listener.onSelectedCreatePrivateGame)
+
+  btnPublicGame.prefWidth <== center.width
+  btnPrivateGame.prefWidth <== center.width
+  btnCreatePrivateGame.prefWidth <== center.width
 
   val borderPane: BorderPane = new BorderPane()
   borderPane.prefWidth <== parentStage.width
   borderPane.prefHeight <== parentStage.height
-
-  val center: VBox = new VBox()
-  center.alignment = Center
-  center.spacing = 20d
-
   borderPane.center = center
 
-  center.getChildren.addAll(title, btnPlayersNum, btnCode, btnNewCode)
+  center.getChildren.addAll(title, btnPublicGame, btnPrivateGame, btnCreatePrivateGame)
 
   content = Seq(background, borderPane)
 }
