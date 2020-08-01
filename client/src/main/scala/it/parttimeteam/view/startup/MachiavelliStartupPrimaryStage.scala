@@ -1,18 +1,19 @@
 package it.parttimeteam.view.startup
 
 import it.parttimeteam.controller.startup.GameStartUpListener
-import it.parttimeteam.view.startup.listeners.{CreatePrivateGameSceneListener, PlayersGameSceneListener, PrivateGameSceneListener, SelectSceneListener}
-import it.parttimeteam.view.startup.scenes.{CreatePrivateGameScene, PlayersGameScene, PrivateGameScene, SelectScene}
+import it.parttimeteam.view.ViewEvent
+import it.parttimeteam.view.startup.listeners._
+import it.parttimeteam.view.startup.scenes.{CreatePrivateGameScene, PrivateGameScene, PublicGameScene, SelectScene}
 import scalafx.application.JFXApp
 
 /**
   * Stage for startup scenes.
   *
-  * @param toControllerListener enables to call actions exposed by controller
-  * @param windowWidth          the width of the window
-  * @param windowHeight         the height of the window
+  * @param gameStartUpListener enables to call actions exposed by controller
+  * @param windowWidth         the width of app window
+  * @param windowHeight        the height of app window
   */
-class MachiavelliStartupPrimaryStage(toControllerListener: GameStartUpListener, windowWidth: Double, windowHeight: Double) extends JFXApp.PrimaryStage with PrimaryStageListener {
+class MachiavelliStartupPrimaryStage(gameStartUpListener: GameStartUpListener, windowWidth: Double, windowHeight: Double) extends JFXApp.PrimaryStage with PrimaryStageListener {
   title = "Machiavelli"
   resizable = true
   width = windowWidth
@@ -22,16 +23,12 @@ class MachiavelliStartupPrimaryStage(toControllerListener: GameStartUpListener, 
 
   private val mainScene = new SelectScene(this, new SelectSceneListener {
 
-    override def onSelectedGameWithPlayers(): Unit = scene = new PlayersGameScene(stage, onBackClick)
+    override def onSelectedPublicGame(): Unit = scene = new PublicGameScene(stage)
 
-    override def onSelectedGameWithCode(): Unit = scene = new PrivateGameScene(stage, onBackClick)
+    override def onSelectedPrivateGame(): Unit = scene = new PrivateGameScene(stage)
 
-    override def onSelectedCreatePrivateGame(): Unit = scene = new CreatePrivateGameScene(stage, onBackClick)
+    override def onSelectedCreatePrivateGame(): Unit = scene = new CreatePrivateGameScene(stage)
   })
-
-  def onBackClick(): Unit = {
-    scene = mainScene
-  }
 
   scene = mainScene
 
@@ -39,11 +36,13 @@ class MachiavelliStartupPrimaryStage(toControllerListener: GameStartUpListener, 
     System.exit(0)
   }
 
-  override def registerToPrivateGame(username: String, privateCode: String): Unit = toControllerListener.requestPrivateGame(username, privateCode)
+  override def onBackPressed(): Unit = {
+    scene = mainScene
+  }
 
-  override def registerToGame(username: String, playersNumber: Int): Unit = toControllerListener.requestGameWithPlayers(username, playersNumber)
-
-  override def createPrivateGame(username: String, playersNumber: Int): Unit = toControllerListener.createPrivateGame(username, playersNumber)
+  override def onSubmit(viewEvent: ViewEvent): Unit = {
+    gameStartUpListener.onViewEvent(viewEvent)
+  }
 }
 
 /**
@@ -59,4 +58,4 @@ object MachiavelliStartupPrimaryStage {
 
 }
 
-trait PrimaryStageListener extends PlayersGameSceneListener with PrivateGameSceneListener with CreatePrivateGameSceneListener
+trait PrimaryStageListener extends StartUpSceneListener

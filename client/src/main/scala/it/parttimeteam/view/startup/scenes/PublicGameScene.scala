@@ -1,8 +1,8 @@
 package it.parttimeteam.view.startup.scenes
 
-import it.parttimeteam.view.BaseScene
-import it.parttimeteam.view.startup.listeners.PlayersGameSceneListener
+import it.parttimeteam.view.startup.listeners.StartUpSceneListener
 import it.parttimeteam.view.utils.{BasicAlert, SimpleButton}
+import it.parttimeteam.view.{BaseScene, PublicGameSubmitViewEvent}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
@@ -11,9 +11,10 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
 
 /**
   * Allow to participate to a game by selecting the number of players to play with.
+  *
   * @param listener to interact with parent stage
   */
-class PlayersGameScene(val listener: PlayersGameSceneListener) extends BaseScene() {
+class PublicGameScene(val listener: StartUpSceneListener) extends BaseScene() {
   val btnBack: Button = SimpleButton("<", listener.onBackPressed)
   val btnSubmit: Button = SimpleButton("Send", submit)
 
@@ -58,7 +59,7 @@ class PlayersGameScene(val listener: PlayersGameSceneListener) extends BaseScene
     val nPlayers: Int = comboBox.getValue
 
     if (!username.isEmpty && nPlayers > 2) {
-      listener.registerToGame(username, nPlayers)
+      listener.onSubmit(PublicGameSubmitViewEvent(username, nPlayers))
       showLoading()
       btnSubmit.setDisable(true)
     } else {

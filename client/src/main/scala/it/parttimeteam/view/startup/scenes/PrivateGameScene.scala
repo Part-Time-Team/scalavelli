@@ -1,8 +1,8 @@
 package it.parttimeteam.view.startup.scenes
 
-import it.parttimeteam.view.BaseScene
-import it.parttimeteam.view.startup.listeners.PrivateGameSceneListener
+import it.parttimeteam.view.startup.listeners.StartUpSceneListener
 import it.parttimeteam.view.utils.{BasicAlert, SimpleButton}
+import it.parttimeteam.view.{BaseScene, PrivateGameSubmitViewEvent}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
@@ -11,9 +11,10 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
 
 /**
   * Allow to participate to a private game by inserting a private code.
+  *
   * @param listener to interact with parent stage
   */
-class PrivateGameScene(val listener: PrivateGameSceneListener) extends BaseScene() {
+class PrivateGameScene(val listener: StartUpSceneListener) extends BaseScene() {
   val btnBack: Button = SimpleButton("<", listener.onBackPressed)
   val btnSubmit: Button = SimpleButton("Send", submit)
 
@@ -54,7 +55,7 @@ class PrivateGameScene(val listener: PrivateGameSceneListener) extends BaseScene
     val code: String = codeField.getText
 
     if (!username.isEmpty && !code.isEmpty) {
-      listener.registerToPrivateGame(username, code)
+      listener.onSubmit(PrivateGameSubmitViewEvent(username, code))
       showLoading()
       btnSubmit.setDisable(true)
     } else {

@@ -1,8 +1,8 @@
 package it.parttimeteam.view.startup.scenes
 
-import it.parttimeteam.view.BaseScene
-import it.parttimeteam.view.startup.listeners.CreatePrivateGameSceneListener
+import it.parttimeteam.view.startup.listeners.StartUpSceneListener
 import it.parttimeteam.view.utils.{BasicAlert, SimpleButton}
+import it.parttimeteam.view.{BaseScene, CreatePrivateGameSubmitViewEvent}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
@@ -15,7 +15,7 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
   *
   * @param listener to interact with parent stage
   */
-class CreatePrivateGameScene(val listener: CreatePrivateGameSceneListener) extends BaseScene() {
+class CreatePrivateGameScene(val listener: StartUpSceneListener) extends BaseScene() {
   val btnBack: Button = SimpleButton("<", listener.onBackPressed)
   val btnSubmit: Button = SimpleButton("Send", submit)
 
@@ -58,7 +58,7 @@ class CreatePrivateGameScene(val listener: CreatePrivateGameSceneListener) exten
     val nPlayers: Int = comboBox.getValue
 
     if (!username.isEmpty && nPlayers > 2) {
-      listener.createPrivateGame(username, nPlayers)
+      listener.onSubmit(CreatePrivateGameSubmitViewEvent(username, nPlayers))
       showLoading()
       btnSubmit.setDisable(true)
     } else {

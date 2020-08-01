@@ -1,5 +1,7 @@
 package it.parttimeteam.controller.startup
+
 import it.parttimeteam.view.startup.MachiavelliStartupPrimaryStage
+import it.parttimeteam.view.{CreatePrivateGameSubmitViewEvent, PrivateGameSubmitViewEvent, PublicGameSubmitViewEvent, ViewEvent}
 import scalafx.application.JFXApp
 
 class StartUpControllerImpl extends StartUpController {
@@ -7,18 +9,11 @@ class StartUpControllerImpl extends StartUpController {
     app.stage = MachiavelliStartupPrimaryStage(this)
   }
 
-  override def requestGameWithPlayers(username: String, playersNumber: Int): Unit = {
-    System.out.println(s"requestGameWithPlayers $username - $playersNumber")
+  override def onViewEvent(viewEvent: ViewEvent): Unit = viewEvent match {
+    case PublicGameSubmitViewEvent(username, playersNumber) => System.out.println(s"PublicGameSubmitViewEvent $username - $playersNumber")
+    case PrivateGameSubmitViewEvent(username, code) => System.out.println(s"PrivateGameSubmitViewEvent $username - $code")
+    case CreatePrivateGameSubmitViewEvent(username, playersNumber) => System.out.println(s"CreatePrivateGameSubmitViewEvent $username - $playersNumber")
+    case _ =>
   }
-
-  override def requestPrivateGame(username: String, code: String): Unit = {
-    System.out.println(s"requestPrivateGame $username - $code")
-  }
-
-  override def createPrivateGame(username: String, playersNumber: Int): Unit = {
-    System.out.println(s"createPrivateGame $username - $playersNumber")
-
-  }
-
 
 }

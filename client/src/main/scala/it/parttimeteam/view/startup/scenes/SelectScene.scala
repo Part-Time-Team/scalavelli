@@ -25,8 +25,8 @@ class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) ext
     preserveRatio = true
   }
 
-  val btnPlayersNum: Button = SimpleButton("Start new game", listener.onSelectedGameWithPlayers, 200d)
-  val btnCode: Button = SimpleButton("Participate with a code", listener.onSelectedGameWithCode, 200d)
+  val btnPlayersNum: Button = SimpleButton("Start new game", listener.onSelectedPublicGame, 200d)
+  val btnCode: Button = SimpleButton("Participate with a code", listener.onSelectedPrivateGame, 200d)
   val btnNewCode: Button = SimpleButton("Create new code", listener.onSelectedCreatePrivateGame, 200d)
 
   val borderPane: BorderPane = new BorderPane()

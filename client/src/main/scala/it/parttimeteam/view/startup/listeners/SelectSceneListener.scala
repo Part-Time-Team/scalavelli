@@ -2,9 +2,9 @@ package it.parttimeteam.view.startup.listeners
 
 trait SelectSceneListener {
 
-  def onSelectedGameWithPlayers(): Unit
+  def onSelectedPublicGame(): Unit
 
-  def onSelectedGameWithCode(): Unit
+  def onSelectedPrivateGame(): Unit
 
   def onSelectedCreatePrivateGame(): Unit
 }

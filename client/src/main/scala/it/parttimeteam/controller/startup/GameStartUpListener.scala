@@ -1,10 +1,8 @@
 package it.parttimeteam.controller.startup
 
+import it.parttimeteam.view.ViewEvent
+
 trait GameStartUpListener {
 
-  def requestGameWithPlayers(username: String, playersNumber: Int): Unit
-
-  def requestPrivateGame(username: String, code: String): Unit
-
-  def createPrivateGame(username: String, playersNumber: Int) : Unit
+  def onViewEvent(viewEvent: ViewEvent): Unit
 }
