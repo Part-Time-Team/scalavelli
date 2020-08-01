@@ -11,12 +11,13 @@ class StartUpControllerImpl extends StartUpController {
     System.out.println(s"requestGameWithPlayers $username - $playersNumber")
   }
 
-  override def requestPrivateGame(): Unit = {
-    System.out.println("requestPrivateGame")
+  override def requestPrivateGame(username: String, code: String): Unit = {
+    System.out.println(s"requestPrivateGame $username - $code")
   }
 
-  override def createPrivateGame(): Unit = {
-    System.out.println(s"createPrivateGame")
+  override def createPrivateGame(username: String, playersNumber: Int): Unit = {
+    System.out.println(s"createPrivateGame $username - $playersNumber")
+
   }
 
 

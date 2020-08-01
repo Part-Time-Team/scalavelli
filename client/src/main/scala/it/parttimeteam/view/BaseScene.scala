@@ -2,9 +2,8 @@ package it.parttimeteam.view
 
 import scalafx.scene.Scene
 import scalafx.scene.control.ProgressIndicator
-import scalafx.stage.Stage
 
-abstract case class BaseScene(parentStage: Stage) extends Scene {
+trait BaseScene extends Scene {
   val progress: ProgressIndicator
 
   def showLoading(): Unit = {

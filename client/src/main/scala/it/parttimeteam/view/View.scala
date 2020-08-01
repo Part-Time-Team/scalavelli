@@ -5,22 +5,11 @@ import scalafx.application.JFXApp
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
+/**
+  * The main View of the application.
+  */
 trait View {
-
-}
-
-object View {
   def apply(app: JFXApp): View = new ViewImpl(app)
-
-  class ViewImpl(private val app: JFXApp) extends View {
-
-    /** Implicit executor */
-    implicit val executionContextExecutor: ExecutionContextExecutor = ExecutionContext.global
-
-    /** Setting the primary stage */
-    app.stage = MachiavelliStartupPrimaryStage()
-  }
-
 }
 
 

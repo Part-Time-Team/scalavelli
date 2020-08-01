@@ -1,6 +1,6 @@
 package it.parttimeteam.controller
 
-trait GameAvailableCallback {
+trait GameRefAvailableCallback {
 
   def onDone(gameRef: String)
 }

@@ -2,17 +2,20 @@ package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.view.BaseScene
 import it.parttimeteam.view.startup.listeners.PrivateGameSceneListener
-import it.parttimeteam.view.utils.{AlertFactory, ButtonFactory}
+import it.parttimeteam.view.utils.{BasicAlert, SimpleButton}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.{Alert, Button, ProgressIndicator, TextField}
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
-import scalafx.stage.Stage
 
-class PrivateGameScene(override val parentStage: Stage, val listener: PrivateGameSceneListener, val onBack: () => Unit) extends BaseScene(parentStage) {
-  val btnBack: Button = ButtonFactory.makeButton("<", onBack)
-  val btnSubmit: Button = ButtonFactory.makeButton("Send", submit)
+/**
+  * Allow to participate to a private game by inserting a private code.
+  * @param listener to interact with parent stage
+  */
+class PrivateGameScene(val listener: PrivateGameSceneListener) extends BaseScene() {
+  val btnBack: Button = SimpleButton("<", listener.onBackPressed)
+  val btnSubmit: Button = SimpleButton("Send", submit)
 
   val usernameField: TextField = new TextField()
   usernameField.setPromptText("Username")
@@ -42,7 +45,7 @@ class PrivateGameScene(override val parentStage: Stage, val listener: PrivateGam
   center.getChildren.addAll(usernameField, codeField)
   bottom.getChildren.addAll(progress, btnSubmit)
 
-  val alert: Alert = AlertFactory.makeAlert("Input missing", "You must enter username and code.", AlertType.Warning)
+  val alert: Alert = BasicAlert("Input missing", "You must enter username and code.", AlertType.Warning)
 
   root = borderPane
 

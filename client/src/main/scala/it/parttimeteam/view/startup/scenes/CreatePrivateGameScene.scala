@@ -2,17 +2,22 @@ package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.view.BaseScene
 import it.parttimeteam.view.startup.listeners.CreatePrivateGameSceneListener
-import it.parttimeteam.view.utils.{AlertFactory, ButtonFactory}
+import it.parttimeteam.view.utils.{BasicAlert, SimpleButton}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
-import scalafx.stage.Stage
 
-class CreatePrivateGameScene(override val parentStage: Stage, val listener: CreatePrivateGameSceneListener, val onBack: () => Unit) extends BaseScene(parentStage) {
-  val btnBack: Button = ButtonFactory.makeButton("<", onBack)
-  val btnSubmit: Button = ButtonFactory.makeButton("Send", submit)
+/**
+  * Allow to participate to create a private game by inserting the number of players.
+  * Obtains a private code to share to invite other players.
+  *
+  * @param listener to interact with parent stage
+  */
+class CreatePrivateGameScene(val listener: CreatePrivateGameSceneListener) extends BaseScene() {
+  val btnBack: Button = SimpleButton("<", listener.onBackPressed)
+  val btnSubmit: Button = SimpleButton("Send", submit)
 
   val usernameField: TextField = new TextField()
   usernameField.setPromptText("Username")
@@ -44,7 +49,7 @@ class CreatePrivateGameScene(override val parentStage: Stage, val listener: Crea
   bottom.getChildren.addAll(progress, btnSubmit)
 
 
-  val alert: Alert = AlertFactory.makeAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
+  val alert: Alert = BasicAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
 
   root = borderPane
 
