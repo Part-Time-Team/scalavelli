@@ -29,9 +29,9 @@ class GameMatchActor(numberOfPlayers: Int) extends Actor with ActorLogging with 
           val updatedReadyPlayers = playersReady :+ p
           if (updatedReadyPlayers.length == numberOfPlayers) {
             log.debug("All players ready")
+            this.broadcastMessageToPlayers(players)(GamePlayerState())
             context.become(inGame())
           } else {
-            this.broadcastMessageToPlayers(players)(GamePlayerState())
             context.become(initializing(players, updatedReadyPlayers))
           }
         }

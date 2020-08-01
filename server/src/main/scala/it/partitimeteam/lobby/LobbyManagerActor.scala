@@ -1,10 +1,10 @@
 package it.partitimeteam.lobby
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, Props}
 import it.partitimeteam.`match`.GameMatchActor
 import it.partitimeteam.common.IdGenerator
 import it.parttimeteam.entities
-import it.parttimeteam.entities.{GamePlayer, Player}
+import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.messages.GameMessage.GamePlayers
 import it.parttimeteam.messages.LobbyMessages._
 
@@ -14,13 +14,13 @@ object LobbyManagerActor {
 
 }
 
-class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
+class LobbyManagerActor extends Actor with IdGenerator {
 
   type UserName = String
   type UserId = String
 
   private var connectedPlayers: Map[UserId, UserName] = Map()
-  private val lobbyManger: LobbyManager[GamePlayer] = new LobbyManagerImpl[GamePlayer]()
+  private val lobbyManger: LobbyManager[GamePlayer] = LobbyManager()
 
   private val privateLobbyService: PrivateLobbyService = PrivateLobbyService()
 
@@ -58,6 +58,7 @@ class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
   private def checkAndCreateGame(lobbyType: LobbyType): Unit = {
     this.lobbyManger.attemptExtractPlayerForMatch(lobbyType) match {
       case Some(players) => this.generateAndStartGameActor(lobbyType)(players)
+      case None =>
     }
   }
 
