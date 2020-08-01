@@ -19,7 +19,7 @@ case class GameLobby[T <: Player](numberOfPlayers: Int, override val players: Li
   /**
    * @inheritdoc
    */
-  override def extractPlayersForMatch(): Pair[Lobby[T], Option[List[T]]] =
+  override def extractPlayersForMatch(): Pair[Lobby[T], Option[Seq[T]]] =
     if (this.hasEnoughPlayers) {
       Pair(GameLobby(numberOfPlayers, players.drop(numberOfPlayers)), Some(players.take(numberOfPlayers)))
     } else {

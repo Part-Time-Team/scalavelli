@@ -23,7 +23,7 @@ trait Lobby[T <: Player] {
    *
    * @return the new lobby without the extracted player and the extracted players if present, otherwise none
    */
-  def extractPlayersForMatch(): Pair[Lobby[T], Option[List[T]]]
+  def extractPlayersForMatch(): Pair[Lobby[T], Option[Seq[T]]]
 
   /**
    * Add a new player to the lobby
