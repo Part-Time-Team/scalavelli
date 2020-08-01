@@ -1,7 +1,7 @@
 package it.parttimeteam.messages
 
 import it.parttimeteam.GameState
-import it.parttimeteam.entities.GamePlayer
+import it.parttimeteam.entities.{GamePlayer, GamePlayerState}
 
 object GameMessage {
 
@@ -20,15 +20,17 @@ object GameMessage {
 
   /**
    * Client response to the game start message
+   *
+   * @param playerId id of the player
    */
-  case object Ready
+  case class Ready(playerId: String)
 
   /**
    * Message sent by the server to notify clients of game updates
    *
    * @param gameState the new game state
    */
-  case class GameStateUpdated(gameState: GameState)
+  case class GameStateUpdated(gameState: GamePlayerState)
 
 
   /**
