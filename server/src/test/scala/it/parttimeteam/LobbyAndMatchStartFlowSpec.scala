@@ -1,7 +1,7 @@
 package it.parttimeteam
 
 import akka.actor.ActorSystem
-import akka.testkit.{ImplicitSender, TestKit, TestProbe}
+import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import it.partitimeteam.lobby.LobbyManagerActor
 import it.parttimeteam.entities.GamePlayerState
 import it.parttimeteam.messages.LobbyMessages.{JoinPublicLobby, UserAddedToLobby}
@@ -20,7 +20,7 @@ class LobbyAndMatchStartFlowSpec extends TestKit(ActorSystem())
 
   "A correct flow" should {
 
-    val lobbyActor = system.actorOf(LobbyManagerActor.props()) // TestActorRef[LobbyManagerActor](LobbyManagerActor.props())
+    val lobbyActor = TestActorRef[LobbyManagerActor](LobbyManagerActor.props())
     val probe = TestProbe()
 
     "add users to lobby and if number of player is enough, start a match and notify the players" in {
@@ -31,8 +31,8 @@ class LobbyAndMatchStartFlowSpec extends TestKit(ActorSystem())
       expectMsgType[UserAddedToLobby]
 
       probe.expectMsg(GameStarted)
-      probe.send(lobbyActor, Ready)
       expectMsg(GameStarted)
+      probe.send(lobbyActor, Ready)
       lobbyActor ! Ready
 
       probe.expectMsgType[GamePlayerState]

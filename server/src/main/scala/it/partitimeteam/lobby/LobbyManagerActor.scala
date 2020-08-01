@@ -1,9 +1,11 @@
 package it.partitimeteam.lobby
 
-import akka.actor.{Actor, Props}
+import akka.actor.{Actor, ActorLogging, Props}
+import it.partitimeteam.`match`.GameMatchActor
 import it.partitimeteam.common.IdGenerator
 import it.parttimeteam.entities
 import it.parttimeteam.entities.{GamePlayer, Player}
+import it.parttimeteam.messages.GameMessage.GamePlayers
 import it.parttimeteam.messages.LobbyMessages._
 
 object LobbyManagerActor {
@@ -12,7 +14,7 @@ object LobbyManagerActor {
 
 }
 
-class LobbyManagerActor extends Actor with IdGenerator {
+class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
 
   type UserName = String
   type UserId = String
@@ -26,28 +28,42 @@ class LobbyManagerActor extends Actor with IdGenerator {
   override def receive: Receive = {
     case JoinPublicLobby(username, numberOfPlayers) => {
       val playerId = this.generateId
-      this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, sender()), PlayerNumberLobby(numberOfPlayers))
+      val lobbyType = PlayerNumberLobby(numberOfPlayers)
+      this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, sender()), lobbyType)
       sender() ! UserAddedToLobby(playerId)
+      this.checkAndCreateGame(lobbyType)
 
     }
     case CreatePrivateLobby(username, numberOfPlayers) => {
-      val lobby = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
+      val lobbyType = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
       val playerId = this.generateId
-      this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, sender()), lobby)
-      sender() ! PrivateLobbyCreated(playerId, lobby.lobbyId)
+      this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, sender()), lobbyType)
+      sender() ! PrivateLobbyCreated(playerId, lobbyType.lobbyId)
 
     }
     case JoinPrivateLobby(username, lobbyCode) => privateLobbyService.retrieveExistingLobby(lobbyCode) match {
-      case Some(lobby) => {
+      case Some(lobbyType) => {
         val player = entities.GamePlayer(generateId, username, sender())
-        this.lobbyManger.addPlayer(player, lobby)
+        this.lobbyManger.addPlayer(player, lobbyType)
         sender() ! UserAddedToLobby(player.id)
+        this.checkAndCreateGame(lobbyType)
       }
       case None => sender() ! LobbyJoinError(s"Private lobby with code $lobbyCode does not exist")
     }
 
     case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
 
+  }
+
+  private def checkAndCreateGame(lobbyType: LobbyType): Unit = {
+    this.lobbyManger.attemptExtractPlayerForMatch(lobbyType) match {
+      case Some(players) => this.generateAndStartGameActor(lobbyType)(players)
+    }
+  }
+
+  private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
+    val gameActor = context.actorOf(GameMatchActor.props(lobbyType.numberOfPlayers))
+    gameActor ! GamePlayers(players)
   }
 
 }
