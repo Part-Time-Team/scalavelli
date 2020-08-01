@@ -1,6 +1,6 @@
 package it.parttimeteam.messages
 
-import it.parttimeteam.GameState
+import it.parttimeteam.PlayerAction
 import it.parttimeteam.entities.{GamePlayer, GamePlayerState}
 
 object GameMessage {
@@ -45,7 +45,7 @@ object GameMessage {
    * @param playerId player identifier
    * @param action   action made by the player during the game
    */
-  case class PlayerAction(playerId: String, action: PlayerAction)
+  case class PlayerActionMade(playerId: String, action: PlayerAction)
 
   /**
    * Message sent by the client to leave the game
