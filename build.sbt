@@ -35,6 +35,9 @@ val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaV
 val akkaTest = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaV
 val akkaRemote = "com.typesafe.akka" %% "akka-remote" % akkaV
 
+// PROLOG
+val tuProlog = "it.unibo.alice.tuprolog" % "tuprolog" % "3.3.0"
+
 lazy val akkaDependencies = Seq(
   akkaTyped,
   akkaRemote,
@@ -87,7 +90,7 @@ lazy val settings = commonSettings
 lazy val core = (project in file("core")).settings(
   name := "core",
   settings,
-  libraryDependencies ++= testDependencies
+  libraryDependencies ++= (testDependencies :+ tuProlog)
 )
 
 lazy val commons = (project in file("commons")).settings(
