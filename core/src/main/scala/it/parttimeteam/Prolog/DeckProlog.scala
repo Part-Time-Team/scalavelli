@@ -1,11 +1,9 @@
 package it.parttimeteam.Prolog
 
 import java.io.InputStream
-
-import alice.tuprolog.{Term, Var}
 import it.parttimeteam.{Card, Deck}
 
-object DeckProlog extends App {
+case class DeckImpl {
 
   val theory: InputStream = getClass.getResourceAsStream("rules.pl")
   val engine: PrologEngine = PrologEngine.loadTheory(theory)
@@ -47,4 +45,13 @@ object DeckProlog extends App {
     })
     Deck(cardsList)
   }
+  
+}
+
+object DeckProlog extends App {
+
+  val deckImpl : DeckImpl = DeckImpl()
+
+  deckImpl.loadSuit()
+  deckImpl.loadDeck
 }
