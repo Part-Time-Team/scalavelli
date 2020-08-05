@@ -8,7 +8,7 @@ suit(spades, "♠").
 startHand(13).
 
 % Cards
-% number | seed | points(?)
+% number | nameSuit | shortName
 card(1, X, Y) :- suit(X, Y).
 card(2, X, Y) :- suit(X, Y).
 card(3, X, Y) :- suit(X, Y).
