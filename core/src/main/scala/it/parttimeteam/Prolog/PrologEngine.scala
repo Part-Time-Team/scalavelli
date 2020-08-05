@@ -1,15 +1,14 @@
 package it.parttimeteam.Prolog
 
 import java.io.InputStream
-
-import org.apache.commons.lang3.tuple.Pair
+import alice.tuprolog.{Prolog, SolveInfo, Struct, Term, Theory, Var}
 
 trait PrologEngine {
 
   /**
    * Resolve a specific goal
    *
-   * @param predicate
+   * @param predicate predicate to solve
    * @return goal result
    */
   def goal(predicate: Term): Set[Term]
@@ -17,22 +16,29 @@ trait PrologEngine {
   /**
    * Check if there are open alternatives.
    *
-   * @return
+   * @return true if there are other solutions otherwise false
    */
   def hasOpenAlternatives: Boolean
 
   /**
    * Get all solution a specific goal
    *
-   * @return
+   * @return list of terms with respect to the specific goal
    */
   def goals(goal: Term): List[Term]
+
+  /**
+   * Get value by term and variable
+   *
+   * @param info solution to get value
+   * @return list of values
+   */
+  def bindingVars(info: SolveInfo): List[Term]
 
 }
 
 object PrologEngine {
 
-  //Apply
   def apply(): PrologEngine = new PrologEngineImpl()
 
   /**
@@ -86,18 +92,22 @@ object PrologEngine {
 
       _goals(engine solve goal)(List())
     }
+
+    override def bindingVars(info: SolveInfo): List[Term] = {
+
+      var varList: List[Term] = List()
+      info.getBindingVars.forEach(v => {
+        varList = info.getTerm(v.getName) :: varList
+      })
+      varList
+    }
   }
 
-  // TODO finire il binding var per capire quanti variabili sono nel predicato
-  def bindingVars(info: SolveInfo): List[Term] = {
-
-    val list = List()
-    info.getBindingVars.forEach( v => v.getName :: list)
-    println(list)
-    list
-  }
 }
 
+/**
+ * Object Prolog Struct
+ */
 object PrologStruct {
   def apply(rule: String, variable: Var): Struct = new Struct(rule, variable)
 
