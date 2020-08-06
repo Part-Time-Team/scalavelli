@@ -4,7 +4,7 @@ suit(diamond,"♦").
 suit(clubs,  "♣").
 suit(spades, "♠").
 
-% Card-start of the game
+% Card start of the game
 startHand(13).
 
 % Cards
@@ -22,3 +22,8 @@ card(10, X, Y) :- 	suit(X, Y).
 card(11, X, Y) :- 	suit(X, Y).
 card(12, X, Y) :- 	suit(X, Y).
 card(13, X, Y) :- 	suit(X, Y).
+
+
+random_permutation([X], Y).
+
+

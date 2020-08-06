@@ -1,15 +1,19 @@
 package it.parttimeteam.Prolog
 
 import java.io.InputStream
+import java.util
+
+import alice.tuprolog.{Term, Var}
 import it.parttimeteam.{Card, Deck}
 
-case class DeckImpl {
+case class DeckImpl() {
 
   val theory: InputStream = getClass.getResourceAsStream("rules.pl")
   val engine: PrologEngine = PrologEngine.loadTheory(theory)
 
   val cardsPredicate: String = "card"
   val suitPredicate: String = "suit"
+  val shuffledDeck : String = "random_permutation"
 
   val x: Var = new Var("X")
   val y: Var = new Var("Y")
@@ -20,11 +24,11 @@ case class DeckImpl {
    *
    * @return Suit of deck
    */
-  def loadSuit(): Iterator[List[Term]] = {
+  def loadSuit: Iterator[List[Term]] = {
 
     engine goals PrologStruct(suitPredicate, x, y) grouped 2
 
-    // TODO creare oggetti Suit. Apply nell'object?
+    // TODO creare oggetti Suit. Apply nel object?
     //var suit :List[Suit] = List()
     //iteratorSuite.foreach( item => item)
     //suit
@@ -35,23 +39,22 @@ case class DeckImpl {
    *
    * @return deck entity
    */
-  def loadDeck: Deck = {
+  def loadDeck: Iterator[List[Term]] = {
 
-    var cardsList: List[Card] = List()
-    val cards: Iterator[List[Term]] = engine goals PrologStruct(cardsPredicate, x, y, z) grouped 3
+    engine goals PrologStruct(cardsPredicate, x, y, z) grouped 3
     // TODO come creo le carte con suit e rank??
+    /*var cardsList: List[Card] = List()
     cards.foreach(item => {
       cardsList = Card() :: cardsList
     })
-    Deck(cardsList)
+    Deck(cardsList)*/
   }
-  
 }
 
 object DeckProlog extends App {
 
-  val deckImpl : DeckImpl = DeckImpl()
+  val deckImpl: DeckImpl = DeckImpl()
 
-  deckImpl.loadSuit()
-  deckImpl.loadDeck
+  deckImpl.loadSuit.foreach(println(_))
+  deckImpl.loadDeck.foreach(println(_))
 }
