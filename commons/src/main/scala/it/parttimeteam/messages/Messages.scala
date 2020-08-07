@@ -3,7 +3,6 @@ package it.parttimeteam.messages
 import akka.actor.ActorRef
 
 object Messages {
-
   /**
    * Message sent by the client to join a public lobby for a match with the given number of players
    *
@@ -34,6 +33,11 @@ object Messages {
    * @param userId id of the user (the one retrieved by the server after the first connection)
    */
   case class LeaveLobby(userId: String)
+
+  /**
+    * Message sent by the client to stop the current actor
+    */
+  case class Stop()
 
 
   /**

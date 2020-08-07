@@ -1,7 +1,7 @@
 package it.parttimeteam.model.actors
 
 import akka.actor.{Actor, ActorRef, Props}
-import it.parttimeteam.messages.Messages.{JoinPublicLobby, LobbyJoinError, MatchFound}
+import it.parttimeteam.messages.Messages.{JoinPublicLobby, LobbyJoinError, MatchFound, Stop}
 import it.parttimeteam.model._
 
 object StartUpActor {
@@ -14,6 +14,8 @@ class StartUpActor(val notifyEvent: GameStartUpEvent => Unit) extends Actor {
     case PrivateLobbyCreatedEvent(generatedUserId: String, lobbyCode: String) => notifyEvent(PrivateLobbyCreatedEvent(generatedUserId, lobbyCode))
     case MatchFound(gameRoom: ActorRef) => notifyEvent(GameStartedEvent(gameRoom))
     case LobbyJoinError(reason: String) => notifyEvent(LobbyJoinErrorEvent(reason))
+    case Stop() => context.stop(self)
+
     case _ =>
   }
 }

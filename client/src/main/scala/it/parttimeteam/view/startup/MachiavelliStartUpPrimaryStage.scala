@@ -13,7 +13,7 @@ import scalafx.scene.control.Alert.AlertType
 /**
   * Stage for startup scenes.
   */
-trait MachiavelliStartUpPrimaryStage extends JFXApp.PrimaryStage with PrimaryStageListener{
+trait MachiavelliStartUpPrimaryStage extends JFXApp.PrimaryStage with PrimaryStageListener {
   def notifyPrivateCode(privateCode: String): Unit
 
   def notifyLobbyJoined(): Unit
@@ -51,7 +51,6 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
   })
 
   scene = mainScene
-
 
   onCloseRequest = _ => {
     System.exit(0)

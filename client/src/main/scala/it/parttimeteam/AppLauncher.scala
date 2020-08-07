@@ -9,9 +9,6 @@ import scalafx.application.JFXApp
 object AppLauncher extends JFXApp {
   val controller: MainController = new MainControllerImpl(this)
 
-  // TODO: LUCA - replace gameRef type with the correct one
-  controller.startUp((gameRef: String) => {
-    controller.startGame(gameRef)
-  })
+  controller.start()
 }
 
