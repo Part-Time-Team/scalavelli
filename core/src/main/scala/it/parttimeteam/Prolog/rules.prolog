@@ -1,4 +1,4 @@
-% suit game
+% suit(+suit)
 suit("♥").
 suit("♦").
 suit("♣").
@@ -19,10 +19,24 @@ card("J", Suit)     :- suit(Suit).
 card("Q", Suit)     :- suit(Suit).
 card("K", Suit)     :- suit(Suit).
 
-% Card start of the game
+% startHand(+NumberCard)
 startHand(13).
 
-% getTurn(+(Name, Id), -PLayer)
-%getTurn([(Name, Id)| T],PLayer) :- ..
+% sameElementList(+ListSuit, +Suit)
+sameElementList([], Suit).
+sameElementList([H|T], Suit) :- H \== Suit, sameElementList(T, Suit).
+
+% validationTris(+Cards)
+validationTris([(Number, Suit)], ListSuit).
+validationTris([(Number1, Suit1), (Number2, Suit2) | T], ListSuit) :-
+ 								                                    integer(Number1),
+ 													                integer(Number2),
+ 													                Number1 == Number2,
+ 												                    sameElementList(ListSuit, Suit1),
+ 													                append(ListSuit, [Suit1], NewListSuit),
+													                validationTris([(Number2, Suit2) | T], NewListSuit).
+
+
+
 
 
