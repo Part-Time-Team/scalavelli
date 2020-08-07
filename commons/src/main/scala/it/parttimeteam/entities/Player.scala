@@ -1,3 +1,3 @@
-package it.partitimeteam.common
+package it.parttimeteam.entities
 
 trait Player extends Identifiable with Referable
