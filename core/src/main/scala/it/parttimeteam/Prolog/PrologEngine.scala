@@ -3,6 +3,9 @@ package it.parttimeteam.Prolog
 import java.io.InputStream
 import alice.tuprolog.{Prolog, SolveInfo, Struct, Term, Theory, Var}
 
+/**
+ * Helper facilities to improve TuProlog quality.
+ */
 trait PrologEngine {
 
   /**
@@ -34,6 +37,14 @@ trait PrologEngine {
    * @return list of values
    */
   def bindingVars(info: SolveInfo): List[Term]
+
+  /**
+   * Convert term to int
+   *
+   * @param term term to covert
+   * @return type int
+   */
+  def toInt(term: Term): Int
 
 }
 
@@ -100,6 +111,10 @@ object PrologEngine {
         varList = info.getTerm(v.getName) :: varList
       })
       varList
+    }
+
+    override def toInt(term: Term): Int = {
+      term.toString.toInt
     }
   }
 
