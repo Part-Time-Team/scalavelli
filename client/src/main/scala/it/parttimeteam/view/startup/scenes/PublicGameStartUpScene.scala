@@ -3,7 +3,8 @@ package it.parttimeteam.view.startup.scenes
 import it.parttimeteam.GamePreferences
 import it.parttimeteam.view.startup.listeners.StartUpSceneListener
 import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliButton, MachiavelliLabel, MachiavelliTextField}
-import it.parttimeteam.view.{BaseScene, PublicGameSubmitViewEvent, ViewConfig}
+import it.parttimeteam.view.{PublicGameSubmitViewEvent, ViewConfig}
+import javafx.scene.control
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
@@ -15,7 +16,7 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
   *
   * @param listener to interact with parent stage
   */
-class PublicGameScene(val listener: StartUpSceneListener) extends BaseScene() {
+class PublicGameStartUpScene(val listener: StartUpSceneListener) extends BaseStartUpScene() {
   val btnBack: Button = MachiavelliButton("<", listener.onBackPressed)
   val btnSubmit: Button = MachiavelliButton("Send", submit)
 
@@ -52,8 +53,11 @@ class PublicGameScene(val listener: StartUpSceneListener) extends BaseScene() {
   progress.prefHeight <== bottom.height
   hideLoading()
 
+  override val messageContainer: Label = MachiavelliLabel()
+  hideMessage()
+
   center.getChildren.addAll(usernameLabel, usernameField, selectPlayersLabel, comboBox)
-  bottom.getChildren.addAll(progress, btnSubmit)
+  bottom.getChildren.addAll(messageContainer, progress, btnSubmit)
 
   val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
 
@@ -71,4 +75,5 @@ class PublicGameScene(val listener: StartUpSceneListener) extends BaseScene() {
       alert.showAndWait()
     }
   }
+
 }
