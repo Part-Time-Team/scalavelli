@@ -5,7 +5,7 @@ import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import it.partitimeteam.lobby.LobbyManagerActor
 import it.parttimeteam.entities.GamePlayerState
 import it.parttimeteam.messages.GameMessage.{GameStarted, Ready}
-import it.parttimeteam.messages.LobbyMessages.{JoinPublicLobby, UserAddedToLobby}
+import it.parttimeteam.messages.LobbyMessages.{Connect, Connected, JoinPublicLobby, UserAddedToLobby}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -22,15 +22,32 @@ class LobbyAndMatchStartFlowSpec extends TestKit(ActorSystem())
 
     "add users to lobby and if number of player is enough, start a match and notify the players" in {
       val lobbyActor = TestActorRef[LobbyManagerActor](LobbyManagerActor.props())
-      val probe = TestProbe()
-      probe.send(lobbyActor, JoinPublicLobby("otherPlayer", NUMBER_OF_PLAYERS))
-      lobbyActor ! JoinPublicLobby("me", NUMBER_OF_PLAYERS)
+      val client1 = TestProbe()
+      val client2 = TestProbe()
 
-      probe.expectMsgType[UserAddedToLobby]
-      expectMsgType[UserAddedToLobby]
+      lobbyActor ! Connect(client1.ref)
 
-      probe.expectMsgClass(GameStarted.getClass)
-      expectMsgClass(GameStarted.getClass)
+      client1.expectMsgPF() {
+        case Connected(client1Id) => {
+          lobbyActor ! Connect(client2.ref)
+
+          client2.expectMsgPF() {
+            case Connected(client2Id) => {
+              lobbyActor ! JoinPublicLobby(client1Id, "me", NUMBER_OF_PLAYERS)
+              lobbyActor ! JoinPublicLobby(client2Id, "me2", NUMBER_OF_PLAYERS)
+
+              client1.expectMsgType[UserAddedToLobby]
+              client2.expectMsgType[UserAddedToLobby]
+
+              client1.expectMsgClass(GameStarted.getClass)
+              client2.expectMsgClass(GameStarted.getClass)
+
+            }
+          }
+
+        }
+      }
+
 
     }
 
