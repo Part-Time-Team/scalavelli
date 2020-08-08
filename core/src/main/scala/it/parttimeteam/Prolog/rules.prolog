@@ -35,18 +35,19 @@ sameNumber([(N1,_), (N2,_) | T]) :-  integer(N1),
 
 % sameSuit(+List)
 sameSuit([(_,S)]).
-sameSuit([(_,S1), (_,S2) | T]) :-  S1 == S2,
+sameSuit([(_,S1), (_,S2) | T]) :- S1 == S2,
                            			  sameSuit([(_,S2)| T]). 
 
 % sameElementList(+ListSuit, +Suit)
 sameElementList([], Suit).
-sameElementList([H|T], Suit) :- H \== Suit, sameElementList(T, Suit).
+sameElementList([H|T], Suit) :- H \== Suit, 
+                                sameElementList(T, Suit).
 
 % differentSuit(+List)
 differentSuit([], Suit).
 differentSuit([(_, S1), (_, S2) |T]) :- S1 \== S2,
-                                              append([], [S1, S2], ListSuit),
-                                              differentSuit(T, ListSuit).    
+                                        append([], [S1, S2], ListSuit),
+                                        differentSuit(T, ListSuit).    
 % differentSuit(+List, +Suit)                                                               
 differentSuit([(_, Suit) |T], ListSuit) :- sameElementList(ListSuit, Suit), 
                                            append(ListSuit, [Suit], NewListSuit),
@@ -54,7 +55,9 @@ differentSuit([(_, Suit) |T], ListSuit) :- sameElementList(ListSuit, Suit),
 
 % orderByValue(+List)
 orderByValue([(N,_)]).
-orderByValue([(N1,_), (N2,_) | T]) :- X is N1 + 1,
+orderByValue([(N1,_), (N2,_) | T]) :- integer(N1),
+																			integer(N2),
+																			X is N1 + 1,
                                       N2 == X, 
                                       orderByValue([(N2,_) | T]).
                              
