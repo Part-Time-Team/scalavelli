@@ -2,7 +2,7 @@ name := "scalavelli"
 
 version := "0.1"
 
-scalaVersion in ThisBuild := "2.13.3"
+scalaVersion in ThisBuild := "2.12.8"
 organization in ThisBuild := "it.parttimeteam"
 
 coverageEnabled := true
@@ -30,7 +30,7 @@ val scalacheck = "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
 val scalafx = "org.scalafx" %% "scalafx" % "14-R19"
 
 // AKKA ACTORS.
-val akkaV = "2.6.4"
+val akkaV = "2.5.13"
 val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaV
 val akkaTest = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaV
 val akkaRemote = "com.typesafe.akka" %% "akka-remote" % akkaV
