@@ -42,16 +42,16 @@ class StartUpControllerImpl extends StartUpController {
 
   def notifyEvent(gameStartUpEvent: GameStartUpEvent): Unit = gameStartUpEvent match {
 
-    case LobbyJoinedEvent(userId: String) => {
+    case LobbyJoinedEvent => {
       startUpStage.notifyLobbyJoined()
     }
 
-    case PrivateLobbyCreatedEvent(userId: String, privateCode: String) => {
+    case PrivateLobbyCreatedEvent(privateCode: String) => {
       startUpStage.notifyPrivateCode(privateCode)
       startUpStage.notifyLobbyJoined()
     }
 
-    case PrivateLobbyCreatedEvent(userId: String, privateCode: String) => {
+    case PrivateLobbyCreatedEvent(privateCode: String) => {
       startUpStage.notifyPrivateCode(privateCode)
       startUpStage.notifyLobbyJoined()
     }

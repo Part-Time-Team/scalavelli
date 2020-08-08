@@ -5,7 +5,7 @@ version := "0.1"
 scalaVersion in ThisBuild := "2.12.8"
 organization in ThisBuild := "it.parttimeteam"
 
-coverageEnabled := true
+coverageEnabled := false
 
 // Determine OS version of JavaFX binaries
 lazy val osName = System.getProperty("os.name") match {

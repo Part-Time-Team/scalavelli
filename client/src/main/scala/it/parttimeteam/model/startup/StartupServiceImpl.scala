@@ -1,8 +1,8 @@
 package it.parttimeteam.model.startup
 
 import akka.actor.ActorRef
-import it.parttimeteam.messages.LobbyMessages.Connect
-import it.parttimeteam.model.GameStartUpEvent
+import it.parttimeteam.messages.LobbyMessages.{Connect, CreatePrivateLobby, JoinPrivateLobby, JoinPublicLobby, LeaveLobby}
+import it.parttimeteam.model.{GameStartUpEvent, GameStartedEvent, LobbyJoinedEvent, PrivateLobbyCreatedEvent}
 import it.parttimeteam.{ActorSystemManager, Constants}
 
 import scala.concurrent.Future
@@ -28,13 +28,23 @@ class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) exte
     })
   }
 
-  override def joinPublicLobby(username: String, numberOfPlayers: Int): Unit = ???
+  override def joinPublicLobby(username: String, numberOfPlayers: Int): Unit =
+    serverLobbyRef ! JoinPublicLobby(clientGeneratedId, username, numberOfPlayers)
 
-  override def createPrivateLobby(username: String, numberOfPlayers: Int): Unit = ???
+  override def createPrivateLobby(username: String, numberOfPlayers: Int): Unit =
+    serverLobbyRef ! CreatePrivateLobby(clientGeneratedId, username, numberOfPlayers)
 
-  override def joinPrivateLobby(username: String, privateLobbyId: String): Unit = ???
+  override def joinPrivateLobby(username: String, privateLobbyId: String): Unit =
+    serverLobbyRef ! JoinPrivateLobby(clientGeneratedId, username, privateLobbyId)
 
-  override def leaveLobby(): Unit = ???
+  override def leaveLobby(): Unit = serverLobbyRef ! LeaveLobby(clientGeneratedId)
+
+  //  case JoinPublicLobby => notifyEvent(LobbyJoinedEvent(""))
+  //  case PrivateLobbyCreatedEvent(generatedUserId: String, lobbyCode: String) => notifyEvent(PrivateLobbyCreatedEvent(generatedUserId, lobbyCode))
+  //  case MatchFound(gameRoom: ActorRef) => notifyEvent(GameStartedEvent(gameRoom))
+  //  case LobbyJoinError(reason: String) => notifyEvent(LobbyJoinErrorEvent(reason))
+  //  case Stop() => context.stop(self)
+  //  case _ =>
 
   // region server response listener
 
@@ -43,11 +53,11 @@ class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) exte
     this.clientGeneratedId = clientId
   }
 
-  override def joinedToPrivateLobby(): Unit = ???
+  override def addedToLobby(): Unit = this.notifyEvent(LobbyJoinedEvent)
 
-  override def joinedToPublicLobby(): Unit = ???
+  override def privateLobbyCreated(privateLobbyId: String): Unit = this.notifyEvent(PrivateLobbyCreatedEvent(privateLobbyId))
 
-  override def privateLobbyCreated(privateLobbyId: String): Unit = ???
+  override def matchFound(matchRef: ActorRef): Unit = this.notifyEvent(GameStartedEvent(matchRef))
 
   // endregion
 

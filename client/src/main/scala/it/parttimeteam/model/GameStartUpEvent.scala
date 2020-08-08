@@ -6,9 +6,9 @@ sealed class GameStartUpEvent {
 
 }
 
-case class LobbyJoinedEvent(userId: String) extends GameStartUpEvent
+case object LobbyJoinedEvent extends GameStartUpEvent
 
-case class PrivateLobbyCreatedEvent(userId: String, privateCode: String) extends GameStartUpEvent
+case class PrivateLobbyCreatedEvent(privateCode: String) extends GameStartUpEvent
 
 case class GameStartedEvent(gameActorRef: ActorRef) extends GameStartUpEvent
 

@@ -6,10 +6,12 @@ trait StartupServerResponsesListener {
 
   def connected(clientId: String, serverLobbyRef: ActorRef)
 
-  def joinedToPrivateLobby()
-
-  def joinedToPublicLobby()
+  def addedToLobby()
 
   def privateLobbyCreated(privateLobbyId: String)
+
+  def matchFound(matchRef: ActorRef)
+
+  // TODO error
 
 }
