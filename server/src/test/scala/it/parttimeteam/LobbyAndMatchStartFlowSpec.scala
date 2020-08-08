@@ -2,14 +2,14 @@ package it.parttimeteam
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
+import com.typesafe.config.ConfigFactory
 import it.partitimeteam.lobby.LobbyManagerActor
-import it.parttimeteam.entities.GamePlayerState
-import it.parttimeteam.messages.GameMessage.{GameStarted, Ready}
+import it.parttimeteam.messages.GameMessage.GameStarted
 import it.parttimeteam.messages.LobbyMessages.{Connect, Connected, JoinPublicLobby, UserAddedToLobby}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class LobbyAndMatchStartFlowSpec extends TestKit(ActorSystem())
+class LobbyAndMatchStartFlowSpec extends TestKit(ActorSystem("test", ConfigFactory.load("test")))
   with ImplicitSender
   with AnyWordSpecLike
   with BeforeAndAfterAll {
