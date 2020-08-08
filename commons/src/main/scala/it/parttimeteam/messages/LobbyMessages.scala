@@ -4,6 +4,12 @@ import akka.actor.ActorRef
 
 object LobbyMessages {
 
+
+  case class Connect(clientRef: ActorRef)
+
+  case class Connected(clientId: String)
+
+
   /**
    * Message sent by the client to join a public lobby for a match with the given number of players
    *
