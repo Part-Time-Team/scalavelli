@@ -2,7 +2,7 @@ package it.parttimeteam.controller.startup
 
 import akka.actor.ActorRef
 import it.parttimeteam.model._
-import it.parttimeteam.model.startup.{StartupService, StartupServiceImpl}
+import it.parttimeteam.model.startup.{GameMatchInformations, StartupService, StartupServiceImpl}
 import it.parttimeteam.view._
 import it.parttimeteam.view.startup.MachiavelliStartUpPrimaryStage
 import scalafx.application.JFXApp
@@ -60,8 +60,8 @@ class StartUpControllerImpl extends StartUpController {
       startUpStage.notifyError(result)
     }
 
-    case GameStartedEvent(gameActorRef: ActorRef) => {
-      startGameFunction(gameActorRef)
+    case GameStartedEvent(gameInfo: GameMatchInformations) => {
+      startGameFunction(gameInfo.gameRef)
     }
 
     case _ => {

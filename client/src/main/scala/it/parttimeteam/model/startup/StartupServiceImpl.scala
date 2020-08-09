@@ -1,14 +1,14 @@
 package it.parttimeteam.model.startup
 
 import akka.actor.ActorRef
-import it.parttimeteam.messages.LobbyMessages.{Connect, CreatePrivateLobby, JoinPrivateLobby, JoinPublicLobby, LeaveLobby}
+import it.parttimeteam.messages.LobbyMessages._
 import it.parttimeteam.model.{GameStartUpEvent, GameStartedEvent, LobbyJoinedEvent, PrivateLobbyCreatedEvent}
 import it.parttimeteam.{ActorSystemManager, Constants}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) extends StartupService with StartupServerResponsesListener {
 
@@ -57,7 +57,7 @@ class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) exte
 
   override def privateLobbyCreated(privateLobbyId: String): Unit = this.notifyEvent(PrivateLobbyCreatedEvent(privateLobbyId))
 
-  override def matchFound(matchRef: ActorRef): Unit = this.notifyEvent(GameStartedEvent(matchRef))
+  override def matchFound(matchRef: ActorRef): Unit = this.notifyEvent(GameStartedEvent(GameMatchInformations(matchRef)))
 
   // endregion
 
