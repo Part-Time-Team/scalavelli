@@ -10,11 +10,26 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) extends StartupService with StartupServerResponsesListener {
+class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) extends StartupService {
 
-  private lazy val startupActorRef = ActorSystemManager.actorSystem.actorOf(StartUpActor.props(this))
+  private lazy val startupActorRef = ActorSystemManager.actorSystem.actorOf(StartUpActor.props(serverResponseListener))
   private var serverLobbyRef: ActorRef = _
   private var clientGeneratedId: String = _
+
+  private val serverResponseListener = new StartupServerResponsesListener {
+    override def connected(clientId: String, serverLobbyRef: ActorRef): Unit = {
+      StartupServiceImpl.this.serverLobbyRef = serverLobbyRef
+      clientGeneratedId = clientId
+    }
+
+    override def addedToLobby(): Unit = {
+      notifyEvent(LobbyJoinedEvent)
+    }
+
+    override def privateLobbyCreated(privateLobbyId: String): Unit = notifyEvent(PrivateLobbyCreatedEvent(privateLobbyId))
+
+    override def matchFound(matchRef: ActorRef): Unit = notifyEvent(GameStartedEvent(GameMatchInformations(matchRef)))
+  }
 
   override def connect(address: String, port: Int): Unit = {
     resolveRemoteActorPath(generateServerActorPath(address, port)) onComplete ({
@@ -45,19 +60,6 @@ class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) exte
   //  case LobbyJoinError(reason: String) => notifyEvent(LobbyJoinErrorEvent(reason))
   //  case Stop() => context.stop(self)
   //  case _ =>
-
-  // region server response listener
-
-  override def connected(clientId: String, serverLobbyRef: ActorRef): Unit = {
-    this.serverLobbyRef = serverLobbyRef
-    this.clientGeneratedId = clientId
-  }
-
-  override def addedToLobby(): Unit = this.notifyEvent(LobbyJoinedEvent)
-
-  override def privateLobbyCreated(privateLobbyId: String): Unit = this.notifyEvent(PrivateLobbyCreatedEvent(privateLobbyId))
-
-  override def matchFound(matchRef: ActorRef): Unit = this.notifyEvent(GameStartedEvent(GameMatchInformations(matchRef)))
 
   // endregion
 
