@@ -28,7 +28,9 @@ class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) exte
 
     override def privateLobbyCreated(privateLobbyId: String): Unit = notifyEvent(PrivateLobbyCreatedEvent(privateLobbyId))
 
-    override def matchFound(matchRef: ActorRef): Unit = notifyEvent(GameStartedEvent(GameMatchInformations(matchRef)))
+    override def matchFound(matchRef: ActorRef): Unit =
+      notifyEvent(GameStartedEvent(GameMatchInformations(clientGeneratedId, matchRef)))
+
   }
 
   override def connect(address: String, port: Int): Unit = {
