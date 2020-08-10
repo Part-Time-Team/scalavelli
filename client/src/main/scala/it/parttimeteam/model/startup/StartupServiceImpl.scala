@@ -66,6 +66,9 @@ class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) exte
   private def generateServerActorPath(address: String, port: Int): String =
     s"akka.tcp://${Constants.Remote.SERVER_ACTOR_SYSTEM_NAME}@$address:$port/user/${Constants.Remote.SERVER_LOBBY_ACTOR_NAME}"
 
+  /**
+   * obtains the ActorRef of the corresponding remote actor
+   */
   private def resolveRemoteActorPath(actorPath: String): Future[ActorRef] = {
     ActorSystemManager.actorSystem.actorSelection(actorPath).resolveOne()(10.seconds)
   }
