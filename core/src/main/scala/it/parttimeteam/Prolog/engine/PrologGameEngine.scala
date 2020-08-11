@@ -2,11 +2,16 @@ package it.parttimeteam.Prolog.engine
 
 import java.io.InputStream
 import alice.tuprolog._
+import it.parttimeteam.Prolog.engine.PrologEngine.theory
 import scala.language.postfixOps
 
+/**
+ * Class to improve TuPrologQuality
+ */
 class PrologGameEngine extends PrologEngine {
 
   val engine: Prolog = new Prolog()
+  loadTheory(theory)
 
   /**
    * Load theory from specific file prolog
@@ -14,14 +19,8 @@ class PrologGameEngine extends PrologEngine {
    * @param theory theory to load
    * @return PrologEngine
    */
-  def loadTheory(theory: InputStream): PrologGameEngine = {
+  private def loadTheory(theory: InputStream): Unit = {
     engine.setTheory(new Theory(theory))
-    this
-  }
-
-  override def goal(predicate: Term): Set[Term] = {
-    val solveInfo: SolveInfo = engine.solve(predicate)
-    isSuccess(solveInfo)
   }
 
   /**
@@ -30,12 +29,17 @@ class PrologGameEngine extends PrologEngine {
    * @param solveInfo result of goal
    * @return
    */
-  def isSuccess(solveInfo: SolveInfo): Set[Term] = {
+  private def isSuccess(solveInfo: SolveInfo): Set[Term] = {
     if (solveInfo isSuccess) {
       Set(solveInfo getSolution)
     } else {
       Set()
     }
+  }
+
+  override def goal(predicate: Term): Set[Term] = {
+    val solveInfo: SolveInfo = engine.solve(predicate)
+    isSuccess(solveInfo)
   }
 
   override def hasOpenAlternatives: Boolean = engine.hasOpenAlternatives
@@ -61,22 +65,14 @@ class PrologGameEngine extends PrologEngine {
     })
     varList
   }
-
-  override def toInt(term: Term): scala.Int = {
-    term.toString toInt
-  }
-
-  override def toTerm(stringTerm: String): Term = engine toTerm stringTerm
-
 }
 
 /**
- * Object Prolog Struct
+ * Object Prolog Struct to execute the goals
  */
 object PrologStruct {
+
   def apply(rule: String, variable: Var): Struct = new Struct(rule, variable)
-
   def apply(rule: String, variable: Term*): Struct = new Struct(rule, variable toArray)
-
   def apply(rule: String, parameters: Array[Term]): Struct = new Struct(rule, parameters)
 }

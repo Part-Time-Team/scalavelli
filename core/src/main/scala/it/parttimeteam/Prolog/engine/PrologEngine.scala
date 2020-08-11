@@ -1,5 +1,6 @@
 package it.parttimeteam.Prolog.engine
 
+import java.io.InputStream
 import alice.tuprolog.{SolveInfo, Term}
 
 /**
@@ -37,21 +38,14 @@ trait PrologEngine {
    */
   def bindingVars(info: SolveInfo): List[Term]
 
-  /**
-   * Convert term to int
-   *
-   * @param term term to covert
-   * @return type int
-   */
-  def toInt(term: Term): Int
-
-  def toTerm(stringTerm: String): Term
 }
 
 /**
- * Object PrologEngine to initialize the class PrologGameEngine
+ * Object to initialize the class PrologGameEngine
  */
 object PrologEngine {
+
+  val theory: InputStream = getClass.getResourceAsStream("rules.prolog")
 
   def apply(): PrologGameEngine = new PrologGameEngine
 }
