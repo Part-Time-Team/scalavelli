@@ -1,8 +1,8 @@
 package it.parttimeteam.Prolog
 
 import java.io.InputStream
-
 import alice.tuprolog.{Term, Var}
+import it.parttimeteam.Prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
 import it.parttimeteam.{Card, Rank, Suit}
 
 import scala.annotation.tailrec
@@ -10,7 +10,7 @@ import scala.annotation.tailrec
 case class PrologGame() {
 
   private val theory: InputStream = getClass.getResourceAsStream("rules.prolog")
-  private val engine: PrologEngine = PrologEngine.loadTheory(theory)
+  private val engine: PrologGameEngine = PrologEngine() loadTheory(theory)
 
   /**
    * Predicate for the goals of the prolog
@@ -24,7 +24,6 @@ case class PrologGame() {
    */
   private val x: Var = new Var("X")
   private val y: Var = new Var("Y")
-  private val z: Var = new Var("Z")
 
   /**
    * Loading suit from predicate in prolog
@@ -70,8 +69,14 @@ case class PrologGame() {
    * @return number of cards for each player
    */
   def startHand(): Int = {
-    val startHand = engine goals PrologStruct(startHandPredicate, x)
+    val startHand : List[Term] = engine goals PrologStruct(startHandPredicate, x)
     engine toInt startHand.head
+  }
+
+  def length(): Int = {
+    val list : Term = engine toTerm "[(\"ciao\", \"ciao\")]"
+    val len : List[Term] = engine goals PrologStruct("lengthList", list, x)
+    engine toInt len.head
   }
 
 }
@@ -80,6 +85,6 @@ object PrologGame extends App {
 
   def apply(): PrologGame = new PrologGame()
 
-  //val game = new PrologGame()
-  //game.startHand()
+  val game = new PrologGame()
+  println(game.length())
 }
