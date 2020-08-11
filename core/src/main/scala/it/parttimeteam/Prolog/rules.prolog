@@ -29,14 +29,14 @@ lengthList([(_,_)|T],X) :- lengthList(T,N), X is N+1.
 % sameNumber(+List)
 sameNumber([(N,_)]).
 sameNumber([(N1,_), (N2,_) | T]) :-  integer(N1),  
-                           					 integer(N2),
-                           					 N1 == N2,
-                           					 sameNumber([(N2,_)| T]). 
+                           		     integer(N2),
+                           			 N1 == N2,
+                           			 sameNumber([(N2,_)| T]).
 
 % sameSuit(+List)
 sameSuit([(_,S)]).
 sameSuit([(_,S1), (_,S2) | T]) :- S1 == S2,
-                           			  sameSuit([(_,S2)| T]). 
+                           		  sameSuit([(_,S2)| T]).
 
 % sameElementList(+ListSuit, +Suit)
 sameElementList([], Suit).
@@ -56,17 +56,20 @@ differentSuit([(_, Suit) |T], ListSuit) :- sameElementList(ListSuit, Suit),
 % orderByValue(+List)
 orderByValue([(N,_)]).
 orderByValue([(N1,_), (N2,_) | T]) :- integer(N1),
-																			integer(N2),
-																			X is N1 + 1,
+									  integer(N2),
+									  X is N1 + 1,
                                       N2 == X, 
                                       orderByValue([(N2,_) | T]).
                              
-% validationQuarter(+Cards)	
-validationQuarter(L) :- lengthList(L, X), X >= 3, X =< 4,
+% validationQuarter(+Cards)
+	
+validationQuarter(L) :-
+                        lengthList(L, X), X >= 3, X =< 4,
                         sameNumber(L),
                         differentSuit(L).
 
-% validationSequence(+Cards)
+
+% validationSequence(+Cards)
 validationSequence(L) :- lengthList(L, X), X >= 3,
                          sameSuit(L),
                          orderByValue(L).
