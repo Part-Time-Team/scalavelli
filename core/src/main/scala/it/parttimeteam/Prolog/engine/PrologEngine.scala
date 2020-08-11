@@ -44,8 +44,6 @@ trait PrologEngine {
  * Object to initialize the class PrologGameEngine
  */
 object PrologEngine {
-
   val theory: InputStream = getClass.getResourceAsStream("rules.prolog")
-
-  def apply(): PrologGameEngine = new PrologGameEngine
+  def apply(): PrologGameEngine = new PrologGameEngine()
 }

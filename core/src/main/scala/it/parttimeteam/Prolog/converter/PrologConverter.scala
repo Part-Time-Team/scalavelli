@@ -33,13 +33,20 @@ trait PrologConverter {
   def toTerm(string: String): Term
 
   /**
-   * Convert a list of cards in a tuple list
+   * Convert string to term list
+   *
+   * @param string string to convert
+   * @return type term to return
+   */
+  def toTermList(string: String): Term
+
+  /**
+   * Convert a list of cards in a tuple list of string
    *
    * @param cards cards to convert
-   * @return list of tuple
+   * @return type string
    */
-  def toTupleList(cards : List[Card]) : List[(Int, String)]
-
+  def toTupleList(cards: List[Card]): String
 }
 
 /**

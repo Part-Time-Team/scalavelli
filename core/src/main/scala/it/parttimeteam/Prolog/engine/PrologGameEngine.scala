@@ -3,12 +3,13 @@ package it.parttimeteam.Prolog.engine
 import java.io.InputStream
 import alice.tuprolog._
 import it.parttimeteam.Prolog.engine.PrologEngine.theory
+
 import scala.language.postfixOps
 
 /**
  * Class to improve TuPrologQuality
  */
-class PrologGameEngine extends PrologEngine {
+class PrologGameEngine() extends PrologEngine {
 
   val engine: Prolog = new Prolog()
   loadTheory(theory)
