@@ -2,6 +2,7 @@ package it.parttimeteam.Prolog
 
 import java.io.InputStream
 import alice.tuprolog.{Prolog, SolveInfo, Struct, Term, Theory, Var}
+import scala.language.postfixOps
 
 /**
  * Helper facilities to improve TuProlog quality.
