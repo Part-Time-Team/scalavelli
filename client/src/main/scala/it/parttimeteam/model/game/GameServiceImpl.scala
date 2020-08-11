@@ -5,11 +5,12 @@ import it.parttimeteam.entities.GamePlayerState
 import it.parttimeteam.model.startup.GameMatchInformations
 
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
-                      private val onGameUpdates: GameUpdate => Unit) extends GameService {
+                      private val lobbyServiceListener: GameServiceListener) extends GameService {
 
 
   private val remoteMatchGameRef = gameInformation.gameRef
   private val playerId = gameInformation.playerId
+
   private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(new MatchServerResponseListener {
     override def onGameStateUpdated(gameState: GamePlayerState): Unit = ???
 
@@ -20,5 +21,12 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   }
 
+
+}
+
+/**
+ * Used to notify about GameService events
+ */
+trait GameServiceListener {
 
 }
