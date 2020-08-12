@@ -30,7 +30,7 @@ lengthList([(_,_)|T],X) :- lengthList(T,N), X is N+1.
 sameNumber([(N,_)]).
 sameNumber([(N1,_), (N2,_) | T]) :-  integer(N1),  
                            					 integer(N2),
-                           					 N1 == N2,
+                           					 N1 =:= N2,
                            					 sameNumber([(N2,_)| T]). 
 
 % sameSuit(+List)
@@ -51,16 +51,23 @@ differentSuit([(_, S1), (_, S2) |T]) :- S1 \== S2,
 % differentSuit(+List, +Suit)                                                               
 differentSuit([(_, Suit) |T], ListSuit) :- sameElementList(ListSuit, Suit), 
                                            append(ListSuit, [Suit], NewListSuit),
-                                           differentSuit(T, NewListSuit).     
+                                           differentSuit(T, NewListSuit). 
+
+% endSequence(+Cards)
+endSequence([(N,_)]).
+endSequence([(N1,_), (N2,_) | T]):- ( N1 =:= 13, N2 =:= 14 -> lengthList(T, S), S =:= 0
+																		  ; endSequence([(N2,_) | T])
+																		).
 
 % orderByValue(+List)
 orderByValue([(N,_)]).
 orderByValue([(N1,_), (N2,_) | T]) :- integer(N1),
 																			integer(N2),
 																			X is N1 + 1,
-                                      N2 == X, 
+                                      N2 =:= X, 
+                                      endSequence([(N1,_), (N2,_) | T]),
                                       orderByValue([(N2,_) | T]).
-                             
+                            
 % validationQuarter(+Cards)	
 validationQuarter(L) :- lengthList(L, X), X >= 3, X =< 4,
                         sameNumber(L),
@@ -69,11 +76,11 @@ validationQuarter(L) :- lengthList(L, X), X >= 3, X =< 4,
 % validationSequence(+Cards)
 validationSequence(L) :- lengthList(L, X), X >= 3, X =< 14,
                          sameSuit(L),
-                         orderByValue(L).
-
-
+                         orderByValue(L).                      
+																						 
 % casi particolari:
+
+% --> asso dopo il K DEVE VALERE 14!!
 % --> validazione matta (le matte ci sono?)
-% --> validzione scala dopo K,A. Verificare dopo implementazione in scala
 
 
