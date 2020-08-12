@@ -10,17 +10,32 @@ class PrologGameConverter extends PrologConverter {
 
   val prolog: Prolog = new Prolog()
 
+  /**
+   * Check last element in a list
+   */
+  val lastElement: (Int, List[(Int, String)]) => String = (i, list) => if (i != list.size - 1) "," else ""
+
+  /**
+   * Convert tuple-list in string
+   */
+  val convertList: List[(Int, String)] => String = list => {
+    var stringList = ""
+    for (i <- list.indices) {
+      stringList += list(i) + lastElement(i, list)
+    }
+    "[" + stringList + "]"
+  }
+
   override def toInt(term: Term): Int = term.toString.toInt
 
   override def toTerm(stringTerm: String): Term = prolog toTerm stringTerm
 
-  override def toTermList(list: String): Term = prolog toTerm "[" + list + "]"
+  override def toTermList(tupleList: List[(Int, String)]): Term = prolog toTerm convertList(tupleList)
 
   override def toStringAndReplace(term: Term): String = term.toString.replace("'", "")
 
-  override def toTupleList(cards: List[Card]): String = {
-
-    val tupleList : List[String] = for (card <- cards) yield (card.rank.value, card.suit.name).toString()
-    tupleList head //TODO continuare da qui -- restituire tutto il contenuto della stringa
+  override def cardsConvert(cards: List[Card]): Term = {
+    val tupleList: List[(Int, String)] = for (card <- cards) yield (card.rank.value, card.suit.name)
+    toTermList(tupleList)
   }
 }

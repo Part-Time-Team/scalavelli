@@ -17,9 +17,9 @@ trait PrologConverter {
   def toInt(term: Term): Int
 
   /**
-   * Convert string
+   * Convert string and replace
    *
-   * @param term term to convert and replace
+   * @param term term to convert
    * @return string to return
    */
   def toStringAndReplace(term: Term): String
@@ -28,25 +28,25 @@ trait PrologConverter {
    * Convert string to term
    *
    * @param string string to convert
-   * @return type term to return
+   * @return term to return
    */
   def toTerm(string: String): Term
 
   /**
-   * Convert string to term list
+   * Convert tuple-list to term
    *
-   * @param string string to convert
-   * @return type term to return
+   * @param tupleList tuple-list to convert
+   * @return term to return
    */
-  def toTermList(string: String): Term
+  def toTermList(tupleList: List[(Int, String)]): Term
 
   /**
-   * Convert a list of cards in a tuple list of string
+   * Convert a list of cards in a term
    *
    * @param cards cards to convert
-   * @return type string
+   * @return term to return
    */
-  def toTupleList(cards: List[Card]): String
+  def cardsConvert(cards: List[Card]): Term
 }
 
 /**

@@ -62,8 +62,8 @@ class PrologGame() {
    * @param cards cards to validate
    */
   def validateQuarter(cards: List[Card]): Unit = {
-    val tupleCards: String = conversion toTupleList cards
-    //val validate: List[Term] = engine goals PrologStruct(validationQuarter, conversion toTermList tupleCards, x)
+    val tupleCards: Term = conversion cardsConvert cards
+    val validate: Set[Term] = engine goal PrologStruct(validationQuarter, tupleCards, x)
   }
 }
 
