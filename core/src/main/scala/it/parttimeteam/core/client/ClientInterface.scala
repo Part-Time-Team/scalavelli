@@ -1,4 +1,4 @@
-package it.parttimeteam.client
+package it.parttimeteam.core.client
 
 import it.parttimeteam.{Card, CardCombination, Player}
 
