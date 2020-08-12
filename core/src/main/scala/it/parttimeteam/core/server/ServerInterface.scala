@@ -1,13 +1,10 @@
-/*
- * Build pattern learned from: https://medium.com/@maximilianofelice/builder-pattern-in-scala-with-phantom-types-3e29a167e863
- */
-package it.parttimeteam.core.client
+package it.parttimeteam.core.server
 
 import it.parttimeteam.core.Interface
-import it.parttimeteam.core.player.Player
 import it.parttimeteam.{Card, CardCombination}
+import it.parttimeteam.core.player.Player
 
-case class ClientInterface(player: Player, enemies: List[Player]) extends Interface {
+case class ServerInterface(players: List[Player]) extends Interface {
   /**
    * Add cards to the current player hand.
    *

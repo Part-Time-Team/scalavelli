@@ -1,4 +1,6 @@
-package it.parttimeteam
+package it.parttimeteam.core.player
+
+import it.parttimeteam.{Card, Hand}
 
 /**
  * Represent of a generic player.
@@ -13,11 +15,21 @@ sealed class Player(
                      val hand: Hand) {
 }
 
+// TODO: Add player without cards
+  // TODO: This player must only have the number of cards in hands.
+// TODO: Add player with cards
+  // TODO: This player must have the list of cards in hands.
+
 object Player {
 
   case class EmptyPlayer() extends Player("Empty", "0", Hand())
 
-  def empty: Player = EmptyPlayer()
+  case class NoHandPlayer(override val name: String,
+                          override val id: String) extends Player(name, id, Hand())
+
+  case class HandPlayer(override val name: String,
+                        override val id: String,
+                        override val hand: Hand) extends Player(name, id, hand)
 }
 
 /**

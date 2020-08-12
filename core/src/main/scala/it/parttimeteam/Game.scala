@@ -1,5 +1,7 @@
 package it.parttimeteam
 
+import it.parttimeteam.core.player.Player
+
 /**
  * Represent the game entity
  *

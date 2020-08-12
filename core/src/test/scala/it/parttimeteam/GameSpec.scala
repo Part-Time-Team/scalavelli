@@ -1,5 +1,7 @@
 package it.parttimeteam
 
+import it.parttimeteam.core.player
+import it.parttimeteam.core.player.ScalavelliPlayer
 import org.scalatest.funsuite.AnyFunSuite
 
 class GameSpec extends AnyFunSuite {
@@ -11,10 +13,10 @@ class GameSpec extends AnyFunSuite {
     val card3: Card = Card(Rank.King(), Suit.Diamonds())
     val card4: Card = Card(Rank.Queen(), Suit.Diamonds())
 
-    val player1: ScalavelliPlayer = ScalavelliPlayer("Lorenzo", "01", Hand(List(card1)))
-    val player2: ScalavelliPlayer = ScalavelliPlayer("Matteo", "02", Hand(List(card2)))
-    val player3: ScalavelliPlayer = ScalavelliPlayer("Daniele", "03", Hand(List(card3)))
-    val player4: ScalavelliPlayer = ScalavelliPlayer("Luca", "04", Hand(List(card4)))
+    val player1: ScalavelliPlayer = player.ScalavelliPlayer("Lorenzo", "01", Hand(List(card1)))
+    val player2: ScalavelliPlayer = player.ScalavelliPlayer("Matteo", "02", Hand(List(card2)))
+    val player3: ScalavelliPlayer = player.ScalavelliPlayer("Daniele", "03", Hand(List(card3)))
+    val player4: ScalavelliPlayer = player.ScalavelliPlayer("Luca", "04", Hand(List(card4)))
 
     val gameBoard : GameBoard = GameBoard(List())
     val game : Game = Game(List(player1, player2, player3, player4), null, 3,gameBoard)
