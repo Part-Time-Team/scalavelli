@@ -24,26 +24,19 @@ class PrologGameEngine() extends PrologEngine {
     engine.setTheory(new Theory(theory))
   }
 
-  /**
-   * Check if the result is successful
-   *
-   * @param solveInfo result of goal
-   * @return
-   */
-  private def isSuccess(solveInfo: SolveInfo): Set[Term] = {
-    if (solveInfo isSuccess) {
-      Set(solveInfo getSolution)
-    } else {
-      Set()
-    }
+  override def goal(predicate: Term): List[Term] = {
+    val info: SolveInfo = engine solve predicate
+    if (info isSuccess) bindingVars(info)
+    else List()
   }
 
-  override def goal(predicate: Term): Set[Term] = {
-    val solveInfo: SolveInfo = engine.solve(predicate)
-    isSuccess(solveInfo)
+  override def goal(predicate: String): List[Term] = {
+    val info: SolveInfo = engine solve predicate
+    if (info isSuccess) bindingVars(info)
+    else List()
   }
 
-  override def hasOpenAlternatives: Boolean = engine.hasOpenAlternatives
+  override def hasOpenAlternatives: Boolean = engine hasOpenAlternatives
 
   override def goals(goal: Term): List[Term] = {
 
@@ -51,7 +44,7 @@ class PrologGameEngine() extends PrologEngine {
     def _goals(info: SolveInfo)(solution: List[Term]): List[Term] = {
       if (info isSuccess) {
         val newSolutions = solution ++ bindingVars(info)
-        if (engine hasOpenAlternatives) _goals(engine.solveNext())(newSolutions) else newSolutions
+        if (engine hasOpenAlternatives) _goals(engine solveNext)(newSolutions) else newSolutions
       } else solution
     }
 

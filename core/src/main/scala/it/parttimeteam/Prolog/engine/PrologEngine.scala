@@ -11,10 +11,18 @@ trait PrologEngine {
   /**
    * Resolve a specific goal
    *
-   * @param predicate predicate to solve
+   * @param predicate predicate (Term) to solve
    * @return goal result
    */
-  def goal(predicate: Term): Set[Term]
+  def goal(predicate: Term): List[Term]
+
+  /**
+   * Resolve a specific goal
+   *
+   * @param predicate predicate (String) to solve
+   * @return goal result
+   */
+  def goal(predicate: String): List[Term]
 
   /**
    * Get all solution a specific goal
