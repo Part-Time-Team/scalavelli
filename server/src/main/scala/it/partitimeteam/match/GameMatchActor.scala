@@ -1,7 +1,10 @@
 package it.partitimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props, Stash}
-import it.parttimeteam.entities.{GamePlayer, GamePlayerState}
+import it.parttimeteam.Board
+import it.parttimeteam.core.collections.Hand
+import it.parttimeteam.entities.GamePlayer
+import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStarted, Ready}
 
 object GameMatchActor {
@@ -29,7 +32,7 @@ class GameMatchActor(numberOfPlayers: Int) extends Actor with ActorLogging with 
           val updatedReadyPlayers = playersReady :+ p
           if (updatedReadyPlayers.length == numberOfPlayers) {
             log.debug("All players ready")
-            this.broadcastMessageToPlayers(players)(GamePlayerState())
+            this.broadcastMessageToPlayers(players)(PlayerGameState(Board(), Hand(), Seq.empty))
             context.become(inGame())
           } else {
             context.become(initializing(players, updatedReadyPlayers))

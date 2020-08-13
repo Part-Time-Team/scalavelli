@@ -1,6 +1,6 @@
-package it.parttimeteam
+package it.parttimeteam.core.cards
 
-import it.parttimeteam.Rank.{Ace, Eight, Five, Four, Jack, King, Nine, Queen, Seven, Six, Ten, Three, Two}
+import it.parttimeteam.core.cards.Rank._
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
@@ -131,6 +131,12 @@ class RankPropSpec
   property("value2rank must return Rank at value input") {
     forAll(examples) { rank =>
       Rank value2rank rank.value should be(rank)
+    }
+  }
+
+  property("equals must return boolean values") {
+    forAll(examples) { rank =>
+      rank equals rank should be(true)
     }
   }
 

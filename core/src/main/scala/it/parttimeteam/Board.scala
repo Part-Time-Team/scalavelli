@@ -1,11 +1,13 @@
 package it.parttimeteam
 
+import it.parttimeteam.core.collections.CardCombination
+
 /**
  * Represent the game board
  *
  * @param combinationsList combinations of cards
  */
-case class GameBoard(combinationsList: List[CardCombination] = List()) {
+case class Board(combinationsList: List[CardCombination] = List()) {
 
   /**
    * Add new combination to game board
@@ -13,7 +15,9 @@ case class GameBoard(combinationsList: List[CardCombination] = List()) {
    * @param combinations combinations to add
    * @return updated game board
    */
-  def addCombination(combinations: CardCombination*): GameBoard = {
+  def addCombination(combinations: CardCombination*): Board = {
     this.copy(combinationsList = combinationsList ++ combinations)
   }
+
+  def pickCombination(combinations: CardCombination*): Board = ???
 }

@@ -1,6 +1,6 @@
-package it.parttimeteam
+package it.parttimeteam.core.player
 
-import it.parttimeteam.core.player.Player
+import it.parttimeteam.core.collections.Hand
 import org.scalatest.funspec.AnyFunSpec
 
 class PlayerSpec extends AnyFunSpec{

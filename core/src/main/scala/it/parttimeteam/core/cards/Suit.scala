@@ -1,4 +1,4 @@
-package it.parttimeteam
+package it.parttimeteam.core.cards
 
 /**
  * One of the 4 suit of the deck.

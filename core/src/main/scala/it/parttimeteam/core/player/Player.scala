@@ -1,6 +1,6 @@
 package it.parttimeteam.core.player
 
-import it.parttimeteam.Hand
+import it.parttimeteam.core.collections.Hand
 
 /**
  * Represent a generic player.

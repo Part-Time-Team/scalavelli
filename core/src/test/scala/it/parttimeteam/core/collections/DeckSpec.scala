@@ -1,4 +1,4 @@
-package it.parttimeteam
+package it.parttimeteam.core.collections
 
 import org.scalatest.funspec.AnyFunSpec
 

@@ -1,7 +1,8 @@
 package it.parttimeteam.messages
 
 import it.parttimeteam.PlayerAction
-import it.parttimeteam.entities.{GamePlayer, GamePlayerState}
+import it.parttimeteam.entities.GamePlayer
+import it.parttimeteam.gamestate.PlayerGameState
 
 object GameMessage {
 
@@ -30,7 +31,7 @@ object GameMessage {
    *
    * @param gameState the new game state
    */
-  case class GameStateUpdated(gameState: GamePlayerState)
+  case class GameStateUpdated(gameState: PlayerGameState)
 
 
   /**
