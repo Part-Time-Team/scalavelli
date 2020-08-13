@@ -1,23 +1,27 @@
+%color(+color)
+color("red").
+color("blue").
+
 % suit(+suit)
 suit("♥").
 suit("♦").
 suit("♣").
 suit("♠").
 
-% card(+Number, -Suit)
-card("A", Suit)     :- suit(Suit).
-card(2, Suit)       :- suit(Suit).
-card(3, Suit)       :- suit(Suit).
-card(4, Suit)       :- suit(Suit).
-card(5, Suit)       :- suit(Suit).
-card(6, Suit)       :- suit(Suit).
-card(7, Suit)       :- suit(Suit).
-card(8, Suit)       :- suit(Suit).
-card(9, Suit)       :- suit(Suit).
-card(0, Suit)       :- suit(Suit).
-card("J", Suit)     :- suit(Suit).
-card("Q", Suit)     :- suit(Suit).
-card("K", Suit)     :- suit(Suit).
+% card(+Number, -Suit, -color)
+card("A", Suit, Color)     :- suit(Suit), color(Color).
+card(2, Suit, Color)       :- suit(Suit), color(Color).
+card(3, Suit, Color)       :- suit(Suit), color(Color).
+card(4, Suit, Color)       :- suit(Suit), color(Color).
+card(5, Suit, Color)       :- suit(Suit), color(Color).
+card(6, Suit, Color)       :- suit(Suit), color(Color).
+card(7, Suit, Color)       :- suit(Suit), color(Color).
+card(8, Suit, Color)       :- suit(Suit), color(Color).
+card(9, Suit, Color)       :- suit(Suit), color(Color).
+card(0, Suit, Color)       :- suit(Suit), color(Color).
+card("J", Suit, Color)     :- suit(Suit), color(Color).
+card("Q", Suit, Color)     :- suit(Suit), color(Color).
+card("K", Suit, Color)     :- suit(Suit), color(Color).
 
 % startHand(+NumberCard)
 startHand(13).
@@ -77,3 +81,6 @@ validationSequence(L) :- lengthList(L, X), X >= 3, X =< 14,
                          sameSuit(L),
                          endSequence(L),
                          orderByValue(L).
+
+% modellazione del colore --> aspettare tento che crea l'entit� color
+% modellare l'asso con valore opzionale 1 o 14 a seconda della posizione che � in sequenza

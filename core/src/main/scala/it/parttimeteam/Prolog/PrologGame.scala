@@ -25,6 +25,7 @@ class PrologGame() {
    */
   private val x: Var = new Var("X")
   private val y: Var = new Var("Y")
+  private val z: Var = new Var("Z")
 
   /**
    * Loading deck
@@ -33,13 +34,13 @@ class PrologGame() {
    */
   def loadDeck(): List[Card] = {
 
-    val deckToLoad: Iterator[List[Term]] = engine goals PrologStruct(card, x, y) grouped 2
+    val deckToLoad: Iterator[List[Term]] = engine goals PrologStruct(card, x, y, z) grouped 3
 
     @tailrec
     def _loadDeck(deck: List[Card])(deckToLoad: List[List[Term]]): List[Card] = deckToLoad match {
 
-      case h :: t => _loadDeck(Card(Rank.string2rank(conversion toStringAndReplace h(1)),
-        Suit.string2suit(conversion toStringAndReplace h.head)) +: deck)(t)
+      case h :: t => _loadDeck(Card(Rank.string2rank(conversion toStringAndReplace h(2)),
+        Suit.string2suit(conversion toStringAndReplace h(1))) +: deck)(t)
       case _ => deck
     }
 
@@ -93,5 +94,6 @@ object PrologGame extends App {
   val card3: Card = Card(Rank.Ace(), Suit.Hearts())
   val card4: Card = Card(Rank.Ace(), Suit.Diamonds())
 
-  game.validateQuarter(List(card1, card2, card3, card4))
+  //game.validateQuarter(List(card1, card2, card3, card4))
+  println(game.loadDeck())
 }
