@@ -33,12 +33,13 @@ trait PrologConverter {
   def toTerm(string: String): Term
 
   /**
-   * Convert tuple-list to term
+   * Convert result of goal in boolean
    *
-   * @param tupleList tuple-list to convert
-   * @return term to return
+   * @param list result of goal
+   * @return true if the goal is successful, false otherwise
    */
-  def toTermList(tupleList: List[(Int, String)]): Term
+  def toBoolean(list: List[Term]): Boolean
+
 
   /**
    * Convert a list of cards in a term
@@ -46,7 +47,7 @@ trait PrologConverter {
    * @param cards cards to convert
    * @return term to return
    */
-  def cardsConvert(cards: List[Card]): Term
+  def cardsConvert(cards: List[Card]): String
 }
 
 /**
