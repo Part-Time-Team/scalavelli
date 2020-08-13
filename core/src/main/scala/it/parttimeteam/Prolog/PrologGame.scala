@@ -52,18 +52,30 @@ class PrologGame() {
    * @return number of cards
    */
   def startGameHand(): Int = {
-    val numberCards: Set[Term] = engine goal PrologStruct(startHand, x)
+    val numberCards: List[Term] = engine goal PrologStruct(startHand, x)
     conversion toInt numberCards.head
   }
 
   /**
-   * Validate tris o quarter
+   * Validate tris or quarter of
    *
    * @param cards cards to validate
+   * @return true if the goal is successful, false otherwise
    */
-  def validateQuarter(cards: List[Card]): Unit = {
-    val tupleCards: Term = conversion cardsConvert cards
-    val validate: Set[Term] = engine goal PrologStruct(validationQuarter, tupleCards, x)
+  def validateQuarter(cards: List[Card]): Boolean = {
+    val validate = engine goal validationQuarter + conversion.cardsConvert(cards)
+    conversion toBoolean validate
+  }
+
+  /**
+   * Validate sequence or scala of cards
+   *
+   * @param cards cards to validate
+   * @return true if the goal is successful, false otherwise
+   */
+  def validateSequence(cards: List[Card]): Boolean = {
+    val validate = engine goal validationSequence + conversion.cardsConvert(cards)
+    conversion toBoolean validate
   }
 }
 
@@ -77,9 +89,9 @@ object PrologGame extends App {
   val game = new PrologGame()
 
   val card1: Card = Card(Rank.Ace(), Suit.Clubs())
-  val card2: Card = Card(Rank.Four(), Suit.Spades())
-  val card3: Card = Card(Rank.King(), Suit.Diamonds())
-  val card4: Card = Card(Rank.Queen(), Suit.Diamonds())
+  val card2: Card = Card(Rank.Ace(), Suit.Spades())
+  val card3: Card = Card(Rank.Ace(), Suit.Hearts())
+  val card4: Card = Card(Rank.Ace(), Suit.Diamonds())
 
   game.validateQuarter(List(card1, card2, card3, card4))
 }
