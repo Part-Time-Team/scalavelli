@@ -38,7 +38,6 @@ class PrologGameConverter extends PrologConverter {
   override def toStringAndReplace(term: Term): String = term.toString.replace("'", "")
 
   override def cardsConvert(cards: List[Card]): String = {
-    val tupleList: List[(Int, String)] = for (card <- cards) yield (card.rank.value, card.suit.name)
-    convertList(tupleList)
+    convertList(for (card <- cards) yield (card.rank.value, card.suit.name))
   }
 }
