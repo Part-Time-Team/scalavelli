@@ -1,64 +1,57 @@
 package it.parttimeteam.core.player
 
-import it.parttimeteam.{Card, Hand}
+import it.parttimeteam.Hand
 
 /**
- * Represent of a generic player.
+ * Represent a generic player.
  *
  * @param name Name of the player.
  * @param id   Id of the player.
  * @param hand Hand of the player.
  */
-sealed class Player(
-                     val name: String,
-                     val id: String,
-                     val hand: Hand) {
-}
-
-// TODO: Add player without cards
-  // TODO: This player must only have the number of cards in hands.
-// TODO: Add player with cards
-  // TODO: This player must have the list of cards in hands.
-
-object Player {
-
-  case class EmptyPlayer() extends Player("Empty", "0", Hand())
-
-  case class NoHandPlayer(override val name: String,
-                          override val id: String) extends Player(name, id, Hand())
-
-  case class HandPlayer(override val name: String,
-                        override val id: String,
-                        override val hand: Hand) extends Player(name, id, hand)
-}
-
-/**
- * Player class
- *
- * @param name name of the player
- * @param id   id of the player
- * @param hand hand of the player
- */
-case class ScalavelliPlayer(override val name: String,
-                            override val id: String,
-                            override val hand: Hand) extends Player(name, id, hand) {
+sealed class Player(name: String,
+                    id: String,
+                    val hand: Hand) {
 
   /**
    * Get name of the player
    *
    * @return Player name
    */
-  def getName: String = f"Player name: $name"
+  def getName: String = this match {
+    case Player.EmptyPlayer() => "Empty player"
+    case _ => f"Name: $name"
+  }
 
   /**
-   * Get id of the player
-   *
-   * @return Id player
+   * Get Id of the player. This is a unique GUID identifier.
+   * @return GUID.
    */
-  def getId: String = f"Player id: $id"
-
-  def refreshHand(playerCards: List[Card], tableCards: List[Card]): Hand = {
-    val hand: Hand = Hand(playerCards, tableCards)
-    hand
+  def getId: String = this match {
+    case Player.EmptyPlayer() => "Empty player"
+    case _ => f"Id: $id"
   }
+
+  /**
+   * @inheritdoc
+   */
+  override def toString: String = this match {
+    case Player.EmptyPlayer() => "Empty player"
+    case _ => f"$getName $getId"
+  }
+}
+
+// TODO: Add player without cards
+// TODO: This player must only have the number of cards in hands.
+// TODO: Add player with cards
+// TODO: This player must have the list of cards in hands.
+
+object Player {
+
+  case class EmptyPlayer() extends Player("", "", Hand())
+
+  case class FullPlayer(name: String,
+                        id: String,
+                        override val hand: Hand) extends Player(name, id, hand)
+
 }
