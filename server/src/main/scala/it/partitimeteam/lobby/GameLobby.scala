@@ -30,7 +30,7 @@ case class GameLobby[T <: Player](numberOfPlayers: Int, override val players: Li
    * @inheritdoc
    */
   override def addPlayer(player: T): Lobby[T] =
-    GameLobby(numberOfPlayers, players appended player)
+    GameLobby(numberOfPlayers, players :+ player)
 
 
   /**

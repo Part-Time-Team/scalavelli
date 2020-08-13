@@ -2,6 +2,7 @@ package it.parttimeteam.`match`
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
+import com.typesafe.config.ConfigFactory
 import it.partitimeteam.`match`.GameMatchActor
 import it.parttimeteam.entities.{GamePlayer, GamePlayerState}
 import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStarted, Ready}
@@ -9,7 +10,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class GameMatchActorSpec extends TestKit(ActorSystem())
+class GameMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.load("test")))
   with ImplicitSender
   with AnyWordSpecLike
   with BeforeAndAfterAll
