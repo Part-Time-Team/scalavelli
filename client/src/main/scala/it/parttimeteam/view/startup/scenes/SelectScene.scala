@@ -48,4 +48,5 @@ class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) ext
   center.getChildren.addAll(title, btnPublicGame, btnPrivateGame, btnCreatePrivateGame)
 
   content = Seq(background, borderPane)
+
 }

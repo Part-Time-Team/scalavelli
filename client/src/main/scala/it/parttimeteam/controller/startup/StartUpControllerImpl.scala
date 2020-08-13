@@ -1,23 +1,76 @@
 package it.parttimeteam.controller.startup
 
+import akka.actor.ActorRef
+import it.parttimeteam.model._
+import it.parttimeteam.model.startup.{GameMatchInformations, StartupService, StartupServiceImpl}
+import it.parttimeteam.view._
 import it.parttimeteam.view.startup.MachiavelliStartUpPrimaryStage
-import it.parttimeteam.view.{CreatePrivateGameSubmitViewEvent, PrivateGameSubmitViewEvent, PublicGameSubmitViewEvent, ViewEvent}
 import scalafx.application.JFXApp
 
 class StartUpControllerImpl extends StartUpController {
   val startUpStage = MachiavelliStartUpPrimaryStage(this)
 
-  override def start(app: JFXApp): Unit = {
+  private val startUpService: StartupService = new StartupServiceImpl(notifyEvent)
+
+  var startGameFunction: ActorRef => Unit = _
+
+  override def start(app: JFXApp, startGame: ActorRef => Unit): Unit = {
     app.stage = startUpStage
+    startGameFunction = startGame
+    this.startUpService.connect("localhost", 5150)
   }
 
   override def onViewEvent(viewEvent: ViewEvent): Unit = viewEvent match {
-    case PublicGameSubmitViewEvent(username, playersNumber) => System.out.println(s"PublicGameSubmitViewEvent $username - $playersNumber")
-    case PrivateGameSubmitViewEvent(username, code) => System.out.println(s"PrivateGameSubmitViewEvent $username - $code")
+    case PublicGameSubmitViewEvent(username, playersNumber) => {
+      System.out.println(s"PublicGameSubmitViewEvent $username - $playersNumber")
+      this.startUpService.joinPublicLobby(username, playersNumber)
+    }
+    case PrivateGameSubmitViewEvent(username, code) => {
+      System.out.println(s"PrivateGameSubmitViewEvent $username - $code")
+      this.startUpService.joinPrivateLobby(username, code)
+    }
     case CreatePrivateGameSubmitViewEvent(username, playersNumber) => {
       System.out.println(s"CreatePrivateGameSubmitViewEvent $username - $playersNumber")
-      startUpStage.setReceivedCode("TEST CODE")
+      this.startUpService.createPrivateLobby(username, playersNumber)
+    }
+    case LeaveLobbyViewEvent(userId) => {
+      System.out.println(s"LeaveLobbyViewEvent $userId")
+      this.startUpService.leaveLobby()
     }
     case _ =>
+  }
+
+  def notifyEvent(gameStartUpEvent: GameStartUpEvent): Unit = gameStartUpEvent match {
+
+    case LobbyJoinedEvent => {
+      startUpStage.notifyLobbyJoined()
+    }
+
+    case PrivateLobbyCreatedEvent(privateCode: String) => {
+      startUpStage.notifyPrivateCode(privateCode)
+      startUpStage.notifyLobbyJoined()
+    }
+
+    case PrivateLobbyCreatedEvent(privateCode: String) => {
+      startUpStage.notifyPrivateCode(privateCode)
+      startUpStage.notifyLobbyJoined()
+    }
+
+    case LobbyJoinErrorEvent(result: String) => {
+      startUpStage.notifyError(result)
+    }
+
+    case GameStartedEvent(gameInfo: GameMatchInformations) => {
+      startGameFunction(gameInfo.gameRef)
+    }
+
+    case _ => {
+
+    }
+
+  }
+
+  override def end(): Unit = {
+
   }
 }
