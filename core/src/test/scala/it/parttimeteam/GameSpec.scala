@@ -1,6 +1,5 @@
 package it.parttimeteam
 
-import it.parttimeteam.core.player
 import it.parttimeteam.core.player.Player
 import org.scalatest.funsuite.AnyFunSuite
 
