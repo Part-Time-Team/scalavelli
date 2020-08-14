@@ -1,7 +1,7 @@
 package it.parttimeteam.model.game
 
 import akka.actor.{Actor, Props}
-import it.parttimeteam.entities.GamePlayerState
+import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{GameStateUpdated, PlayerTurn}
 
 object RemoteGameActor {
@@ -20,6 +20,6 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
 
 
 trait MatchServerResponseListener {
-  def onGameStateUpdated(gameState: GamePlayerState)
+  def onGameStateUpdated(gameState: PlayerGameState)
   def onTurnStarted()
 }

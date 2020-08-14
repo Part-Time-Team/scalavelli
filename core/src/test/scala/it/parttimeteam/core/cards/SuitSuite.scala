@@ -1,6 +1,6 @@
-package it.parttimeteam
+package it.parttimeteam.core.cards
 
-import it.parttimeteam.Suit.{Clubs, Diamonds, Hearts, Spades}
+import it.parttimeteam.core.cards.Suit._
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}

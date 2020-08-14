@@ -1,6 +1,7 @@
-package it.parttimeteam
+package it.parttimeteam.core.cards
 
-import it.parttimeteam.Rank.{Ace, King}
+import it.parttimeteam.core.cards
+import it.parttimeteam.core.cards.Rank.{Ace, King}
 
 /**
  * Card of deck.
@@ -53,7 +54,7 @@ object Card {
   } yield Card(rank, suit)
 
   implicit def string2card(s: String): Card = s match {
-    case pattern(rank, suit) => Card(rank, suit)
+    case pattern(rank, suit) => cards.Card(rank, suit)
     case _ => throw new RuntimeException(s"Invalid card string ${s}")
   }
 }

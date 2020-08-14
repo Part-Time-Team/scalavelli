@@ -1,4 +1,4 @@
-package it.parttimeteam
+package it.parttimeteam.core.cards
 
 /**
  * One of the 13 rank of cards in the deck.
@@ -26,7 +26,7 @@ sealed class Rank(val value: Int,
    * @return True if have the same value. false anywhere.
    */
   override def equals(obj: Any): Boolean = obj match {
-    case obj: Rank if value equals obj.value => true
+    case obj: Rank => this.value equals obj.value
     case _ => super.equals(obj)
   }
 }

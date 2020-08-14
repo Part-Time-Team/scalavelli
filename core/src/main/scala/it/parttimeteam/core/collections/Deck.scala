@@ -1,4 +1,6 @@
-package it.parttimeteam
+package it.parttimeteam.core.collections
+
+import it.parttimeteam.core.cards.Card
 
 import scala.util.Random
 
