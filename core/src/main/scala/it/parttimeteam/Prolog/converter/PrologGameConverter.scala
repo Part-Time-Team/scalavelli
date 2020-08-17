@@ -30,10 +30,7 @@ class PrologGameConverter extends PrologConverter {
 
   override def toTerm(stringTerm: String): Term = prolog toTerm stringTerm
 
-  override def toBoolean(list: List[Term]): Boolean = list match {
-    case l if l.nonEmpty => true
-    case _ => false
-  }
+  override def toBoolean(list: List[Term]): Boolean = list.nonEmpty
 
   override def toStringAndReplace(term: Term): String = term.toString.replace("'", "")
 
