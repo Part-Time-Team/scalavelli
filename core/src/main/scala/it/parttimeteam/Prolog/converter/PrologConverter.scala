@@ -25,14 +25,6 @@ trait PrologConverter {
   def toStringAndReplace(term: Term): String
 
   /**
-   * Convert string to term
-   *
-   * @param string string to convert
-   * @return term to return
-   */
-  def toTerm(string: String): Term
-
-  /**
    * Convert result of goal in boolean
    *
    * @param list result of goal

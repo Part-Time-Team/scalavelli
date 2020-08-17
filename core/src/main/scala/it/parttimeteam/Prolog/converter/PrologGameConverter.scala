@@ -28,8 +28,6 @@ class PrologGameConverter extends PrologConverter {
 
   override def toInt(term: Term): Int = term.toString.toInt
 
-  override def toTerm(stringTerm: String): Term = prolog toTerm stringTerm
-
   override def toBoolean(list: List[Term]): Boolean = list.nonEmpty
 
   override def toStringAndReplace(term: Term): String = term.toString.replace("'", "")
