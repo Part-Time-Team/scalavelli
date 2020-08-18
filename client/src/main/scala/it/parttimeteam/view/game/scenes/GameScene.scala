@@ -1,20 +1,92 @@
 package it.parttimeteam.view.game.scenes
 
+import it.parttimeteam.Board
+import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.collections.{CardCombination, Hand}
+import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.listeners.GameSceneListener
-import it.parttimeteam.view.utils.MachiavelliLabel
+import it.parttimeteam.view.utils.{CardUtils, MachiavelliButton, MachiavelliLabel}
+import scalafx.geometry.Insets
 import scalafx.scene.Scene
 import scalafx.scene.control._
-import scalafx.scene.layout.BorderPane
+import scalafx.scene.image.{Image, ImageView}
+import scalafx.scene.layout.{BorderPane, HBox, TilePane, VBox}
 
 class GameScene(val listener: GameSceneListener) extends Scene() {
+  stylesheets.add("/styles/gameStyle.css")
+  val board: Board = Board()
+  board.addCombination(CardCombination(List(new Card("A", "♠"), new Card("2", "♠"))))
+  board.addCombination(CardCombination(List(new Card("3", "♠"), new Card("4", "♠"))))
+  board.addCombination(CardCombination(List(new Card("5", "♠"), new Card("6", "♠"), new Card("7", "♠"))))
+
+  val hand: Hand = new Hand()
+  hand.addPlayerCards(new Card("1", "♥"),
+    new Card("2", "♥"),
+    new Card("3", "♥"),
+    new Card("4", "♥"),
+    new Card("5", "♥"),
+    new Card("6", "♥"),
+    new Card("7", "♥"))
+
+  val currState: PlayerGameState = new PlayerGameState(board, hand, null)
 
   val label: Label = MachiavelliLabel("Hello Game", ViewConfig.formLabelFontSize)
 
+  val bottom = new VBox()
+  val actionBar = new HBox()
+
+  val endTurnBtn = MachiavelliButton("Next", null)
+
+  actionBar.children.addAll(endTurnBtn)
+  bottom.children.addAll(actionBar)
+
+
+  val right = new VBox()
+  val state = new VBox()
+  val stateTitle = MachiavelliLabel("Time")
+  val stateMessage = MachiavelliLabel("03:00")
+
+  state.children.addAll(stateTitle, stateMessage)
+
+  val otherPlayers = new TilePane()
+  otherPlayers.setPrefColumns(2)
+
+  right.children.addAll(state, otherPlayers)
+
+  val tableCombinations = new VBox()
+  tableCombinations.spacing = 10d
+
+  val combinations: List[CardCombination] = currState.board.combinationsList
+
+  for (combination: CardCombination <- combinations){
+    val comb = new HBox()
+    comb.setPadding(Insets(10d))
+    comb.spacing = 10d
+    comb.getStyleClass.add("combination")
+
+    for (card : combination.cards){
+      val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
+      cardImage.prefWidth(50)
+      cardImage.preserveRatio = true
+      comb.children.add(cardImage)
+    }
+    val pickBtn = MachiavelliButton("Pick", null)
+    comb.children.add(pickBtn)
+
+    tableCombinations.children.add(comb)
+  }
+
+  val center = new ScrollPane()
+  center.setContent(tableCombinations)
+
+
   val borderPane: BorderPane = new BorderPane()
 
-  borderPane.center = label
+  borderPane.bottom = bottom
+  borderPane.right = right
+  borderPane.center = center
 
   root = borderPane
-
 }
+
