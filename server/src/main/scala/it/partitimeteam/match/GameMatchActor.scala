@@ -6,6 +6,7 @@ import it.parttimeteam.core.collections.Hand
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStarted, Ready}
+import it.parttimeteam.messages.LobbyMessages.MatchFound
 
 object GameMatchActor {
   def props(numberOfPlayers: Int): Props = Props(new GameMatchActor(numberOfPlayers))
@@ -18,7 +19,7 @@ class GameMatchActor(numberOfPlayers: Int) extends Actor with ActorLogging with 
   private def idle: Receive = {
     case GamePlayers(players) => {
       require(players.size == numberOfPlayers)
-      this.broadcastMessageToPlayers(players)(GameStarted)
+      this.broadcastMessageToPlayers(players)(MatchFound(self))
       context.become(initializing(players, Seq.empty))
       unstashAll()
     }
