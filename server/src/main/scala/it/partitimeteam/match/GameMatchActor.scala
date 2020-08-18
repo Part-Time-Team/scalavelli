@@ -5,7 +5,7 @@ import it.parttimeteam.GameState
 import it.parttimeteam.core.GameManager
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
-import it.parttimeteam.messages.GameMessage.{GamePlayers, PlayerActionMade, Ready}
+import it.parttimeteam.messages.GameMessage.{GamePlayers, PlayerActionMade, PlayerTurn, Ready}
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 
 object GameMatchActor {
@@ -61,20 +61,37 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
   private def initializeGame(): Unit = {
     val gameState = gameManager.create(players.map(_.id))
     this.broadcastGameStateToPlayers(gameState)
+    this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
     context.become(inTurn(gameState, getPlayerForCurrentTurn))
   }
 
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
-      //handle player action
+      //TODO handle player action
 
-      // update the state
+
+      // TODO update the state
+      val newState = gameState
+
 
       // notify the state
+      this.broadcastGameStateToPlayers(gameState)
 
-      // update the turn
+      // if game not ended
+      if (true) { // TODO check game ended
+        // update the turn
+        val nextPlayerId = this.turnManager.nextTurn
 
-      // notify the next player it's his turn
+        // notify the next player it's his turn
+        this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
+
+        //switch the actor behaviour
+        context.become(inTurn(newState, getPlayerForCurrentTurn))
+      } else {
+
+        // game ended
+
+      }
 
     }
   }
