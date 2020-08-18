@@ -1,6 +1,7 @@
 package it.parttimeteam.core.player
 
 import it.parttimeteam.core.collections.Hand
+import it.parttimeteam.core.player.Player.FullPlayer
 
 /**
  * Represent a generic player.
@@ -10,8 +11,8 @@ import it.parttimeteam.core.collections.Hand
  * @param hand Hand of the player.
  */
 sealed class Player(name: String,
-                    id: String,
-                    val hand: Hand) {
+                    val id: String,
+                    hand: Hand){
 
   /**
    * Get name of the player
@@ -25,19 +26,33 @@ sealed class Player(name: String,
 
   /**
    * Get Id of the player. This is a unique GUID identifier.
+   *
    * @return GUID.
    */
-  def getId: String = this match {
+  /* def getId: String = this match {
     case Player.EmptyPlayer() => "Empty player"
     case _ => f"Id: $id"
+  }*/
+
+  /**
+   * Set the hand of the player.
+   *
+   * @param newHand New hand.
+   * @return Player with a new hand.
+   */
+  def setHand(newHand: Hand): Player = this match {
+    case _: FullPlayer => Player.FullPlayer(name, id, newHand)
+    case _ => this
   }
+
+  def getHand: Hand = hand
 
   /**
    * @inheritdoc
    */
   override def toString: String = this match {
     case Player.EmptyPlayer() => "Empty player"
-    case _ => f"$getName $getId"
+    case _ => f"$getName $id"
   }
 }
 
@@ -51,7 +66,7 @@ object Player {
   case class EmptyPlayer() extends Player("", "", Hand())
 
   case class FullPlayer(name: String,
-                        id: String,
-                        override val hand: Hand) extends Player(name, id, hand)
+                        override val id: String,
+                        hand: Hand) extends Player(name, id, hand)
 
 }

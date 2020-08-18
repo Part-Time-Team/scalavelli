@@ -12,11 +12,11 @@ class PlayerSpec extends AnyFunSpec{
       }
 
       it("Have an id") {
-        assert(player.getId equals "Empty player")
+        assert(player.id equals "Empty player")
       }
 
       it("Have an hand") {
-        assert(player.hand equals Hand(List(), List()))
+        assert(player.getHand equals Hand(List(), List()))
       }
 
       it("Can be converted to a string"){
@@ -30,7 +30,7 @@ class PlayerSpec extends AnyFunSpec{
       }
 
       it("Have an id") {
-        assert(player.getId equals "Id: #001")
+        assert(player.id equals "Id: #001")
       }
 
       it("Have an hand") {

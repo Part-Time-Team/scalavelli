@@ -20,7 +20,7 @@ class GameStateSpec extends AnyFunSuite {
     val player3 = Player.FullPlayer("Daniele", "03", Hand(List(card3)))
     val player4 = Player.FullPlayer("Luca", "04", Hand(List(card4)))
 
-    val gameBoard : Board = Board(List())
+    val gameBoard : Board = Board.EmptyBoard()
     val game : GameState = GameState(List(player1, player2, player3, player4), Deck.shuffled, gameBoard)
 
     // TODO: Fix this test.
