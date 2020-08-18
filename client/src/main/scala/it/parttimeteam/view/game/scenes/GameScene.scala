@@ -15,13 +15,13 @@ import scalafx.scene.layout.{BorderPane, HBox, TilePane, VBox}
 
 class GameScene(val listener: GameSceneListener) extends Scene() {
   stylesheets.add("/styles/gameStyle.css")
-  val board: Board = Board()
-  board.addCombination(CardCombination(List(new Card("A", "♠"), new Card("2", "♠"))))
-  board.addCombination(CardCombination(List(new Card("3", "♠"), new Card("4", "♠"))))
-  board.addCombination(CardCombination(List(new Card("5", "♠"), new Card("6", "♠"), new Card("7", "♠"))))
+  var board: Board = Board()
+  board = board.addCombination(CardCombination(List(new Card("A", "♠"), new Card("2", "♠"))))
+  board = board.addCombination(CardCombination(List(new Card("3", "♠"), new Card("4", "♠"))))
+  board = board.addCombination(CardCombination(List(new Card("5", "♠"), new Card("6", "♠"), new Card("7", "♠"))))
 
-  val hand: Hand = new Hand()
-  hand.addPlayerCards(new Card("1", "♥"),
+  var hand: Hand = new Hand()
+  hand = hand.addPlayerCards(new Card("A", "♥"),
     new Card("2", "♥"),
     new Card("3", "♥"),
     new Card("4", "♥"),
@@ -29,18 +29,11 @@ class GameScene(val listener: GameSceneListener) extends Scene() {
     new Card("6", "♥"),
     new Card("7", "♥"))
 
+  hand = hand.addTableCards(new Card("K", "♥"))
+
   val currState: PlayerGameState = new PlayerGameState(board, hand, null)
 
   val label: Label = MachiavelliLabel("Hello Game", ViewConfig.formLabelFontSize)
-
-  val bottom = new VBox()
-  val actionBar = new HBox()
-
-  val endTurnBtn = MachiavelliButton("Next", null)
-
-  actionBar.children.addAll(endTurnBtn)
-  bottom.children.addAll(actionBar)
-
 
   val right = new VBox()
   val state = new VBox()
@@ -65,12 +58,13 @@ class GameScene(val listener: GameSceneListener) extends Scene() {
     comb.spacing = 10d
     comb.getStyleClass.add("combination")
 
-    for (card : combination.cards){
+    for (card <- combination.cards){
       val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
       cardImage.prefWidth(50)
       cardImage.preserveRatio = true
       comb.children.add(cardImage)
     }
+
     val pickBtn = MachiavelliButton("Pick", null)
     comb.children.add(pickBtn)
 
@@ -80,6 +74,39 @@ class GameScene(val listener: GameSceneListener) extends Scene() {
   val center = new ScrollPane()
   center.setContent(tableCombinations)
 
+  val bottom = new VBox()
+  val actionBar = new HBox()
+
+  val endTurnBtn = MachiavelliButton("Next", null)
+  val handPane = new ScrollPane()
+
+  actionBar.children.addAll(endTurnBtn)
+
+  val handCards = new HBox()
+  handCards.spacing = 5d
+  handCards.padding = Insets(5d)
+
+  for (card <- currState.hand.playerCards){
+    val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
+    cardImage.prefWidth(50)
+    cardImage.preserveRatio = true
+    handCards.children.add(cardImage)
+  }
+
+  for (card <- currState.hand.tableCards){
+    val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
+    cardImage.prefWidth(50)
+    cardImage.preserveRatio = true
+
+    val imageViewWrapper = new BorderPane()
+    imageViewWrapper.center = cardImage
+    imageViewWrapper.getStyleClass.add("tableCard")
+    handCards.children.add(cardImage)
+  }
+
+  handPane.setContent(handCards)
+
+  bottom.children.addAll(actionBar, handPane)
 
   val borderPane: BorderPane = new BorderPane()
 
