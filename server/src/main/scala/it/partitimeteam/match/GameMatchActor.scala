@@ -2,21 +2,20 @@ package it.partitimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props, Stash}
 import it.parttimeteam.GameState
-import it.parttimeteam.core.{GameManager, GameManagerImpl}
+import it.parttimeteam.core.GameManager
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage.{GamePlayers, PlayerActionMade, Ready}
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 
 object GameMatchActor {
-  def props(numberOfPlayers: Int): Props = Props(new GameMatchActor(numberOfPlayers))
+  def props(numberOfPlayers: Int, gameManager: GameManager): Props = Props(new GameMatchActor(numberOfPlayers, gameManager: GameManager))
 }
 
-class GameMatchActor(numberOfPlayers: Int) extends Actor with ActorLogging with Stash {
+class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager) extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
 
-  private val gameManager: GameManager = new GameManagerImpl()
   private var players: Seq[GamePlayer] = _
   private var turnManager: TurnManager = _
 
@@ -91,6 +90,9 @@ class GameMatchActor(numberOfPlayers: Int) extends Actor with ActorLogging with 
    * @param gameState the global game state
    */
   private def broadcastGameStateToPlayers(gameState: GameState) {
+    println(this.players.toString())
+
+    println(gameState.toString)
     this.players.foreach(player => {
       player.actorRef ! PlayerGameState(
         gameState.board,
