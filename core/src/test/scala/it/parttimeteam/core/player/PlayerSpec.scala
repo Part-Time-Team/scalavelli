@@ -30,7 +30,7 @@ class PlayerSpec extends AnyFunSpec{
       }
 
       it("Have an id") {
-        assert(player.getId equals "Id: #001")
+        assert(player.getId nonEmpty)
       }
 
       it("Have an hand") {
