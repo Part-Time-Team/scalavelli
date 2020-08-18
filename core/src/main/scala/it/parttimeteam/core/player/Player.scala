@@ -29,7 +29,7 @@ sealed class Player(name: String,
    */
   def getId: String = this match {
     case Player.EmptyPlayer() => "Empty player"
-    case _ => f"Id: $id"
+    case _ => id
   }
 
   /**
@@ -48,6 +48,7 @@ sealed class Player(name: String,
 
 object Player {
 
+  // a che serve?
   case class EmptyPlayer() extends Player("", "", Hand())
 
   case class FullPlayer(name: String,
