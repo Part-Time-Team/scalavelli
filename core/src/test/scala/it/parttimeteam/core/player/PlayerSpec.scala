@@ -3,34 +3,34 @@ package it.parttimeteam.core.player
 import it.parttimeteam.core.collections.Hand
 import org.scalatest.funspec.AnyFunSpec
 
-class PlayerSpec extends AnyFunSpec{
+class PlayerSpec extends AnyFunSpec {
   describe("A player") {
-    describe("Made empty"){
+    describe("Made empty") {
       val player = Player.EmptyPlayer()
       it("Have a name") {
         assert(player.getName equals "Empty player")
       }
 
       it("Have an id") {
-        assert(player.id equals "Empty player")
+        assert(player.id equals "")
       }
 
       it("Have an hand") {
         assert(player.getHand equals Hand(List(), List()))
       }
 
-      it("Can be converted to a string"){
+      it("Can be converted to a string") {
         assert(player.toString() equals "Empty player")
       }
     }
-    describe("Made full"){
+    describe("Made full") {
       val player = Player.FullPlayer("Lorenzo", "#001", Hand(List(), List()))
       it("Have a name") {
         assert(player.getName equals "Name: Lorenzo")
       }
 
       it("Have an id") {
-        assert(player.id equals "Id: #001")
+        assert(player.id equals "#001")
       }
 
       it("Have an hand") {

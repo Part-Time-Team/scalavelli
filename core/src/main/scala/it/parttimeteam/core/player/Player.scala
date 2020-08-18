@@ -12,7 +12,7 @@ import it.parttimeteam.core.player.Player.FullPlayer
  */
 sealed class Player(name: String,
                     val id: String,
-                    hand: Hand){
+                    hand: Hand) {
 
   /**
    * Get name of the player
@@ -69,4 +69,9 @@ object Player {
                         override val id: String,
                         hand: Hand) extends Player(name, id, hand)
 
+  def create(id: String): Player =
+    if (id equals "")
+      EmptyPlayer()
+    else
+      FullPlayer("", id, Hand())
 }

@@ -18,7 +18,9 @@ sealed class Board(combinations: List[CardCombination]) {
    * @param combinations Combinations to pick up.
    * @return
    */
-  def pickCombination(combinations: CardCombination*): Board = ???
+  def pickCombination(combinations: CardCombination*): Board = {
+    Board(combinations filterNot (p => p equals combinations) toList)
+  }
 }
 
 object Board {
@@ -35,4 +37,5 @@ object Board {
    */
   case class BoardFilled(combinations: List[CardCombination]) extends Board(combinations)
 
+  def apply(combinations: List[CardCombination]): Board = new Board(combinations)
 }
