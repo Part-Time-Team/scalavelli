@@ -14,12 +14,6 @@ object GameMessage {
   case class GamePlayers(players: Seq[GamePlayer])
 
   /**
-   * Message sent to the clients to notify the match start
-   *
-   */
-  case object GameStarted
-
-  /**
    * Client response to the game start message
    *
    * @param playerId id of the player

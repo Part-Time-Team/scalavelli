@@ -5,7 +5,7 @@ import it.parttimeteam.Board
 import it.parttimeteam.core.collections.Hand
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStarted, Ready}
+import it.parttimeteam.messages.GameMessage.{GamePlayers, Ready}
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 
 object GameMatchActor {

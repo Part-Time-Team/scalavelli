@@ -6,7 +6,8 @@ import com.typesafe.config.ConfigFactory
 import it.partitimeteam.`match`.GameMatchActor
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStarted, Ready}
+import it.parttimeteam.messages.GameMessage.{GamePlayers, Ready}
+import it.parttimeteam.messages.LobbyMessages.MatchFound
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -29,9 +30,9 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       val player2 = TestProbe()
 
       gameActor ! GamePlayers(Seq(GamePlayer("id1", "player1", player1.ref), GamePlayer("id2", "player2", player2.ref)))
-      player1.expectMsg(GameStarted)
+      player1.expectMsgType[MatchFound]
       player1.send(gameActor, Ready("id1"))
-      player2.expectMsg(GameStarted)
+      player2.expectMsgType[MatchFound]
       player2.send(gameActor, Ready("id2"))
 
       player1.expectMsgType[PlayerGameState]
