@@ -1,13 +1,12 @@
 package it.partitimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props, Stash}
-import it.parttimeteam.core.collections.Hand
+import it.parttimeteam.GameState
 import it.parttimeteam.core.{GameManager, GameManagerImpl}
 import it.parttimeteam.entities.GamePlayer
-import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.messages.GameMessage.{GamePlayers, Ready}
+import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
+import it.parttimeteam.messages.GameMessage.{GamePlayers, PlayerActionMade, Ready}
 import it.parttimeteam.messages.LobbyMessages.MatchFound
-import it.parttimeteam.{Board, GameState}
 
 object GameMatchActor {
   def props(numberOfPlayers: Int): Props = Props(new GameMatchActor(numberOfPlayers))
@@ -19,10 +18,12 @@ class GameMatchActor(numberOfPlayers: Int) extends Actor with ActorLogging with 
 
   private val gameManager: GameManager = new GameManagerImpl()
   private var players: Seq[GamePlayer] = _
+  private var turnManager: TurnManager = _
 
   private def idle: Receive = {
     case GamePlayers(players) => {
       this.players = players
+      this.turnManager = TurnManager(players.map(_.id))
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
       context.become(initializing(Seq.empty))
@@ -60,12 +61,23 @@ class GameMatchActor(numberOfPlayers: Int) extends Actor with ActorLogging with 
    */
   private def initializeGame(): Unit = {
     val gameState = gameManager.create(players.map(_.id))
-    context.become(inGame(gameState, TurnManager(players.map(_.id))))
     this.broadcastGameStateToPlayers(gameState)
+    context.become(inTurn(gameState, getPlayerForCurrentTurn))
   }
 
-  private def inGame(gameState: GameState, turnManager: TurnManager): Receive = {
-    case _ =>
+  private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
+    case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
+      //handle player action
+
+      // update the state
+
+      // notify the state
+
+      // update the turn
+
+      // notify the next player it's his turn
+
+    }
   }
 
 
@@ -79,7 +91,21 @@ class GameMatchActor(numberOfPlayers: Int) extends Actor with ActorLogging with 
    * @param gameState the global game state
    */
   private def broadcastGameStateToPlayers(gameState: GameState) {
-    this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))
+    this.players.foreach(player => {
+      player.actorRef ! PlayerGameState(
+        gameState.board,
+        gameState.players.find(_.getId == player.id).get.hand,
+        gameState.players.filter(_.getId != player.id).map(p => Opponent(p.getName, p.hand.playerCards.size))
+      )
+
+    })
+    //this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))
   }
+
+  private def getPlayerForCurrentTurn: GamePlayer =
+    this.players.find(_.id == turnManager.playerInTurnId).get
+
+
+  // TODO receive function for disconnection and error events
 
 }
