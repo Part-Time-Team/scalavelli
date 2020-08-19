@@ -13,7 +13,7 @@ import it.parttimeteam.core.player.Player.PlayerId
  */
 case class GameState(deck: Deck, board: Board, players: Seq[Player]) {
   // TODO: Implement utilities functions.
-  def getP(id: PlayerId): Option[Player] = players.find(p => p.id equals id)
+  def getPlayer(id: PlayerId): Option[Player] = players.find(p => p.id equals id)
 
   def updatePlayer(player: Player): GameState =
     this.copy(players = players.map(p => if (p.id equals player.id) player else p))
