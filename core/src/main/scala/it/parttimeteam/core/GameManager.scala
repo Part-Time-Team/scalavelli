@@ -3,6 +3,7 @@ package it.parttimeteam.core
 import it.parttimeteam.{Board, GameState}
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections._
+import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player._
 
 trait GameManager {

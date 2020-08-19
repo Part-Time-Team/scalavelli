@@ -68,7 +68,3 @@ private class HistoryImpl[T](private val values: Seq[T] = List.empty, private va
   }
 
 }
-
-object Seq {
-
-}

@@ -1,7 +1,8 @@
 package it.parttimeteam
 
 import it.parttimeteam.core.collections.Deck
-import it.parttimeteam.core.player.Player.{Player, PlayerId}
+import it.parttimeteam.core.player.Player
+import it.parttimeteam.core.player.Player.PlayerId
 
 /**
  * Current game state.

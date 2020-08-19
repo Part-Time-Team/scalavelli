@@ -3,6 +3,7 @@ package it.partitimeteam.lobby
 import akka.actor.{Actor, ActorRef, Props}
 import it.partitimeteam.`match`.GameMatchActor
 import it.partitimeteam.common.IdGenerator
+import it.parttimeteam.core.GameManagerImpl
 import it.parttimeteam.entities
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.messages.GameMessage.GamePlayers
@@ -75,7 +76,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
   }
 
   private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
-    val gameActor = context.actorOf(GameMatchActor.props(lobbyType.numberOfPlayers))
+    val gameActor = context.actorOf(GameMatchActor.props(lobbyType.numberOfPlayers, new GameManagerImpl()))
     gameActor ! GamePlayers(players)
   }
 
