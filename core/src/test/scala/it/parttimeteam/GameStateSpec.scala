@@ -8,10 +8,10 @@ import org.scalatest.funspec.AnyFunSpec
 class GameStateSpec extends AnyFunSpec {
 
   describe("A GameState") {
-    val card1 = Card.string2card("A♥")
-    val card2 = Card.string2card("4♦")
-    val card3 = Card.string2card("K♣")
-    val card4 = Card.string2card("Q♠")
+    val card1 = Card.string2card("A♥R")
+    val card2 = Card.string2card("4♦B")
+    val card3 = Card.string2card("K♣B")
+    val card4 = Card.string2card("Q♠R")
 
     var player1 = Player("Lorenzo", "1", Hand(List(card1)))
     val player2 = Player("Matteo", "2", Hand(List(card2)))
