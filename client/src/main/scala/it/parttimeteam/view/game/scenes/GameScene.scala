@@ -1,37 +1,27 @@
 package it.parttimeteam.view.game.scenes
 
-import it.parttimeteam.Board
-import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{CardCombination, Hand}
+import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.listeners.GameSceneListener
 import it.parttimeteam.view.utils.{CardUtils, MachiavelliButton, MachiavelliLabel}
-import scalafx.geometry.Insets
+import javafx.scene.layout.StackPane
+import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
 import scalafx.scene.control._
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, HBox, TilePane, VBox}
 
-class GameScene(val listener: GameSceneListener) extends Scene() {
+/**
+  * Allow to participate to create a private game by inserting the number of players.
+  * Obtains a private code to share to invite other players.
+  **/
+trait GameScene extends Scene {
+  def setState(state: PlayerGameState): Unit
+}
+
+class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
   stylesheets.add("/styles/gameStyle.css")
-  var board: Board = Board()
-  board = board.addCombination(CardCombination(List(new Card("A", "♠"), new Card("2", "♠"))))
-  board = board.addCombination(CardCombination(List(new Card("3", "♠"), new Card("4", "♠"))))
-  board = board.addCombination(CardCombination(List(new Card("5", "♠"), new Card("6", "♠"), new Card("7", "♠"))))
-
-  var hand: Hand = new Hand()
-  hand = hand.addPlayerCards(new Card("A", "♥"),
-    new Card("2", "♥"),
-    new Card("3", "♥"),
-    new Card("4", "♥"),
-    new Card("5", "♥"),
-    new Card("6", "♥"),
-    new Card("7", "♥"))
-
-  hand = hand.addTableCards(new Card("K", "♥"))
-
-  val currState: PlayerGameState = new PlayerGameState(board, hand, null)
 
   val label: Label = MachiavelliLabel("Hello Game", ViewConfig.formLabelFontSize)
 
@@ -50,27 +40,6 @@ class GameScene(val listener: GameSceneListener) extends Scene() {
   val tableCombinations = new VBox()
   tableCombinations.spacing = 10d
 
-  val combinations: List[CardCombination] = currState.board.combinationsList
-
-  for (combination: CardCombination <- combinations){
-    val comb = new HBox()
-    comb.setPadding(Insets(10d))
-    comb.spacing = 10d
-    comb.getStyleClass.add("combination")
-
-    for (card <- combination.cards){
-      val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
-      cardImage.prefWidth(50)
-      cardImage.preserveRatio = true
-      comb.children.add(cardImage)
-    }
-
-    val pickBtn = MachiavelliButton("Pick", null)
-    comb.children.add(pickBtn)
-
-    tableCombinations.children.add(comb)
-  }
-
   val center = new ScrollPane()
   center.setContent(tableCombinations)
 
@@ -86,24 +55,6 @@ class GameScene(val listener: GameSceneListener) extends Scene() {
   handCards.spacing = 5d
   handCards.padding = Insets(5d)
 
-  for (card <- currState.hand.playerCards){
-    val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
-    cardImage.prefWidth(50)
-    cardImage.preserveRatio = true
-    handCards.children.add(cardImage)
-  }
-
-  for (card <- currState.hand.tableCards){
-    val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
-    cardImage.prefWidth(50)
-    cardImage.preserveRatio = true
-
-    val imageViewWrapper = new BorderPane()
-    imageViewWrapper.center = cardImage
-    imageViewWrapper.getStyleClass.add("tableCard")
-    handCards.children.add(cardImage)
-  }
-
   handPane.setContent(handCards)
 
   bottom.children.addAll(actionBar, handPane)
@@ -115,5 +66,46 @@ class GameScene(val listener: GameSceneListener) extends Scene() {
   borderPane.center = center
 
   root = borderPane
+
+  override def setState(state: PlayerGameState): Unit = {
+    for (card <- state.hand.playerCards){
+      val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
+      cardImage.fitWidth = 80d
+      cardImage.preserveRatio = true
+      handCards.children.add(cardImage)
+    }
+
+    for (card <- state.hand.tableCards){
+      val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
+      cardImage.fitWidth = 80d
+      cardImage.preserveRatio = true
+
+      val prohibitionIcon: ImageView = new ImageView(new Image("images/prohibitionSign.png", 15, 15, false, false))
+      prohibitionIcon.margin = Insets(5d)
+      val imageViewWrapper = new StackPane()
+      imageViewWrapper.setAlignment(Pos.TopRight)
+      imageViewWrapper.getChildren.addAll(cardImage, prohibitionIcon)
+      handCards.children.add(imageViewWrapper)
+    }
+
+    for (combination: CardCombination <- state.board.combinationsList){
+      val comb = new HBox()
+      comb.setPadding(Insets(10d))
+      comb.spacing = 10d
+      comb.getStyleClass.add("combination")
+
+      for (card <- combination.cards){
+        val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
+        cardImage.fitWidth = 80d
+        cardImage.preserveRatio = true
+        comb.children.add(cardImage)
+      }
+
+      val pickBtn = MachiavelliButton("Pick", null)
+      comb.children.add(pickBtn)
+
+      tableCombinations.children.add(comb)
+    }
+  }
 }
 

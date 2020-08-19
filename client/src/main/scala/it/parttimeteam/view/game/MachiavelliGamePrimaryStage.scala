@@ -1,8 +1,9 @@
 package it.parttimeteam.view.game
 
+import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.listeners.GameSceneListener
-import it.parttimeteam.view.game.scenes.GameScene
+import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
 import it.parttimeteam.view.utils.MachiavelliAlert
 import scalafx.application.JFXApp
 import scalafx.scene.control.Alert
@@ -12,6 +13,7 @@ import scalafx.scene.control.Alert.AlertType
   * Stage for game scenes
   */
 trait MachiavelliGamePrimaryStage extends JFXApp.PrimaryStage with GameStageListener {
+  def updateState(mockState: PlayerGameState): Unit
 
   def notifyError(result:String): Unit
 }
@@ -30,7 +32,7 @@ class MachiavelliGamePrimaryStageImpl(gameListener: GameStageListener, windowWid
 
   val stage: MachiavelliGamePrimaryStage = this
 
-  val gameScene: GameScene = new GameScene(this)
+  val gameScene: GameScene = new GameSceneImpl(this)
 
   scene = gameScene
 
@@ -43,6 +45,9 @@ class MachiavelliGamePrimaryStageImpl(gameListener: GameStageListener, windowWid
     alert.showAndWait()
   }
 
+  override def updateState(state: PlayerGameState): Unit = {
+    gameScene.setState(state)
+  }
 }
 
 /**
