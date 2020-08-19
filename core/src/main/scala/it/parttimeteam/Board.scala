@@ -15,7 +15,7 @@ case class Board(combinations: List[CardCombination]) {
    * @return Updated game board.
    */
   def addCombination(others: CardCombination*): Board =
-    Board.BoardFilled(combinations ++ others)
+    Board(combinations ++ others)
 
   /**
    * Pick a combination from the actual game board.
@@ -33,10 +33,7 @@ object Board {
   /**
    * Represent an empty game board.
    */
-  def EmptyBoard() = Board(List.empty)
-
-
-  def BoardFilled(combinations: List[CardCombination]) = Board(combinations)
+  def empty() = Board(List.empty)
 
 
 }

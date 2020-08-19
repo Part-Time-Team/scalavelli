@@ -57,7 +57,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
      */
     override def create(players: Seq[PlayerId]): GameState = GameState(
       Deck(List()),
-      Board.EmptyBoard(),
+      Board.empty,
       players.map(id => Player(id, id, Hand(List(), List()))))
 
     /**
