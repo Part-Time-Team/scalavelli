@@ -2,6 +2,7 @@ package it.parttimeteam.controller.game
 
 import akka.actor.ActorRef
 import it.parttimeteam.controller.BaseController
+import it.parttimeteam.view.ViewEvent
 import it.parttimeteam.view.game.GameStageListener
 import scalafx.application.JFXApp
 
@@ -10,5 +11,7 @@ import scalafx.application.JFXApp
   */
 trait GameController extends BaseController with GameStageListener {
   def start(app: JFXApp, gameRef: ActorRef): Unit
+
+  def onViewEvent(viewEvent: ViewEvent): Unit
 
 }

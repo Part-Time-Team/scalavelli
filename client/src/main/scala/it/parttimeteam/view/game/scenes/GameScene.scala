@@ -1,7 +1,7 @@
 package it.parttimeteam.view.game.scenes
 
 import it.parttimeteam.core.collections.CardCombination
-import it.parttimeteam.gamestate.PlayerGameState
+import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.listeners.GameSceneListener
 import it.parttimeteam.view.utils.{CardUtils, MachiavelliButton, MachiavelliLabel}
@@ -11,12 +11,17 @@ import scalafx.scene.Scene
 import scalafx.scene.control._
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, HBox, TilePane, VBox}
+import scalafx.stage.{Modality, Stage, StageStyle}
 
 /**
   * Allow to participate to create a private game by inserting the number of players.
   * Obtains a private code to share to invite other players.
   **/
 trait GameScene extends Scene {
+  def matchReady(): Unit
+
+  def showInitMatch(): Unit
+
   def setState(state: PlayerGameState): Unit
 }
 
@@ -24,18 +29,37 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
   stylesheets.add("/styles/gameStyle.css")
 
   val label: Label = MachiavelliLabel("Hello Game", ViewConfig.formLabelFontSize)
+  val initMatchDialog = new Stage()
 
-  val right = new VBox()
-  val state = new VBox()
+
+  val right = new BorderPane()
+  val rightTop = new VBox()
+  val rightBottom = new VBox()
+
+  right.top = rightTop
+  right.bottom = rightBottom
+
+  val stateContainer = new VBox()
   val stateTitle = MachiavelliLabel("Time")
   val stateMessage = MachiavelliLabel("03:00")
 
-  state.children.addAll(stateTitle, stateMessage)
+  stateContainer.children.addAll(stateTitle, stateMessage)
 
-  val otherPlayers = new TilePane()
-  otherPlayers.setPrefColumns(2)
+  val otherPlayersContainer = new TilePane()
+  otherPlayersContainer.setPrefColumns(2)
 
-  right.children.addAll(state, otherPlayers)
+  val btnContainer = new VBox()
+  val historyBtnContainer = new HBox()
+
+  val undoBtn = MachiavelliButton("Undo", null)
+  val redoBtn = MachiavelliButton("Redo", null)
+  val nextBtn = MachiavelliButton("Next", null)
+
+  historyBtnContainer.children.addAll(undoBtn, redoBtn)
+  btnContainer.children.addAll(nextBtn, historyBtnContainer)
+
+  rightTop.children.addAll(stateContainer, otherPlayersContainer)
+  rightBottom.children.add(btnContainer)
 
   val tableCombinations = new VBox()
   tableCombinations.spacing = 10d
@@ -46,10 +70,11 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
   val bottom = new VBox()
   val actionBar = new HBox()
 
-  val endTurnBtn = MachiavelliButton("Next", null)
+  val combinationBtn = MachiavelliButton("Make Combination", null)
+
   val handPane = new ScrollPane()
 
-  actionBar.children.addAll(endTurnBtn)
+  actionBar.children.add(combinationBtn)
 
   val handCards = new HBox()
   handCards.spacing = 5d
@@ -106,6 +131,47 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
 
       tableCombinations.children.add(comb)
     }
+
+    for (player: Opponent <- state.otherPlayers){
+      val nameLabel = MachiavelliLabel(player.name)
+      val cardsNumberLabel = MachiavelliLabel(player.cardsNumber.toString)
+
+      val playerInfoContainer: VBox = new VBox()
+      val cardInfoContainer: HBox = new HBox()
+
+      val cardImage: ImageView = new ImageView(new Image("images/cards/backBlue.png"))
+      cardImage.fitWidth = 20d
+      cardImage.preserveRatio = true
+
+      cardInfoContainer.children.addAll(cardImage, cardsNumberLabel)
+      playerInfoContainer.children.addAll(nameLabel, cardInfoContainer)
+
+      otherPlayersContainer.children.add(playerInfoContainer)
+    }
+  }
+
+  override def showInitMatch(): Unit = {
+
+    val progressBar: ProgressBar = new ProgressBar()
+    initMatchDialog.initStyle(StageStyle.Decorated)
+    initMatchDialog.setResizable(false)
+    initMatchDialog.initModality(Modality.ApplicationModal)
+    initMatchDialog.setTitle("LOADING")
+    val label = new Label("Please wait...")
+
+    val hb = new HBox()
+    hb.setSpacing(5)
+    hb.setAlignment(Pos.Center)
+    hb.getChildren.addAll(label, progressBar)
+    val scene = new Scene(hb)
+    initMatchDialog.setScene(scene)
+
+    initMatchDialog.show()
+    initMatchDialog.setAlwaysOnTop(true)
+  }
+
+  override def matchReady(): Unit = {
+    initMatchDialog.hide()
   }
 }
 

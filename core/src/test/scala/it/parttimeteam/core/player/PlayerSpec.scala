@@ -3,6 +3,8 @@ package it.parttimeteam.core.player
 import it.parttimeteam.core.collections.Hand
 import org.scalatest.funspec.AnyFunSpec
 
+import scala.language.postfixOps
+
 class PlayerSpec extends AnyFunSpec{
   describe("A player") {
     describe("Made empty"){

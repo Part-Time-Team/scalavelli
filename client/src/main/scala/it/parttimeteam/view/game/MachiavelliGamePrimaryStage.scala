@@ -13,18 +13,22 @@ import scalafx.scene.control.Alert.AlertType
   * Stage for game scenes
   */
 trait MachiavelliGamePrimaryStage extends JFXApp.PrimaryStage with GameStageListener {
+  def matchReady(): Unit
+
+  def initMatch(): Unit
+
   def updateState(mockState: PlayerGameState): Unit
 
-  def notifyError(result:String): Unit
+  def notifyError(result: String): Unit
 }
 
 /**
   * Stage for game scenes
   *
-  * @param gameListener        enables to call actions exposed by controller
-  * @param windowWidth         the width of app window
-  * @param windowHeight        the height of app window  */
-class MachiavelliGamePrimaryStageImpl(gameListener: GameStageListener, windowWidth: Double, windowHeight: Double) extends MachiavelliGamePrimaryStage{
+  * @param gameListener enables to call actions exposed by controller
+  * @param windowWidth  the width of app window
+  * @param windowHeight the height of app window  */
+class MachiavelliGamePrimaryStageImpl(gameListener: GameStageListener, windowWidth: Double, windowHeight: Double) extends MachiavelliGamePrimaryStage {
   title = "Machiavelli"
   resizable = true
   width = windowWidth
@@ -40,13 +44,21 @@ class MachiavelliGamePrimaryStageImpl(gameListener: GameStageListener, windowWid
     System.exit(0)
   }
 
-  override def notifyError(result:String): Unit = {
+  override def notifyError(result: String): Unit = {
     val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
     alert.showAndWait()
   }
 
   override def updateState(state: PlayerGameState): Unit = {
     gameScene.setState(state)
+  }
+
+  override def initMatch(): Unit = {
+    gameScene.showInitMatch()
+  }
+
+  override def matchReady(): Unit = {
+    gameScene.matchReady()
   }
 }
 
