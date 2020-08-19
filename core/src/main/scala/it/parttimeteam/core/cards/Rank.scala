@@ -10,7 +10,7 @@ package it.parttimeteam.core.cards
 sealed class Rank(val value: Int,
                   val name: String,
                   val shortName: String)
-    extends Comparable[Rank] {
+    extends Comparable[Rank] with Serializable {
 
   /**
    * Base compare between two ranks.
