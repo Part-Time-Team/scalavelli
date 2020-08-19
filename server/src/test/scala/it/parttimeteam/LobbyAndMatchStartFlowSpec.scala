@@ -4,8 +4,7 @@ import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
 import it.partitimeteam.lobby.LobbyManagerActor
-import it.parttimeteam.messages.GameMessage.GameStarted
-import it.parttimeteam.messages.LobbyMessages.{Connect, Connected, JoinPublicLobby, UserAddedToLobby}
+import it.parttimeteam.messages.LobbyMessages._
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -39,8 +38,8 @@ class LobbyAndMatchStartFlowSpec extends TestKit(ActorSystem("test", ConfigFacto
               client1.expectMsgType[UserAddedToLobby]
               client2.expectMsgType[UserAddedToLobby]
 
-              client1.expectMsgClass(GameStarted.getClass)
-              client2.expectMsgClass(GameStarted.getClass)
+              client1.expectMsgType[MatchFound]
+              client2.expectMsgType[MatchFound]
 
             }
           }
