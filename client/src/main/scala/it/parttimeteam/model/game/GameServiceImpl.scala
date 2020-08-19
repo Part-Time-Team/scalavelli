@@ -19,7 +19,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }))
 
   override def playerReady(): Unit = {
-    remoteMatchGameRef ! Ready(playerId)
+    remoteMatchGameRef ! Ready(playerId, gameClientActorRef)
   }
 
   override def notifyUserAction(action: UserGameAction): Unit = {
