@@ -2,6 +2,7 @@ package it.parttimeteam.model.game
 
 import it.parttimeteam.ActorSystemManager
 import it.parttimeteam.gamestate.PlayerGameState
+import it.parttimeteam.messages.GameMessage.Ready
 import it.parttimeteam.model.startup.GameMatchInformations
 
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
@@ -12,10 +13,14 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   private val playerId = gameInformation.playerId
 
   private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(new MatchServerResponseListener {
-    override def onGameStateUpdated(gameState: PlayerGameState): Unit = ???
+    override def onGameStateUpdated(gameState: PlayerGameState): Unit = GameServiceImpl.this.lobbyServiceListener.onGameStateUpdated(gameState)
 
     override def onTurnStarted(): Unit = ???
   }))
+
+  override def playerReady(): Unit = {
+    remoteMatchGameRef ! Ready(playerId)
+  }
 
   override def notifyUserAction(action: UserGameAction): Unit = {
 
@@ -28,5 +33,5 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
  * Used to notify about GameService events
  */
 trait GameServiceListener {
-
+  def onGameStateUpdated(state: PlayerGameState)
 }
