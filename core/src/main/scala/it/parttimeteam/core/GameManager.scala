@@ -2,10 +2,11 @@ package it.parttimeteam.core
 
 import it.parttimeteam.{Board, GameState}
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{CardCombination, Deck, Hand}
+import it.parttimeteam.core.collections._
+import it.parttimeteam.core.player.Player
+import it.parttimeteam.core.player.Player._
 
 trait GameManager {
-  type Id = String
 
   /**
    * Create a new game state from players ids.
@@ -13,7 +14,7 @@ trait GameManager {
    * @param players List of players ids.
    * @return New Game State.
    */
-  def create(players: Seq[Id]): GameState
+  def create(players: Seq[PlayerId]): GameState
 
   /**
    * Draw a card from the top of the deck.
@@ -65,12 +66,18 @@ class GameManagerImpl extends GameManager {
   /**
    * @inheritdoc
    */
-  override def create(players: Seq[Id]): GameState = ???
+  override def create(ids: Seq[PlayerId]): GameState = {
+    GameState(
+      Deck.shuffled,
+      Board.EmptyBoard(),
+      ids.map(i => Player("", i, Hand(Nil, Nil)))
+    )
+  }
 
   /**
    * @inheritdoc
    */
-  override def draw(deck: Deck): (Deck, Card) = ???
+  override def draw(deck: Deck): (Deck, Card) = deck.draw()
 
   /**
    * @inheritdoc
@@ -85,10 +92,25 @@ class GameManagerImpl extends GameManager {
   /**
    * @inheritdoc
    */
-  override def pickTableCards(hand: Hand, board: Board, cards: Card*): (Hand, Board) = ???
+  override def pickTableCards(
+                               hand: Hand,
+                               board: Board,
+                               cards: Card*):
+  (Hand, Board) = {
+    val b = board.pickCombination(CardCombination(cards.toList))
+    val nh = hand.addTableCards(cards)
+    (nh, b)
+  }
 
   /**
    * @inheritdoc
    */
-  override def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board) = ???
+  override def playCombination(
+                                hand: Hand,
+                                board: Board,
+                                combination: CardCombination):
+  (Hand, Board) = {
+    val b = board.addCombination(combination)
+    (hand, b)
+  }
 }

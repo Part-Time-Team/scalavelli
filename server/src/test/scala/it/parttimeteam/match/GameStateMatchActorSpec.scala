@@ -9,7 +9,7 @@ import it.parttimeteam.core.GameManager
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{CardCombination, Deck, Hand}
 import it.parttimeteam.core.player.Player
-import it.parttimeteam.core.player.Player.FullPlayer
+import it.parttimeteam.core.player.Player.PlayerId
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{GamePlayers, Ready}
@@ -56,10 +56,10 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
      * @param players List of players ids.
      * @return New Game State.
      */
-    override def create(players: Seq[Id]): GameState = GameState(
-      players.map(id => FullPlayer(id, id, Hand(List(), List()))).toList,
+    override def create(players: Seq[PlayerId]): GameState = GameState(
       Deck(List()),
-      Board())
+      Board.EmptyBoard(),
+      players.map(id => Player(id, id, Hand(List(), List()))))
 
     /**
      * Draw a card from the top of the deck.
@@ -108,7 +108,3 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
   }
 
 }
-
-
-
-
