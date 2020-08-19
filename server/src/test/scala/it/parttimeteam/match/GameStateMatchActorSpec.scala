@@ -37,9 +37,9 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
 
       gameActor ! GamePlayers(Seq(GamePlayer("id1", "player1", player1.ref), GamePlayer("id2", "player2", player2.ref)))
       player1.expectMsgType[MatchFound]
-      player1.send(gameActor, Ready("id1"))
+      player1.send(gameActor, Ready("id1", player1.ref))
       player2.expectMsgType[MatchFound]
-      player2.send(gameActor, Ready("id2"))
+      player2.send(gameActor, Ready("id2", player2.ref))
 
       player1.expectMsgType[PlayerGameState]
       player2.expectMsgType[PlayerGameState]

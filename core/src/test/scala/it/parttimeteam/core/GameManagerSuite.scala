@@ -107,7 +107,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         val c3 = Card.string2card("4♣")
         val comb = CardCombination(List(c1, c2, c3))
         var state = gameManager.create(ids)
-        val daniele = state getP "Daniele" get
+        val daniele = state getPlayer "Daniele" get
         val played = gameManager.playCombination(
           daniele.hand, state.board, comb)
         state = state.copy(board = played._2)
@@ -115,7 +115,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         state = state updatePlayer daniele
         val picked =
           gameManager.pickTableCards(
-            (state getP "Daniele" get).hand,
+            (state getPlayer "Daniele" get).hand,
             state.board,
             c1)
         assert(picked._1.tableCards contains c1)

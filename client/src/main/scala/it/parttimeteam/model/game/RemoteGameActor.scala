@@ -12,8 +12,8 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
 
   override def receive: Receive = {
 
-    case GameStateUpdated(gameState) =>
-    case PlayerTurn =>
+    case GameStateUpdated(gameState) => this.listener.onGameStateUpdated(gameState)
+    case PlayerTurn => this.listener.onTurnStarted()
 
   }
 }
@@ -21,5 +21,6 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
 
 trait MatchServerResponseListener {
   def onGameStateUpdated(gameState: PlayerGameState)
+
   def onTurnStarted()
 }
