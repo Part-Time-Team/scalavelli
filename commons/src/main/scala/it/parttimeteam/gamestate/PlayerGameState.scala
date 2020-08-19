@@ -2,7 +2,7 @@ package it.parttimeteam.gamestate
 
 import it.parttimeteam.Board
 import it.parttimeteam.core.collections.Hand
-import it.parttimeteam.core.player.Player
+import it.parttimeteam.core.player.Player.Player
 
 /**
  * State used by the client side of the game,
