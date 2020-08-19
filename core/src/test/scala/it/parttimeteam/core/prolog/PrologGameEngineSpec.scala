@@ -1,7 +1,7 @@
-package it.parttimeteam.Prolog
+package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Prolog, Var}
-import it.parttimeteam.Prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
+import it.parttimeteam.core.prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
 import org.scalatest.funsuite.AnyFunSuite
 
 class PrologGameEngineSpec extends AnyFunSuite {

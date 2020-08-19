@@ -1,7 +1,7 @@
-package it.parttimeteam.Prolog.converter
+package it.parttimeteam.prolog.converter
 
 import alice.tuprolog.Term
-import it.parttimeteam.Card
+import it.parttimeteam.core.cards.Card
 
 /**
  * Helper facilities to improve conversions results in prolog

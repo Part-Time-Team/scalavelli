@@ -1,9 +1,9 @@
-package it.parttimeteam.Prolog
+package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.Prolog.converter.{PrologConverter, PrologGameConverter}
-import it.parttimeteam.Prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
-import it.parttimeteam.{Card, Rank, Suit}
+import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
+import it.parttimeteam.core.prolog.converter.{PrologConverter, PrologGameConverter}
+import it.parttimeteam.core.prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
 
 import scala.annotation.tailrec
 
@@ -32,7 +32,7 @@ class PrologGame() {
    *
    * @return deck entity
    */
-  def loadDeck(): List[Card] = {
+  def loadDeck: List[Card] = {
 
     val deckToLoad: Iterator[List[Term]] = engine goals PrologStruct(card, x, y, z) grouped 3
 
@@ -40,7 +40,7 @@ class PrologGame() {
     def _loadDeck(deck: List[Card])(deckToLoad: List[List[Term]]): List[Card] = deckToLoad match {
 
       case h :: t => _loadDeck(Card(Rank.string2rank(conversion toStringAndReplace h(2)),
-        Suit.string2suit(conversion toStringAndReplace h(1))) +: deck)(t)
+        Suit.string2suit(conversion toStringAndReplace h(1)), Color.string2color(conversion toStringAndReplace h.head)) +: deck)(t)
       case _ => deck
     }
 
@@ -52,7 +52,7 @@ class PrologGame() {
    *
    * @return number of cards
    */
-  def startGameHand(): Int = {
+  def startGameHand: Int = {
     val numberCards: List[Term] = engine goal PrologStruct(startHand, x)
     conversion toInt numberCards.head
   }

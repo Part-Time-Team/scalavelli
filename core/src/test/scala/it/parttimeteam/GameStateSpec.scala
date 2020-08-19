@@ -1,7 +1,7 @@
 package it.parttimeteam
 
 import it.parttimeteam.core.cards
-import it.parttimeteam.core.cards.{Card, Rank, Suit}
+import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 import it.parttimeteam.core.collections.{Deck, Hand}
 import it.parttimeteam.core.player.Player
 import org.scalatest.funsuite.AnyFunSuite
@@ -10,10 +10,10 @@ class GameStateSpec extends AnyFunSuite {
 
   test("Get next Player") {
 
-    val card1: Card = cards.Card(Rank.Ace(), Suit.Clubs())
-    val card2: Card = cards.Card(Rank.Four(), Suit.Spades())
-    val card3: Card = cards.Card(Rank.King(), Suit.Diamonds())
-    val card4: Card = cards.Card(Rank.Queen(), Suit.Diamonds())
+    val card1: Card = cards.Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
+    val card2: Card = cards.Card(Rank.Four(), Suit.Spades(), Color.Red())
+    val card3: Card = cards.Card(Rank.King(), Suit.Diamonds(), Color.Red())
+    val card4: Card = cards.Card(Rank.Queen(), Suit.Diamonds(), Color.Blue())
 
     val player1 = Player.FullPlayer("Lorenzo", "01", Hand(List(card1)))
     val player2 = Player.FullPlayer("Matteo", "02", Hand(List(card2)))

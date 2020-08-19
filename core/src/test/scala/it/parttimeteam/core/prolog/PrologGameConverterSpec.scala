@@ -1,9 +1,9 @@
-package it.parttimeteam.Prolog
+package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Prolog, Term, Var}
-import it.parttimeteam.{Card, Rank, Suit}
-import it.parttimeteam.Prolog.converter.{PrologConverter, PrologGameConverter}
-import it.parttimeteam.Prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
+import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
+import it.parttimeteam.core.prolog.converter.{PrologConverter, PrologGameConverter}
+import it.parttimeteam.core.prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
 import org.scalatest.funsuite.AnyFunSuite
 
 class PrologGameConverterSpec extends AnyFunSuite {
@@ -21,9 +21,9 @@ class PrologGameConverterSpec extends AnyFunSuite {
 
   test("Convert list of cards to string") {
 
-    val card1: Card = Card(Rank.Ace(), Suit.Clubs())
-    val card2: Card = Card(Rank.Four(), Suit.Spades())
-    val card3: Card = Card(Rank.King(), Suit.Diamonds())
+    val card1: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Red())
+    val card2: Card = Card(Rank.Four(), Suit.Spades(), Color.Blue())
+    val card3: Card = Card(Rank.King(), Suit.Diamonds(), Color.Red())
 
     assert(gameConverter.cardsConvert(List(card1, card2, card3)) equals "([(1,Clubs),(4,Spades),(13,Diamonds)]).")
   }

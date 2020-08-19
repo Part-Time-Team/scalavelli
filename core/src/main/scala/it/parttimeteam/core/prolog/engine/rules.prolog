@@ -71,16 +71,18 @@ orderByValue([(N1,_), (N2,_) | T]) :- integer(N1),
                                       N2 =:= X, 
                                       orderByValue([(N2,_) | T]).
                             
-% validationQuarter(+Cards)	
-validationQuarter(L) :- lengthList(L, X), X >= 3, X =< 4,
+% validationQuarter(+Cards)
+	
+validationQuarter(L) :-
+ lengthList(L, X), X >= 3, X =< 4,
                         sameNumber(L),
                         differentSuit(L).
 
-% validationSequence(+Cards)
+
+% validationSequence(+Cards)
 validationSequence(L) :- lengthList(L, X), X >= 3, X =< 14,
                          sameSuit(L),
                          endSequence(L),
                          orderByValue(L).
 
-% modellazione del colore --> aspettare tento che crea l'entità color
-% modellare l'asso con valore opzionale 1 o 14 a seconda della posizione che è in sequenza
+% modellare l'asso con valore opzionale 1 o 14 a seconda della posizione che ï¿½ in sequenza

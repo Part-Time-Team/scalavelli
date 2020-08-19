@@ -1,7 +1,6 @@
-package it.parttimeteam.Prolog.engine
+package it.parttimeteam.prolog.engine
 
 import alice.tuprolog._
-import it.parttimeteam.Prolog.engine.PrologEngine.theory
 
 import scala.language.postfixOps
 

@@ -1,4 +1,4 @@
-package it.parttimeteam.Prolog.engine
+package it.parttimeteam.prolog.engine
 
 import java.io.InputStream
 import alice.tuprolog.{SolveInfo, Term}
