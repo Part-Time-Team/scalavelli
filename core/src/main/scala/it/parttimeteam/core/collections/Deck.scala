@@ -54,7 +54,7 @@ object Deck {
    *
    * @return List of cards.
    */
-  def empty: Deck = Deck(Nil)
+  def empty: Deck = Deck(List.empty)
 
   /**
    * Convert a list of cards into a deck entity.
