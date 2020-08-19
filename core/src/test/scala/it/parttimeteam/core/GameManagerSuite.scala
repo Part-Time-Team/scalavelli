@@ -40,7 +40,6 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         val emptyDeck = Deck.empty
         an[UnsupportedOperationException] should be thrownBy
           (gameManager draw emptyDeck)
-        pending
       }
     }
 
@@ -50,11 +49,11 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       stubManager.validateTurn _ when(Board(Nil), Hand(Nil, Nil)) returns true
 
       // If the board is filled with a combination and the hand is empty, return a valid turn
-      stubManager.validateTurn _ when(Board(List(CardCombination(Card.string2card("2♣") :: Nil))), Hand(Nil, Nil)) returns true
+      stubManager.validateTurn _ when(Board(List(CardCombination(Card.string2card("2♣R") :: Nil))), Hand(Nil, Nil)) returns true
       // TODO: Waiting for PROLOG part.
       it("With complex op") {
         // assert(stubManager.validateTurn(Board(Nil), Hand(Nil, Nil)) equals true)
-        // assert(stubManager.validateTurn(Board(List(CardCombination(Card.string2card("2♣") :: Nil))), Hand(Nil, Nil)) equals true)
+        // assert(stubManager.validateTurn(Board(List(CardCombination(Card.string2card("2♣R") :: Nil))), Hand(Nil, Nil)) equals true)
         pending
       }
     }
@@ -89,9 +88,9 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
 
     describe("Play a combination") {
       it("Play a valid comb") {
-        val c1 = Card.string2card("2♣")
-        val c2 = Card.string2card("3♣")
-        val c3 = Card.string2card("4♣")
+        val c1 = Card.string2card("2♣R")
+        val c2 = Card.string2card("3♣B")
+        val c3 = Card.string2card("4♣B")
         val comb = CardCombination(List(c1, c2, c3))
         val state = gameManager.create(ids)
         val played = gameManager.playCombination(Hand(), state.board, comb)
@@ -102,9 +101,9 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
 
     describe("Pick table cards") {
       it("Pick from table some cards") {
-        val c1 = Card.string2card("2♣")
-        val c2 = Card.string2card("3♣")
-        val c3 = Card.string2card("4♣")
+        val c1 = Card.string2card("2♣R")
+        val c2 = Card.string2card("3♣B")
+        val c3 = Card.string2card("4♣R")
         val comb = CardCombination(List(c1, c2, c3))
         var state = gameManager.create(ids)
         val daniele = state getPlayer "Daniele" get

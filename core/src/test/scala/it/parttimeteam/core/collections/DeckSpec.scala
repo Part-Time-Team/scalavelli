@@ -1,6 +1,6 @@
 package it.parttimeteam.core.collections
 
-import it.parttimeteam.core.cards.{Card, Rank, Suit}
+import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 import org.scalatest.funspec.AnyFunSpec
 
 class DeckSpec extends AnyFunSpec {
@@ -16,10 +16,10 @@ class DeckSpec extends AnyFunSpec {
       }
 
       it("Tostring must return a compatible string") {
-        val simpleDeck = Deck(Card.string2card(s"${Rank.Ace().shortName}${Suit.Clubs().shortName}") :: Nil)
+        val simpleDeck = Deck(Card.string2card(s"${Rank.Ace().shortName}${Suit.Clubs().shortName}${Color.Blue().shortName}") :: Nil)
         val str = simpleDeck.toString
         println(str)
-        assert(str equals "A♣")
+        assert(str equals "A♣B")
       }
     }
 
@@ -27,13 +27,13 @@ class DeckSpec extends AnyFunSpec {
       it("Must have less card than before") {
         val deck: Deck = Deck.sorted
         val before = deck.remaining
-        assert(before equals 52)
+        assert(before equals 104)
         val cardDrawn = deck.draw()
-        assert(cardDrawn._1.remaining equals 51)
-        assert(!(cardDrawn._2.name() equals ""))
+        assert(cardDrawn._1.remaining equals 103)
+        assert(!(cardDrawn._2.name equals ""))
       }
 
-      it("Must be empty if all cards are drawed") {
+      it("Must be empty if all cards are drawn") {
         var deckToEmpty = Deck.shuffled
         assert(!deckToEmpty.isEmpty)
         // For each card, draw a card.
