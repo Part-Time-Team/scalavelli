@@ -2,7 +2,12 @@ package it.parttimeteam
 
 import it.parttimeteam.core.collections.CardCombination
 
-sealed class Board(combinations: List[CardCombination]) {
+/**
+ * Represent the game board
+ *
+ * @param combinations combinations of cards
+ */
+case class Board(combinations: List[CardCombination]) {
   /**
    * Add new combination to game board.
    *
@@ -28,14 +33,10 @@ object Board {
   /**
    * Represent an empty game board.
    */
-  case class EmptyBoard() extends Board(List.empty)
+  def EmptyBoard() = Board(List.empty)
 
-  /**
-   * Represent the game board
-   *
-   * @param combinations combinations of cards
-   */
-  case class BoardFilled(combinations: List[CardCombination]) extends Board(combinations)
 
-  def apply(combinations: List[CardCombination]): Board = new Board(combinations)
+  def BoardFilled(combinations: List[CardCombination]) = Board(combinations)
+
+
 }
