@@ -4,16 +4,15 @@ import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
 import it.partitimeteam.`match`.GameMatchActor
-import it.parttimeteam.{Board, GameState}
 import it.parttimeteam.core.GameManager
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{CardCombination, Deck, Hand}
 import it.parttimeteam.core.player.Player
-import it.parttimeteam.core.player.Player.FullPlayer
+import it.parttimeteam.core.player.Player.PlayerId
 import it.parttimeteam.entities.GamePlayer
-import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.messages.GameMessage.{GamePlayers, Ready}
+import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStateUpdated, Ready}
 import it.parttimeteam.messages.LobbyMessages.MatchFound
+import it.parttimeteam.{Board, GameState}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -37,12 +36,12 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
 
       gameActor ! GamePlayers(Seq(GamePlayer("id1", "player1", player1.ref), GamePlayer("id2", "player2", player2.ref)))
       player1.expectMsgType[MatchFound]
-      player1.send(gameActor, Ready("id1"))
+      player1.send(gameActor, Ready("id1", player1.ref))
       player2.expectMsgType[MatchFound]
-      player2.send(gameActor, Ready("id2"))
+      player2.send(gameActor, Ready("id2", player2.ref))
 
-      player1.expectMsgType[PlayerGameState]
-      player2.expectMsgType[PlayerGameState]
+      player1.expectMsgType[GameStateUpdated]
+      player2.expectMsgType[GameStateUpdated]
 
     }
 
@@ -56,10 +55,10 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
      * @param players List of players ids.
      * @return New Game State.
      */
-    override def create(players: Seq[Id]): GameState = GameState(
-      players.map(id => FullPlayer(id, id, Hand(List(), List()))).toList,
+    override def create(players: Seq[PlayerId]): GameState = GameState(
       Deck(List()),
-      Board())
+      Board.EmptyBoard(),
+      players.map(id => Player(id, id, Hand(List(), List()))))
 
     /**
      * Draw a card from the top of the deck.
@@ -108,7 +107,3 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
   }
 
 }
-
-
-
-

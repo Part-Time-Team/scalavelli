@@ -5,19 +5,38 @@ import it.parttimeteam.core.collections.CardCombination
 /**
  * Represent the game board
  *
- * @param combinationsList combinations of cards
+ * @param combinations combinations of cards
  */
-case class Board(combinationsList: List[CardCombination] = List()) {
+case class Board(combinations: List[CardCombination]) {
+  /**
+   * Add new combination to game board.
+   *
+   * @param others Combinations to add.
+   * @return Updated game board.
+   */
+  def addCombination(others: CardCombination*): Board =
+    Board.BoardFilled(combinations ++ others)
 
   /**
-   * Add new combination to game board
+   * Pick a combination from the actual game board.
    *
-   * @param combinations combinations to add
-   * @return updated game board
+   * @param combinations Combinations to pick up.
+   * @return
    */
-  def addCombination(combinations: CardCombination*): Board = {
-    this.copy(combinationsList = combinationsList ++ combinations)
+  def pickCombination(combinations: CardCombination*): Board = {
+    Board(combinations filterNot (p => p equals combinations) toList)
   }
+}
 
-  def pickCombination(combinations: CardCombination*): Board = ???
+object Board {
+
+  /**
+   * Represent an empty game board.
+   */
+  def EmptyBoard() = Board(List.empty)
+
+
+  def BoardFilled(combinations: List[CardCombination]) = Board(combinations)
+
+
 }

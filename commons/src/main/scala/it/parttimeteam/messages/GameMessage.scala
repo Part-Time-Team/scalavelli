@@ -1,5 +1,6 @@
 package it.parttimeteam.messages
 
+import akka.actor.ActorRef
 import it.parttimeteam.PlayerAction
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.PlayerGameState
@@ -16,9 +17,10 @@ object GameMessage {
   /**
    * Client response to the game start message
    *
-   * @param playerId id of the player
+   * @param playerId           id of the player
+   * @param gameClientActorRef ref of the client actor responsible for the communication with the server during the game
    */
-  case class Ready(playerId: String)
+  case class Ready(playerId: String, gameClientActorRef: ActorRef)
 
   /**
    * Message sent by the server to notify clients of game updates

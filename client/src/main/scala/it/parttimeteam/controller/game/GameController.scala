@@ -1,17 +1,16 @@
 package it.parttimeteam.controller.game
 
-import akka.actor.ActorRef
 import it.parttimeteam.controller.BaseController
+import it.parttimeteam.model.startup.GameMatchInformations
 import it.parttimeteam.view.ViewEvent
 import it.parttimeteam.view.game.GameStageListener
 import scalafx.application.JFXApp
 
 /**
-  * Controller responsible of the main game
-  */
+ * Controller responsible of the main game
+ */
 trait GameController extends BaseController with GameStageListener {
-  def start(app: JFXApp, gameRef: ActorRef): Unit
+  def start(app: JFXApp, gameInfo: GameMatchInformations): Unit
 
   def onViewEvent(viewEvent: ViewEvent): Unit
-
 }

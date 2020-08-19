@@ -53,9 +53,24 @@ jobs:
         local_dir: public
         on:
           all_branches: true
+    - stage: Deploy to Github Releases
+      script: sbt clean compile package # Deploying artifacts need only compile.
+      deploy:
+        provider: releases
+        skip_cleanup: true
+        token: $GH_TOKEN
+        file_glob: true
+        file:
+          - client/target/scala-*/*SNAPSHOT.jar
+          - server/target/scala-*/*SNAPSHOT.jar
+        on:
+          branch: master
+          tags: true
 
 stages:
   - name: Run sbt with OpenJdk11
     if: type IN (pull_request, push)
   - name: Generate coverage and scaladoc
     if: type IN (pull_request, push) AND branch IN (master, dev)
+  - name: Deploy to Github Releases
+    if: type IN (push) AND branch IN (master)

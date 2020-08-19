@@ -1,26 +1,40 @@
 package it.parttimeteam.controller.game
-import akka.actor.ActorRef
+
 import it.parttimeteam.Board
-import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.cards.{Card, Color}
 import it.parttimeteam.core.collections.{CardCombination, Hand}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
-import it.parttimeteam.view._
+import it.parttimeteam.model.game.{GameService, GameServiceImpl, GameServiceListener}
+import it.parttimeteam.model.startup.GameMatchInformations
+import it.parttimeteam.view.{GameStartedViewEvent, ViewEvent}
 import it.parttimeteam.view.game.MachiavelliGamePrimaryStage
-import scalafx.application.JFXApp
+import scalafx.application.{JFXApp, Platform}
 
 class GameControllerImpl extends GameController {
   var gameStage: MachiavelliGamePrimaryStage = _
 
-  override def start(app: JFXApp, gameRef: ActorRef): Unit = {
-    gameStage = MachiavelliGamePrimaryStage(this)
+  private var gameService: GameService = _
 
-    app.stage = gameStage
+  override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
+    Platform.runLater({
+      val gameStage: MachiavelliGamePrimaryStage = MachiavelliGamePrimaryStage(this)
 
-    gameStage.initMatch()
+      gameStage.initMatch()
 
-    // TODO: Luca - Remove when server works
-    gameStage.matchReady()
-    gameStage.updateState(getMockState)
+      this.gameService = new GameServiceImpl(gameInfo, new GameServiceListener {
+        override def onGameStateUpdated(state: PlayerGameState): Unit = {
+          gameStage.matchReady()
+          gameStage.updateState(state)
+        }
+      })
+
+      app.stage = gameStage
+      this.gameService.playerReady()
+
+      // TODO: remove when server works
+      gameStage.matchReady()
+      gameStage.updateState(getMockState)
+    })
   }
 
   override def onViewEvent(viewEvent: ViewEvent): Unit = viewEvent match {
@@ -32,24 +46,29 @@ class GameControllerImpl extends GameController {
   }
 
   private def getMockState: PlayerGameState = {
-    var board: Board = Board()
-    board = board.addCombination(CardCombination(List(Card("A", "♠"), Card("2", "♠"))))
-    board = board.addCombination(CardCombination(List(Card("3", "♠"), Card("4", "♠"))))
-    board = board.addCombination(CardCombination(List(Card("5", "♠"), Card("6", "♠"), Card("7", "♠"))))
+    val board: Board = Board(
+      List(
+        CardCombination(List(Card("A", "♠", "B"), Card("2", "♠", "B"))),
+        CardCombination(List(Card("3", "♠", "B"), Card("4", "♠", "B"))),
+        CardCombination(List(Card("5", "♠", "B"), Card("6", "♠", "B"), Card("7", "♠", "B")))
+      )
+    )
 
     var hand: Hand = Hand()
-    hand = hand.addPlayerCards(
-      Card("A", "♥"),
-      Card("2", "♥"),
-      Card("3", "♥"),
-      Card("4", "♥"),
-      Card("5", "♥"),
-      Card("6", "♥"),
-      Card("7", "♥"))
+    hand = hand.addPlayerCards(Seq(
+      Card("A", "♥", "B"),
+      Card("2", "♥", "B"),
+      Card("3", "♥", "B"),
+      Card("4", "♥", "B"),
+      Card("5", "♥", "B"),
+      Card("6", "♥", "B"),
+      Card("7", "♥", "B")
+    ))
 
-    hand = hand.addTableCards(
-      Card("K", "♥"),
-      Card("Q", "♠"))
+    hand = hand.addTableCards(Seq(
+      Card("K", "♥", "B"),
+      Card("Q", "♠", "B")
+    ))
 
     val pippo: Seq[Opponent] = List(
       Opponent("Matteo", 5),

@@ -25,9 +25,7 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
    * @param cards cards to add
    * @return new Hand with the updated playerCards list
    */
-  def addPlayerCards(cards: Card*): Hand = {
-    this.copy(playerCards = playerCards ++ cards.toList)
-  }
+  def addPlayerCards(cards: Seq[Card]): Hand = this.copy(playerCards = playerCards ::: cards.toList)
 
   /**
    * Add cards to the list tablePlayer
@@ -35,10 +33,7 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
    * @param cards cards to add
    * @return new Hand the updated tableCards list
    */
-  def addTableCards(cards: Card*): Hand = {
-    this.copy(tableCards = tableCards ++ cards.toList)
-  }
-
+  def addTableCards(cards: Seq[Card]): Hand = this.copy(tableCards = tableCards ::: cards.toList)
 
   /**
    * Sort cards by value

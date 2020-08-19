@@ -1,6 +1,5 @@
 package it.parttimeteam.controller.startup
 
-import akka.actor.ActorRef
 import it.parttimeteam.model._
 import it.parttimeteam.model.startup.{GameMatchInformations, StartupService, StartupServiceImpl}
 import it.parttimeteam.view._
@@ -8,13 +7,12 @@ import it.parttimeteam.view.startup.MachiavelliStartUpPrimaryStage
 import scalafx.application.JFXApp
 
 class StartUpControllerImpl extends StartUpController {
-  val startUpStage = MachiavelliStartUpPrimaryStage(this)
 
+  private val startUpStage = MachiavelliStartUpPrimaryStage(this)
   private val startUpService: StartupService = new StartupServiceImpl(notifyEvent)
+  private var startGameFunction: GameMatchInformations => Unit = _
 
-  var startGameFunction: ActorRef => Unit = _
-
-  override def start(app: JFXApp, startGame: ActorRef => Unit): Unit = {
+  override def start(app: JFXApp, startGame: GameMatchInformations => Unit): Unit = {
     app.stage = startUpStage
     startGameFunction = startGame
     this.startUpService.connect("localhost", 5150)
@@ -61,7 +59,7 @@ class StartUpControllerImpl extends StartUpController {
     }
 
     case GameStartedEvent(gameInfo: GameMatchInformations) => {
-      startGameFunction(gameInfo.gameRef)
+      startGameFunction(gameInfo)
     }
 
     case _ => {

@@ -5,7 +5,8 @@ package it.parttimeteam.model.game
  */
 trait GameService {
 
-  def notifyUserAction(action: UserGameAction): Unit
+  def playerReady(): Unit
 
+  def notifyUserAction(action: UserGameAction): Unit
 
 }

@@ -20,11 +20,11 @@ object MachiavelliButton {
     btn
   }
 
-  def apply(text: String, onClick: () => Unit, iconPath: String): Button = {
+  def apply(text: String, onClick: () => Unit, iconPath: String, iconHeight: Double): Button = {
     val btn = this (text, onClick)
 
     val img = new ImageView(new Image(iconPath))
-    img.fitHeight = 15d
+    img.fitHeight = iconHeight
     img.preserveRatio = true
 
     btn.setGraphic(img)

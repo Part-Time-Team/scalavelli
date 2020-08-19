@@ -1,6 +1,7 @@
 package it.parttimeteam.core.collections
 
 import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.prolog.PrologGame
 
 import scala.util.Random
 
@@ -40,21 +41,21 @@ object Deck {
    *
    * @return List of cards.
    */
-  def sorted: Deck = Deck(Card.fullDeck)
+  def sorted: Deck = Deck(PrologGame().loadDeck)
 
   /**
    * Return a shuffled list of cards.
    *
    * @return List of cards.
    */
-  def shuffled: Deck = Deck(Random.shuffle(Card.fullDeck))
+  def shuffled: Deck = Deck(Random.shuffle(PrologGame().loadDeck))
 
   /**
    * Return an empty list of cards.
    *
    * @return List of cards.
    */
-  def empty: Deck = Deck(List[Card]())
+  def empty: Deck = Deck(List.empty)
 
   /**
    * Convert a list of cards into a deck entity.

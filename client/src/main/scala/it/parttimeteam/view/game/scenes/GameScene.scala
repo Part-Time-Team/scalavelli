@@ -43,8 +43,8 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
   historyBtnContainer.alignment = Pos.Center
   historyBtnContainer.spacing = 5d
 
-  val undoBtn = MachiavelliButton("Undo", undoClick, "images/undo.png")
-  val redoBtn = MachiavelliButton("Redo", redoClick, "images/redo.png")
+  val undoBtn = MachiavelliButton("Undo", undoClick, "images/undo.png", 15d)
+  val redoBtn = MachiavelliButton("Redo", redoClick, "images/redo.png", 15d)
   val nextBtn = MachiavelliButton("Next", nextTurnClick)
 
   nextBtn.prefWidth <== rightBottom.width
@@ -156,7 +156,7 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
       })
     }
 
-    state.board.combinationsList.zipWithIndex foreach {
+    state.board.combinations.zipWithIndex foreach {
       case (combination, index) => {
         val combinationContainer = new BorderPane()
 
@@ -242,7 +242,7 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
       cardWrapper.getStyleClass.remove("cardSelected")
     })
 
-    selectedCards = selectedCards.empty
+    selectedCards = List()
     System.out.println(s"Selected Cards ${selectedCards.toString()}")
   }
 
