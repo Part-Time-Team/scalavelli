@@ -13,7 +13,7 @@ class GameControllerImpl extends GameController {
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
       this.gameService = new GameServiceImpl(gameInfo, new GameServiceListener {
-        override def onGameStateUpdated(state: PlayerGameState): Unit = ???
+        override def onGameStateUpdated(state: PlayerGameState): Unit = {}
       })
       val gameStage: MachiavelliGamePrimaryStage = MachiavelliGamePrimaryStage(this)
       app.stage = gameStage

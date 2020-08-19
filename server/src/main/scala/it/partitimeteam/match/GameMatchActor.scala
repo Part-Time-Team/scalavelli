@@ -5,7 +5,7 @@ import it.parttimeteam.GameState
 import it.parttimeteam.core.GameManager
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
-import it.parttimeteam.messages.GameMessage.{GamePlayers, PlayerActionMade, PlayerTurn, Ready}
+import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStateUpdated, PlayerActionMade, PlayerTurn, Ready}
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 
 object GameMatchActor {
@@ -112,11 +112,11 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
 
     println(gameState.toString)
     this.players.foreach(player => {
-      player.actorRef ! PlayerGameState(
+      player.actorRef ! GameStateUpdated(PlayerGameState(
         gameState.board,
         gameState.players.find(_.id == player.id).get.hand,
         gameState.players.filter(_.id != player.id).map(p => Opponent(p.name, p.hand.playerCards.size))
-      )
+      ))
 
     })
     //this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))

@@ -15,7 +15,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(new MatchServerResponseListener {
     override def onGameStateUpdated(gameState: PlayerGameState): Unit = GameServiceImpl.this.lobbyServiceListener.onGameStateUpdated(gameState)
 
-    override def onTurnStarted(): Unit = ???
+    override def onTurnStarted(): Unit = {}
   }))
 
   override def playerReady(): Unit = {
