@@ -45,7 +45,7 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
 
   val undoBtn = MachiavelliButton("Undo", undoClick, "images/undo.png", 15d)
   val redoBtn = MachiavelliButton("Redo", redoClick, "images/redo.png", 15d)
-  val nextBtn = MachiavelliButton("Next", nextTurnClick)
+  val nextBtn = MachiavelliButton("Next", endTurnClick)
 
   nextBtn.prefWidth <== rightBottom.width
 
@@ -234,6 +234,7 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
 
   def makeCombinationClick(): Unit = {
     System.out.println("makeCombinationClick")
+    listener.makeCombination(selectedCards)
   }
 
   def clearSelectionClick(): Unit = {
@@ -248,18 +249,22 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
 
   def redoClick(): Unit = {
     System.out.println("redoClick")
+    listener.nextState()
   }
 
   def undoClick(): Unit = {
     System.out.println("undoClick")
+    listener.previousState()
   }
 
   def pickCombinationClick(combinationIndex: Int): Unit = {
     System.out.println(s"pickCombinationClick $combinationIndex")
+    listener.pickCombination(combinationIndex)
   }
 
-  def nextTurnClick(): Unit = {
+  def endTurnClick(): Unit = {
     System.out.println(s"nextTurnClick")
+    listener.endTurn()
   }
 
 }

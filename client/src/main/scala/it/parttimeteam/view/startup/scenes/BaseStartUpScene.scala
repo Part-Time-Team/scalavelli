@@ -1,5 +1,6 @@
 package it.parttimeteam.view.startup.scenes
 
+import scalafx.application.Platform
 import scalafx.scene.Scene
 import scalafx.scene.control.{Label, ProgressIndicator}
 
@@ -17,12 +18,16 @@ trait BaseStartUpScene extends Scene {
   }
 
   def showMessage(message: String): Unit = {
-    messageContainer.setText(message)
-    messageContainer.setVisible(true)
+    Platform.runLater({
+      messageContainer.setText(message)
+      messageContainer.setVisible(true)
+    })
   }
 
   def hideMessage(): Unit = {
-    messageContainer.setText("")
-    messageContainer.setVisible(false)
+    Platform.runLater({
+      messageContainer.setText("")
+      messageContainer.setVisible(false)
+    })
   }
 }

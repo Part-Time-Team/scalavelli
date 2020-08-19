@@ -62,9 +62,7 @@ class StartUpControllerImpl extends StartUpController {
       startGameFunction(gameInfo)
     }
 
-    case _ => {
-
-    }
+    case _ => {}
 
   }
 
