@@ -1,7 +1,7 @@
 package it.partitimeteam.lobby
 
 import akka.japi.Pair
-import it.partitimeteam.common.{Player, Referable}
+import it.parttimeteam.entities.Player
 
 object Lobby {
   def apply(numberOfPlayers: Int): Lobby[Player] = GameLobby[Player](numberOfPlayers)
@@ -23,7 +23,7 @@ trait Lobby[T <: Player] {
    *
    * @return the new lobby without the extracted player and the extracted players if present, otherwise none
    */
-  def extractPlayersForMatch(): Pair[Lobby[T], Option[List[T]]]
+  def extractPlayersForMatch(): Pair[Lobby[T], Option[Seq[T]]]
 
   /**
    * Add a new player to the lobby

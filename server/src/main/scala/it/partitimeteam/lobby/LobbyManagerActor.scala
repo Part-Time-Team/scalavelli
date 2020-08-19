@@ -1,10 +1,13 @@
 package it.partitimeteam.lobby
 
-import java.util.UUID
-
-import akka.actor.{Actor, Props}
-import it.partitimeteam.common.GamePlayer
-import it.parttimeteam.messages.Messages.{Connect, ConnectUserToPrivateLobby, ConnectUserToPublicLobby, LeaveLobby, LobbyConnectionAccepted, PrivateLobbyCreated, RequestPrivateLobbyCreation, UserConnectionAccepted, UserConnectionRefused}
+import akka.actor.{Actor, ActorRef, Props}
+import it.partitimeteam.`match`.GameMatchActor
+import it.partitimeteam.common.IdGenerator
+import it.parttimeteam.core.GameManagerImpl
+import it.parttimeteam.entities
+import it.parttimeteam.entities.GamePlayer
+import it.parttimeteam.messages.GameMessage.GamePlayers
+import it.parttimeteam.messages.LobbyMessages._
 
 object LobbyManagerActor {
 
@@ -12,47 +15,79 @@ object LobbyManagerActor {
 
 }
 
-class LobbyManagerActor extends Actor {
+class LobbyManagerActor extends Actor with IdGenerator {
 
   type UserName = String
   type UserId = String
 
-  private var connectedPlayers: Map[UserId, UserName] = Map()
-  private val lobbyManger = new LobbyManagerImpl[GamePlayer]()
+  private var connectedPlayers: Map[UserId, ActorRef] = Map()
+  private val lobbyManger: LobbyManager[GamePlayer] = LobbyManager()
+
+  private val privateLobbyService: PrivateLobbyService = PrivateLobbyService()
 
 
   override def receive: Receive = {
-    case Connect(userName) => {
-      val userId = UUID.randomUUID().toString
-      connectedPlayers = connectedPlayers + (userId -> userName)
-      sender() ! UserConnectionAccepted(userId)
+    case Connect(clientRef) => {
+      val clientId = generateId
+      connectedPlayers = connectedPlayers + (clientId -> clientRef)
+      clientRef ! Connected(clientId)
     }
-    case ConnectUserToPublicLobby(userId, numberOfPlayers) => {
-      connectedPlayers.get(userId) match {
-        case Some(username) => {
-          this.lobbyManger.addPlayer(GamePlayer(userId, username, sender()), PlayerNumberLobby(numberOfPlayers))
-          sender() ! LobbyConnectionAccepted
-        }
-        case None => sender() ! UserConnectionRefused("Invalid user id")
+
+    case JoinPublicLobby(clientId, username, numberOfPlayers) => {
+      this.executeOnClientRefPresent(clientId) { ref =>
+        val playerId = this.generateId
+        val lobbyType = PlayerNumberLobby(numberOfPlayers)
+        this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, ref), lobbyType)
+        ref ! UserAddedToLobby()
+        this.checkAndCreateGame(lobbyType)
       }
 
     }
-    case RequestPrivateLobbyCreation(userId, numberOfPlayers) => {
-      val lobbyId = UUID.randomUUID().toString
-      connectedPlayers.get(userId) match {
-        case Some(username) => {
-          this.lobbyManger.addPlayer(GamePlayer(userId, username, sender()), PrivateLobby(lobbyId, numberOfPlayers))
-          sender() ! PrivateLobbyCreated(lobbyId)
-
+    case CreatePrivateLobby(clientId, username, numberOfPlayers) => {
+      this.executeOnClientRefPresent(clientId) { ref =>
+        val lobbyType = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
+        val playerId = this.generateId
+        this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, ref), lobbyType)
+        ref ! PrivateLobbyCreated(lobbyType.lobbyId)
+      }
+    }
+    case JoinPrivateLobby(clientId, username, lobbyCode) =>
+      this.executeOnClientRefPresent(clientId) { ref =>
+        privateLobbyService.retrieveExistingLobby(lobbyCode) match {
+          case Some(lobbyType) => {
+            val player = entities.GamePlayer(generateId, username, ref)
+            this.lobbyManger.addPlayer(player, lobbyType)
+            ref ! UserAddedToLobby()
+            this.checkAndCreateGame(lobbyType)
+          }
+          case None => ref ! LobbyJoinError(s"Private lobby with code $lobbyCode does not exist")
         }
-        case None => 
       }
 
-    }
-    case ConnectUserToPrivateLobby(userId, lobbyCode) =>
     case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
 
   }
 
+  private def checkAndCreateGame(lobbyType: LobbyType): Unit = {
+    this.lobbyManger.attemptExtractPlayerForMatch(lobbyType) match {
+      case Some(players) => this.generateAndStartGameActor(lobbyType)(players)
+      case None =>
+    }
+  }
+
+  private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
+    val gameActor = context.actorOf(GameMatchActor.props(lobbyType.numberOfPlayers, new GameManagerImpl()))
+    gameActor ! GamePlayers(players)
+  }
+
+  private def getClientRef(clientId: String): Option[ActorRef] = {
+    this.connectedPlayers.get(clientId)
+  }
+
+  private def executeOnClientRefPresent(clientId: String)(action: ActorRef => Unit): Unit = {
+    this.getClientRef(clientId) match {
+      case Some(ref) => action(ref)
+    }
+  }
 
 }

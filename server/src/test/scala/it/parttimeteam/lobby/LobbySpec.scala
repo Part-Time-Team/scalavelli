@@ -1,7 +1,7 @@
 package it.parttimeteam.lobby
 
-import it.partitimeteam.common.{GamePlayer, Player}
 import it.partitimeteam.lobby.{GameLobby, Lobby}
+import it.parttimeteam.entities.{GamePlayer, Player}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -59,6 +59,17 @@ class LobbySpec extends AnyWordSpecLike with MockFactory {
       val result = lobby.extractPlayersForMatch()
       assert(result.second.isDefined && result.second.get.length == 2)
       assertResult(1)(result.first.players.length)
+    }
+
+    "return nothig on the second extraction player if players are not enough" in {
+      var lobby = create2PlayersLobby
+      lobby = lobby.addPlayer(mock[Player])
+      lobby = lobby.addPlayer(mock[Player])
+      lobby = lobby.addPlayer(mock[Player])
+      val result = lobby.extractPlayersForMatch()
+      assert(result.second.isDefined && result.second.get.length == 2)
+      assertResult(1)(result.first.players.length)
+      assert(result.first.extractPlayersForMatch().second.isEmpty)
     }
 
 
