@@ -1,4 +1,4 @@
-package it.parttimeteam.prolog.converter
+package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.Term
 import it.parttimeteam.core.cards.Card

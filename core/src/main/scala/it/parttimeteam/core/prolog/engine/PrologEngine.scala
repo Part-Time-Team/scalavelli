@@ -1,6 +1,5 @@
-package it.parttimeteam.prolog.engine
+package it.parttimeteam.core.prolog.engine
 
-import java.io.InputStream
 import alice.tuprolog.{SolveInfo, Term}
 
 /**
@@ -52,7 +51,5 @@ trait PrologEngine {
  * Object to initialize the class PrologGameEngine
  */
 object PrologEngine {
-  val theory: InputStream = getClass.getResourceAsStream("rules.prolog")
-
   def apply(): PrologGameEngine = new PrologGameEngine()
 }

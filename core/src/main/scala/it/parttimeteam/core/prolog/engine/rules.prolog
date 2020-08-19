@@ -1,6 +1,6 @@
 %color(+color)
-color("red").
-color("blue").
+color("R").
+color("B").
 
 % suit(+suit)
 suit("♥").

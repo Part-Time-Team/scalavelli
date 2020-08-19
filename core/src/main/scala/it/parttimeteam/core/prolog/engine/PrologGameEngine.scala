@@ -1,4 +1,4 @@
-package it.parttimeteam.prolog.engine
+package it.parttimeteam.core.prolog.engine
 
 import alice.tuprolog._
 
@@ -14,7 +14,7 @@ class PrologGameEngine() extends PrologEngine {
   /**
    * Set theory from specific file prolog
    */
-  engine.setTheory(new Theory(theory))
+  engine.setTheory(new Theory(getClass.getResourceAsStream("rules.prolog")))
 
   override def goal(predicate: Term): List[Term] = {
     val info: SolveInfo = engine solve predicate
