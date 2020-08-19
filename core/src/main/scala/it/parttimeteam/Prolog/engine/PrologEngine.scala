@@ -53,5 +53,6 @@ trait PrologEngine {
  */
 object PrologEngine {
   val theory: InputStream = getClass.getResourceAsStream("rules.prolog")
+
   def apply(): PrologGameEngine = new PrologGameEngine()
 }

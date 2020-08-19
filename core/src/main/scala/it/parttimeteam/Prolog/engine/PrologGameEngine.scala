@@ -1,6 +1,5 @@
 package it.parttimeteam.Prolog.engine
 
-import java.io.InputStream
 import alice.tuprolog._
 import it.parttimeteam.Prolog.engine.PrologEngine.theory
 
@@ -12,17 +11,11 @@ import scala.language.postfixOps
 class PrologGameEngine() extends PrologEngine {
 
   val engine: Prolog = new Prolog()
-  loadTheory(theory)
 
   /**
-   * Load theory from specific file prolog
-   *
-   * @param theory theory to load
-   * @return PrologEngine
+   * Set theory from specific file prolog
    */
-  private def loadTheory(theory: InputStream): Unit = {
-    engine.setTheory(new Theory(theory))
-  }
+  engine.setTheory(new Theory(theory))
 
   override def goal(predicate: Term): List[Term] = {
     val info: SolveInfo = engine solve predicate
@@ -67,6 +60,8 @@ class PrologGameEngine() extends PrologEngine {
 object PrologStruct {
 
   def apply(rule: String, variable: Var): Struct = new Struct(rule, variable)
+
   def apply(rule: String, variable: Term*): Struct = new Struct(rule, variable toArray)
+
   def apply(rule: String, parameters: Array[Term]): Struct = new Struct(rule, parameters)
 }

@@ -83,17 +83,6 @@ class PrologGame() {
 /**
  * Object to initialize the class PrologGame
  */
-object PrologGame extends App {
-
+object PrologGame {
   def apply(): PrologGame = new PrologGame()
-
-  val game = new PrologGame()
-
-  val card1: Card = Card(Rank.Ace(), Suit.Clubs())
-  val card2: Card = Card(Rank.Ace(), Suit.Spades())
-  val card3: Card = Card(Rank.Ace(), Suit.Hearts())
-  val card4: Card = Card(Rank.Ace(), Suit.Diamonds())
-
-  //game.validateQuarter(List(card1, card2, card3, card4))
-  println(game.loadDeck())
 }
