@@ -1,5 +1,6 @@
 package it.parttimeteam.core.collections
 
+import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 import org.scalatest.funspec.AnyFunSpec
 
 class DeckSpec extends AnyFunSpec {
@@ -9,9 +10,16 @@ class DeckSpec extends AnyFunSpec {
         assert(Deck.empty.isEmpty)
       }
 
-      it("must or not empty is shuffled or sorted") {
+      it("Must or not empty is shuffled or sorted") {
         assert(!Deck.shuffled.isEmpty)
         assert(!Deck.sorted.isEmpty)
+      }
+
+      it("Tostring must return a compatible string") {
+        val simpleDeck = Deck(Card.string2card(s"${Rank.Ace().shortName}${Suit.Clubs().shortName}${Color.Blue().shortName}") :: Nil)
+        val str = simpleDeck.toString
+        println(str)
+        assert(str equals "A♣B")
       }
     }
 

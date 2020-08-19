@@ -31,18 +31,18 @@ case class Card(rank: Rank, suit: Suit, color: Color)
    * @param card Other card.
    * @return True if is next, false anywhere.
    */
-  def isNext(card: Card): Boolean = (rank, suit, card.rank, card.suit) match {
-    case (_, suit, _, cardSuite) if !(suit.name equals cardSuite.name) => false
-    case (Ace(), _, King(), _) => true
-    case _ => card.rank.value + 1 equals rank.value
+  def isNext(card: Card): Boolean = (rank, card.rank) match {
+    case (Ace(), King()) => true
+    case _ => if (!(suit equals card.suit)) false else card.rank.value + 1 equals rank.value
   }
 
   override def toString: String = shortName
 
-  override def compareTo(t: Card): Int = (suit, t.suit) match {
-    case (suit, tSuit) if suit equals tSuit => this.rank compareTo t.rank
-    case _ => suit compareTo t.suit
-  }
+  override def compareTo(t: Card): Int =
+    if (suit == t.suit)
+      this.rank compareTo t.rank
+    else
+      suit compareTo t.suit
 }
 
 object Card {

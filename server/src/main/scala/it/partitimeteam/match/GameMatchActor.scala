@@ -37,14 +37,15 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
    * @param playersReady players ready for the game
    */
   private def initializing(playersReady: Seq[GamePlayer]): Receive = {
-    case Ready(id) => {
+    case Ready(id, ref) => {
       this.players.find(_.id == id) match {
         case Some(p) => {
-          val updatedReadyPlayers = playersReady :+ p
+          players = players.map(p => if (p.id == id) p.copy(actorRef = ref) else p)
+          val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
+
           if (updatedReadyPlayers.length == numberOfPlayers) {
             log.debug("All players ready")
             this.initializeGame()
-
           } else {
             context.become(initializing(updatedReadyPlayers))
           }
@@ -67,8 +68,8 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
 
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
-      //TODO handle player action
 
+      // TODO handle player action
 
       // TODO update the state
       val newState = gameState
@@ -113,8 +114,8 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
     this.players.foreach(player => {
       player.actorRef ! PlayerGameState(
         gameState.board,
-        gameState.players.find(_.getId == player.id).get.hand,
-        gameState.players.filter(_.getId != player.id).map(p => Opponent(p.getName, p.hand.playerCards.size))
+        gameState.players.find(_.id == player.id).get.hand,
+        gameState.players.filter(_.id != player.id).map(p => Opponent(p.name, p.hand.playerCards.size))
       )
 
     })

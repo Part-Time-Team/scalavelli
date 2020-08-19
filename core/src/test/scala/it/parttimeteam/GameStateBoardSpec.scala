@@ -9,7 +9,7 @@ class GameStateBoardSpec extends AnyFunSuite {
 
   test("Add combination to game board") {
 
-    val gameBoard: Board = Board(List())
+    val gameBoard: Board = Board.EmptyBoard()
 
     val card1: Card = cards.Card(Rank.Ace(), Suit.Clubs(), Color.Red())
     val card2: Card = cards.Card(Rank.Two(), Suit.Clubs(), Color.Blue())
@@ -17,6 +17,6 @@ class GameStateBoardSpec extends AnyFunSuite {
 
     val cardCombination: CardCombination = CardCombination(List(card1, card2, card3))
 
-    assert(gameBoard.addCombination(cardCombination) equals Board(List(cardCombination)))
+    assert(gameBoard.addCombination(cardCombination) equals Board.BoardFilled(List(cardCombination)))
   }
 }
