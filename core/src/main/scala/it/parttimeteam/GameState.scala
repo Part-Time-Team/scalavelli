@@ -1,7 +1,7 @@
 package it.parttimeteam
 
 import it.parttimeteam.core.collections.Deck
-import it.parttimeteam.core.player.Player
+import it.parttimeteam.core.player.Player.{Player, PlayerId}
 
 /**
  * Current game state.
@@ -10,16 +10,10 @@ import it.parttimeteam.core.player.Player
  * @param board   board.
  * @param players list of player.
  */
-case class GameState(var deck: Deck, var board: Board, var players: Seq[Player]) {
+case class GameState(deck: Deck, board: Board, players: Seq[Player]) {
   // TODO: Implement utilities functions.
-  def >(id: String): Player =
-    players.find(p => p.id equals id) match {
-      case Some(p) => p
-      case None => Player.EmptyPlayer()
-    }
+  def getP(id: PlayerId): Option[Player] = players.find(p => p.id equals id)
 
-  def <(player: Player): GameState = {
-    val list: List[Player] = players.filter(p => !(p.id equals player.id)).toList
-    GameState(deck, board, player :: list)
-  }
+  def updatePlayer(player: Player): GameState =
+    this.copy(players = players.map(p => if (p.id equals player.id) player else p))
 }
