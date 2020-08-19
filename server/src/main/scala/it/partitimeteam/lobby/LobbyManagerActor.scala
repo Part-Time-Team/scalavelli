@@ -35,9 +35,8 @@ class LobbyManagerActor extends Actor with IdGenerator {
 
     case JoinPublicLobby(clientId, username, numberOfPlayers) => {
       this.executeOnClientRefPresent(clientId) { ref =>
-        val playerId = this.generateId
         val lobbyType = PlayerNumberLobby(numberOfPlayers)
-        this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, ref), lobbyType)
+        this.lobbyManger.addPlayer(entities.GamePlayer(clientId, username, ref), lobbyType)
         ref ! UserAddedToLobby()
         this.checkAndCreateGame(lobbyType)
       }
@@ -46,8 +45,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
     case CreatePrivateLobby(clientId, username, numberOfPlayers) => {
       this.executeOnClientRefPresent(clientId) { ref =>
         val lobbyType = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
-        val playerId = this.generateId
-        this.lobbyManger.addPlayer(entities.GamePlayer(playerId, username, ref), lobbyType)
+        this.lobbyManger.addPlayer(entities.GamePlayer(clientId, username, ref), lobbyType)
         ref ! PrivateLobbyCreated(lobbyType.lobbyId)
       }
     }
@@ -55,7 +53,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
       this.executeOnClientRefPresent(clientId) { ref =>
         privateLobbyService.retrieveExistingLobby(lobbyCode) match {
           case Some(lobbyType) => {
-            val player = entities.GamePlayer(generateId, username, ref)
+            val player = entities.GamePlayer(clientId, username, ref)
             this.lobbyManger.addPlayer(player, lobbyType)
             ref ! UserAddedToLobby()
             this.checkAndCreateGame(lobbyType)
