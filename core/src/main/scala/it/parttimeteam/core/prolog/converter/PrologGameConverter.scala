@@ -11,19 +11,10 @@ class PrologGameConverter extends PrologConverter {
   val prolog: Prolog = new Prolog()
 
   /**
-   * Check last element in a list
-   */
-  val lastElement: (Int, List[(Int, String)]) => String = (i, list) => if (i != list.size - 1) "," else ""
-
-  /**
    * Convert tuple-list in string
    */
   val convertList: List[(Int, String)] => String = list => {
-    var stringList = ""
-    for (i <- list.indices) {
-      stringList += list(i) + lastElement(i, list)
-    }
-    "([" + stringList + "])."
+    "([" + list.mkString(",") + "])."
   }
 
   override def toInt(term: Term): Int = term.toString.toInt
