@@ -44,7 +44,6 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
           if (updatedReadyPlayers.length == numberOfPlayers) {
             log.debug("All players ready")
             this.initializeGame()
-
           } else {
             context.become(initializing(updatedReadyPlayers))
           }
@@ -113,8 +112,8 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
     this.players.foreach(player => {
       player.actorRef ! PlayerGameState(
         gameState.board,
-        gameState.players.find(_.getId == player.id).get.hand,
-        gameState.players.filter(_.getId != player.id).map(p => Opponent(p.getName, p.hand.playerCards.size))
+        gameState.players.find(_.id == player.id).get.hand,
+        gameState.players.filter(_.id != player.id).map(p => Opponent(p.name, p.hand.playerCards.size))
       )
 
     })

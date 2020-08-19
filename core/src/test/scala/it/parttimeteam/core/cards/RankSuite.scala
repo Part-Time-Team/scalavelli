@@ -76,6 +76,10 @@ class RankSuite extends AnyFunSuite {
   test("Check all ranks") {
     assert(Rank.all equals List(Ace(), Two(), Three(), Four(), Five(), Six(), Seven(), Eight(), Nine(), Ten(), Jack(), Queen(), King()))
   }
+
+  test("Check Equals with other objs") {
+    assert(!(Rank.Ace() equals "A2"))
+  }
 }
 
 class RankPropSpec
@@ -111,6 +115,7 @@ class RankPropSpec
   property("string2rank must return shortName at name input") {
     forAll(examples) { rank =>
       Rank string2rank rank.shortName should be(rank)
+      Rank string2rank rank.shortName equals rank should be(true)
     }
   }
 
