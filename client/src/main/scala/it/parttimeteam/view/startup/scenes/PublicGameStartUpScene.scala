@@ -58,7 +58,7 @@ class PublicGameStartUpScene(val listener: StartUpSceneListener) extends BaseSta
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 
-  override def hideMessage(message: String): Unit = bottomBar.hideMessage()
+  override def hideMessage(): Unit = bottomBar.hideMessage()
 
   private def submit(): Unit = {
     val username: String = usernameField.getText

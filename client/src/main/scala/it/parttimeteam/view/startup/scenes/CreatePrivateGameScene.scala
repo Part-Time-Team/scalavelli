@@ -75,7 +75,7 @@ class CreatePrivateGameStartUpSceneImpl(val listener: StartUpSceneListener) exte
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 
-  override def hideMessage(message: String): Unit = bottomBar.hideMessage()
+  override def hideMessage(): Unit = bottomBar.hideMessage()
 
   private def submit(): Unit = {
     val username: String = usernameField.getText
