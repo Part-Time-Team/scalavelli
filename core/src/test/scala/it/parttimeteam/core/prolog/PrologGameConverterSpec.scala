@@ -1,23 +1,14 @@
 package it.parttimeteam.core.prolog
 
-import alice.tuprolog.{Prolog, Term, Var}
+import alice.tuprolog.{Prolog, Term}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 import it.parttimeteam.core.prolog.converter.{PrologConverter, PrologGameConverter}
-import it.parttimeteam.core.prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
 import org.scalatest.funsuite.AnyFunSuite
 
 class PrologGameConverterSpec extends AnyFunSuite {
 
   val gameConverter: PrologGameConverter = PrologConverter()
   val prolog: Prolog = new Prolog
-
-  test("Convert term to int") {
-
-    val engine: PrologGameEngine = PrologEngine()
-    val numberCard: List[Term] = engine goal PrologStruct("startHand", new Var("X"))
-
-    assert(gameConverter.toInt(numberCard.head) equals 13)
-  }
 
   test("Convert list of cards to string") {
 

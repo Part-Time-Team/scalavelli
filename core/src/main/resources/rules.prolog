@@ -23,9 +23,6 @@ card("J", Suit, Color)     :- suit(Suit), color(Color).
 card("Q", Suit, Color)     :- suit(Suit), color(Color).
 card("K", Suit, Color)     :- suit(Suit), color(Color).
 
-% startHand(+NumberCard)
-startHand(13).
-
 % lengthList(+List, -LengthList)
 lengthList([], 0).
 lengthList([(_,_)|T],X) :- lengthList(T,N), X is N+1.
