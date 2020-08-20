@@ -5,9 +5,13 @@ import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.Ready
 import it.parttimeteam.model.startup.GameMatchInformations
 
+import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.duration._
+
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
                       private val notifyEvent: GameEvent => Unit) extends GameService {
 
+  implicit val executionContext: ExecutionContextExecutor = ActorSystemManager.actorSystem.dispatcher
 
   private val remoteMatchGameRef = gameInformation.gameRef
   private val playerId = gameInformation.playerId
@@ -19,7 +23,11 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }))
 
   override def playerReady(): Unit = {
-    remoteMatchGameRef ! Ready(playerId, gameClientActorRef)
+    // timer to be sure the view is ready on server responses
+    ActorSystemManager.actorSystem.scheduler.scheduleOnce(1.second) {
+      remoteMatchGameRef ! Ready(playerId, gameClientActorRef)
+    }
+
   }
 
   override def notifyUserAction(action: UserGameAction): Unit = {

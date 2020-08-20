@@ -10,23 +10,19 @@ import it.parttimeteam.view.game._
 import scalafx.application.{JFXApp, Platform}
 
 class GameControllerImpl extends GameController {
-  var gameStage: MachiavelliGamePrimaryStage = _
 
+  private var gameStage: MachiavelliGamePrimaryStage = _
   private var gameService: GameService = _
 
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
-      val gameStage: MachiavelliGamePrimaryStage = MachiavelliGamePrimaryStage(this)
-
+      gameStage = MachiavelliGamePrimaryStage(this)
       gameStage.initMatch()
-      gameStage.matchReady()
-      gameStage.updateState(getMockState)
-
-      this.gameService = new GameServiceImpl(gameInfo, notifyEvent)
-
       app.stage = gameStage
-      this.gameService.playerReady()
     })
+
+    this.gameService = new GameServiceImpl(gameInfo, notifyEvent)
+    this.gameService.playerReady()
   }
 
   def notifyEvent(gameEvent: GameEvent): Unit = gameEvent match {
