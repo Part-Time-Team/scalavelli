@@ -30,11 +30,24 @@ class GameControllerImpl extends GameController {
   }
 
   def notifyEvent(gameEvent: GameEvent): Unit = gameEvent match {
+
     case StateUpdatedEvent(state: PlayerGameState) => {
       Platform.runLater({
         gameStage.matchReady()
         gameStage.updateState(state)
       })
+    }
+
+    case TurnChangedEvent(state, actualPlayerName) => {
+      gameStage.updateState(state)
+      gameStage.setMessage(s"It's $actualPlayerName turn")
+    }
+
+    case YourTurnEvent(state) => {
+      gameStage.updateState(state)
+      gameStage.notifyInfo("It's your turn")
+      gameStage.setMessage("Your turn")
+      gameStage.showTimer()
     }
 
     case _ =>
@@ -47,6 +60,7 @@ class GameControllerImpl extends GameController {
     case NextStateViewEvent() =>
     case PickCardCombinationViewEvent(cardCombinationIndex) =>
     case EndTurnViewEvent() =>
+    case _ =>
   }
 
   private def getMockState: PlayerGameState = {

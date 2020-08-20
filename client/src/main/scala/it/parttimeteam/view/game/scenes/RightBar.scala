@@ -15,10 +15,13 @@ class RightBar(val listener: GameSceneListener) extends BorderPane
   val rightBottom = new VBox()
 
   val stateContainer = new VBox()
-  val stateTitle = MachiavelliLabel("Time")
-  val stateMessage = MachiavelliLabel("03:00")
 
-  stateContainer.children.addAll(stateTitle, stateMessage)
+  val messageLabel = MachiavelliLabel()
+
+  val timerLabel = MachiavelliLabel("Timer 03:00")
+  hideTimer()
+
+  stateContainer.children.addAll(messageLabel, timerLabel)
 
   val otherPlayersContainer = new TilePane()
   otherPlayersContainer.setPrefColumns(2)
@@ -63,6 +66,18 @@ class RightBar(val listener: GameSceneListener) extends BorderPane
 
       otherPlayersContainer.children.add(playerInfoContainer)
     }
+  }
+
+  def setMessage(message: String): Unit = {
+    messageLabel.text = message
+  }
+
+  def showTimer(): Unit = {
+    timerLabel.visible = true
+  }
+
+  def hideTimer(): Unit = {
+    timerLabel.visible = false
   }
 
   private def redoClick(): Unit = {

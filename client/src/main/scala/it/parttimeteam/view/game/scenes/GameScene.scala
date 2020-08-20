@@ -13,11 +13,15 @@ import scalafx.stage.{Modality, Stage, StageStyle}
   * Obtains a private code to share to invite other players.
   **/
 trait GameScene extends Scene {
-  def matchReady(): Unit
+  def hideInitMatch(): Unit
 
   def showInitMatch(): Unit
 
   def setState(state: PlayerGameState): Unit
+
+  def setMessage(message: String): Unit
+
+  def showTimer(): Unit
 }
 
 class GameSceneImpl(val parentStage: Stage, val listener: GameSceneListener) extends GameScene {
@@ -70,7 +74,15 @@ class GameSceneImpl(val parentStage: Stage, val listener: GameSceneListener) ext
     initMatchDialog.setAlwaysOnTop(true)
   }
 
-  override def matchReady(): Unit = {
+  override def hideInitMatch(): Unit = {
     initMatchDialog.hide()
+  }
+
+  override def setMessage(message: String): Unit = {
+    rightBar.setMessage(message)
+  }
+
+  override def showTimer(): Unit = {
+    rightBar.showTimer()
   }
 }

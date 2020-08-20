@@ -15,6 +15,12 @@ import scalafx.scene.control.Alert.AlertType
   * Stage for game scenes
   */
 trait MachiavelliGamePrimaryStage extends JFXApp.PrimaryStage with PrimaryStageListener {
+  def showTimer(): Unit
+
+  def notifyInfo(message: String): Unit
+
+  def setMessage(message: String): Unit
+
   def matchReady(): Unit
 
   def initMatch(): Unit
@@ -51,18 +57,23 @@ class MachiavelliGamePrimaryStageImpl(gameListener: GameListener, windowWidth: D
     alert.showAndWait()
   }
 
-  override def updateState(state: PlayerGameState): Unit = {
-    gameScene.setState(state)
+  override def notifyInfo(message: String): Unit = {
+    val alert: Alert = MachiavelliAlert("", message, AlertType.Information)
+    alert.showAndWait()
   }
 
-  override def initMatch(): Unit = {
-    gameScene.showInitMatch()
-  }
+  // controller actions
+  override def showTimer(): Unit = gameScene.showTimer()
 
-  override def matchReady(): Unit = {
-    gameScene.matchReady()
-  }
+  override def setMessage(message: String): Unit = gameScene.setMessage(message)
 
+  override def updateState(state: PlayerGameState): Unit = gameScene.setState(state)
+
+  override def initMatch(): Unit = gameScene.showInitMatch()
+
+  override def matchReady(): Unit = gameScene.hideInitMatch()
+
+  // view actions
   override def pickCombination(combinationIndex: Int): Unit = gameListener.onViewEvent(PickCardCombinationViewEvent(combinationIndex))
 
   override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationViewEvent(cards))
