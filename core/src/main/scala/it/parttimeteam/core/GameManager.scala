@@ -67,10 +67,19 @@ class GameManagerImpl extends GameManager {
    * @inheritdoc
    */
   override def create(ids: Seq[PlayerId]): GameState = {
+    var deck: Deck = Deck.shuffled
+    def fillHand(hand: Hand): Hand =
+      if(hand.playerCards.size < 13) {
+        val drawed = deck.draw
+        deck = drawed._1
+        hand.copy(playerCards = drawed._2 :: hand.playerCards)
+      } else {
+        hand
+      }
     GameState(
-      Deck.shuffled,
+      deck,
       Board.empty,
-      ids.map(i => Player("", i, Hand(Nil, Nil)))
+      ids.map(i => Player("", i, fillHand(Hand(List.empty, List.empty))))
     )
   }
 
