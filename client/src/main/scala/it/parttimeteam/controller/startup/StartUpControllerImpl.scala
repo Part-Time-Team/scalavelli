@@ -1,5 +1,6 @@
 package it.parttimeteam.controller.startup
 
+import it.parttimeteam.Constants
 import it.parttimeteam.model._
 import it.parttimeteam.model.startup.{GameMatchInformations, StartupService, StartupServiceImpl}
 import it.parttimeteam.view._
@@ -15,7 +16,7 @@ class StartUpControllerImpl extends StartUpController {
   override def start(app: JFXApp, startGame: GameMatchInformations => Unit): Unit = {
     app.stage = startUpStage
     startGameFunction = startGame
-    this.startUpService.connect("localhost", 5150)
+    this.startUpService.connect(Constants.Remote.SERVER_ADDRESS, Constants.Remote.SERVER_PORT)
   }
 
   override def onViewEvent(viewEvent: ViewEvent): Unit = viewEvent match {
