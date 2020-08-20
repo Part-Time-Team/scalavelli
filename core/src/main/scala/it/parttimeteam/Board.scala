@@ -24,16 +24,13 @@ case class Board(combinations: List[CardCombination]) {
    * @return
    */
   def pickCombination(combinations: CardCombination*): Board = {
-    Board(combinations filterNot (p => p equals combinations) toList)
+    Board((combinations filterNot (p => p equals combinations)).toList)
   }
 }
 
 object Board {
-
   /**
    * Represent an empty game board.
    */
-  def empty() = Board(List.empty)
-
-
+  def empty: Board = Board(List.empty)
 }

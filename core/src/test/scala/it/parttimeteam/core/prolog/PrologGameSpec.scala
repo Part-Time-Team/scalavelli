@@ -7,7 +7,8 @@ class PrologGameSpec extends AnyFunSuite {
   val prologGame: PrologGame = PrologGame()
 
   test("Load deck") {
-    assert(prologGame.loadDeck.size equals 104)
+    val deck = prologGame.loadDeck
+    assert(deck.size equals 104)
   }
 
   test("Validate a valid quarter") {

@@ -20,11 +20,17 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         assert(gameManager.create(Seq.empty).players equals List.empty)
       }
 
-      it("Filled if players are added") {
-        // TODO: Need to create a stub game state because the creation
-        // generate a game state with a shuffled deck.
-        val list = ids.map(i => Player("", i, Hand(Nil, Nil)))
-        assert(gameManager.create(ids).players equals list)
+      describe("When there are player to add") {
+        val list = ids.map(i => Player("", i, Hand(List.empty, List.empty)))
+        val state = gameManager.create(ids)
+
+        it("Game state players are not empty") {
+          assert(state.players.nonEmpty)
+        }
+
+        it("Players have their hands filled with 13 cards") {
+          assert(state.players.forall(p => p.hand.playerCards.size == 13))
+        }
       }
     }
 
