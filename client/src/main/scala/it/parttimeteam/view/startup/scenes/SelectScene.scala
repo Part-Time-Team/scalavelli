@@ -32,9 +32,9 @@ class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) ext
   center.spacing = ViewConfig.formSpacing
   center.setMaxWidth(ViewConfig.formWidth)
 
-  val btnPublicGame: Button = MachiavelliButton("Start new game", listener.onSelectedPublicGame)
-  val btnPrivateGame: Button = MachiavelliButton("Participate with a code", listener.onSelectedPrivateGame)
-  val btnCreatePrivateGame: Button = MachiavelliButton("Create new code", listener.onSelectedCreatePrivateGame)
+  val btnPublicGame: Button = MachiavelliButton("Start new game", () => listener.onSelectedPublicGame())
+  val btnPrivateGame: Button = MachiavelliButton("Participate with a code", () => listener.onSelectedPrivateGame())
+  val btnCreatePrivateGame: Button = MachiavelliButton("Create new code", () => listener.onSelectedCreatePrivateGame())
 
   btnPublicGame.prefWidth <== center.width
   btnPrivateGame.prefWidth <== center.width
