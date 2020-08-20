@@ -17,8 +17,6 @@ class PrologGameConverter extends PrologConverter {
     "([" + list.mkString(",") + "])."
   }
 
-  override def toInt(term: Term): Int = term.toString.toInt
-
   override def toBoolean(list: List[Term]): Boolean = list.nonEmpty
 
   override def toStringAndReplace(term: Term): String = term.toString.replace("'", "")
