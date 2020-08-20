@@ -93,7 +93,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
      * @param cards Cards to pick.
      * @return Hand and Board updated.
      */
-    override def pickTableCards(hand: Hand, board: Board, cards: Card*): (Hand, Board) = ???
+    override def pickBoardCards(hand: Hand, board: Board, cards: Card*): Either[String, (Hand, Board)] = ???
 
     /**
      * Play cards from hand to board.

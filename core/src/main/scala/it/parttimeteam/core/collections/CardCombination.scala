@@ -7,12 +7,12 @@ import it.parttimeteam.core.cards.Card
  *
  * @param cards combinations of cards
  */
-case class CardCombination(cards: List[Card] = List()) {
+case class CardCombination(cards: Seq[Card] = Seq.empty) {
 
   /**
    * Check if the combination is valid
    *
    * @return true if the combination is valid otherwise false
    */
-  def isValid: Boolean = true
+  def isValid: Boolean = true // TODO: Add prolog validation.
 }

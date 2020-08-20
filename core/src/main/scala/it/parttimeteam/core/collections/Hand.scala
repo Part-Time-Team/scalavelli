@@ -36,6 +36,28 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
   def addTableCards(cards: Seq[Card]): Hand = this.copy(tableCards = tableCards ::: cards.toList)
 
   /**
+   * Check if hand contain some cards.
+   *
+   * @param cards Cards that must be contained in the hand.
+   * @return True if all cards are contained, false anywhere.
+   */
+  def containsCards(cards: Card*): Boolean =
+    (cards exists (c => playerCards contains c)) &&
+      (cards exists (c => tableCards contains c))
+
+  /**
+   * Remove cards contained in the hand.
+   *
+   * @param cards Cards that must be removed from the hand.
+   * @return New hand without those cards.
+   */
+  def removeCards(cards: Seq[Card]): Hand = {
+    val pCards = playerCards filterNot (c => cards contains c)
+    val tCards = tableCards filterNot (c => cards contains c)
+    this.copy(playerCards = pCards, tableCards = tCards)
+  }
+
+  /**
    * Sort cards by value
    *
    * @param cards cards to order
