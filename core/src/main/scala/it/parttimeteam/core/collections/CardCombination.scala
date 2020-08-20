@@ -14,5 +14,5 @@ case class CardCombination(cards: List[Card] = List()) {
    *
    * @return true if the combination is valid otherwise false
    */
-  def isValidate: Boolean = true
+  def isValid: Boolean = true
 }
