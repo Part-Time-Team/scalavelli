@@ -3,12 +3,12 @@ package it.parttimeteam.view.startup.scenes
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.PrivateGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartUpSceneListener
-import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliButton, MachiavelliLabel, MachiavelliTextField}
+import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
 import scalafx.geometry.Insets
-import scalafx.geometry.Pos.{BottomRight, Center}
+import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
-import scalafx.scene.layout.{BorderPane, HBox, VBox}
+import scalafx.scene.layout.{BorderPane, VBox}
 
 /**
   * Allow to participate to a private game by inserting a private code.
@@ -16,15 +16,14 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
   * @param listener to interact with parent stage
   */
 class PrivateGameStartUpScene(val listener: StartUpSceneListener) extends BaseStartUpScene() {
-  val btnBack: Button = MachiavelliButton("<", () => listener.onBackPressed())
-  val btnSubmit: Button = MachiavelliButton("Send", () => submit())
+  val topBar: StartUpSceneTopBar = new StartUpSceneTopBar(listener)
+  val bottomBar: StartUpSceneBottomBar = new StartUpSceneBottomBar(() => submit())
 
   val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
   val usernameField: TextField = MachiavelliTextField("Username")
 
   val codeLabel: Label = MachiavelliLabel("Code", ViewConfig.formLabelFontSize)
   val codeField: TextField = MachiavelliTextField("Code")
-
 
   val borderPane: BorderPane = new BorderPane()
   borderPane.setPadding(Insets(ViewConfig.screenPadding))
@@ -38,37 +37,34 @@ class PrivateGameStartUpScene(val listener: StartUpSceneListener) extends BaseSt
   codeLabel.maxWidth <== center.width
   codeField.maxWidth <== center.width
 
-  val bottom: HBox = new HBox()
-
   center.alignment = Center
-  bottom.alignment = BottomRight
-
-  borderPane.center = center
-  borderPane.top = btnBack
-  borderPane.bottom = bottom
-
-  override val progress: ProgressIndicator = new ProgressIndicator()
-  progress.prefHeight <== bottom.height
-  hideLoading()
-
-  override val messageContainer: Label = MachiavelliLabel()
-  hideMessage()
 
   center.getChildren.addAll(usernameLabel, usernameField, codeLabel, codeField)
-  bottom.getChildren.addAll(messageContainer, progress, btnSubmit)
+
+  borderPane.center = center
+  borderPane.top = topBar
+  borderPane.bottom = bottomBar
+
+  bottomBar.hideLoading()
+  bottomBar.hideMessage()
 
   val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and code.", AlertType.Warning)
 
   root = borderPane
 
-  def submit(): Unit = {
+
+  override def showMessage(message: String): Unit = bottomBar.showMessage(message)
+
+  override def hideMessage(message: String): Unit = bottomBar.hideMessage()
+
+  private def submit(): Unit = {
     val username: String = usernameField.getText
     val code: String = codeField.getText
 
     if (!username.isEmpty && !code.isEmpty) {
       listener.onSubmit(PrivateGameSubmitViewEvent(username, code))
-      showLoading()
-      btnSubmit.setDisable(true)
+      bottomBar.showLoading()
+      bottomBar.disableButtons()
     } else {
       alert.showAndWait()
     }

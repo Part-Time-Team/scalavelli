@@ -10,8 +10,7 @@ import scalafx.scene.control.ScrollPane
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{HBox, VBox}
 
-class BottomBar(listener: GameSceneListener) extends VBox
-{
+class BottomBar(listener: GameSceneListener) extends VBox {
   var selectedCards: Seq[Card] = Seq()
 
   val actionBar = new HBox()
@@ -32,29 +31,11 @@ class BottomBar(listener: GameSceneListener) extends VBox
 
   def setHand(hand: Hand): Unit = {
     for (card <- hand.playerCards) {
-      addHandCard(card, false)
+      addHandCard(card, isTableCard = false)
     }
 
     for (card <- hand.tableCards) {
-      addHandCard(card, true)
-
-      val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
-      cardImage.fitWidth = 80d
-      cardImage.preserveRatio = true
-
-
-      val imageViewWrapper = new StackPane()
-      imageViewWrapper.setAlignment(Pos.TopRight)
-      handCardsContainer.children.add(imageViewWrapper)
-
-      imageViewWrapper.setOnMouseClicked(_ => {
-        if (selectedCards.contains(card)) {
-          removeCardToSelection(imageViewWrapper, card)
-        } else {
-          addCardToSelection(imageViewWrapper, card)
-        }
-
-      })
+      addHandCard(card, isTableCard = true)
     }
   }
 
@@ -66,7 +47,7 @@ class BottomBar(listener: GameSceneListener) extends VBox
     val imageViewWrapper = new StackPane()
     imageViewWrapper.setAlignment(Pos.TopRight)
 
-    if (isTableCard){
+    if (isTableCard) {
       val prohibitionIcon: ImageView = new ImageView(new Image("images/prohibitionSign.png", 15, 15, false, false))
       prohibitionIcon.margin = Insets(5d)
       imageViewWrapper.getChildren.addAll(cardImage, prohibitionIcon)
