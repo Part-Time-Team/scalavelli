@@ -19,6 +19,8 @@ class GameControllerImpl extends GameController {
       val gameStage: MachiavelliGamePrimaryStage = MachiavelliGamePrimaryStage(this)
 
       gameStage.initMatch()
+      gameStage.matchReady()
+      gameStage.updateState(getMockState)
 
       this.gameService = new GameServiceImpl(gameInfo, notifyEvent)
 
