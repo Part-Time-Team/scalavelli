@@ -69,7 +69,7 @@ class GameManagerImpl extends GameManager {
   override def create(ids: Seq[PlayerId]): GameState = {
     GameState(
       Deck.shuffled,
-      Board.EmptyBoard(),
+      Board.empty,
       ids.map(i => Player("", i, Hand(Nil, Nil)))
     )
   }

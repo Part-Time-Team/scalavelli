@@ -7,7 +7,7 @@ package it.parttimeteam.core.cards
  * @param shortName Symbol.
  */
 sealed class Suit(val name: String, val shortName: String, val order: Int)
-  extends Comparable[Suit] {
+  extends Comparable[Suit] with Serializable {
   override def compareTo(t: Suit): Int = order compareTo t.order
 }
 
