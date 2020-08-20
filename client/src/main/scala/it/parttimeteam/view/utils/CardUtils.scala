@@ -19,6 +19,7 @@ object CardUtils {
       case Diamonds() => "D"
       case Clubs() => "C"
       case Spades() => "S"
+      case _ =>
     }
 
     val rankPath = card.rank match {
@@ -31,10 +32,11 @@ object CardUtils {
       case Seven() => "7"
       case Eight() => "8"
       case Nine() => "9"
-      case Jack() => "10"
-      case Queen() => "11"
-      case Jack() => "12"
+      case Ten() => "10"
+      case Jack() => "11"
+      case Queen() => "12"
       case King() => "13"
+      case _ =>
     }
 
     path + suitPath + rankPath + ".png"

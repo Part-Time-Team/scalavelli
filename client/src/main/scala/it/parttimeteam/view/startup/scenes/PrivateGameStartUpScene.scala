@@ -1,8 +1,9 @@
 package it.parttimeteam.view.startup.scenes
 
+import it.parttimeteam.view.ViewConfig
+import it.parttimeteam.view.startup.PrivateGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartUpSceneListener
 import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliButton, MachiavelliLabel, MachiavelliTextField}
-import it.parttimeteam.view.{PrivateGameSubmitViewEvent, ViewConfig}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center}
 import scalafx.scene.control.Alert.AlertType
@@ -15,8 +16,8 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
   * @param listener to interact with parent stage
   */
 class PrivateGameStartUpScene(val listener: StartUpSceneListener) extends BaseStartUpScene() {
-  val btnBack: Button = MachiavelliButton("<", listener.onBackPressed)
-  val btnSubmit: Button = MachiavelliButton("Send", submit)
+  val btnBack: Button = MachiavelliButton("<", () => listener.onBackPressed())
+  val btnSubmit: Button = MachiavelliButton("Send", () => submit())
 
   val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
   val usernameField: TextField = MachiavelliTextField("Username")

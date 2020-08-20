@@ -43,9 +43,9 @@ class GameSceneImpl(val parentStage: Stage, val listener: GameSceneListener) ext
   historyBtnContainer.alignment = Pos.Center
   historyBtnContainer.spacing = 5d
 
-  val undoBtn = MachiavelliButton("Undo", undoClick, "images/undo.png", 15d)
-  val redoBtn = MachiavelliButton("Redo", redoClick, "images/redo.png", 15d)
-  val nextBtn = MachiavelliButton("Next", endTurnClick)
+  val undoBtn = MachiavelliButton("Undo", () => undoClick(), "images/undo.png", 15d)
+  val redoBtn = MachiavelliButton("Redo", () => redoClick(), "images/redo.png", 15d)
+  val nextBtn = MachiavelliButton("Next", () => endTurnClick())
 
   nextBtn.prefWidth <== rightBottom.width
 
@@ -78,8 +78,8 @@ class GameSceneImpl(val parentStage: Stage, val listener: GameSceneListener) ext
   val bottom = new VBox()
   val actionBar = new HBox()
 
-  val combinationBtn = MachiavelliButton("Make Combination", makeCombinationClick)
-  val clearCombinationBtn = MachiavelliButton("Clear Selection", clearSelectionClick)
+  val combinationBtn = MachiavelliButton("Make Combination", () => makeCombinationClick())
+  val clearCombinationBtn = MachiavelliButton("Clear Selection", () => clearSelectionClick())
 
   val handPane = new ScrollPane()
 

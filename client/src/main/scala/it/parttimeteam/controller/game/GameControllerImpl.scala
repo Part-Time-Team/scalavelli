@@ -6,8 +6,7 @@ import it.parttimeteam.core.collections.{CardCombination, Hand}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.model.game._
 import it.parttimeteam.model.startup.GameMatchInformations
-import it.parttimeteam.view._
-import it.parttimeteam.view.game.MachiavelliGamePrimaryStage
+import it.parttimeteam.view.game._
 import scalafx.application.{JFXApp, Platform}
 
 class GameControllerImpl extends GameController {
@@ -39,8 +38,8 @@ class GameControllerImpl extends GameController {
     case _ =>
   }
 
-  override def onViewEvent(viewEvent: ViewEvent): Unit = viewEvent match {
-    // TODO: To be implemented
+  override def onViewEvent(viewEvent: GameViewEvent): Unit = viewEvent match {
+    // TODO: To be implementedc
     case MakeCombinationViewEvent(cards) =>
     case PreviousStateViewEvent() =>
     case NextStateViewEvent() =>
