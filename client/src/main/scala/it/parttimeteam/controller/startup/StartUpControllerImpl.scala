@@ -1,9 +1,9 @@
 package it.parttimeteam.controller.startup
 
+import it.parttimeteam.Constants
 import it.parttimeteam.model._
 import it.parttimeteam.model.startup.{GameMatchInformations, StartupService, StartupServiceImpl}
-import it.parttimeteam.view._
-import it.parttimeteam.view.startup.MachiavelliStartUpPrimaryStage
+import it.parttimeteam.view.startup._
 import scalafx.application.JFXApp
 
 class StartUpControllerImpl extends StartUpController {
@@ -15,10 +15,10 @@ class StartUpControllerImpl extends StartUpController {
   override def start(app: JFXApp, startGame: GameMatchInformations => Unit): Unit = {
     app.stage = startUpStage
     startGameFunction = startGame
-    this.startUpService.connect("localhost", 5150)
+    this.startUpService.connect(Constants.Remote.SERVER_ADDRESS, Constants.Remote.SERVER_PORT)
   }
 
-  override def onViewEvent(viewEvent: ViewEvent): Unit = viewEvent match {
+  override def onViewEvent(viewEvent: StartUpViewEvent): Unit = viewEvent match {
     case PublicGameSubmitViewEvent(username, playersNumber) => {
       System.out.println(s"PublicGameSubmitViewEvent $username - $playersNumber")
       this.startUpService.joinPublicLobby(username, playersNumber)
@@ -49,10 +49,6 @@ class StartUpControllerImpl extends StartUpController {
       startUpStage.notifyLobbyJoined()
     }
 
-    case PrivateLobbyCreatedEvent(privateCode: String) => {
-      startUpStage.notifyPrivateCode(privateCode)
-      startUpStage.notifyLobbyJoined()
-    }
 
     case LobbyJoinErrorEvent(result: String) => {
       startUpStage.notifyError(result)
@@ -62,9 +58,7 @@ class StartUpControllerImpl extends StartUpController {
       startGameFunction(gameInfo)
     }
 
-    case _ => {
-
-    }
+    case _ =>
 
   }
 

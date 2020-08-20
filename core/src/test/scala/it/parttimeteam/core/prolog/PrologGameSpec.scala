@@ -11,10 +11,6 @@ class PrologGameSpec extends AnyFunSuite {
     assert(deck.size equals 104)
   }
 
-  test("Check number of initial cards") {
-    assert(prologGame.startGameHand equals 13)
-  }
-
   test("Validate a valid quarter") {
 
     val card1: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())

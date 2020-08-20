@@ -48,16 +48,6 @@ class PrologGame() {
   }
 
   /**
-   * Returns the initial number of cards for each player
-   *
-   * @return number of cards
-   */
-  def startGameHand: Int = {
-    val numberCards: List[Term] = engine goal PrologStruct(startHand, x)
-    conversion toInt numberCards.head
-  }
-
-  /**
    * Validate tris or quarter of
    *
    * @param cards cards to validate

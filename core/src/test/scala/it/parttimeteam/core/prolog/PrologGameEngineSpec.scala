@@ -1,6 +1,6 @@
 package it.parttimeteam.core.prolog
 
-import alice.tuprolog.{Prolog, Var}
+import alice.tuprolog.{Prolog, Term, Var}
 import it.parttimeteam.core.prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -11,8 +11,10 @@ class PrologGameEngineSpec extends AnyFunSuite {
 
 
   test("Resolve a specific valid goal") {
-    assert(prologEngine.goal(PrologStruct("startHand", new Var("X"))) equals List(prolog toTerm "13"))
-    assert(prologEngine.goal("startHand(X).") equals List(prolog toTerm "13"))
+    val result : List[Term] = List(prolog toTerm "♥")
+
+    assert(prologEngine.goal(PrologStruct("suit", new Var("X"))) equals result)
+    assert(prologEngine.goal("suit(X).") equals result)
   }
 
   test("Resolve a specific invalid goal") {

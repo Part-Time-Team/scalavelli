@@ -16,6 +16,7 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
       log.debug(s"Received game state $gameState")
       this.listener.onGameStateUpdated(gameState)
     }
+
     case PlayerTurn => {
       log.debug("Its my turn")
       this.listener.onTurnStarted()

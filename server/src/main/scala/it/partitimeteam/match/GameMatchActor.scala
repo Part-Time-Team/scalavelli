@@ -40,6 +40,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
     case Ready(id, ref) => {
       this.players.find(_.id == id) match {
         case Some(p) => {
+          log.debug(s"player ${p.username} ready")
           players = players.map(p => if (p.id == id) p.copy(actorRef = ref) else p)
           val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
 
@@ -60,6 +61,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
    *
    */
   private def initializeGame(): Unit = {
+    log.debug("initializing game..")
     val gameState = gameManager.create(players.map(_.id))
     this.broadcastGameStateToPlayers(gameState)
     this.getPlayerForCurrentTurn.actorRef ! PlayerTurn

@@ -1,15 +1,15 @@
 package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.GamePreferences
+import it.parttimeteam.view.ViewConfig
+import it.parttimeteam.view.startup.PublicGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartUpSceneListener
-import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliButton, MachiavelliLabel, MachiavelliTextField}
-import it.parttimeteam.view.{PublicGameSubmitViewEvent, ViewConfig}
-import javafx.scene.control
+import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
 import scalafx.geometry.Insets
-import scalafx.geometry.Pos.{BottomRight, Center}
+import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
-import scalafx.scene.layout.{BorderPane, HBox, VBox}
+import scalafx.scene.layout.{BorderPane, VBox}
 
 /**
   * Allow to participate to a game by selecting the number of players to play with.
@@ -17,8 +17,8 @@ import scalafx.scene.layout.{BorderPane, HBox, VBox}
   * @param listener to interact with parent stage
   */
 class PublicGameStartUpScene(val listener: StartUpSceneListener) extends BaseStartUpScene() {
-  val btnBack: Button = MachiavelliButton("<", listener.onBackPressed)
-  val btnSubmit: Button = MachiavelliButton("Send", submit)
+  val topBar: StartUpSceneTopBar = new StartUpSceneTopBar(listener)
+  val bottomBar: StartUpSceneBottomBar = new StartUpSceneBottomBar(() => submit())
 
   val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
   val usernameField: TextField = MachiavelliTextField("Username")
@@ -38,42 +38,38 @@ class PublicGameStartUpScene(val listener: StartUpSceneListener) extends BaseSta
 
   comboBox.maxWidth <== center.width
 
-  val bottom: HBox = new HBox()
-
   center.alignment = Center
-  bottom.alignment = BottomRight
 
   val borderPane: BorderPane = new BorderPane()
   borderPane.setPadding(Insets(ViewConfig.screenPadding))
+
   borderPane.center = center
-  borderPane.top = btnBack
-  borderPane.bottom = bottom
+  borderPane.top = topBar
+  borderPane.bottom = bottomBar
 
-  override val progress: ProgressIndicator = new ProgressIndicator()
-  progress.prefHeight <== bottom.height
-  hideLoading()
-
-  override val messageContainer: Label = MachiavelliLabel()
-  hideMessage()
+  bottomBar.hideLoading()
+  bottomBar.hideMessage()
 
   center.getChildren.addAll(usernameLabel, usernameField, selectPlayersLabel, comboBox)
-  bottom.getChildren.addAll(messageContainer, progress, btnSubmit)
 
   val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
 
   root = borderPane
 
-  def submit(): Unit = {
+  override def showMessage(message: String): Unit = bottomBar.showMessage(message)
+
+  override def hideMessage(): Unit = bottomBar.hideMessage()
+
+  private def submit(): Unit = {
     val username: String = usernameField.getText
     val nPlayers: Int = comboBox.getValue
 
     if (!username.isEmpty && nPlayers >= GamePreferences.MIN_PLAYERS_NUM) {
       listener.onSubmit(PublicGameSubmitViewEvent(username, nPlayers))
-      showLoading()
-      btnSubmit.setDisable(true)
+      bottomBar.showLoading()
+      bottomBar.disableButtons()
     } else {
       alert.showAndWait()
     }
   }
-
 }
