@@ -38,7 +38,7 @@ class MachiavelliGamePrimaryStageImpl(gameListener: GameListener, windowWidth: D
 
   val stage: MachiavelliGamePrimaryStage = this
 
-  val gameScene: GameScene = new GameSceneImpl(this)
+  val gameScene: GameScene = new GameSceneImpl(stage, this)
 
   scene = gameScene
 

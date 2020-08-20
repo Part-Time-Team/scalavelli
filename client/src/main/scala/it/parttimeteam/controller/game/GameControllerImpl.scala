@@ -41,11 +41,11 @@ class GameControllerImpl extends GameController {
 
   override def onViewEvent(viewEvent: ViewEvent): Unit = viewEvent match {
     // TODO: To be implemented
-    case MakeCombinationViewEvent(cards) => _
-    case PreviousStateViewEvent() => _
-    case NextStateViewEvent() => _
-    case PickCardCombinationViewEvent(cardCombinationIndex) => _
-    case EndTurnViewEvent() => _
+    case MakeCombinationViewEvent(cards) =>
+    case PreviousStateViewEvent() =>
+    case NextStateViewEvent() =>
+    case PickCardCombinationViewEvent(cardCombinationIndex) =>
+    case EndTurnViewEvent() =>
   }
 
   private def getMockState: PlayerGameState = {

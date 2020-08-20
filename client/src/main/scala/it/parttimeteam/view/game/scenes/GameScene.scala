@@ -24,7 +24,7 @@ trait GameScene extends Scene {
   def setState(state: PlayerGameState): Unit
 }
 
-class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
+class GameSceneImpl(val parentStage: Stage, val listener: GameSceneListener) extends GameScene {
   stylesheets.add("/styles/gameStyle.css")
 
   var initMatchDialog: Stage = _
@@ -213,9 +213,12 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
     val progressBar: ProgressBar = new ProgressBar()
     initMatchDialog.initStyle(StageStyle.Decorated)
     initMatchDialog.setResizable(false)
-    initMatchDialog.initModality(Modality.ApplicationModal)
+    initMatchDialog.initModality(Modality.WindowModal)
     initMatchDialog.setTitle("Game loading")
-    val label = new Label("Please wait...")
+    initMatchDialog.setMinWidth(200)
+    initMatchDialog.setMinHeight(100)
+
+    val label = new Label("Preparing your cards...")
 
     val vb = new VBox()
     vb.setSpacing(5)
@@ -223,8 +226,8 @@ class GameSceneImpl(val listener: GameSceneListener) extends GameScene {
     vb.getChildren.addAll(label, progressBar)
     val scene = new Scene(vb)
     initMatchDialog.setScene(scene)
-
-    initMatchDialog.show()
+    initMatchDialog.initOwner(parentStage)
+    initMatchDialog.showAndWait()
     initMatchDialog.setAlwaysOnTop(true)
   }
 
