@@ -1,10 +1,10 @@
 package it.parttimeteam.core
 
-import it.parttimeteam.{Board, GameState}
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections._
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player._
+import it.parttimeteam.{Board, GameState}
 
 trait GameManager {
 
@@ -67,19 +67,18 @@ class GameManagerImpl extends GameManager {
    * @inheritdoc
    */
   override def create(ids: Seq[PlayerId]): GameState = {
+
     var deck: Deck = Deck.shuffled
-    def fillHand(hand: Hand): Hand =
-      if(hand.playerCards.size < 13) {
-        val drawed = deck.draw
-        deck = drawed._1
-        hand.copy(playerCards = drawed._2 :: hand.playerCards)
-      } else {
-        hand
-      }
+    val playerList = ids.map(i => {
+      val playerCards = deck.draw(13)
+      deck = playerCards._1
+      Player("", i, Hand(playerCards._2.toList))
+    })
+
     GameState(
       deck,
       Board.empty,
-      ids.map(i => Player("", i, fillHand(Hand(List.empty, List.empty))))
+      playerList
     )
   }
 

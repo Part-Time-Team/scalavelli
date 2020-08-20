@@ -29,7 +29,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         }
 
         it("Players have their hands filled with 13 cards") {
-          assert(state.players.forAll(p => p.hand.playerCards.size == 13))
+          assert(state.players.forall(p => p.hand.playerCards.size == 13))
         }
       }
     }
