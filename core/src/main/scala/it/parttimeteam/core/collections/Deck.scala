@@ -11,7 +11,20 @@ case class Deck(cards: List[Card]) {
    *
    * @return Tuple (new Deck, Card drawn).
    */
-  def draw(): (Deck, Card) = (Deck(cards.tail), cards.head)
+  def draw(): (Deck, Card) = (this.copy(cards = cards.tail), cards.head)
+
+  /**
+   * Draw any number of cards from the top of the deck and return them.
+   *
+   * @param number Number of cards to draw.
+   * @return Tuple(new Deck, Cards drawn).
+   */
+  def draw(number: Int): (Deck, Seq[Card]) = (0 until number).foldLeft((this, Seq.empty[Card])) {
+    (acc, _) => {
+      val drawn = acc._1 draw()
+      (drawn._1, drawn._2 +: acc._2)
+    }
+  }
 
   /**
    * The remaining cards number.
@@ -26,13 +39,6 @@ case class Deck(cards: List[Card]) {
    * @return True if is empty, false anywhere.
    */
   def isEmpty: Boolean = cards.isEmpty
-
-  /**
-   * Convert to string all cards in the deck.
-   *
-   * @return
-   */
-  override def toString: String = cards.mkString(", ")
 }
 
 object Deck {
@@ -41,7 +47,10 @@ object Deck {
    *
    * @return List of cards.
    */
-  def sorted: Deck = Deck(PrologGame().loadDeck)
+  def sorted: Deck = {
+    val deck = PrologGame().loadDeck
+    Deck(deck)
+  }
 
   /**
    * Return a shuffled list of cards.

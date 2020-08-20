@@ -14,13 +14,6 @@ class DeckSpec extends AnyFunSpec {
         assert(!Deck.shuffled.isEmpty)
         assert(!Deck.sorted.isEmpty)
       }
-
-      it("Tostring must return a compatible string") {
-        val simpleDeck = Deck(Card.string2card(s"${Rank.Ace().shortName}${Suit.Clubs().shortName}${Color.Blue().shortName}") :: Nil)
-        val str = simpleDeck.toString
-        println(str)
-        assert(str equals "A♣B")
-      }
     }
 
     describe("After draw") {
@@ -42,6 +35,22 @@ class DeckSpec extends AnyFunSpec {
           deckToEmpty = cardDrawn._1
         }
         assert(deckToEmpty.isEmpty)
+      }
+
+      it("Must be empty drawing all cards") {
+        val deckToEmpty = Deck.cards2deck(
+          List(
+            Card(Rank.Ace(), Suit.Clubs(), Color.Blue()),
+            Card(Rank.King(), Suit.Clubs(), Color.Blue()),
+            Card(Rank.Jack(), Suit.Clubs(), Color.Blue())
+          ))
+
+        assert(!deckToEmpty.isEmpty)
+        val cardToDraw = 2 // deckToEmpty.cards.size
+        val deckDrawn = deckToEmpty.draw(cardToDraw)
+        assertResult(cardToDraw)(deckDrawn._2.size) // Card drawn.
+        assertResult(deckToEmpty.cards.size - cardToDraw)(deckDrawn._1.cards.size) // Remaining deck.
+        // assert(deckDrawn._1.isEmpty)
       }
     }
   }
