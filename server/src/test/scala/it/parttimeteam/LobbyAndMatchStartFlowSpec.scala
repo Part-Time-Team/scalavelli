@@ -3,7 +3,7 @@ package it.parttimeteam
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
-import it.partitimeteam.lobby.LobbyManagerActor
+import it.parttimeteam.lobby.LobbyManagerActor
 import it.parttimeteam.messages.LobbyMessages._
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike

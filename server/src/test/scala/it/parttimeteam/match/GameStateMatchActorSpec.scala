@@ -3,7 +3,7 @@ package it.parttimeteam.`match`
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
-import it.partitimeteam.`match`.GameMatchActor
+import it.parttimeteam.`match`.GameMatchActor
 import it.parttimeteam.core.GameManager
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{CardCombination, Deck, Hand}

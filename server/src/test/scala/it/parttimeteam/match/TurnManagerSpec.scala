@@ -1,6 +1,6 @@
 package it.parttimeteam.`match`
 
-import it.partitimeteam.`match`.TurnManager
+import it.parttimeteam.`match`.TurnManager
 import org.scalatest.flatspec.AnyFlatSpecLike
 
 class TurnManagerSpec extends AnyFlatSpecLike {

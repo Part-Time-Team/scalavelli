@@ -1,4 +1,4 @@
-package it.partitimeteam.`match`
+package it.parttimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props, Stash}
 import it.parttimeteam.GameState

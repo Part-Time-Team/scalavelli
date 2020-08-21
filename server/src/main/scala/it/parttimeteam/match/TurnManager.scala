@@ -1,4 +1,4 @@
-package it.partitimeteam.`match`
+package it.parttimeteam.`match`
 
 trait TurnManager {
 

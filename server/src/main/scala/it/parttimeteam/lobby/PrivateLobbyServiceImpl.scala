@@ -1,6 +1,6 @@
-package it.partitimeteam.lobby
+package it.parttimeteam.lobby
 
-import it.partitimeteam.common.IdGenerator
+import it.parttimeteam.common.IdGenerator
 
 class PrivateLobbyServiceImpl extends PrivateLobbyService with IdGenerator {
 
