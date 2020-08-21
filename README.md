@@ -1,4 +1,4 @@
-# scalavelli 
+# Scalavelli project 
 
 ### Build status
 | Branch | Status |
@@ -30,6 +30,8 @@ After that, you can execute them with those commands
 | --- | --- |
 | Server | `./bastra-server/target/universal/stage/bin/bastra-server` |
 | Client | `./bastra-client/target/universal/stage/bin/bastra-client` |
+
+Look to our travis.yml file for packaging scripts.
 
 Be aware to execute first the server and after that how many clients you want.
 You can also modify configuration files to execute server on a different machine.

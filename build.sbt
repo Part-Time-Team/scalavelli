@@ -1,9 +1,10 @@
 name := "scalavelli"
 
-version := "0.1"
+version in ThisBuild := "0.1.1"
 
 scalaVersion in ThisBuild := "2.12.8"
 organization in ThisBuild := "it.parttimeteam"
+maintainer in ThisBuild := "Part Time Team"
 
 enablePlugins(JavaAppPackaging)
 coverageEnabled := false
@@ -107,13 +108,7 @@ lazy val commons = (project in file("commons")).settings(
 lazy val server = (project in file("server")).settings(
   name := "server",
   settings,
-  mainClass in assembly := Some("ScalavelliServer"),
-  assemblyJarName in assembly := s"${name.value}-${version.value}",
-  assemblyMergeStrategy in assembly := {
-    case "application.conf" => MergeStrategy.concat
-    case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
-    case _ => MergeStrategy.first
-  },
+  mainClass in Compile := Some("it.parttimeteam.ScalavelliServer"),
   libraryDependencies ++= (
     akkaDependencies ++
       testDependencies
@@ -126,13 +121,7 @@ lazy val server = (project in file("server")).settings(
 lazy val client = (project in file("client")).settings(
   name := "client",
   settings,
-  mainClass in assembly := Some("AppLauncher"),
-  assemblyJarName in assembly := s"${name.value}-${version.value}",
-  assemblyMergeStrategy in assembly := {
-    case "application.conf" => MergeStrategy.concat
-    case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
-    case _ => MergeStrategy.first
-  },
+  mainClass in Compile := Some("it.parttimeteam.AppLauncher"),
   libraryDependencies ++= (akkaDependencies ++
     testDependencies ++
     scalaFXDep.union(Seq(scalafx))

@@ -53,6 +53,21 @@ jobs:
         local_dir: public
         on:
           all_branches: true
+    - stage: Deploy to Github Releases
+      before_deploy:
+        - sbt "project server" universal:packageBin
+        - sbt "project client" universal:packageBin
+      deploy:
+        provider: releases
+        skip_cleanup: true
+        token: $GH_TOKEN
+        file_glob: true
+        file:
+          - client/target/universal/client-*.zip
+          - server/target/universal/server-*.zip
+        on:
+          branch: master
+          tags: true
 
 stages:
   - name: Run sbt with OpenJdk11
