@@ -5,6 +5,7 @@ version := "0.1"
 scalaVersion in ThisBuild := "2.12.8"
 organization in ThisBuild := "it.parttimeteam"
 
+enablePlugins(JavaAppPackaging)
 coverageEnabled := false
 
 // Determine OS version of JavaFX binaries
@@ -106,11 +107,17 @@ lazy val commons = (project in file("commons")).settings(
 lazy val server = (project in file("server")).settings(
   name := "server",
   settings,
+  mainClass in assembly := Some("ScalavelliServer"),
+  assemblyJarName in assembly := s"${name.value}-${version.value}",
+  assemblyMergeStrategy in assembly := {
+    case "application.conf" => MergeStrategy.concat
+    case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+    case _ => MergeStrategy.first
+  },
   libraryDependencies ++= (
     akkaDependencies ++
       testDependencies
-    ),
-  exportJars := true
+    )
 ).dependsOn(
   core,
   commons
@@ -119,11 +126,17 @@ lazy val server = (project in file("server")).settings(
 lazy val client = (project in file("client")).settings(
   name := "client",
   settings,
+  mainClass in assembly := Some("AppLauncher"),
+  assemblyJarName in assembly := s"${name.value}-${version.value}",
+  assemblyMergeStrategy in assembly := {
+    case "application.conf" => MergeStrategy.concat
+    case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+    case _ => MergeStrategy.first
+  },
   libraryDependencies ++= (akkaDependencies ++
     testDependencies ++
     scalaFXDep.union(Seq(scalafx))
-    ),
-  exportJars := true
+    )
 ).dependsOn(
   core,
   commons
