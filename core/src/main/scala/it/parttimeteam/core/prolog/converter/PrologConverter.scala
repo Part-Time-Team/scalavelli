@@ -9,14 +9,6 @@ import it.parttimeteam.core.cards.Card
 trait PrologConverter {
 
   /**
-   * Convert term to int
-   *
-   * @param term term to covert
-   * @return type int to return
-   */
-  def toInt(term: Term): Int
-
-  /**
    * Convert string and replace
    *
    * @param term term to convert

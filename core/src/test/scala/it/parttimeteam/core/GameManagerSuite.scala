@@ -20,11 +20,17 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         assert(gameManager.create(Seq.empty).players equals List.empty)
       }
 
-      it("Filled if players are added") {
-        // TODO: Need to create a stub game state because the creation
-        // generate a game state with a shuffled deck.
-        val list = ids.map(i => Player("", i, Hand(Nil, Nil)))
-        assert(gameManager.create(ids).players equals list)
+      describe("When there are player to add") {
+        val list = ids.map(i => Player("", i, Hand(List.empty, List.empty)))
+        val state = gameManager.create(ids)
+
+        it("Game state players are not empty") {
+          assert(state.players.nonEmpty)
+        }
+
+        it("Players have their hands filled with 13 cards") {
+          assert(state.players.forall(p => p.hand.playerCards.size == 13))
+        }
       }
     }
 
@@ -86,39 +92,47 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       }
     }
 
+    // TODO: Check when a player have played a combination in this hand and not.
     describe("Play a combination") {
       it("Play a valid comb") {
-        val c1 = Card.string2card("2♣R")
-        val c2 = Card.string2card("3♣B")
-        val c3 = Card.string2card("4♣B")
-        val comb = CardCombination(List(c1, c2, c3))
         val state = gameManager.create(ids)
-        val played = gameManager.playCombination(Hand(), state.board, comb)
-        // assert(played._2 contains c1)
-        assert(!(played._1.tableCards contains c1))
+        val c1 = Card.string2card("2♣R")
+        val list = List(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
+        val comb = CardCombination(list)
+        val played = gameManager.playCombination(Hand(list), state.board, comb)
+        assert(!(played._1 containsCards c1))
+        assert(played._2.combinations contains comb)
       }
     }
 
+    // TODO: Check whan a player pick up a combination that is present or not.
     describe("Pick table cards") {
       it("Pick from table some cards") {
         val c1 = Card.string2card("2♣R")
-        val c2 = Card.string2card("3♣B")
-        val c3 = Card.string2card("4♣R")
-        val comb = CardCombination(List(c1, c2, c3))
+        val list = List(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
+        val comb = CardCombination(list)
         var state = gameManager.create(ids)
-        val daniele = state getPlayer "Daniele" get
+        val daniele = (state getPlayer "Daniele").get
+
+        // First play a combination.
         val played = gameManager.playCombination(
-          daniele.hand, state.board, comb)
+          Hand(list), state.board, comb)
         state = state.copy(board = played._2)
         daniele.hand = played._1
         state = state updatePlayer daniele
-        val picked =
-          gameManager.pickTableCards(
-            (state getPlayer "Daniele" get).hand,
-            state.board,
-            c1)
-        assert(picked._1.tableCards contains c1)
-        assert(!(picked._1.playerCards contains c1))
+
+        // Second try to pick a combination from the board.
+        val picked = gameManager.pickBoardCards(
+          Hand(),
+          state.board,
+          c1)
+        assert(picked.isRight)
+
+        // This is make secure by previous assertion.
+        val (hand: Hand, board: Board) = picked.right.get
+        assert(hand.tableCards contains c1)
+        assert(!(hand.playerCards contains c1))
+        assert(board.combinations forall (c => !(c.cards contains c1)))
       }
     }
   }

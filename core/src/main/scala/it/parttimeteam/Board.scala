@@ -1,5 +1,6 @@
 package it.parttimeteam
 
+import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.CardCombination
 
 /**
@@ -20,20 +21,30 @@ case class Board(combinations: List[CardCombination]) {
   /**
    * Pick a combination from the actual game board.
    *
-   * @param combinations Combinations to pick up.
+   * @param cards Combinations to pick up.
    * @return
    */
-  def pickCombination(combinations: CardCombination*): Board = {
-    Board(combinations filterNot (p => p equals combinations) toList)
+  def pickCards(cards: Seq[Card]): Either[String, Board] = {
+    def cardsInBoard(): Boolean = {
+      val boardCards = this.combinations.flatMap(_.cards)
+      cards forall (c => boardCards contains c)
+    }
+
+    Either.cond(
+      cardsInBoard(),
+      Board(combinations.foldLeft(Seq.empty[CardCombination]) {
+        (acc: Seq[CardCombination], boardCombination: CardCombination) => {
+          val nBoard = boardCombination.cards.filterNot(c => cards contains c)
+          CardCombination(nBoard) +: acc
+        }
+      }.toList),
+      "No cards in the board")
   }
 }
 
 object Board {
-
   /**
    * Represent an empty game board.
    */
-  def empty() = Board(List.empty)
-
-
+  def empty: Board = Board(List.empty)
 }

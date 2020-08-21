@@ -1,10 +1,10 @@
 package it.parttimeteam.core
 
-import it.parttimeteam.{Board, GameState}
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections._
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player._
+import it.parttimeteam.{Board, GameState}
 
 trait GameManager {
 
@@ -49,7 +49,7 @@ trait GameManager {
    * @param cards Cards to pick.
    * @return Hand and Board updated.
    */
-  def pickTableCards(hand: Hand, board: Board, cards: Card*): (Hand, Board)
+  def pickBoardCards(hand: Hand, board: Board, cards: Card*): Either[String, (Hand, Board)]
 
   /**
    * Play cards from hand to board.
@@ -67,10 +67,18 @@ class GameManagerImpl extends GameManager {
    * @inheritdoc
    */
   override def create(ids: Seq[PlayerId]): GameState = {
+
+    var deck: Deck = Deck.shuffled
+    val playerList = ids.map(i => {
+      val playerCards = deck.draw(13)
+      deck = playerCards._1
+      Player("", i, Hand(playerCards._2.toList))
+    })
+
     GameState(
-      Deck.shuffled,
+      deck,
       Board.empty,
-      ids.map(i => Player("", i, Hand(Nil, Nil)))
+      playerList
     )
   }
 
@@ -92,14 +100,10 @@ class GameManagerImpl extends GameManager {
   /**
    * @inheritdoc
    */
-  override def pickTableCards(
-                               hand: Hand,
-                               board: Board,
-                               cards: Card*):
-  (Hand, Board) = {
-    val b = board.pickCombination(CardCombination(cards.toList))
-    val nh = hand.addTableCards(cards)
-    (nh, b)
+  override def pickBoardCards(hand: Hand,
+                              board: Board,
+                              cards: Card*): Either[String, (Hand, Board)] = {
+    board.pickCards(cards).map(updatedBoard => (hand.addTableCards(cards), updatedBoard))
   }
 
   /**
@@ -111,6 +115,7 @@ class GameManagerImpl extends GameManager {
                                 combination: CardCombination):
   (Hand, Board) = {
     val b = board.addCombination(combination)
-    (hand, b)
+    val nHand = hand.removeCards(combination.cards)
+    (nHand, b)
   }
 }

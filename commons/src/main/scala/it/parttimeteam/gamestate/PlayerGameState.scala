@@ -13,6 +13,6 @@ case class PlayerGameState(board: Board, hand: Hand, otherPlayers: Seq[Opponent]
  * Opponent player with few fields.
  *
  * @param name         Name.
- * @param cardsNumbers Number of cards in hands.
+ * @param cardsNumber Number of cards in hands.
  */
-case class Opponent(name: String, cardsNumbers: Int)
+case class Opponent(name: String, cardsNumber: Int)

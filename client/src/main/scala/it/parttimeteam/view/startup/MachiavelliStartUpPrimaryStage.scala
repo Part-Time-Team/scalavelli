@@ -1,10 +1,10 @@
 package it.parttimeteam.view.startup
 
 import it.parttimeteam.controller.startup.GameStartUpListener
+import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.listeners._
 import it.parttimeteam.view.startup.scenes._
 import it.parttimeteam.view.utils.MachiavelliAlert
-import it.parttimeteam.view.{ViewConfig, ViewEvent}
 import scalafx.application.JFXApp
 import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
@@ -18,7 +18,7 @@ trait MachiavelliStartUpPrimaryStage extends JFXApp.PrimaryStage with PrimarySta
 
   def notifyLobbyJoined(): Unit
 
-  def notifyError(result:String): Unit
+  def notifyError(result: String): Unit
 }
 
 /**
@@ -28,7 +28,7 @@ trait MachiavelliStartUpPrimaryStage extends JFXApp.PrimaryStage with PrimarySta
   * @param windowWidth         the width of app window
   * @param windowHeight        the height of app window
   */
-class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListener, windowWidth: Double, windowHeight: Double) extends MachiavelliStartUpPrimaryStage{
+class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListener, windowWidth: Double, windowHeight: Double) extends MachiavelliStartUpPrimaryStage {
   title = "Machiavelli"
   resizable = true
   width = windowWidth
@@ -66,7 +66,7 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
     scene = mainScene
   }
 
-  override def onSubmit(viewEvent: ViewEvent): Unit = {
+  override def onSubmit(viewEvent: StartUpViewEvent): Unit = {
     gameStartUpListener.onViewEvent(viewEvent)
   }
 
@@ -79,7 +79,7 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
     currentInnerScene.showMessage("Waiting for other players")
   }
 
-  override def notifyError(result:String): Unit = {
+  override def notifyError(result: String): Unit = {
     val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
     alert.showAndWait()
   }
