@@ -1,0 +1,76 @@
+package it.parttimeteam.messages
+
+import akka.actor.ActorRef
+
+object LobbyMessages {
+
+  /**
+   *
+   * @param clientRef ref of the client requesting the connection
+   */
+  case class Connect(clientRef: ActorRef)
+
+  /**
+   *
+   * @param clientId server generated client id
+   */
+  case class Connected(clientId: String)
+
+
+  /**
+   * Message sent by the client to join a public lobby for a match with the given number of players
+   *
+   * @param username        username choosed by the user
+   * @param numberOfPlayers required to start a match
+   */
+  case class JoinPublicLobby(clientId: String, username: String, numberOfPlayers: Int)
+
+  /**
+   * Message sent by the client to join a private lobby
+   *
+   * @param username         username choosed by the user
+   * @param privateLobbyCode required to start a match
+   */
+  case class JoinPrivateLobby(clientId: String, username: String, privateLobbyCode: String)
+
+  /**
+   * Message sent by the client to request a creation of a new private lobby and join
+   *
+   * @param username        username choosed by the user
+   * @param numberOfPlayers required to start a match
+   */
+  case class CreatePrivateLobby(clientId: String, username: String, numberOfPlayers: Int)
+
+  /**
+   * Message sent by the client to leave the current lobby
+   *
+   * @param clientId id of the user (the one retrieved by the server after the first connection)
+   */
+  case class LeaveLobby(clientId: String)
+
+
+  /**
+   * Message sent by the server after a successfull lobby connection
+   *
+   */
+  case class UserAddedToLobby()
+
+  case class LobbyJoinError(reason: String)
+
+  /**
+   * Message sent by the server after private lobby creation
+   *
+   * @param lobbyCode code of the created lobby
+   */
+  case class PrivateLobbyCreated(lobbyCode: String)
+
+
+  /**
+   * Message sent by the server on match found
+   *
+   * @param gameRoom actorRef of the game room to join
+   */
+  case class MatchFound(gameRoom: ActorRef)
+
+
+}
