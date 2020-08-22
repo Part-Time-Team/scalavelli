@@ -1,7 +1,9 @@
 package it.parttimeteam.messages
 
 import akka.actor.ActorRef
-import it.parttimeteam.PlayerAction
+import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.collections.Hand
+import it.parttimeteam.{Board, PlayerAction}
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.PlayerGameState
 
@@ -35,6 +37,10 @@ object GameMessage {
    */
   case object PlayerTurn
 
+  /**
+    * Tells the player who is playing
+    */
+  case object OpponentInTurn
 
   /**
    * Action made by the client
@@ -50,5 +56,15 @@ object GameMessage {
    * @param playerId player identifier
    */
   case class LeaveGame(playerId: String)
+
+  case class Error(errorType: GameErrorType)
+
+  case class EndTurnWithPlays(playerId: String, board: Board, hand: Hand)
+
+  case class EndTurnAndDraw(playerId: String)
+
+  case class CardDrawn(card: Card)
+
+
 
 }
