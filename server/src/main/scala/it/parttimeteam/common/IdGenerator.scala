@@ -1,4 +1,4 @@
-package it.partitimeteam.common
+package it.parttimeteam.common
 
 import java.util.UUID
 

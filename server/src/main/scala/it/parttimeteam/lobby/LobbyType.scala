@@ -1,4 +1,4 @@
-package it.partitimeteam.lobby
+package it.parttimeteam.lobby
 
 /**
  *

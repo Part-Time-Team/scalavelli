@@ -1,8 +1,8 @@
-package it.partitimeteam.lobby
+package it.parttimeteam.lobby
 
 import akka.actor.{Actor, ActorRef, Props}
-import it.partitimeteam.`match`.GameMatchActor
-import it.partitimeteam.common.IdGenerator
+import it.parttimeteam.`match`.GameMatchActor
+import it.parttimeteam.common.IdGenerator
 import it.parttimeteam.core.GameManagerImpl
 import it.parttimeteam.entities
 import it.parttimeteam.entities.GamePlayer

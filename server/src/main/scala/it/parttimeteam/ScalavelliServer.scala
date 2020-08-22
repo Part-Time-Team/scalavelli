@@ -1,8 +1,8 @@
-package it.partitimeteam
+package it.parttimeteam
 
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
-import it.partitimeteam.lobby.LobbyManagerActor
+import it.parttimeteam.lobby.LobbyManagerActor
 import it.parttimeteam.Constants
 
 object ScalavelliServer {

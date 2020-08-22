@@ -1,10 +1,12 @@
 name := "scalavelli"
 
-version := "0.1"
+version in ThisBuild := "0.1.1"
 
 scalaVersion in ThisBuild := "2.12.8"
 organization in ThisBuild := "it.parttimeteam"
+maintainer in ThisBuild := "Part Time Team"
 
+enablePlugins(JavaAppPackaging)
 coverageEnabled := false
 
 // Determine OS version of JavaFX binaries
@@ -106,11 +108,11 @@ lazy val commons = (project in file("commons")).settings(
 lazy val server = (project in file("server")).settings(
   name := "server",
   settings,
+  mainClass in Compile := Some("it.parttimeteam.ScalavelliServer"),
   libraryDependencies ++= (
     akkaDependencies ++
       testDependencies
-    ),
-  exportJars := true
+    )
 ).dependsOn(
   core,
   commons
@@ -119,11 +121,11 @@ lazy val server = (project in file("server")).settings(
 lazy val client = (project in file("client")).settings(
   name := "client",
   settings,
+  mainClass in Compile := Some("it.parttimeteam.AppLauncher"),
   libraryDependencies ++= (akkaDependencies ++
     testDependencies ++
     scalaFXDep.union(Seq(scalafx))
-    ),
-  exportJars := true
+    )
 ).dependsOn(
   core,
   commons
