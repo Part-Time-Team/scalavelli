@@ -8,7 +8,7 @@ case class StateUpdatedEvent(state: PlayerGameState) extends GameEvent
 
 case class OpponentInTurnEvent(actualPlayerName: String) extends GameEvent
 
-case class InTurnEvent() extends GameEvent
+case object InTurnEvent extends GameEvent
 
 case class InfoEvent(message: String) extends GameEvent
 
