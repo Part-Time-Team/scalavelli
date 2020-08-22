@@ -10,6 +10,8 @@ import scala.concurrent.duration._
 
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
                       private val notifyEvent: GameEvent => Unit) extends GameService {
+  val history: History[PlayerGameState] = ???
+  val store: GameStateStore = ???
 
   implicit val executionContext: ExecutionContextExecutor = ActorSystemManager.actorSystem.dispatcher
 

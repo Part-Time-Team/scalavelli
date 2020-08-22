@@ -6,9 +6,14 @@ sealed class GameEvent
 
 case class StateUpdatedEvent(state: PlayerGameState) extends GameEvent
 
-case class TurnChangedEvent(state: PlayerGameState, actualPlayerName: String) extends GameEvent
+case class OpponentInTurnEvent(actualPlayerName: String) extends GameEvent
 
-case class YourTurnEvent(state: PlayerGameState) extends GameEvent
+case class InTurnEvent() extends GameEvent
+
+case class InfoEvent(message: String) extends GameEvent
+
+case class ErrorEvent(reason: String) extends GameEvent
+
 
 
 
