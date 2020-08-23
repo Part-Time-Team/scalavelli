@@ -34,13 +34,11 @@ class GameControllerImpl extends GameController {
       })
     }
 
-    case TurnChangedEvent(state, actualPlayerName) => {
-      gameStage.updateState(state)
+    case OpponentInTurnEvent(actualPlayerName) => {
       gameStage.setMessage(s"It's $actualPlayerName turn")
     }
 
-    case YourTurnEvent(state) => {
-      gameStage.updateState(state)
+    case InTurnEvent => {
       gameStage.notifyInfo("It's your turn")
       gameStage.setMessage("Your turn")
       gameStage.showTimer()
@@ -52,10 +50,10 @@ class GameControllerImpl extends GameController {
   override def onViewEvent(viewEvent: GameViewEvent): Unit = viewEvent match {
     // TODO: To be implementedc
     case MakeCombinationViewEvent(cards) =>
-    case PreviousStateViewEvent() =>
-    case NextStateViewEvent() =>
+    case UndoViewEvent =>
+    case RedoViewEvent =>
     case PickCardCombinationViewEvent(cardCombinationIndex) =>
-    case EndTurnViewEvent() =>
+    case EndTurnViewEvent =>
     case _ =>
   }
 

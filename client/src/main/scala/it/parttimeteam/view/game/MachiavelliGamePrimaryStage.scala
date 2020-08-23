@@ -12,8 +12,8 @@ import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
 
 /**
-  * Stage for game scenes
-  */
+ * Stage for game scenes
+ */
 trait MachiavelliGamePrimaryStage extends JFXApp.PrimaryStage with PrimaryStageListener {
   def showTimer(): Unit
 
@@ -31,11 +31,11 @@ trait MachiavelliGamePrimaryStage extends JFXApp.PrimaryStage with PrimaryStageL
 }
 
 /**
-  * Stage for game scenes
-  *
-  * @param gameListener enables to call actions exposed by controller
-  * @param windowWidth  the width of app window
-  * @param windowHeight the height of app window  */
+ * Stage for game scenes
+ *
+ * @param gameListener enables to call actions exposed by controller
+ * @param windowWidth  the width of app window
+ * @param windowHeight the height of app window  */
 class MachiavelliGamePrimaryStageImpl(gameListener: GameListener, windowWidth: Double, windowHeight: Double) extends MachiavelliGamePrimaryStage {
   title = "Machiavelli"
   resizable = true
@@ -74,20 +74,20 @@ class MachiavelliGamePrimaryStageImpl(gameListener: GameListener, windowWidth: D
   override def matchReady(): Unit = gameScene.hideInitMatch()
 
   // view actions
-  override def pickCombination(combinationIndex: Int): Unit = gameListener.onViewEvent(PickCardCombinationViewEvent(combinationIndex))
+  override def pickCombination(combinationIndex: Int): Unit = ??? //gameListener.onViewEvent(PickCardCombinationViewEvent(combinationIndex))
 
   override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationViewEvent(cards))
 
-  override def endTurn(): Unit = gameListener.onViewEvent(EndTurnViewEvent())
+  override def endTurn(): Unit = gameListener.onViewEvent(EndTurnViewEvent)
 
-  override def nextState(): Unit = gameListener.onViewEvent(NextStateViewEvent())
+  override def nextState(): Unit = gameListener.onViewEvent(RedoViewEvent)
 
-  override def previousState(): Unit = gameListener.onViewEvent(PreviousStateViewEvent())
+  override def previousState(): Unit = gameListener.onViewEvent(UndoViewEvent)
 }
 
 /**
-  * Companion object for MachiavelliGamePrimaryStage
-  */
+ * Companion object for MachiavelliGamePrimaryStage
+ */
 object MachiavelliGamePrimaryStage {
   val windowWidth: Double = ViewConfig.screenWidth
   val windowHeight: Double = ViewConfig.screenHeight
