@@ -18,9 +18,10 @@ case class CardCombination(cards: Seq[Card] = Seq.empty) {
    * @return true if the combination is valid otherwise false.
    */
   def isValid: Boolean =
-    if(cards.forall(c => c.rank equals cards.head.rank))
+    if (cards.forall(c => c.rank equals cards.head.rank))
       PrologGame().validateQuarter(cards.toList)
     else
       PrologGame().validateSequence(cards.toList)
+
   // TODO: Can be a Seq or need to be a List?
 }
