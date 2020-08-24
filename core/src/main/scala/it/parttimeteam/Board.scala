@@ -35,7 +35,7 @@ case class Board(combinations: List[CardCombination]) {
       Board(combinations.foldLeft(Seq.empty[CardCombination]) {
         (acc: Seq[CardCombination], boardCombination: CardCombination) => {
           val nBoard = boardCombination.cards.filterNot(c => cards contains c)
-          CardCombination(nBoard) +: acc
+          boardCombination.copy(cards = nBoard) +: acc
         }
       }.toList),
       "No cards in the board")

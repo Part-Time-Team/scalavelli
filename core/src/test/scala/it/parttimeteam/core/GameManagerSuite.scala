@@ -55,7 +55,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       stubManager.validateTurn _ when(Board(Nil), Hand(Nil, Nil)) returns true
 
       // If the board is filled with a combination and the hand is empty, return a valid turn
-      stubManager.validateTurn _ when(Board(List(CardCombination(Card.string2card("2♣R") :: Nil))), Hand(Nil, Nil)) returns true
+      stubManager.validateTurn _ when(Board(Seq(CardCombination("#1", Seq(Card.string2card("2♣R"))))), Hand(Nil, Nil)) returns true
       // TODO: Waiting for PROLOG part.
       it("With complex op") {
         // assert(stubManager.validateTurn(Board(Nil), Hand(Nil, Nil)) equals true)
@@ -97,9 +97,9 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       it("Play a valid comb") {
         val state = gameManager.create(ids)
         val c1 = Card.string2card("2♣R")
-        val list = List(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
-        val comb = CardCombination(list)
-        val played = gameManager.playCombination(Hand(list), state.board, comb)
+        val seq = Seq(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
+        val comb = CardCombination("#1", seq)
+        val played = gameManager.playCombination(Hand(seq.toList), state.board, comb)
         assert(!(played._1 containsCards c1))
         assert(played._2.combinations contains comb)
       }
@@ -109,14 +109,14 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
     describe("Pick table cards") {
       it("Pick from table some cards") {
         val c1 = Card.string2card("2♣R")
-        val list = List(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
-        val comb = CardCombination(list)
+        val seq = Seq(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
+        val comb = CardCombination("#2", seq)
         var state = gameManager.create(ids)
         val daniele = (state getPlayer "Daniele").get
 
         // First play a combination.
         val played = gameManager.playCombination(
-          Hand(list), state.board, comb)
+          Hand(seq.toList), state.board, comb)
         state = state.copy(board = played._2)
         daniele.hand = played._1
         state = state updatePlayer daniele
