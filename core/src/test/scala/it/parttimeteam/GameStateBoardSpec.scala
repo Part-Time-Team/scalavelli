@@ -17,6 +17,6 @@ class GameStateBoardSpec extends AnyFunSuite {
 
     val cardCombination: CardCombination = CardCombination("#1", Seq(card1, card2, card3))
 
-    assert(gameBoard.addCombination(cardCombination) equals Board(List(cardCombination)))
+    assert(gameBoard.addCombination(cardCombination) equals Board(Seq(cardCombination)))
   }
 }

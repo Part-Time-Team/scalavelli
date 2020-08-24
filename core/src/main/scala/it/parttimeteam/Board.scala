@@ -8,7 +8,7 @@ import it.parttimeteam.core.collections.CardCombination
  *
  * @param combinations combinations of cards
  */
-case class Board(combinations: List[CardCombination]) {
+case class Board(combinations: Seq[CardCombination]) {
   /**
    * Add new combination to game board.
    *
@@ -25,6 +25,10 @@ case class Board(combinations: List[CardCombination]) {
    * @return
    */
   def pickCards(cards: Seq[Card]): Either[String, Board] = {
+    /**
+     * Return if a card is present in any combination on the board or not.
+     * @return True if is present, false anywhere.
+     */
     def cardsInBoard(): Boolean = {
       val boardCards = this.combinations.flatMap(_.cards)
       cards forall (c => boardCards contains c)
@@ -46,5 +50,5 @@ object Board {
   /**
    * Represent an empty game board.
    */
-  def empty: Board = Board(List.empty)
+  def empty: Board = Board(Seq.empty)
 }

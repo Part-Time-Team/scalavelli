@@ -52,7 +52,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
     describe("Validate a turn") {
       val stubManager = stub[GameManager]
       // If the board is empty and the hand too, return a valid turn.
-      stubManager.validateTurn _ when(Board(Nil), Hand(Nil, Nil)) returns true
+      stubManager.validateTurn _ when(Board(Seq.empty), Hand(Nil, Nil)) returns true
 
       // If the board is filled with a combination and the hand is empty, return a valid turn
       stubManager.validateTurn _ when(Board(Seq(CardCombination("#1", Seq(Card.string2card("2♣R"))))), Hand(Nil, Nil)) returns true
