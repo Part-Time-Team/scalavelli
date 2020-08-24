@@ -57,7 +57,7 @@ trait GameManager {
    * @param hand        Hand where to pick cards.
    * @param board       Board where put cards.
    * @param combination Combination to pick.
-   * @return Hand and Board updated.
+   * @return Hand and Board updated. If hand doesn't contain any combination card, return exactly the same hand and board.
    */
   def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board)
 }
@@ -75,11 +75,9 @@ class GameManagerImpl extends GameManager {
       Player("", i, Hand(playerCards._2.toList))
     })
 
-    GameState(
-      deck,
+    GameState(deck,
       Board.empty,
-      playerList
-    )
+      playerList)
   }
 
   /**
@@ -111,12 +109,14 @@ class GameManagerImpl extends GameManager {
   /**
    * @inheritdoc
    */
-  override def playCombination(
-                                hand: Hand,
-                                board: Board,
-                                combination: CardCombination): (Hand, Board) = {
-    val b = board.addCombination(combination)
-    val nHand = hand.removeCards(combination.cards)
-    (nHand, b)
+  override def playCombination(hand: Hand,
+                               board: Board,
+                               combination: CardCombination): (Hand, Board) = {
+
+    val removed = hand.removeCards(combination.cards)
+    removed match {
+      case Right(value) => (value._1, board.addCombination(combination))
+      case _ => (hand, board)
+    }
   }
 }
