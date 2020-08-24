@@ -3,12 +3,7 @@ package it.parttimeteam
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.CardCombination
 
-/**
- * Represent the game board
- *
- * @param combinations combinations of cards
- */
-case class Board(combinations: List[CardCombination]) {
+case class Board(combinations: Seq[CardCombination]) {
   /**
    * Add new combination to game board.
    *
@@ -46,5 +41,5 @@ object Board {
   /**
    * Represent an empty game board.
    */
-  def empty: Board = Board(List.empty)
+  def empty: Board = Board(Seq.empty)
 }

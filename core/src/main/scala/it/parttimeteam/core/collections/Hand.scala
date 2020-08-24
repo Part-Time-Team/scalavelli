@@ -42,19 +42,51 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
    * @return True if all cards are contained, false anywhere.
    */
   def containsCards(cards: Card*): Boolean =
-    (cards exists (c => playerCards contains c)) &&
+    (cards exists (c => playerCards contains c)) ||
       (cards exists (c => tableCards contains c))
 
   /**
-   * Remove cards contained in the hand.
+   * Remove cards contained in the hand or return an error string if the hand
+   * doesn't contain all the cards in the parameter.
    *
-   * @param cards Cards that must be removed from the hand.
-   * @return New hand without those cards.
+   * @param cards Cards to remove from Hand.
+   * @return
    */
-  def removeCards(cards: Seq[Card]): Hand = {
-    val pCards = playerCards filterNot (c => cards contains c)
-    val tCards = tableCards filterNot (c => cards contains c)
-    this.copy(playerCards = pCards, tableCards = tCards)
+  def removeCards(cards: Seq[Card]): Either[String, (Hand, Seq[Card])] = {
+
+    /**
+     * Remove cards contained in the hand.
+     *
+     * @param cards Cards that must be removed from the hand.
+     * @return New hand without those cards.
+     */
+    def remove(cards: Seq[Card]): (Hand, Seq[Card]) = {
+      val removedPlayerCards = playerCards.foldLeft((Seq.empty[Card], Seq.empty[Card])) {
+        (acc: (Seq[Card], Seq[Card]), card) => {
+          // If cards contains card
+          if (cards contains card)
+            (acc._1, acc._2 ++ (card +: Nil)) // I remove it from hand and put it into removed cards.
+          else
+            (acc._1 ++ (card +: Nil), acc._2) // I re-add it to playerCards.
+        }
+      }
+
+      val removedBoardCards = tableCards.foldLeft((Seq.empty[Card], Seq.empty[Card])) {
+        (acc: (Seq[Card], Seq[Card]), card) => {
+          if (cards contains card)
+            (acc._1, acc._2 ++ (card +: Nil))
+          else
+            (acc._1 ++ (card +: Nil), acc._2)
+        }
+      }
+
+      // Return a new hand with new card lists and the concat of the two sequences of removed cards
+      (this.copy(playerCards = removedPlayerCards._1.toList,
+        tableCards = removedBoardCards._1.toList),
+        removedPlayerCards._2 ++ removedBoardCards._2)
+    }
+
+    Either.cond(cards forall (c => this containsCards c), remove(cards), s"$this doesn't contain $cards")
   }
 
   /**
