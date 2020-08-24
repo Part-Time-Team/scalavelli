@@ -48,16 +48,17 @@ class PrologGame() {
   }
 
   /**
-   * Validate tris or quarter of
+   * Validate tris or quarter of cards.
    *
-   * @param cards cards to validate
-   * @return true if the goal is successful, false otherwise
+   * @param cards Cards to validate.
+   * @return True if the goal is successful, False otherwise.
    */
   def validateQuarter(cards: List[Card]): Boolean = {
     val validate = engine goal validationQuarter + conversion.cardsConvert(cards)
     conversion toBoolean validate
   }
 
+  // TODO: Rename this method into validateChair.
   /**
    * Validate sequence or scala of cards
    *

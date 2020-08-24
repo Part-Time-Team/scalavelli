@@ -29,7 +29,7 @@ trait GameManager {
    *
    * @param board Board to validate.
    * @param hand  Hand to validate.
-   * @return True if is validated, false anywhere.
+   * @return True if is valid, false anywhere.
    */
   def validateTurn(board: Board, hand: Hand): Boolean
 
@@ -37,7 +37,7 @@ trait GameManager {
    * Validate a card combination.
    *
    * @param combination Combination to validate.
-   * @return True if is validated, false anywhere.
+   * @return True if is valid, false anywhere.
    */
   def validateCombination(combination: CardCombination): Boolean
 
@@ -90,12 +90,14 @@ class GameManagerImpl extends GameManager {
   /**
    * @inheritdoc
    */
-  override def validateTurn(board: Board, hand: Hand): Boolean = ???
+  override def validateTurn(board: Board, hand: Hand): Boolean =
+    board.combinations.forall(c => validateCombination(c)) && hand.tableCards.isEmpty
 
+  // TODO: This method is useful?
   /**
    * @inheritdoc
    */
-  override def validateCombination(combination: CardCombination): Boolean = ???
+  override def validateCombination(combination: CardCombination): Boolean = combination.isValid
 
   /**
    * @inheritdoc
@@ -112,8 +114,7 @@ class GameManagerImpl extends GameManager {
   override def playCombination(
                                 hand: Hand,
                                 board: Board,
-                                combination: CardCombination):
-  (Hand, Board) = {
+                                combination: CardCombination): (Hand, Board) = {
     val b = board.addCombination(combination)
     val nHand = hand.removeCards(combination.cards)
     (nHand, b)
