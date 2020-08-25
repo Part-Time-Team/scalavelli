@@ -1,17 +1,33 @@
 package it.parttimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props, Stash}
-import it.parttimeteam.GameState
+import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, StateResult}
 import it.parttimeteam.core.GameManager
+import it.parttimeteam.core.cards.Card
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
-import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStateUpdated, PlayerActionMade, PlayerTurn, Ready}
+import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
+import it.parttimeteam.{DrawCard, GameState, PlayedMove, PlayerAction}
 
 object GameMatchActor {
   def props(numberOfPlayers: Int, gameManager: GameManager): Props = Props(new GameMatchActor(numberOfPlayers, gameManager: GameManager))
+
+
+  case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
+
+  sealed class AdditionalInfo
+
+  case class CardDrawnInfo(card: Card) extends AdditionalInfo
+
 }
 
+/**
+ * Responsible for a game match
+ *
+ * @param numberOfPlayers number of players
+ * @param gameManager
+ */
 class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager) extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
@@ -73,6 +89,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
 
       // TODO handle player action
 
+
       // TODO update the state
       val newState = gameState
 
@@ -127,6 +144,47 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
   private def getPlayerForCurrentTurn: GamePlayer =
     this.players.find(_.id == turnManager.playerInTurnId).get
 
+
+  private def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
+    playerAction match {
+      case DrawCard => {
+        val (updateDeck, cardDrawn) = gameManager.draw(currentState.deck)
+
+        // updated player with the new card on his hand
+        val updatedState = currentState
+          .getPlayer(playerInTurn.id)
+          .map(p => currentState.updatePlayer(p.copy(
+            hand = p.hand.copy(playerCards = cardDrawn :: p.hand.playerCards))))
+          .get.copy(deck = updateDeck)
+
+        Right(StateResult(
+          updatedState = updatedState,
+          additionalInformation = Some(CardDrawnInfo(cardDrawn))
+        ))
+      }
+
+      case PlayedMove(updatedHand, updatedBoard) => {
+        if (gameManager.validateTurn(updatedBoard, updatedHand)) {
+          val updatedState = currentState
+            .getPlayer(playerInTurn.id)
+            .map(p => currentState.updatePlayer(p.copy(
+              hand = updatedHand)))
+            .get.copy(board = updatedBoard)
+
+          Right(StateResult(
+            updatedState = updatedState,
+            additionalInformation = None
+          ))
+
+        } else {
+          Left("Non valid plays")
+        }
+      }
+
+
+      case _ => Left("Non supported action")
+    }
+  }
 
   // TODO receive function for disconnection and error events
 
