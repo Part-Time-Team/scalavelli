@@ -11,7 +11,7 @@ class CardCombinationSpec extends AnyFunSuite{
     val card1: Card = cards.Card(Rank.Ace(), Suit.Clubs(), Color.Red())
     val card2: Card = cards.Card(Rank.Four(), Suit.Spades(), Color.Blue())
 
-    val cardCombination = CardCombination(List(card1, card2))
+    val cardCombination = CardCombination("#1", Seq(card1, card2))
     assert(cardCombination.isValid equals true)
   }
 }

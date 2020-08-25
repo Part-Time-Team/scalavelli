@@ -5,7 +5,7 @@ import it.parttimeteam.core.prolog.PrologGame
 
 import scala.util.Random
 
-case class Deck(cards: List[Card]) {
+case class Deck(cards: Seq[Card]) {
   /**
    * Draw a card from the top of the deck and return it.
    *
@@ -64,7 +64,7 @@ object Deck {
    *
    * @return List of cards.
    */
-  def empty: Deck = Deck(List.empty)
+  def empty: Deck = Deck(Seq.empty)
 
   /**
    * Convert a list of cards into a deck entity.
@@ -72,5 +72,5 @@ object Deck {
    * @param cards List of cards.
    * @return Deck entity.
    */
-  implicit def cards2deck(cards: List[Card]): Deck = Deck(cards)
+  implicit def cards2deck(cards: Seq[Card]): Deck = Deck(cards)
 }

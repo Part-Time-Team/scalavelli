@@ -15,8 +15,8 @@ class GameStateBoardSpec extends AnyFunSuite {
     val card2: Card = cards.Card(Rank.Two(), Suit.Clubs(), Color.Blue())
     val card3: Card = cards.Card(Rank.Three(), Suit.Clubs(), Color.Red())
 
-    val cardCombination: CardCombination = CardCombination(List(card1, card2, card3))
+    val cardCombination: CardCombination = CardCombination("#1", Seq(card1, card2, card3))
 
-    assert(gameBoard.addCombination(cardCombination) equals Board(List(cardCombination)))
+    assert(gameBoard.addCombination(cardCombination) equals Board(Seq(cardCombination)))
   }
 }

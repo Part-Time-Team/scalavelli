@@ -7,7 +7,7 @@ import it.parttimeteam.core.cards.Card
  *
  * @param cards combinations of cards
  */
-case class CardCombination(cards: Seq[Card] = Seq.empty) {
+case class CardCombination(id: String, cards: Seq[Card] = Seq.empty) {
 
   /**
    * Check if the combination is valid
