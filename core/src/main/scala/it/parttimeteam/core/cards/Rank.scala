@@ -50,6 +50,11 @@ object Rank {
   }
 
   /**
+   * The optional OverflowAce with value 14
+   */
+  case class OverflowAce() extends Rank(14, "Ace", "A")
+
+  /**
    * The second rank.
    */
   case class Two() extends Rank(2, "Two", "2")
@@ -157,6 +162,7 @@ object Rank {
     case 11 => Jack()
     case 12 => Queen()
     case 13 => King()
+    case 14 => OverflowAce()
     case _ => throw new RuntimeException(f"Unknown rank $v")
   }
 }

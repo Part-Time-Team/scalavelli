@@ -1,7 +1,9 @@
 package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.Term
-import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.cards.Rank.{Ace, King}
+import it.parttimeteam.core.cards.{Card, Rank}
+
 
 /**
  * Class to improve conversions results in prolog
@@ -17,15 +19,16 @@ class PrologGameConverter extends PrologConverter {
     "([" + tupleCard.mkString(",") + "])."
   }
 
- /* def valueCards(cards: List[(Int, String)]): List[(Int, String)] = {
-
-    def _valueCards(cards: List[(Int, String)]): List[(Int, String)] = {
-
-      for (List(_, second) <- cards.grouped(2)) {
-        case ((n1: Int, _), (n2: Int, _)) => if (n1 == 10 && n2 == 1) {}
-
+  def optionalValueCards(cards: Seq[Card]): Seq[Card] = cards.foldLeft(Seq.empty[Card]) {
+    (acc, card) =>
+      acc match {
+        case Nil => card +: Nil
+        case _ => (acc.last.rank, card.rank) match {
+          case (King(), Ace()) => {
+            acc ++ (card.copy(rank = 14) +: Nil)
+          }
+          case _ => acc ++ (card +: Nil)
+        }
       }
-      _valueCards(cards)
-    }
-  }*/
+  }
 }

@@ -33,4 +33,16 @@ class PrologGameConverterSpec extends AnyFunSuite {
 
     assert(gameConverter.toStringAndReplace(term) equals "[1]")
   }
+
+  test("Optional value card Ace"){
+
+    val card1: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Red())
+    val card2: Card = Card(Rank.King(), Suit.Clubs(), Color.Blue())
+    val card3: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Red())
+    val card4: Card = Card(Rank.Two(), Suit.Clubs(), Color.Blue())
+    val card5: Card = Card(Rank.Three(), Suit.Clubs(), Color.Red())
+
+    assertResult(Seq(card1, card2, card3.copy(rank = 14)))(gameConverter.optionalValueCards(Seq(card1, card2, card3)))
+    assertResult(Seq(card1, card2, card3.copy(rank = 14), card4, card5))(gameConverter.optionalValueCards(Seq(card1, card2, card3, card4, card5)))
+  }
 }
