@@ -46,72 +46,18 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       }
     }
 
-    // TODO: Check when a player have played a combination in this hand and not.
-    describe("Play a combination") {
-      val state = gameManager.create(ids)
-      val c1 = Card.string2card("2♣R")
-      val c2 = Card.string2card("3♣B")
-      val c3 = Card.string2card("4♣B")
-      val c4 = Card.string2card("5♣B")
-
-      it("Play a valid comb") {
-        val seq = Seq(c1, c2, c3)
-        val comb = CardCombination(seq)
-        val played = gameManager.playCombination(Hand((c4 +: seq).toList), state.board, comb)
-
-        // Check that seq cards are not in player hand.
-        assert(played._1.playerCards.nonEmpty)
-        assert(played._1.tableCards.isEmpty)
-        assertResult(Seq(c4))(played._1.playerCards)
-        // Check that board contain the new combination.
-        assert(played._2.combinations contains comb)
-      }
-
-      it("Play cards that are not present in the hand") {
-        val seq = Seq(c1, c2, c3)
-        val handSeq = List(c2, c3, c4)
-        val comb = CardCombination(seq)
-        val played = gameManager.playCombination(Hand(handSeq), state.board, comb)
-
-        // Hand and Board must be the same as before the operation.
-        assertResult(played._1)(Hand(handSeq))
-        assertResult(played._2)(state.board)
-      }
-    }
-
-    // TODO: Check whan a player pick up a combination that is present or not.
-    describe("Pick table cards") {
-      it("Pick from table some cards") {
-        val c1 = Card.string2card("2♣R")
-        val list = List(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
-        val comb = CardCombination(list)
-        var state = gameManager.create(ids)
-        val daniele = (state getPlayer "Daniele").get
-
-        // First play a combination.
-        val played = gameManager.playCombination(Hand(list), state.board, comb)
-        state = state.copy(board = played._2)
-        daniele.hand = played._1
-        state = state updatePlayer daniele
-
-        // Second try to pick a combination from the board.
-        val picked = gameManager.pickBoardCards(
-          Hand(),
-          state.board,
-          c1)
-        assert(picked.isRight)
-
-        // This is make secure by previous assertion.
-        val (hand: Hand, board: Board) = picked.right.get
-        assert(hand.tableCards contains c1)
-        assert(!(hand.playerCards contains c1))
-        assert(board.combinations forall (c => !(c.cards contains c1)))
-      }
-    }
-
     describe("Validate a turn") {
+      val stubManager = stub[GameManager]
+      // If the board is empty and the hand too, return a valid turn.
+      stubManager.validateTurn _ when(Board(Seq.empty), Hand(Nil, Nil)) returns true
+
+      // If the board is filled with a combination and the hand is empty, return a valid turn
+      stubManager.validateTurn _ when(Board(Seq(CardCombination("#1", Seq(Card.string2card("2♣R"))))), Hand(Nil, Nil)) returns true
       // TODO: Waiting for PROLOG part.
       it("With complex op") {
+        // assert(stubManager.validateTurn(Board(Nil), Hand(Nil, Nil)) equals true)
+        // assert(stubManager.validateTurn(Board(List(CardCombination(Card.string2card("2♣R") :: Nil))), Hand(Nil, Nil)) equals true)
+        pending
       }
     }
 
@@ -140,6 +86,70 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         it("Chair with same rank cards") {
           pending
         }
+      }
+    }
+
+    // TODO: Check when a player have played a combination in this hand and not.
+    describe("Play a combination") {
+      val state = gameManager.create(ids)
+      val c1 = Card.string2card("2♣R")
+      val c2 = Card.string2card("3♣B")
+      val c3 = Card.string2card("4♣B")
+      val c4 = Card.string2card("5♣B")
+
+      it("Play a valid comb") {
+        val seq = Seq(c1, c2, c3)
+        val comb = CardCombination("#1", seq)
+        val played = gameManager.playCombination(Hand((c4 +: seq).toList), state.board, comb)
+
+        // Check that seq cards are not in player hand.
+        assert(played._1.playerCards.nonEmpty)
+        assert(played._1.tableCards.isEmpty)
+        assertResult(Seq(c4))(played._1.playerCards)
+        // Check that board contain the new combination.
+        assert(played._2.combinations contains comb)
+      }
+
+      it("Play cards that are not present in the hand") {
+        val seq = Seq(c1, c2, c3)
+        val handSeq = List(c2, c3, c4)
+        val comb = CardCombination("#1", seq)
+        val played = gameManager.playCombination(Hand(handSeq), state.board, comb)
+
+        // Hand and Board must be the same as before the operation.
+        assertResult(played._1)(Hand(handSeq))
+        assertResult(played._2)(state.board)
+      }
+    }
+
+    // TODO: Check whan a player pick up a combination that is present or not.
+    describe("Pick table cards") {
+      it("Pick from table some cards") {
+        val c1 = Card.string2card("2♣R")
+        val seq = Seq(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
+        val comb = CardCombination("#2", seq)
+        var state = gameManager.create(ids)
+        val daniele = (state getPlayer "Daniele").get
+
+        // First play a combination.
+        val played = gameManager.playCombination(
+          Hand(seq.toList), state.board, comb)
+        state = state.copy(board = played._2)
+        daniele.hand = played._1
+        state = state updatePlayer daniele
+
+        // Second try to pick a combination from the board.
+        val picked = gameManager.pickBoardCards(
+          Hand(),
+          state.board,
+          c1)
+        assert(picked.isRight)
+
+        // This is make secure by previous assertion.
+        val (hand: Hand, board: Board) = picked.right.get
+        assert(hand.tableCards contains c1)
+        assert(!(hand.playerCards contains c1))
+        assert(board.combinations forall (c => !(c.cards contains c1)))
       }
     }
   }

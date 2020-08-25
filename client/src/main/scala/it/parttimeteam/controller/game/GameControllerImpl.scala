@@ -60,9 +60,9 @@ class GameControllerImpl extends GameController {
   private def getMockState: PlayerGameState = {
     val board: Board = Board(
       List(
-        CardCombination(List(Card("A", "♠", "B"), Card("2", "♠", "B"))),
-        CardCombination(List(Card("3", "♠", "B"), Card("4", "♠", "B"))),
-        CardCombination(List(Card("5", "♠", "B"), Card("6", "♠", "B"), Card("7", "♠", "B")))
+        CardCombination("#1", Seq(Card("A", "♠", "B"), Card("2", "♠", "B"))),
+        CardCombination("#2", Seq(Card("3", "♠", "B"), Card("4", "♠", "B"))),
+        CardCombination("#3", Seq(Card("5", "♠", "B"), Card("6", "♠", "B"), Card("7", "♠", "B")))
       )
     )
 

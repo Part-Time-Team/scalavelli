@@ -3,6 +3,11 @@ package it.parttimeteam
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.CardCombination
 
+/**
+ * Represent the game board
+ *
+ * @param combinations combinations of cards
+ */
 case class Board(combinations: Seq[CardCombination]) {
   /**
    * Add new combination to game board.
@@ -20,6 +25,11 @@ case class Board(combinations: Seq[CardCombination]) {
    * @return
    */
   def pickCards(cards: Seq[Card]): Either[String, Board] = {
+    /**
+     * Return if a card is present in any combination on the board or not.
+     *
+     * @return True if is present, false anywhere.
+     */
     def cardsInBoard(): Boolean = {
       val boardCards = this.combinations.flatMap(_.cards)
       cards forall (c => boardCards contains c)
@@ -30,7 +40,7 @@ case class Board(combinations: Seq[CardCombination]) {
       Board(combinations.foldLeft(Seq.empty[CardCombination]) {
         (acc: Seq[CardCombination], boardCombination: CardCombination) => {
           val nBoard = boardCombination.cards.filterNot(c => cards contains c)
-          CardCombination(nBoard) +: acc
+          boardCombination.copy(cards = nBoard) +: acc
         }
       }.toList),
       "No cards in the board")

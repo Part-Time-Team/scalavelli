@@ -10,7 +10,7 @@ import it.parttimeteam.core.prolog.PrologGame
  *
  * @param cards Combinations of cards.
  */
-case class CardCombination(cards: Seq[Card] = Seq.empty) {
+case class CardCombination(id: String, cards: Seq[Card] = Seq.empty) {
 
   /**
    * Check if the combination is valid.
