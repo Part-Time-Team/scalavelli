@@ -73,10 +73,6 @@ class RankSuite extends AnyFunSuite {
     assert(Ace() compareTo Two() equals -1)
   }
 
-  test("Check all ranks") {
-    assert(Rank.all equals List(Ace(), Two(), Three(), Four(), Five(), Six(), Seven(), Eight(), Nine(), Ten(), Jack(), Queen(), King()))
-  }
-
   test("Check Equals with other objs") {
     assert(!(Rank.Ace() equals "A2"))
   }
