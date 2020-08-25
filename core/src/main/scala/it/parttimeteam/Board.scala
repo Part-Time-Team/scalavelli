@@ -27,6 +27,7 @@ case class Board(combinations: Seq[CardCombination]) {
   def pickCards(cards: Seq[Card]): Either[String, Board] = {
     /**
      * Return if a card is present in any combination on the board or not.
+     *
      * @return True if is present, false anywhere.
      */
     def cardsInBoard(): Boolean = {

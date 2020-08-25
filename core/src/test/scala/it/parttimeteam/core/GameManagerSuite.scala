@@ -3,7 +3,6 @@ package it.parttimeteam.core
 import it.parttimeteam.Board
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{CardCombination, Deck, Hand}
-import it.parttimeteam.core.player.Player
 import org.scalamock.matchers.Matchers
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funspec.AnyFunSpec
@@ -12,23 +11,21 @@ import org.scalatest.matchers.should.Matchers.an
 
 class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
   describe("A game manager") {
+    // Use the same instance of GameManager for all tests.
     val gameManager: GameManager = new GameManagerImpl()
     val ids = Seq("Daniele", "Lorenzo", "Luca", "Matteo")
 
     describe("Can create a game") {
       it("Empty if no players are added") {
-        assert(gameManager.create(Seq.empty).players equals List.empty)
+        assert(gameManager.create(Seq.empty).players equals Seq.empty)
       }
 
       describe("When there are player to add") {
-        val list = ids.map(i => Player("", i, Hand(List.empty, List.empty)))
         val state = gameManager.create(ids)
 
-        it("Game state players are not empty") {
+        it("Game state players are created") {
           assert(state.players.nonEmpty)
-        }
-
-        it("Players have their hands filled with 13 cards") {
+          assert(state.players.map(m => m.id) equals ids)
           assert(state.players.forall(p => p.hand.playerCards.size == 13))
         }
       }
@@ -36,13 +33,13 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
 
     describe("Draw cards from a deck") {
       val deck = Deck.shuffled
+
       it("Draw cards from a non empty deck") {
-        val drawedDeck = Deck.cards2deck(deck.cards.tail)
-        assert(gameManager.draw(deck) equals(drawedDeck, deck.cards.head))
+        val drawnDeck = Deck.cards2deck(deck.cards.tail)
+        assert(gameManager.draw(deck) equals(drawnDeck, deck.cards.head))
       }
 
-      it("Thwow an exception when drawing from an empty deck") {
-        // TODO: Implement a test that catch an exception.
+      it("Throw an exception when drawing from an empty deck") {
         val emptyDeck = Deck.empty
         an[UnsupportedOperationException] should be thrownBy
           (gameManager draw emptyDeck)
@@ -94,14 +91,34 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
 
     // TODO: Check when a player have played a combination in this hand and not.
     describe("Play a combination") {
+      val state = gameManager.create(ids)
+      val c1 = Card.string2card("2♣R")
+      val c2 = Card.string2card("3♣B")
+      val c3 = Card.string2card("4♣B")
+      val c4 = Card.string2card("5♣B")
+
       it("Play a valid comb") {
-        val state = gameManager.create(ids)
-        val c1 = Card.string2card("2♣R")
-        val seq = Seq(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
+        val seq = Seq(c1, c2, c3)
         val comb = CardCombination("#1", seq)
-        val played = gameManager.playCombination(Hand(seq.toList), state.board, comb)
-        assert(!(played._1 containsCards c1))
+        val played = gameManager.playCombination(Hand((c4 +: seq).toList), state.board, comb)
+
+        // Check that seq cards are not in player hand.
+        assert(played._1.playerCards.nonEmpty)
+        assert(played._1.tableCards.isEmpty)
+        assertResult(Seq(c4))(played._1.playerCards)
+        // Check that board contain the new combination.
         assert(played._2.combinations contains comb)
+      }
+
+      it("Play cards that are not present in the hand") {
+        val seq = Seq(c1, c2, c3)
+        val handSeq = List(c2, c3, c4)
+        val comb = CardCombination("#1", seq)
+        val played = gameManager.playCombination(Hand(handSeq), state.board, comb)
+
+        // Hand and Board must be the same as before the operation.
+        assertResult(played._1)(Hand(handSeq))
+        assertResult(played._2)(state.board)
       }
     }
 

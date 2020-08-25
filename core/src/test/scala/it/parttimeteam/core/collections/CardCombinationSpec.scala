@@ -1,17 +1,27 @@
 package it.parttimeteam.core.collections
 
 import it.parttimeteam.core.cards
-import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
-import org.scalatest.funsuite.AnyFunSuite
+import it.parttimeteam.core.cards.{Color, Rank, Suit}
+import org.scalatest.funspec.AnyFunSpec
 
-class CardCombinationSpec extends AnyFunSuite{
+class CardCombinationSpec extends AnyFunSpec {
 
-  test("Check a combination is valid"){
+  describe("A combination") {
+    val card1 = cards.Card(Rank.Three(), Suit.Spades(), Color.Red())
+    val card2 = cards.Card(Rank.Four(), Suit.Spades(), Color.Blue())
+    val card3 = cards.Card(Rank.Five(), Suit.Spades(), Color.Blue())
+    describe("Is invalid") {
+      it("When is composed by less than 3 cards") {
+        val comb = CardCombination("#1", card1 +: (card2 +: Nil))
+        assert(!comb.isValid)
+      }
+    }
 
-    val card1: Card = cards.Card(Rank.Ace(), Suit.Clubs(), Color.Red())
-    val card2: Card = cards.Card(Rank.Four(), Suit.Spades(), Color.Blue())
-
-    val cardCombination = CardCombination("#1", Seq(card1, card2))
-    assert(cardCombination.isValid equals true)
+    describe("Is valid") {
+      it("When is composed by 3 consecutive cards") {
+        val comb = CardCombination("#2", card1 +: (card2 +: (card3 +: Nil)))
+        assert(comb.isValid)
+      }
+    }
   }
 }

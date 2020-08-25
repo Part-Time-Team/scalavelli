@@ -12,7 +12,7 @@ import it.parttimeteam.core.player.Player.PlayerId
  * @param players list of player.
  */
 case class GameState(deck: Deck, board: Board, players: Seq[Player]) {
-  // TODO: Implement utilities functions.
+
   def getPlayer(id: PlayerId): Option[Player] = players.find(p => p.id equals id)
 
   def updatePlayer(player: Player): GameState =
