@@ -16,7 +16,6 @@ class PrologGame() {
    * Predicate for the goals of the prolog
    */
   private val card: String = "card"
-  private val startHand: String = "startHand"
   private val validationQuarter: String = "validationQuarter"
   private val validationSequence: String = "validationSequence"
 
