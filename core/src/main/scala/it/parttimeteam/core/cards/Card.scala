@@ -33,7 +33,8 @@ case class Card(rank: Rank, suit: Suit, color: Color)
    */
   def isNext(card: Card): Boolean = (rank, card.rank) match {
     case (Ace(), King()) => true
-    case _ => if (!(suit equals card.suit)) false else card.rank.value + 1 equals rank.value
+    case _ if !(suit equals card.suit) => false
+    case _ => card.rank.value + 1 == rank.value
   }
 
   override def toString: String = shortName
