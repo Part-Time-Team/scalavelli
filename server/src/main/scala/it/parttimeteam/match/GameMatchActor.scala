@@ -117,6 +117,11 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
   }
 
 
+  /**
+   * Broadcast a generic message to all game players
+   *
+   * @param message a generic message
+   */
   private def broadcastMessageToPlayers(message: Any): Unit = {
     this.players.foreach(p => p.actorRef ! message)
   }
@@ -141,11 +146,24 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
     //this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))
   }
 
+  /**
+   * returns the current player
+   *
+   * @return the current player
+   */
   private def getPlayerForCurrentTurn: GamePlayer =
     this.players.find(_.id == turnManager.playerInTurnId).get
 
 
-  private def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
+  /**
+   * Determines the next game state based on the player action
+   *
+   * @param currentState current state of the game
+   * @param playerInTurn player making the action
+   * @param playerAction action made my the player
+   * @return a state result or a string representing an error
+   */
+  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
     playerAction match {
       case DrawCard => {
         val (updateDeck, cardDrawn) = gameManager.draw(currentState.deck)
