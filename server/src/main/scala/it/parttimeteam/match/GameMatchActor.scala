@@ -8,6 +8,7 @@ import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
+import it.parttimeteam.messages.PlayerActionNotValidError
 import it.parttimeteam.{DrawCard, GameState, PlayedMove, PlayerAction}
 
 object GameMatchActor {
@@ -88,12 +89,12 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
 
       this.determineNextState(gameState, playerInTurn, action) match {
-        case Right(stateResult) => {
-
+        case Right(stateResult) =>
           this.handleStateResult(stateResult, playerInTurn)
 
-        }
-        case Left(errorMessage) => // TODO notify error to the client
+        case Left(errorMessage) =>
+          log.error("Error resolving player action")
+          playerInTurn.actorRef ! PlayerActionNotValidError(errorMessage)
       }
 
     }
