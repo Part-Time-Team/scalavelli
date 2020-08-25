@@ -39,8 +39,10 @@ object GameMessage {
 
   /**
    * Tells the player who is playing
+   *
+   * @param name name of the current player
    */
-  case object OpponentInTurn
+  case class OpponentInTurn(name: String)
 
   /**
    * Action made by the client
