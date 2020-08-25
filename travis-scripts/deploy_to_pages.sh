@@ -43,7 +43,11 @@ echo "************************************************"
 
 ls -lhRG
 
-cp -fr source/* public/
+cp -fr source/index.html public/index.html # Copy site main page.
+cd source/doc/
+pdflatex rel.tex
+cd ../../
+cp -fr source/doc/rel.pdf public/doc/rel.pdf
 
 # Copy scoverage report html files.
 cp -r target/scala-*/scoverage-report/* public/scoverage-reports/
