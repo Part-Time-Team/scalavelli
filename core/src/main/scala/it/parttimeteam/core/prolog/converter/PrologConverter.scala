@@ -22,7 +22,7 @@ trait PrologConverter {
    * @param list result of goal
    * @return true if the goal is successful, false otherwise
    */
-  def toBoolean(list: List[Term]): Boolean
+  def toBoolean(list: Seq[Term]): Boolean
 
 
   /**
@@ -31,7 +31,7 @@ trait PrologConverter {
    * @param cards cards to convert
    * @return term to return
    */
-  def cardsConvert(cards: List[Card]): String
+  def cardsConvert(cards: Seq[Card]): String
 }
 
 /**

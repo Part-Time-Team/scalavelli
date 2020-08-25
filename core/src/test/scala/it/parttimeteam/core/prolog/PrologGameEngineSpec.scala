@@ -9,17 +9,16 @@ class PrologGameEngineSpec extends AnyFunSuite {
   val prologEngine: PrologGameEngine = PrologEngine()
   val prolog: Prolog = new Prolog
 
-
   test("Resolve a specific valid goal") {
-    val result : List[Term] = List(prolog toTerm "♥")
+    val result : Seq[Term] = List(prolog toTerm "♥")
 
     assert(prologEngine.goal(PrologStruct("suit", new Var("X"))) equals result)
     assert(prologEngine.goal("suit(X).") equals result)
   }
 
   test("Resolve a specific invalid goal") {
-    assert(prologEngine.goal(PrologStruct("startHand")) equals List())
-    assert(prologEngine.goal("startHand.") equals List())
+    assert(prologEngine.goal(PrologStruct("startHand")) equals Seq())
+    assert(prologEngine.goal("startHand.") equals Seq())
   }
 
   test("Resolve a specific valid goals") {

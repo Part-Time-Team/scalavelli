@@ -17,7 +17,7 @@ class PrologGameSpec extends AnyFunSuite {
     val card2: Card = Card(Rank.Ace(), Suit.Spades(), Color.Blue())
     val card3: Card = Card(Rank.Ace(), Suit.Diamonds(), Color.Red())
 
-    assert(prologGame.validateQuarter(List(card1, card2, card3)) equals true)
+    assert(prologGame.validateQuarter(Seq(card1, card2, card3)) equals true)
   }
 
   test("Validate an invalid quarter") {
@@ -26,7 +26,7 @@ class PrologGameSpec extends AnyFunSuite {
     val card2: Card = Card(Rank.Ace(), Suit.Spades(), Color.Red())
     val card3: Card = Card(Rank.Ace(), Suit.Spades(), Color.Blue())
 
-    assert(prologGame.validateQuarter(List(card1, card2, card3)) equals false)
+    assert(prologGame.validateQuarter(Seq(card1, card2, card3)) equals false)
   }
 
   test("Validate a valid sequence") {
@@ -36,7 +36,7 @@ class PrologGameSpec extends AnyFunSuite {
     val card3: Card = Card(Rank.Three(), Suit.Clubs(), Color.Blue())
     val card4: Card = Card(Rank.Four(), Suit.Clubs(), Color.Red())
 
-    assert(prologGame.validateSequence(List(card1, card2, card3, card4)) equals true)
+    assert(prologGame.validateSequence(Seq(card1, card2, card3, card4)) equals true)
   }
 
   test("Validate an invalid sequence") {
@@ -46,6 +46,6 @@ class PrologGameSpec extends AnyFunSuite {
     val card3: Card = Card(Rank.Four(), Suit.Clubs(), Color.Blue())
     val card4: Card = Card(Rank.Five(), Suit.Clubs(), Color.Red())
 
-    assert(prologGame.validateSequence(List(card1, card2, card3, card4)) equals false)
+    assert(prologGame.validateSequence(Seq(card1, card2, card3, card4)) equals false)
   }
 }

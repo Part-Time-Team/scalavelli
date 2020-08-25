@@ -31,12 +31,12 @@ class PrologGame() {
    *
    * @return deck entity
    */
-  def loadDeck: List[Card] = {
+  def loadDeck: Seq[Card] = {
 
-    val deckToLoad: Iterator[List[Term]] = engine goals PrologStruct(card, x, y, z) grouped 3
+    val deckToLoad: Iterator[Seq[Term]] = engine goals PrologStruct(card, x, y, z) grouped 3
 
     @tailrec
-    def _loadDeck(deck: List[Card])(deckToLoad: List[List[Term]]): List[Card] = deckToLoad match {
+    def _loadDeck(deck: Seq[Card])(deckToLoad: Seq[Seq[Term]]): Seq[Card] = deckToLoad match {
 
       case h :: t => _loadDeck(Card(Rank.string2rank(conversion toStringAndReplace h(2)),
         Suit.string2suit(conversion toStringAndReplace h(1)), Color.string2color(conversion toStringAndReplace h.head)) +: deck)(t)
@@ -52,7 +52,7 @@ class PrologGame() {
    * @param cards cards to validate
    * @return true if the goal is successful, false otherwise
    */
-  def validateQuarter(cards: List[Card]): Boolean = {
+  def validateQuarter(cards: Seq[Card]): Boolean = {
     val validate = engine goal validationQuarter + conversion.cardsConvert(cards)
     conversion toBoolean validate
   }
@@ -63,7 +63,7 @@ class PrologGame() {
    * @param cards cards to validate
    * @return true if the goal is successful, false otherwise
    */
-  def validateSequence(cards: List[Card]): Boolean = {
+  def validateSequence(cards: Seq[Card]): Boolean = {
     val validate = engine goal validationSequence + conversion.cardsConvert(cards)
     conversion toBoolean validate
   }
