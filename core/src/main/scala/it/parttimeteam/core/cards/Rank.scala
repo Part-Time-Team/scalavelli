@@ -121,13 +121,6 @@ object Rank {
   }
 
   /**
-   * Get all ranks of the deck.
-   *
-   * @return A list with all suits.
-   */
-  def all: List[Rank] = List(Ace(), Two(), Three(), Four(), Five(), Six(), Seven(), Eight(), Nine(), Ten(), Jack(), Queen(), King())
-
-  /**
    * Transform a string in the matching rank.
    *
    * @param s String to convert.

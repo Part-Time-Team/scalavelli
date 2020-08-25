@@ -34,13 +34,6 @@ object Suit {
   case class Spades() extends Suit("Spades", "♠", 3)
 
   /**
-   * Get all suits of the deck.
-   *
-   * @return A list with all suits.
-   */
-  def all: List[Suit] = List(Hearts(), Diamonds(), Clubs(), Spades())
-
-  /**
    * Transform a string in the matching suit.
    *
    * @param s String to convert.
