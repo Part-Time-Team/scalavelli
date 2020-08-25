@@ -29,7 +29,7 @@ trait GameManager {
    *
    * @param board Board to validate.
    * @param hand  Hand to validate.
-   * @return True if is validated, false anywhere.
+   * @return True if is valid, false anywhere.
    */
   def validateTurn(board: Board, hand: Hand): Boolean
 
@@ -37,7 +37,7 @@ trait GameManager {
    * Validate a card combination.
    *
    * @param combination Combination to validate.
-   * @return True if is validated, false anywhere.
+   * @return True if is valid, false anywhere.
    */
   def validateCombination(combination: CardCombination): Boolean
 
@@ -57,7 +57,7 @@ trait GameManager {
    * @param hand        Hand where to pick cards.
    * @param board       Board where put cards.
    * @param combination Combination to pick.
-   * @return Hand and Board updated.
+   * @return Hand and Board updated. If hand doesn't contain any combination card, return exactly the same hand and board.
    */
   def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board)
 }
@@ -75,11 +75,9 @@ class GameManagerImpl extends GameManager {
       Player("", i, Hand(playerCards._2.toList))
     })
 
-    GameState(
-      deck,
+    GameState(deck,
       Board.empty,
-      playerList
-    )
+      playerList)
   }
 
   /**
@@ -90,12 +88,14 @@ class GameManagerImpl extends GameManager {
   /**
    * @inheritdoc
    */
-  override def validateTurn(board: Board, hand: Hand): Boolean = ???
+  override def validateTurn(board: Board, hand: Hand): Boolean =
+    board.combinations.forall(c => validateCombination(c)) && hand.tableCards.isEmpty
 
+  // TODO: This method is useful?
   /**
    * @inheritdoc
    */
-  override def validateCombination(combination: CardCombination): Boolean = ???
+  override def validateCombination(combination: CardCombination): Boolean = combination.isValid
 
   /**
    * @inheritdoc
@@ -109,13 +109,14 @@ class GameManagerImpl extends GameManager {
   /**
    * @inheritdoc
    */
-  override def playCombination(
-                                hand: Hand,
-                                board: Board,
-                                combination: CardCombination):
-  (Hand, Board) = {
-    val b = board.addCombination(combination)
-    val nHand = hand.removeCards(combination.cards)
-    (nHand, b)
+  override def playCombination(hand: Hand,
+                               board: Board,
+                               combination: CardCombination): (Hand, Board) = {
+
+    val removed = hand.removeCards(combination.cards)
+    removed match {
+      case Right(value) => (value._1, board.addCombination(combination))
+      case _ => (hand, board)
+    }
   }
 }
