@@ -87,31 +87,46 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
 
-      // TODO handle player action
+      this.determineNextState(gameState, playerInTurn, action) match {
+        case Right(stateResult) => {
 
+          this.handleStateResult(stateResult, playerInTurn)
 
-      // TODO update the state
-      val newState = gameState
-
-
-      // notify the state
-      this.broadcastGameStateToPlayers(gameState)
-
-      // if game not ended
-      if (true) { // TODO check game ended
-        // update the turn
-        val nextPlayerId = this.turnManager.nextTurn
-
-        // notify the next player it's his turn
-        this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
-
-        //switch the actor behaviour
-        context.become(inTurn(newState, getPlayerForCurrentTurn))
-      } else {
-
-        // game ended
-
+        }
+        case Left(errorMessage) => // TODO notify error to the client
       }
+
+    }
+  }
+
+  private def handleStateResult(stateResult: StateResult, playerInTurn: GamePlayer): Unit = {
+
+
+    // notify the state
+    this.broadcastGameStateToPlayers(stateResult.updatedState)
+
+    // if game not ended
+    if (!stateResult.updatedState.playerWon(playerInTurn.id)) {
+
+      stateResult.additionalInformation match {
+        case Some(CardDrawnInfo(card)) => playerInTurn.actorRef ! CardDrawn(card)
+        case _ => playerInTurn.actorRef ! TurnEnded
+      }
+
+      // update the turn
+      this.turnManager.nextTurn
+
+      // notify the next player it's his turn
+      this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
+
+      //switch the actor behaviour
+      context.become(inTurn(stateResult.updatedState, getPlayerForCurrentTurn))
+
+    } else {
+      log.debug(s"Game ended, player ${playerInTurn.username} won")
+      // game ended
+      playerInTurn.actorRef ! Won
+      this.broadcastMessageToNonCurrentPlayers(playerInTurn.id)(Lost(playerInTurn.username))
 
     }
   }
@@ -124,6 +139,10 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
    */
   private def broadcastMessageToPlayers(message: Any): Unit = {
     this.players.foreach(p => p.actorRef ! message)
+  }
+
+  private def broadcastMessageToNonCurrentPlayers(currentPlayerId: String)(message: Any): Unit = {
+    this.players.filter(_.id != currentPlayerId).foreach(_.actorRef ! message)
   }
 
   /**
