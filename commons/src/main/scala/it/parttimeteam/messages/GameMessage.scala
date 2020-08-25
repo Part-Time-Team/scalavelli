@@ -64,7 +64,7 @@ object GameMessage {
    *
    * @param errorType
    */
-  case class Error(errorType: GameErrorType)
+  case class Error(errorType: GameError)
 
   /**
    * End the current turn with one or more plays
