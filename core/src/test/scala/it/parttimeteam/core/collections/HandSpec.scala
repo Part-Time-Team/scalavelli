@@ -50,14 +50,22 @@ class HandSpec extends AnyFunSuite {
     assert(!(hand containsCards (c3, c4)))
   }
 
-  test("Remove cards from hand that are present") {
+  test("Remove cards from player cards that are present") {
     val seq = Seq(c1, c2)
     val hand = Hand(List(c1, c2, c3, c4))
     val removed = hand.removeCards(seq)
-    println(removed)
     assert(removed.isRight)
     assertResult(c1 +: (c2 +: Nil))(removed.right.get._2)
     assertResult(c3 +: (c4 +: Nil))(removed.right.get._1.playerCards)
+  }
+
+  test("Remove cards from board cards that are present") {
+    val seq = Seq(c1, c2)
+    val hand = Hand(List.empty, List(c1, c2, c3, c4))
+    val removed = hand.removeCards(seq)
+    assert(removed.isRight)
+    assertResult(Seq(c1, c2))(removed.right.get._2)
+    assertResult(Seq(c3, c4))(removed.right.get._1.tableCards)
   }
 
   test("Remove cards from hand that are not present") {
