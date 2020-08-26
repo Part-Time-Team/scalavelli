@@ -144,7 +144,7 @@ class RankPropSpec
   val int2fails: TableFor1[Int] = Table(
     "rank",
     -1,
-    14,
+    15,
   )
 
   property("Invoking value2rank with other values must return RuntimeException") {
