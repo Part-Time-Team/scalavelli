@@ -17,7 +17,7 @@ class PrologGame() {
    */
   private val card: String = "card"
   private val validationQuarter: String = "validationQuarter"
-  private val validationSequence: String = "validationSequence"
+  private val validationChain: String = "validationChain"
 
   /**
    * Variable for the goals of the prolog
@@ -57,15 +57,14 @@ class PrologGame() {
     conversion toBoolean validate
   }
 
-  // TODO: Rename this method into validateChair.
   /**
    * Validate sequence or scala of cards
    *
    * @param cards cards to validate
    * @return true if the goal is successful, false otherwise
    */
-  def validateSequence(cards: Seq[Card]): Boolean = {
-    val validate = engine goal validationSequence + conversion.cardsConvert(cards)
+  def validateChain(cards: Seq[Card]): Boolean = {
+    val validate = engine goal validationChain + conversion.cardsConvert(cards)
     conversion toBoolean validate
   }
 }
@@ -73,6 +72,6 @@ class PrologGame() {
 /**
  * Object to initialize the class PrologGame
  */
-object PrologGame {
+object PrologGame extends App {
   def apply(): PrologGame = new PrologGame()
 }

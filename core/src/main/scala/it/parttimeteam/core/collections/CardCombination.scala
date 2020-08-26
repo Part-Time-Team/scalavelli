@@ -21,7 +21,7 @@ case class CardCombination(id: String, cards: Seq[Card] = Seq.empty) {
     if (cards.forall(c => c.rank equals cards.head.rank))
       PrologGame().validateQuarter(cards.toList)
     else
-      PrologGame().validateSequence(cards.toList)
+      PrologGame().validateChain(cards.toList)
 
   // TODO: Can be a Seq or need to be a List?
 }
