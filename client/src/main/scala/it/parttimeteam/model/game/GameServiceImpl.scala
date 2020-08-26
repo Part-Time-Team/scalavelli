@@ -38,10 +38,3 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
 
 }
-
-/**
- * Used to notify about GameService events
- */
-trait GameServiceListener {
-  def onGameStateUpdated(state: PlayerGameState)
-}
