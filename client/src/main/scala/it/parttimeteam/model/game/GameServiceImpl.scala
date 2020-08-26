@@ -5,6 +5,7 @@ import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.Ready
 import it.parttimeteam.model.startup.GameMatchInformations
+import it.parttimeteam.view.game._
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -33,10 +34,9 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     }
 
-    override def turnStarted(): Unit = {
-    }
+    override def turnStarted(): Unit = notifyEvent(InTurnEvent)
 
-    override def turnEnded(): Unit = ???
+    override def turnEnded(): Unit = notifyEvent(TurnEndedEvent)
 
     override def opponentInTurn(opponentName: String): Unit = notifyEvent(OpponentInTurnEvent(opponentName))
 
@@ -44,12 +44,13 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       // TODO reset history
 
       notifyEvent(StateUpdatedEvent(storeOpt.get.onCardDrawn(card)))
+      notifyEvent(TurnEndedEvent)
 
     }
 
-    override def gameWon(): Unit = ???
+    override def gameWon(): Unit = notifyEvent(GameWonEvent)
 
-    override def gameLost(winnerName: String): Unit = ???
+    override def gameLost(winnerName: String): Unit = notifyEvent(GameLostEvent(winnerName))
 
   }))
 
@@ -64,7 +65,18 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   }
 
-  override def notifyUserAction(action: UserGameAction): Unit = {
+  override def notifyUserAction(action: GameViewEvent): Unit = action match {
+    case EndTurnAndDrawViewEvent =>
+    case EndTurnViewEvent =>
+    case MakeCombinationViewEvent(cards) =>
+    case PickCardsViewEvent(cards) =>
+    case UpdateCardCombinationViewEvent(combinationId, card, indexToAdd) =>
+    case UndoViewEvent =>
+    case RedoViewEvent =>
+    case ResetHistoryViewEvent =>
+    case LeaveGameViewEvent =>
+    case SortHandByRankViewEvent =>
+    case SortHandByRankViewEvent =>
 
   }
 
