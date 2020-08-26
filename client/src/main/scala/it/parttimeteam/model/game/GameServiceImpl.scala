@@ -11,8 +11,9 @@ import scala.concurrent.duration._
 
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
                       private val notifyEvent: GameEvent => Unit) extends GameService {
-  val history: History[PlayerGameState] = ???
-  val store: GameStateStore = ???
+
+  private var turnHistory: History[PlayerGameState] = _
+  private var storeOpt: Option[GameStateStore] = None
 
   implicit val executionContext: ExecutionContextExecutor = ActorSystemManager.actorSystem.dispatcher
 
@@ -20,20 +21,40 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   private val playerId = gameInformation.playerId
 
   private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(new MatchServerResponseListener {
-    override def gameStateUpdated(gameState: PlayerGameState): Unit = notifyEvent(StateUpdatedEvent(gameState))
 
-    override def turnStarted(): Unit = {}
+    override def gameStateUpdated(gameState: PlayerGameState): Unit = {
+
+      storeOpt match {
+        case Some(store) => notifyEvent(StateUpdatedEvent(store.onStateChanged(gameState)))
+        case None =>
+          storeOpt = Some(GameStateStore(gameState))
+          notifyEvent(StateUpdatedEvent(gameState))
+      }
+
+    }
+
+    override def turnStarted(): Unit = {
+    }
 
     override def turnEnded(): Unit = ???
 
-    override def opponentInTurn(opponentName: String): Unit = ???
+    override def opponentInTurn(opponentName: String): Unit = notifyEvent(OpponentInTurnEvent(opponentName))
 
-    override def turnEndedWithCartDrawn(card: Card): Unit = ???
+    override def turnEndedWithCartDrawn(card: Card): Unit = {
+      // TODO reset history
+
+      notifyEvent(StateUpdatedEvent(storeOpt.get.onCardDrawn(card)))
+
+    }
 
     override def gameWon(): Unit = ???
 
     override def gameLost(winnerName: String): Unit = ???
+
   }))
+
+
+  // region GameService
 
   override def playerReady(): Unit = {
     // timer to be sure the view is ready on server responses
@@ -47,5 +68,6 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   }
 
+  // endregion
 
 }
