@@ -52,11 +52,20 @@ object GameStateStore {
    */
   private class GameStateStoreImpl(var currentState: PlayerGameState) extends GameStateStore {
 
-    override def onCardDrawn(card: Card): PlayerGameState = ???
+    override def onCardDrawn(card: Card): PlayerGameState = {
+      currentState = currentState.copy(hand = currentState.hand.copy(playerCards = card :: currentState.hand.playerCards))
+      currentState
+    }
 
-    override def onStateChanged(state: PlayerGameState): PlayerGameState = ???
+    override def onStateChanged(state: PlayerGameState): PlayerGameState = {
+      currentState = state
+      currentState
+    }
 
-    override def onLocalTurnStateChanged(hand: Hand, board: Board): PlayerGameState = ???
+    override def onLocalTurnStateChanged(hand: Hand, board: Board): PlayerGameState = {
+      currentState = currentState.copy(hand = hand, board = board)
+      currentState
+    }
 
   }
 
