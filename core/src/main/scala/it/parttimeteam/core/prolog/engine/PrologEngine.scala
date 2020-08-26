@@ -26,7 +26,7 @@ trait PrologEngine {
   /**
    * Get all solution a specific goal
    *
-   * @return list of terms with respect to the specific goal
+   * @return sequence of terms with respect to the specific goal
    */
   def goals(goal: Term): Seq[Term]
 
@@ -41,7 +41,7 @@ trait PrologEngine {
    * Get value by term and variable
    *
    * @param info solution to get value
-   * @return list of values
+   * @return sequence of values
    */
   def bindingVars(info: SolveInfo): Seq[Term]
 

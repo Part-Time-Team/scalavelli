@@ -19,14 +19,14 @@ trait PrologConverter {
   /**
    * Convert result of goal in boolean
    *
-   * @param list result of goal
+   * @param seq result of goal
    * @return true if the goal is successful, false otherwise
    */
-  def toBoolean(list: Seq[Term]): Boolean
+  def toBoolean(seq: Seq[Term]): Boolean
 
 
   /**
-   * Convert a list of cards in a term
+   * Convert a sequence of cards in a term
    *
    * @param cards cards to convert
    * @return term to return
