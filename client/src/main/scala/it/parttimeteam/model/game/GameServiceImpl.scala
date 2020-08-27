@@ -44,7 +44,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     override def opponentInTurn(opponentName: String): Unit = notifyEvent(OpponentInTurnEvent(opponentName))
 
     override def turnEndedWithCartDrawn(card: Card): Unit = {
-      // TODO reset history
+
+      turnHistory = turnHistory.clear()
 
       notifyEvent(StateUpdatedEvent(storeOpt.get.onCardDrawn(card)))
       notifyEvent(TurnEndedEvent)
@@ -110,7 +111,12 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
         }
       }
       case ResetHistoryViewEvent => {
-        // TODO implement reset method on history
+        val (optState, updatedHistory) = turnHistory.reset()
+        this.turnHistory = updatedHistory
+        if (optState.isDefined) {
+          this.storeOpt.get.onStateChanged(optState.get)
+          this.notifyEvent(StateUpdatedEvent(optState.get))
+        }
       }
       case LeaveGameViewEvent => this.remoteMatchGameRef ! LeaveGame(this.playerId)
 
