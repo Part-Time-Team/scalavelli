@@ -47,6 +47,18 @@ class HistorySpec extends AnyWordSpecLike {
       assertResult(None)(intHistory.previous()._2.setPresent(8).next()._1)
     }
 
+    "reset itself, return no value after this operation" in {
+      val history = History().setPresent(1).setPresent(2).setPresent(3).setPresent(4)
+      assertResult(None)(history.clear().getPresent)
+    }
+
+    "clear the history maintaining only the first value" in {
+      val firstValue = 1
+      val history = History().setPresent(firstValue).setPresent(2).setPresent(3).setPresent(4)
+      assertResult(Some(firstValue))(history.reset().getPresent)
+    }
+
+
   }
 
 }

@@ -33,6 +33,21 @@ trait History[T] {
    */
   def next(): (Option[T], History[T])
 
+
+  /**
+   * Clear all the history, removing all values
+   *
+   * @return
+   */
+  def clear(): History[T]
+
+  /**
+   * Reset to the beginning of the history, removing all next values
+   *
+   * @return
+   */
+  def reset(): History[T]
+
 }
 
 object History {
@@ -66,6 +81,17 @@ object History {
       case n@None => (n, this)
     }
 
+    /**
+     * @inheritdoc
+     */
+    override def clear(): History[T] = new HistoryImpl[T]()
+
+    /**
+     * @inheritdoc
+     */
+    override def reset(): History[T] = if (values.nonEmpty) {
+      new HistoryImpl[T](values.take(1), 0)
+    } else new HistoryImpl[T]()
   }
 
 
