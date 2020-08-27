@@ -2,8 +2,9 @@ package it.parttimeteam.model.game
 
 import it.parttimeteam.ActorSystemManager
 import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.{GameManager, GameManagerImpl}
 import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.messages.GameMessage.Ready
+import it.parttimeteam.messages.GameMessage.{EndTurnAndDraw, EndTurnWithPlays, LeaveGame, Ready}
 import it.parttimeteam.model.startup.GameMatchInformations
 import it.parttimeteam.view.game._
 
@@ -15,6 +16,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   private var turnHistory: History[PlayerGameState] = _
   private var storeOpt: Option[GameStateStore] = None
+
+  private val gameManager: GameManager = new GameManagerImpl()
 
   implicit val executionContext: ExecutionContextExecutor = ActorSystemManager.actorSystem.dispatcher
 
@@ -65,21 +68,60 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   }
 
-  override def notifyUserAction(action: GameViewEvent): Unit = action match {
-    case EndTurnAndDrawViewEvent =>
-    case EndTurnViewEvent =>
-    case MakeCombinationViewEvent(cards) =>
-    case PickCardsViewEvent(cards) =>
-    case UpdateCardCombinationViewEvent(combinationId, card, indexToAdd) =>
-    case UndoViewEvent =>
-    case RedoViewEvent =>
-    case ResetHistoryViewEvent =>
-    case LeaveGameViewEvent =>
-    case SortHandByRankViewEvent =>
-    case SortHandByRankViewEvent =>
+  override def notifyUserAction(action: GameViewEvent): Unit = {
+    val currentState = this.storeOpt.get.currentState
 
+    action match {
+      case EndTurnAndDrawViewEvent => remoteMatchGameRef ! EndTurnAndDraw(this.playerId)
+      case EndTurnViewEvent => {
+
+        remoteMatchGameRef ! EndTurnWithPlays(this.playerId, currentState.board, currentState.hand)
+      }
+      case MakeCombinationViewEvent(cards) => {
+        // validate and play
+      }
+      case PickCardsViewEvent(cards) => {
+        gameManager.pickBoardCards(currentState.hand, currentState.board, cards) match {
+          case Right((hand, board)) => {
+            val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
+            this.turnHistory = this.turnHistory.setPresent(updatedState)
+            this.notifyEvent(StateUpdatedEvent(updatedState))
+          }
+        }
+
+      }
+      case UpdateCardCombinationViewEvent(combinationId, card, indexToAdd) => {
+
+      }
+      case UndoViewEvent => {
+        val (optState, updatedHistory) = turnHistory.previous()
+        this.turnHistory = updatedHistory
+        if (optState.isDefined) {
+          this.storeOpt.get.onStateChanged(optState.get)
+          this.notifyEvent(StateUpdatedEvent(optState.get))
+        }
+      }
+      case RedoViewEvent => {
+        val (optState, updatedHistory) = turnHistory.next()
+        this.turnHistory = updatedHistory
+        if (optState.isDefined) {
+          this.storeOpt.get.onStateChanged(optState.get)
+          this.notifyEvent(StateUpdatedEvent(optState.get))
+        }
+      }
+      case ResetHistoryViewEvent => {
+        // TODO implement reset method on history
+      }
+      case LeaveGameViewEvent => this.remoteMatchGameRef ! LeaveGame(this.playerId)
+
+      case SortHandByRankViewEvent =>
+      case SortHandBySuitViewEvent =>
+
+    }
   }
 
+
   // endregion
+
 
 }
