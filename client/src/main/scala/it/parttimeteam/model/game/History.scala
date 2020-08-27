@@ -44,9 +44,9 @@ trait History[T] {
   /**
    * Reset to the beginning of the history, removing all next values
    *
-   * @return
+   * @return the initial value if present and the updated history
    */
-  def reset(): History[T]
+  def reset(): (Option[T], History[T])
 
 }
 
@@ -89,9 +89,9 @@ object History {
     /**
      * @inheritdoc
      */
-    override def reset(): History[T] = if (values.nonEmpty) {
-      new HistoryImpl[T](values.take(1), 0)
-    } else new HistoryImpl[T]()
+    override def reset(): (Option[T], History[T]) = if (values.nonEmpty) {
+      (Some(values.head), new HistoryImpl[T](values.take(1), 0))
+    } else (None, new HistoryImpl[T]())
   }
 
 

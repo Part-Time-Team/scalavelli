@@ -55,7 +55,7 @@ class HistorySpec extends AnyWordSpecLike {
     "clear the history maintaining only the first value" in {
       val firstValue = 1
       val history = History().setPresent(firstValue).setPresent(2).setPresent(3).setPresent(4)
-      assertResult(Some(firstValue))(history.reset().getPresent)
+      assertResult(Some(firstValue))(history.reset()._1)
     }
 
 
