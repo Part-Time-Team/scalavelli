@@ -53,6 +53,7 @@ class CardPropSpec
           card.rank compareTo tester.rank
         else
           suit compareTo tester.suit
+      )
     }
   }
 }
