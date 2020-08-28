@@ -57,8 +57,30 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
 
     describe("Validate a turn") {
       // TODO: Waiting for PROLOG part.
-      it("With complex op") {
+      it("True with complex op") {
+        val comb1 = CardCombination("#1", Seq(c1, c2, c3))
+        val comb2 = CardCombination("#2", Seq(c5, c6, c7))
+        val board = Board(Seq(comb1, comb2))
+        val hand = Hand(List(c4))
+        assert(gameManager validateTurn(board, hand))
+      }
 
+      describe("False with complex op") {
+        it("With invalid board") {
+          val comb1 = CardCombination("#1", Seq(c1, c2, c7))
+          val comb2 = CardCombination("#2", Seq(c5, c6, c7))
+          val board = Board(Seq(comb1, comb2))
+          val hand = Hand(List(c4))
+          assert(!(gameManager validateTurn(board, hand)))
+        }
+
+        it("With invalid hand") {
+          val comb1 = CardCombination("#1", Seq(c1, c2, c3))
+          val comb2 = CardCombination("#2", Seq(c5, c6, c7))
+          val board = Board(Seq(comb1, comb2))
+          val hand = Hand(tableCards = List(c4))
+          assert(!(gameManager validateTurn(board, hand)))
+        }
       }
     }
 
@@ -134,8 +156,8 @@ class GameManagerPropSpec extends AnyPropSpec with TableDrivenPropertyChecks wit
 
   val validCombs: TableFor1[CardCombination] = Table("cardCombination",
     CardCombination("#1", Seq(c1, c2, c3)),
-    CardCombination("#1", Seq(c4, c5, c6)),
-    CardCombination("#1", Seq(c4, c5, c6, c7)))
+    CardCombination("#2", Seq(c4, c5, c6)),
+    CardCombination("#3", Seq(c4, c5, c6, c7)))
 
   property("Test valid combinations") {
     forAll(validCombs) { comb =>
@@ -144,7 +166,7 @@ class GameManagerPropSpec extends AnyPropSpec with TableDrivenPropertyChecks wit
   }
 
   val invalidCombs: TableFor1[CardCombination] = Table("cardCombination",
-  CardCombination("#2", Seq(c4, c2, c7)))
+  CardCombination("#4", Seq(c4, c2, c7)))
 
   property("Test invalid combinations") {
     forAll(invalidCombs) { comb =>
