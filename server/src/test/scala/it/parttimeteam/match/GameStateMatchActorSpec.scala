@@ -4,15 +4,15 @@ import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
 import it.parttimeteam.`match`.GameMatchActor
-import it.parttimeteam.core.GameManager
+import it.parttimeteam.core
+import it.parttimeteam.core.{GameManager, GameState}
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{CardCombination, Deck, Hand}
+import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player.PlayerId
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStateUpdated, Ready}
 import it.parttimeteam.messages.LobbyMessages.MatchFound
-import it.parttimeteam.{Board, GameState}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -55,7 +55,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
      * @param players List of players ids.
      * @return New Game State.
      */
-    override def create(players: Seq[PlayerId]): GameState = GameState(
+    override def create(players: Seq[PlayerId]): GameState = core.GameState(
       Deck(List()),
       Board.empty,
       players.map(id => Player(id, id, Hand(List(), List()))))
