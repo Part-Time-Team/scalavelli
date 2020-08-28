@@ -52,4 +52,18 @@ object Card {
     case pattern(rank, suit, color) => cards.Card(rank, suit, color)
     case _ => throw new RuntimeException(s"Invalid card string $s")
   }
+
+  /**
+   * Provide the strategy to order a list of ranks.
+   */
+  implicit object RankOrdering extends Ordering[Rank] {
+    override def compare(x: Rank, y: Rank): Int = x compareTo y
+  }
+
+  /**
+   * Provide the strategy to order a list of suit.
+   */
+  implicit object SuitOrdering extends Ordering[Suit] {
+    override def compare(x: Suit, y: Suit): Int = x compareTo y
+  }
 }

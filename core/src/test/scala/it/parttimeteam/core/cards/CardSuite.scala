@@ -44,6 +44,10 @@ class CardSuite extends AnyFunSuite {
       Card string2card s
     }
   }
+
+  test("Test the ordering") {
+
+  }
 }
 
 /*

@@ -26,16 +26,6 @@ class HandSpec extends AnyFunSuite {
     assert(hand.getHand equals Hand(List(c1, c2), List()))
   }
 
-  test("Sort cards by value") {
-    val hand: Hand = Hand(List(), List())
-    assert(hand.sortByValue(c3, c4, c1, c2) equals List(c1, c2, c4, c3))
-  }
-
-  test("Sort cards by suit") {
-    val hand: Hand = Hand(List(), List())
-    assert(hand.sortBySuit(c1, c2, c3, c4) equals List(c3, c4, c1, c2))
-  }
-
   test("Contains cards that are present") {
     val hand = Hand(List(c1, c2, c3))
     assert(hand containsCards c1)

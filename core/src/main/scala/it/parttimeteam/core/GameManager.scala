@@ -60,6 +60,16 @@ trait GameManager {
    * @return Hand and Board updated. If hand doesn't contain any combination card, return exactly the same hand and board.
    */
   def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board)
+
+  /**
+   * Update a combination in the board by his id with some cards.
+   *
+   * @param board Board with the combination to update.
+   * @param id    Id of the combnation to update.
+   * @param cards Cards to pur in the combination.
+   * @return Updated board.
+   */
+  def updateCombination(board: Board, id: String, cards: Card*): Board
 }
 
 class GameManagerImpl extends GameManager {
@@ -119,4 +129,17 @@ class GameManagerImpl extends GameManager {
       case _ => (hand, board)
     }
   }
+
+  /**
+   * @inheritdoc
+   */
+  override def updateCombination(board: Board, id: String, cards: Card*): Board =
+    board.copy(
+      combinations = board.combinations.map(
+        comb => if (comb.id == id) {
+          val combCards = comb.cards ++ cards
+          comb.copy(cards = combCards.sortBy(_.rank))
+        } else {
+          comb
+        }));
 }

@@ -88,24 +88,4 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
 
     Either.cond(cards forall (c => this containsCards c), remove(cards), s"$this doesn't contain $cards")
   }
-
-  /**
-   * Sort cards by value
-   *
-   * @param cards cards to order
-   * @return sorted list of cards
-   */
-  def sortByValue(cards: Card*): List[Card] = {
-    cards.sortWith((s: Card, t: Card) => s.rank.value < t.rank.value).toList
-  }
-
-  /**
-   * Sort cards by suit
-   *
-   * @param cards cards to order
-   * @return sorted list of cards
-   */
-  def sortBySuit(cards: Card*): List[Card] = {
-    cards.sortWith((s: Card, t: Card) => s.suit.order < t.suit.order).toList
-  }
 }
