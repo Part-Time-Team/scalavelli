@@ -3,7 +3,7 @@ package it.parttimeteam.core.prolog.converter
 import alice.tuprolog.{Prolog, Term, Var}
 import it.parttimeteam.core.cards.Rank.{Ace, King}
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.cards.Suit.Clubs
+import it.parttimeteam.core.cards.Suit.{Clubs, Diamonds, Hearts, Spades}
 
 
 /**
@@ -28,18 +28,7 @@ class PrologGameConverter extends PrologConverter {
 
   def sortedCard(cards: Seq[Term]): Seq[Card] = ???
 
-  def collect(cards: Seq[Card]): Seq[Card] = {
-    cards.foldLeft(Seq.empty[Card]) {
-      (acc, card) =>
-        acc match {
-          case Nil => card +: Nil
-          case _ => (acc.last, card.suit) match {
-            case (acc, Clubs()) => acc +: (card +: Nil)
-          }
-        }
-    }
-  }
-
+  def collectSuit(cards: Seq[Card]): Seq[Seq[Card]] = cards.collectHearts +: cards.collectDiamonds +: cards.collectClubs +: cards.collectSpades +: Nil
 
   /**
    * Converts the value card Ace if it is after King card
@@ -74,5 +63,44 @@ class PrologGameConverter extends PrologConverter {
     } else {
       startList + tupleCard.mkString(",") + endList
     }
+
+  implicit class collect(cards: Seq[Card]) {
+
+    def collectClubs: Seq[Card] =
+      cards.foldLeft(Seq.empty[Card]) {
+        (acc, card) =>
+          card.suit match {
+            case Clubs() => acc ++ (card +: Nil)
+            case _ => acc
+          }
+      }
+
+    def collectSpades: Seq[Card] =
+      cards.foldLeft(Seq.empty[Card]) {
+        (acc, card) =>
+          card.suit match {
+            case Spades() => acc ++ (card +: Nil)
+            case _ => acc
+          }
+      }
+
+    def collectDiamonds: Seq[Card] =
+      cards.foldLeft(Seq.empty[Card]) {
+        (acc, card) =>
+          card.suit match {
+            case Diamonds() => acc ++ (card +: Nil)
+            case _ => acc
+          }
+      }
+
+    def collectHearts: Seq[Card] =
+      cards.foldLeft(Seq.empty[Card]) {
+        (acc, card) =>
+          card.suit match {
+            case Hearts() => acc ++ (card +: Nil)
+            case _ => acc
+          }
+      }
+  }
 }
 
