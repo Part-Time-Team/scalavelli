@@ -12,9 +12,10 @@ trait PrologConverter {
    * Convert string and replace
    *
    * @param term term to convert
+   * @param replace sequence of characters to replace
    * @return string to return
    */
-  def toStringAndReplace(term: Term): String
+  def resultToStringAndReplace(term: Term, replace: String): String
 
   /**
    * Convert result of goal in boolean
@@ -22,7 +23,7 @@ trait PrologConverter {
    * @param seq result of goal
    * @return true if the goal is successful, false otherwise
    */
-  def toBoolean(seq: Seq[Term]): Boolean
+  def resultToBoolean(seq: Seq[Term]): Boolean
 
 
   /**
@@ -32,5 +33,5 @@ trait PrologConverter {
    * @param variable
    * @return term to return
    */
-  def cardsConvert(cards: Seq[Card])(variable: Option[Var]): String
+  def cardsConvertToString(cards: Seq[Card])(variable: Option[Var]): String
 }

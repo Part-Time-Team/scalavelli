@@ -39,8 +39,8 @@ class PrologGame() {
     @tailrec
     def _loadDeck(deck: Seq[Card])(deckToLoad: Seq[Seq[Term]]): Seq[Card] = deckToLoad match {
 
-      case h :: t => _loadDeck(Card(Rank.string2rank(conversion toStringAndReplace h(2)),
-        Suit.string2suit(conversion toStringAndReplace h(1)), Color.string2color(conversion toStringAndReplace h.head)) +: deck)(t)
+      case h :: t => _loadDeck(Card(Rank.string2rank(conversion resultToStringAndReplace (h(2), "'")),
+        Suit.string2suit(conversion resultToStringAndReplace (h(1),"'")), Color.string2color(conversion resultToStringAndReplace (h.head, "'"))) +: deck)(t)
       case _ => deck
     }
 
@@ -55,8 +55,8 @@ class PrologGame() {
    */
   def validateQuarter(cards: Seq[Card]): Boolean = {
 
-    val validate : Seq[Term] = engine goal validationQuarter + conversion.cardsConvert(cards)(None)
-    conversion toBoolean validate
+    val validate : Seq[Term] = engine goal validationQuarter + conversion.cardsConvertToString(cards)(None)
+    conversion resultToBoolean validate
   }
 
   /**
@@ -67,15 +67,18 @@ class PrologGame() {
    */
   def validateChain(cards: Seq[Card]): Boolean = {
 
-    val validate : Seq[Term] = engine goal validationChain + conversion.cardsConvert(cards)(None)
-    conversion toBoolean validate
+    val validate : Seq[Term] = engine goal validationChain + conversion.cardsConvertToString(cards)(None)
+    conversion resultToBoolean validate
   }
 
-  def orderByValue(cards: Seq[Card]): Unit = {
-    println(orderByValue + conversion.cardsConvert(cards)(Some(x)))
-    val sortedSeq : Seq[Term] = engine goal orderByValue + conversion.cardsConvert(cards)(Some(x))
-    //TODO ottenere una stringa decente e convertirla in seq[card]
-    println(conversion toStringAndReplace(sortedSeq))
+
+  def sortByValue(cards: Seq[Card]): Unit = {
+    val sortedSeq : Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(x))
+    conversion sortedCard sortedSeq
+  }
+
+  def sortBySuit(cards: Seq[Card]): Unit = {
+    conversion collect cards foreach(println(_))
   }
 }
 
@@ -87,10 +90,10 @@ object PrologGame extends App {
 
   val game = new PrologGame()
 
-  val queen: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
+  val queen: Card = Card(Rank.Queen(), Suit.Spades(), Color.Blue())
   val king: Card = Card(Rank.King(), Suit.Clubs(), Color.Blue())
   val ace: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
   val two: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
 
-  game.orderByValue(Seq(queen, ace, king, two))
+  game.sortBySuit(Seq(queen, king, ace))
 }
