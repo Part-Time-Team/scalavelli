@@ -61,25 +61,51 @@ endSequence([(N1,_), (N2,_) | T]):- ( N1 =:= 13, N2 =:= 14 -> lengthList(T, S), 
 																		).
 
 % orderByValue(+List)
-orderByValue([(N,_)]).
-orderByValue([(N1,_), (N2,_) | T]) :- integer(N1),
+checkOrderByValue([(N,_)]).
+checkOrderByValue([(N1,_), (N2,_) | T]) :- integer(N1),
 																			integer(N2),
 																			X is N1 + 1,
                                       N2 =:= X, 
-                                      orderByValue([(N2,_) | T]).
+                                      checkOrderByValue([(N2,_) | T]).
                             
 % validationQuarter(+Cards)
-	
 validationQuarter(L) :-
- lengthList(L, X), X >= 3, X =< 4,
+ 												lengthList(L, X), X >= 3, X =< 4,
                         sameNumber(L),
                         differentSuit(L).
 
 
-% validationSequence(+Cards)
-validationSequence(L) :- lengthList(L, X), X >= 3, X =< 14,
-                         sameSuit(L),
-                         endSequence(L),
-                         orderByValue(L).
+% validationChain(+Cards)
+validationChain(L) :- lengthList(L, X), X >= 3, X =< 14,
+                      sameSuit(L),
+                      endSequence(L),
+                      checkOrderByValue(L).
 
-% modellare l'asso con valore opzionale 1 o 14 a seconda della posizione che � in sequenza
+% quicksort(+ListToOrder, -SortedList) 
+quicksort([],[]).
+quicksort([(X,Sx)|Xs],Ys):-
+												partition(Xs,(X,Sx),Ls,Bs),
+												quicksort(Ls,LOs),
+												quicksort(Bs,BOs),
+												append(LOs,[(X,Sx)|BOs],Ys).
+												
+partition([],_,[],[]).
+partition([(X,Sx)|Xs],(Y,Sy),[(X,Sx)|Ls],Bs):- X<Y, !, partition(Xs,(Y,Sy),Ls,Bs).
+partition([(X,Sx)|Xs],(Y,Sy),Ls,[(X,Sx)|Bs]):- partition(Xs,(Y,Sy),Ls,Bs).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
