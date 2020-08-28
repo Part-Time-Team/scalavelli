@@ -46,10 +46,4 @@ trait PrologEngine {
   def bindingVars(info: SolveInfo): Seq[Term]
 
 }
-
-/**
- * Object to initialize the class PrologGameEngine
- */
-object PrologEngine {
-  def apply(): PrologGameEngine = new PrologGameEngine()
-}
+// TODO creare object per settare path per la risorsa

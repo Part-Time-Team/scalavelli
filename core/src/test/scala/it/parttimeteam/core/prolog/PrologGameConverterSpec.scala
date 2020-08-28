@@ -7,7 +7,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class PrologGameConverterSpec extends AnyFunSuite {
 
-  val gameConverter: PrologGameConverter = PrologConverter()
+  val gameConverter: PrologGameConverter = new PrologGameConverter
   val prolog: Prolog = new Prolog
 
   test("Convert list of cards to string") {
@@ -16,7 +16,7 @@ class PrologGameConverterSpec extends AnyFunSuite {
     val card2: Card = Card(Rank.Four(), Suit.Spades(), Color.Blue())
     val card3: Card = Card(Rank.King(), Suit.Diamonds(), Color.Red())
 
-    assert(gameConverter.cardsConvert(Seq(card1, card2, card3)) equals "([(1,Clubs),(4,Spades),(13,Diamonds)]).")
+    assert(gameConverter.cardsConvert(Seq(card1, card2, card3))(None) equals "([(1,Clubs),(4,Spades),(13,Diamonds)]).")
   }
 
   test("Convert term to boolean") {

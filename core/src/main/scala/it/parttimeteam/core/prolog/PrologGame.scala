@@ -2,15 +2,15 @@ package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Term, Var}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
-import it.parttimeteam.core.prolog.converter.{PrologConverter, PrologGameConverter}
-import it.parttimeteam.core.prolog.engine.{PrologEngine, PrologGameEngine, PrologStruct}
+import it.parttimeteam.core.prolog.converter.PrologGameConverter
+import it.parttimeteam.core.prolog.engine.{PrologGameEngine, PrologStruct}
 
 import scala.annotation.tailrec
 
 class PrologGame() {
 
-  private val conversion: PrologGameConverter = PrologConverter()
-  private val engine: PrologGameEngine = PrologEngine()
+  private val conversion: PrologGameConverter = new PrologGameConverter
+  private val engine: PrologGameEngine = new PrologGameEngine
 
   /**
    * Predicate for the goals of the prolog
@@ -18,6 +18,7 @@ class PrologGame() {
   private val card: String = "card"
   private val validationQuarter: String = "validationQuarter"
   private val validationChain: String = "validationChain"
+  private val orderByValue: String = "quicksort"
 
   /**
    * Variable for the goals of the prolog
@@ -53,7 +54,8 @@ class PrologGame() {
    * @return True if the goal is successful, False otherwise.
    */
   def validateQuarter(cards: Seq[Card]): Boolean = {
-    val validate = engine goal validationQuarter + conversion.cardsConvert(cards)
+
+    val validate : Seq[Term] = engine goal validationQuarter + conversion.cardsConvert(cards)(None)
     conversion toBoolean validate
   }
 
@@ -64,8 +66,16 @@ class PrologGame() {
    * @return true if the goal is successful, false otherwise
    */
   def validateChain(cards: Seq[Card]): Boolean = {
-    val validate = engine goal validationChain + conversion.cardsConvert(cards)
+
+    val validate : Seq[Term] = engine goal validationChain + conversion.cardsConvert(cards)(None)
     conversion toBoolean validate
+  }
+
+  def orderByValue(cards: Seq[Card]): Unit = {
+    println(orderByValue + conversion.cardsConvert(cards)(Some(x)))
+    val sortedSeq : Seq[Term] = engine goal orderByValue + conversion.cardsConvert(cards)(Some(x))
+    //TODO ottenere una stringa decente e convertirla in seq[card]
+    println(conversion toStringAndReplace(sortedSeq))
   }
 }
 
@@ -74,4 +84,13 @@ class PrologGame() {
  */
 object PrologGame extends App {
   def apply(): PrologGame = new PrologGame()
+
+  val game = new PrologGame()
+
+  val queen: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
+  val king: Card = Card(Rank.King(), Suit.Clubs(), Color.Blue())
+  val ace: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
+  val two: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
+
+  game.orderByValue(Seq(queen, ace, king, two))
 }

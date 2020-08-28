@@ -6,7 +6,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class PrologGameEngineSpec extends AnyFunSuite {
 
-  val prologEngine: PrologGameEngine = PrologEngine()
+  val prologEngine: PrologGameEngine = new PrologGameEngine
   val prolog: Prolog = new Prolog
 
   test("Resolve a specific valid goal") {

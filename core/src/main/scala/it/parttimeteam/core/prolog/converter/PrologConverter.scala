@@ -1,6 +1,6 @@
 package it.parttimeteam.core.prolog.converter
 
-import alice.tuprolog.Term
+import alice.tuprolog.{Term, Var}
 import it.parttimeteam.core.cards.Card
 
 /**
@@ -29,15 +29,8 @@ trait PrologConverter {
    * Convert a sequence of cards in a term
    *
    * @param cards cards to convert
+   * @param variable
    * @return term to return
    */
-  def cardsConvert(cards: Seq[Card]): String
-}
-
-/**
- * Object to initialize the class PrologGameConverter
- */
-object PrologConverter {
-
-  def apply(): PrologGameConverter = new PrologGameConverter
+  def cardsConvert(cards: Seq[Card])(variable: Option[Var]): String
 }
