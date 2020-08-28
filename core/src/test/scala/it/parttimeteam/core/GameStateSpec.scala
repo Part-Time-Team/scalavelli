@@ -1,7 +1,7 @@
-package it.parttimeteam
+package it.parttimeteam.core
 
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{Deck, Hand}
+import it.parttimeteam.core.collections.{Board, Deck, Hand}
 import it.parttimeteam.core.player.Player
 import org.scalatest.funspec.AnyFunSpec
 

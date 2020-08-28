@@ -1,7 +1,6 @@
-package it.parttimeteam
+package it.parttimeteam.core.collections
 
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.CardCombination
 import org.scalatest.funsuite.AnyFunSuite
 
 class BoardSpec extends AnyFunSuite {
