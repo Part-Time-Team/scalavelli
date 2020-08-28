@@ -2,8 +2,8 @@ package it.parttimeteam.messages
 
 import akka.actor.ActorRef
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.Hand
-import it.parttimeteam.{Board, PlayerAction}
+import it.parttimeteam.core.collections.{Board, Hand}
+import it.parttimeteam.PlayerAction
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.PlayerGameState
 

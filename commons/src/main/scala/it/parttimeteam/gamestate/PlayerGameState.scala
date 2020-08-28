@@ -1,7 +1,6 @@
 package it.parttimeteam.gamestate
 
-import it.parttimeteam.Board
-import it.parttimeteam.core.collections.Hand
+import it.parttimeteam.core.collections.{Board, Hand}
 
 /**
  * State used by the client side of the game,

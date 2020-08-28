@@ -1,8 +1,7 @@
 package it.parttimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props, Stash}
-import it.parttimeteam.GameState
-import it.parttimeteam.core.GameManager
+import it.parttimeteam.core.{GameManager, GameState}
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStateUpdated, PlayerActionMade, PlayerTurn, Ready}

@@ -1,8 +1,7 @@
 package it.parttimeteam.controller.game
 
-import it.parttimeteam.Board
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{CardCombination, Hand}
+import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.model.game._
 import it.parttimeteam.model.startup.GameMatchInformations
