@@ -88,6 +88,7 @@ class PrologGame() {
           case _ => {println(conversion.cardsConvertToString(seq)(Some(x)))}; acc ++ (engine goal order + conversion.cardsConvertToString(seq)(Some(x)))
         }
     }
+    // TODO convert prolog result in card
     println(result)
   }
 }

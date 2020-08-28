@@ -25,7 +25,7 @@ class PrologGameConverter extends PrologConverter {
     listInProlog(tupleCard)(variable)
   }
 
-
+  // TODO implements def convert prolog result in card
   def sortedCard(cards: Seq[Term]): Seq[Card] = ???
 
   def collectSuit(cards: Seq[Card]): Seq[Seq[Card]] = cards.collectHearts +: cards.collectDiamonds +: cards.collectClubs +: cards.collectSpades +: Nil
