@@ -41,14 +41,18 @@ class CardPropSpec
   property("Check card compareto to another card with same suit.") {
     forAll(ranks) { rank =>
       val card = Card(rank, Suit.Spades(), Color.Red())
-      card compareTo tester should be(card.rank compareTo rank)
+      card compareTo tester should be(rank compareTo tester.rank)
     }
   }
 
   property("Check card compareto to another card with different suit") {
     forAll(suits) { suit =>
       val card = Card(Rank.Five(), suit, Color.Blue())
-      card compareTo tester should be(card.suit compareTo suit)
+      card compareTo tester should be(
+        if(suit == tester.suit)
+          card.rank compareTo tester.rank
+        else
+          suit compareTo tester.suit
     }
   }
 }

@@ -43,7 +43,7 @@ case class Card(rank: Rank, suit: Suit, color: Color)
     if (suit == t.suit)
       this.rank compareTo t.rank
     else
-      suit compareTo t.suit
+      this.suit compareTo t.suit
 }
 
 object Card {
