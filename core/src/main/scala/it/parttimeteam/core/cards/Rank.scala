@@ -33,6 +33,20 @@ sealed class Rank(val value: Int,
 
 object Rank {
 
+  val ACE = "A"
+  val TWO = "2"
+  val THREE = "3"
+  val FOUR = "4"
+  val FIVE = "5"
+  val SIX = "6"
+  val SEVEN = "7"
+  val EIGHT = "8"
+  val NINE = "9"
+  val TEN = "10"
+  val JACK = "11"
+  val QUEEN = "12"
+  val KING = "13"
+
   /**
    * The first rank.
    */
@@ -132,37 +146,19 @@ object Rank {
    * @return Rank converted.
    */
   implicit def string2rank(s: String): Rank = s match {
-    case "A" => Ace()
-    case "2" => Two()
-    case "3" => Three()
-    case "4" => Four()
-    case "5" => Five()
-    case "6" => Six()
-    case "7" => Seven()
-    case "8" => Eight()
-    case "9" => Nine()
-    case "0" => Ten()
-    case "J" => Jack()
-    case "Q" => Queen()
-    case "K" => King()
+    case ACE => Ace()
+    case TWO => Two()
+    case THREE => Three()
+    case FOUR => Four()
+    case FIVE => Five()
+    case SIX => Six()
+    case SEVEN => Seven()
+    case EIGHT => Eight()
+    case NINE => Nine()
+    case TEN => Ten()
+    case JACK => Jack()
+    case QUEEN => Queen()
+    case KING => King()
     case _ => throw new RuntimeException(f"Unknown rank $s")
-  }
-
-  implicit def value2rank(v: Int): Rank = v match {
-    case 1 => Ace()
-    case 2 => Two()
-    case 3 => Three()
-    case 4 => Four()
-    case 5 => Five()
-    case 6 => Six()
-    case 7 => Seven()
-    case 8 => Eight()
-    case 9 => Nine()
-    case 10 => Ten()
-    case 11 => Jack()
-    case 12 => Queen()
-    case 13 => King()
-    case 14 => OverflowAce()
-    case _ => throw new RuntimeException(f"Unknown rank $v")
   }
 }
