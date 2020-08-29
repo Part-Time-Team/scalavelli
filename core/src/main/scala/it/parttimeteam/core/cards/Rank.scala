@@ -33,7 +33,8 @@ sealed class Rank(val value: Int,
 
 object Rank {
 
-  val ACE = "A"
+  val ACE = "1"
+  val ACE_SYMBOL = "A"
   val TWO = "2"
   val THREE = "3"
   val FOUR = "4"
@@ -44,8 +45,11 @@ object Rank {
   val NINE = "9"
   val TEN = "10"
   val JACK = "11"
+  val JACK_SYMBOL = "J"
   val QUEEN = "12"
+  val QUEEN_SYMBOL = "Q"
   val KING = "13"
+  val KING_SYMBOL = "K"
 
   /**
    * The first rank.
@@ -147,7 +151,7 @@ object Rank {
    */
     //TODO da testare
   implicit def string2rank(s: String): Rank = s match {
-    case ACE => Ace()
+    case ACE | ACE_SYMBOL => Ace()
     case TWO => Two()
     case THREE => Three()
     case FOUR => Four()
@@ -157,9 +161,9 @@ object Rank {
     case EIGHT => Eight()
     case NINE => Nine()
     case TEN => Ten()
-    case JACK => Jack()
-    case QUEEN => Queen()
-    case KING => King()
+    case JACK   | JACK_SYMBOL => Jack()
+    case QUEEN  | QUEEN_SYMBOL => Queen()
+    case KING   | KING_SYMBOL=> King()
     case _ => throw new RuntimeException(f"Unknown rank $s")
   }
 }
