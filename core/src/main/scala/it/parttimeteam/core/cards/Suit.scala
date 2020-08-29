@@ -46,4 +46,13 @@ object Suit {
     case "♠" => Spades()
     case _ => throw new RuntimeException(f"Unknown suit $s")
   }
+
+  // TODO da testare
+  implicit def name2suit(s: String): Suit = s match {
+    case "Hearts" => Hearts()
+    case "Diamonds" => Diamonds()
+    case "Clubs" => Clubs()
+    case "Spades" => Spades()
+    case _ => throw new RuntimeException(f"Unknown suit $s")
+  }
 }
