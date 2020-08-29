@@ -33,7 +33,7 @@ class PrologGameConverter extends PrologConverter {
       val split = card.toString().split(",")
       (split(0).toInt, split(1))
     })
-    tupleCard.map(item => (Rank.value2rank(item._1), Suit.name2suit(item._2)))
+    tupleCard.map(item => (Rank.value2rank(item._1), Suit.string2suit(item._2)))
   }
 
   def collectSuit(cards: Seq[Card]): Seq[Seq[Card]] = cards.collectHearts +: cards.collectDiamonds +: cards.collectClubs +: cards.collectSpades +: Nil

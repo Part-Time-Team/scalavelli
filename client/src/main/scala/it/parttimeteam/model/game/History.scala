@@ -33,38 +33,67 @@ trait History[T] {
    */
   def next(): (Option[T], History[T])
 
+
+  /**
+   * Clear all the history, removing all values
+   *
+   * @return
+   */
+  def clear(): History[T]
+
+  /**
+   * Reset to the beginning of the history, removing all next values
+   *
+   * @return the initial value if present and the updated history
+   */
+  def reset(): (Option[T], History[T])
+
 }
 
 object History {
   def apply[T](): History[T] = new HistoryImpl[T]()
-}
 
-private class HistoryImpl[T](private val values: Seq[T] = List.empty, private val index: Int = -1) extends History[T] {
+  private class HistoryImpl[T](private val values: Seq[T] = List.empty, private val index: Int = -1) extends History[T] {
 
-  /**
-   * @inheritdoc
-   */
-  override def getPresent: Option[T] = if (this.values.size >= index) values.lift(index) else None
+    /**
+     * @inheritdoc
+     */
+    override def getPresent: Option[T] = if (this.values.size >= index) values.lift(index) else None
 
-  /**
-   * @inheritdoc
-   */
-  override def setPresent(value: T): History[T] = new HistoryImpl(values.take(index + 1) :+ value, index + 1)
+    /**
+     * @inheritdoc
+     */
+    override def setPresent(value: T): History[T] = new HistoryImpl(values.take(index + 1) :+ value, index + 1)
 
-  /**
-   * @inheritdoc
-   */
-  override def previous(): (Option[T], History[T]) = values.lift(index - 1) match {
-    case s@Some(_) => (s, new HistoryImpl(values, index - 1))
-    case n@None => (n, this)
+    /**
+     * @inheritdoc
+     */
+    override def previous(): (Option[T], History[T]) = values.lift(index - 1) match {
+      case s@Some(_) => (s, new HistoryImpl(values, index - 1))
+      case n@None => (n, this)
+    }
+
+    /**
+     * @inheritdoc
+     */
+    override def next(): (Option[T], History[T]) = values.lift(index + 1) match {
+      case s@Some(_) => (s, new HistoryImpl(values, index + 1))
+      case n@None => (n, this)
+    }
+
+    /**
+     * @inheritdoc
+     */
+    override def clear(): History[T] = new HistoryImpl[T]()
+
+    /**
+     * @inheritdoc
+     */
+    override def reset(): (Option[T], History[T]) = if (values.nonEmpty) {
+      (Some(values.head), new HistoryImpl[T](values.take(1), 0))
+    } else (None, new HistoryImpl[T]())
   }
 
-  /**
-   * @inheritdoc
-   */
-  override def next(): (Option[T], History[T]) = values.lift(index + 1) match {
-    case s@Some(_) => (s, new HistoryImpl(values, index + 1))
-    case n@None => (n, this)
-  }
 
 }
+

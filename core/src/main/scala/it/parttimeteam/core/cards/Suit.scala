@@ -40,19 +40,10 @@ object Suit {
    * @return Suit converted.
    */
   implicit def string2suit(s: String): Suit = s match {
-    case "♥" => Hearts()
-    case "♦" => Diamonds()
-    case "♣" => Clubs()
-    case "♠" => Spades()
-    case _ => throw new RuntimeException(f"Unknown suit $s")
-  }
-
-  // TODO da testare
-  implicit def name2suit(s: String): Suit = s match {
-    case "Hearts" => Hearts()
-    case "Diamonds" => Diamonds()
-    case "Clubs" => Clubs()
-    case "Spades" => Spades()
+    case "♥" | "Hearts" => Hearts()
+    case "♦" | "Diamonds" => Diamonds()
+    case "♣" | "Clubs" => Clubs()
+    case "♠" | "Spades" => Spades()
     case _ => throw new RuntimeException(f"Unknown suit $s")
   }
 }

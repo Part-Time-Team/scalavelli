@@ -1,6 +1,6 @@
 package it.parttimeteam
 
-import it.parttimeteam.core.collections.Hand
+import it.parttimeteam.core.collections.{Board, Hand}
 
 sealed class PlayerAction
 
