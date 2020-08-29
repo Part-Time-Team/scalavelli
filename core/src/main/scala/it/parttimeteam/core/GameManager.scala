@@ -1,6 +1,7 @@
 package it.parttimeteam.core
 
 import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.core.collections._
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player._

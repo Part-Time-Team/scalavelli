@@ -1,6 +1,6 @@
 package it.parttimeteam.core.collections
 
-import it.parttimeteam.core.cards.{Card, Rank, Suit}
+import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.prolog.PrologGame
 
 // TODO: Remove the default value.
@@ -11,9 +11,6 @@ import it.parttimeteam.core.prolog.PrologGame
  * @param cards Combinations of cards.
  */
 case class CardCombination(id: String, cards: Seq[Card] = Seq.empty) {
-  // Sort cards
-  cards.sortBy(c => c.rank)
-
   /**
    * Check if the combination is valid.
    *
@@ -26,4 +23,8 @@ case class CardCombination(id: String, cards: Seq[Card] = Seq.empty) {
       PrologGame().validateSequence(cards.toList)
 
   // TODO: Can be a Seq or need to be a List?
+}
+
+object CardCombination {
+  def apply(id: String, cards: Seq[Card]): CardCombination = new CardCombination(id, cards.sortByRank())
 }
