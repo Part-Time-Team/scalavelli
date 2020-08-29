@@ -79,18 +79,4 @@ object Card {
     def sortBySuit(): Seq[Card] = base.sortBy(c => c.suit)
   }
 
-  /**
-   * Provide the strategy to order a list of ranks.
-   */
-  implicit object RankOrdering extends Ordering[Rank] {
-    override def compare(x: Rank, y: Rank): Int = x compareTo y
-  }
-
-  /**
-   * Provide the strategy to order a list of suit.
-   */
-  implicit object SuitOrdering extends Ordering[Suit] {
-    override def compare(x: Suit, y: Suit): Int = x compareTo y
-  }
-
 }

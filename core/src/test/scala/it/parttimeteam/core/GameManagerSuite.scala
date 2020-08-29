@@ -137,5 +137,16 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         assert(board.combinations forall (c => !(c.cards contains c1)))
       }
     }
+
+    describe("Update a combination") {
+      it("Update a simple combination") {
+        val comb = CardCombination("#1", Seq(c1, c2, c3, c4))
+        assert(comb.isValid)
+
+        val board = Board(Seq(comb)).pickCards(Seq(c2, c3))
+        assert(board.isRight)
+
+      }
+    }
   }
 }

@@ -17,7 +17,7 @@ class BoardSpec extends AnyFunSuite {
     val c3 = Card.string2card("4♣B")
 
     val cardCombination: CardCombination = CardCombination("#1", Seq(c1, c2, c3))
-    assertResult(Board(Seq(cardCombination)))(gameBoard.addCombination(cardCombination))
+    assertResult(Board(Seq(cardCombination)))(gameBoard.putCombination(cardCombination))
   }
 
   test("Pick a combination from empty board") {

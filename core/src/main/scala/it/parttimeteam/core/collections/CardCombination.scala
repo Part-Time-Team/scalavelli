@@ -21,6 +21,22 @@ case class CardCombination(id: String, cards: Seq[Card]) {
       PrologGame().validateQuarter(cards.toList)
     else
       PrologGame().validateSequence(cards.toList)
+
+  /**
+   * Pick some cards from the combination.
+   *
+   * @param cards Cards to pick up.
+   * @return CardCombination without cards.
+   */
+  def pickCards(cards: Seq[Card]): CardCombination = copy(cards = this.cards.filterNot(c => cards contains c))
+
+  /**
+   * Put some cards into the combination.
+   *
+   * @param cards Cards to put in.
+   * @return CardCombination with cards.
+   */
+  def putCards(cards: Seq[Card]): CardCombination = copy(cards = this.cards ++ cards sortBy (_.rank))
 }
 
 object CardCombination {

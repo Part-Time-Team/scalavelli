@@ -4,38 +4,35 @@ import it.parttimeteam.core.cards
 import org.scalatest.funsuite.AnyFunSuite
 
 class CardSuite extends AnyFunSuite {
+  val s1r: Card = cards.Card(Rank.Ace(), Suit.Spades(), Color.Red())
+  val s2r: Card = cards.Card(Rank.Two(), Suit.Spades(), Color.Red())
+  val skr: Card = cards.Card(Rank.King(), Suit.Spades(), Color.Red())
+  val h2r: Card = cards.Card(Rank.Two(), Suit.Hearts(), Color.Red())
+  val h3r: Card = cards.Card(Rank.Three(), Suit.Hearts(), Color.Red())
+  val c4r: Card = cards.Card(Rank.Four(), Suit.Clubs(), Color.Red())
   test("Naming and ShortNaming") {
-    val card: Card = cards.Card(Rank.Ace(), Suit.Spades(), Color.Red())
-    assert(card.name equals f"${Rank.Ace().name} of ${Suit.Spades().name} of ${Color.Red().name}")
-    assert(card.shortName equals f"${Rank.Ace().shortName}${Suit.Spades().shortName}${Color.Red().shortName}")
+    assert(s1r.name equals f"${Rank.Ace().name} of ${Suit.Spades().name} of ${Color.Red().name}")
+    assert(s1r.shortName equals f"${Rank.Ace().shortName}${Suit.Spades().shortName}${Color.Red().shortName}")
   }
 
   test("Try isNext on different Suit") {
-    val h2: Card = cards.Card(Rank.Two(), Suit.Hearts(), Color.Red())
-    val s1: Card = cards.Card(Rank.Ace(), Suit.Spades(), Color.Red())
-    assert(!(h2 isNext s1))
+    assert(!(h2r isNext s1r))
   }
 
   test("Try isNext on same Suit") {
-    val s2: Card = cards.Card(Rank.Two(), Suit.Spades(), Color.Red())
-    val s1: Card = cards.Card(Rank.Ace(), Suit.Spades(), Color.Blue())
-    assert(s2 isNext s1)
+    assert(s2r isNext s1r)
   }
 
   test("Try isNext on Ace and King of the Suit") {
-    val s1: Card = cards.Card(Rank.Ace(), Suit.Spades(), Color.Red())
-    val sk: Card = cards.Card(Rank.King(), Suit.Spades(), Color.Red())
-    assert(s1 isNext sk)
+    assert(s1r isNext skr)
   }
 
   test("Try string2card from correct cards") {
-    val h3: Card = cards.Card(Rank.Three(), Suit.Hearts(), Color.Red())
-    assert(Card string2card h3.shortName equals h3)
+    assert(Card string2card h3r.shortName equals h3r)
   }
 
   test("Invoking toString on a card will produce the shortname") {
-    val c4: Card = cards.Card(Rank.Four(), Suit.Clubs(), Color.Red())
-    assert(c4.toString equals c4.shortName)
+    assert(c4r.toString equals c4r.shortName)
   }
 
   test("Invoking string2card on currect value will produce RuntimeException") {
@@ -43,5 +40,11 @@ class CardSuite extends AnyFunSuite {
     assertThrows[RuntimeException] {
       Card string2card s
     }
+  }
+
+  test("A sequence of cards can be ordered by Rank or Suit") {
+    val s = Seq(c4r, s2r, h3r)
+    assertResult(Seq(s2r, h3r, c4r))(s.sortByRank())
+    assertResult(Seq(h3r, c4r, s2r))(s.sortBySuit())
   }
 }

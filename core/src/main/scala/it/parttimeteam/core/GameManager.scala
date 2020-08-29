@@ -65,12 +65,13 @@ trait GameManager {
   /**
    * Update a combination in the board by his id with some cards.
    *
+   * @param hand Hand where to pick cards.
    * @param board Board with the combination to update.
    * @param id    Id of the combnation to update.
    * @param cards Cards to pur in the combination.
    * @return Updated board.
    */
-  def updateCombination(board: Board, id: String, cards: Card*): Board
+  def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board)
 }
 
 class GameManagerImpl extends GameManager {
@@ -123,10 +124,9 @@ class GameManagerImpl extends GameManager {
   override def playCombination(hand: Hand,
                                board: Board,
                                combination: CardCombination): (Hand, Board) = {
-
     val removed = hand.removeCards(combination.cards)
     removed match {
-      case Right(value) => (value._1, board.addCombination(combination))
+      case Right(value) => (value._1, board.putCombination(combination))
       case _ => (hand, board)
     }
   }
@@ -134,13 +134,11 @@ class GameManagerImpl extends GameManager {
   /**
    * @inheritdoc
    */
-  override def updateCombination(board: Board, id: String, cards: Card*): Board =
-    board.copy(
-      combinations = board.combinations.map(
-        comb => if (comb.id == id) {
-          val combCards = comb.cards ++ cards
-          comb.copy(cards = combCards.sortBy(_.rank))
-        } else {
-          comb
-        }));
+  override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = {
+    val put = hand.removeCards(cards)
+    put match {
+      case Right(value) => (value._1, board.putCards(id, cards))
+      case _ => (hand, board)
+    }
+  }
 }
