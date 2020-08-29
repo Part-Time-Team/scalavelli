@@ -52,7 +52,7 @@ object GameStateStore {
   private class GameStateStoreImpl(var currentState: PlayerGameState) extends GameStateStore {
 
     override def onCardDrawn(card: Card): PlayerGameState = {
-      currentState = currentState.copy(hand = currentState.hand.copy(playerCards = card :: currentState.hand.playerCards))
+      currentState = currentState.copy(hand = currentState.hand.copy(playerCards = card +: currentState.hand.playerCards))
       currentState
     }
 
