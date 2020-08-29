@@ -38,9 +38,11 @@ object GameMessage {
   case object PlayerTurn
 
   /**
-    * Tells the player who is playing
-    */
-  case object OpponentInTurn
+   * Tells the player who is playing
+   *
+   * @param name name of the current player
+   */
+  case class OpponentInTurn(name: String)
 
   /**
    * Action made by the client
@@ -57,14 +59,53 @@ object GameMessage {
    */
   case class LeaveGame(playerId: String)
 
-  case class Error(errorType: GameErrorType)
+  /**
+   * a generic error sent by the server to the client
+   *
+   * @param errorType
+   */
+  case class Error(errorType: GameError)
 
+  /**
+   * End the current turn with one or more plays
+   *
+   * @param playerId current player id
+   * @param board    the updated board
+   * @param hand     the updated hand
+   */
   case class EndTurnWithPlays(playerId: String, board: Board, hand: Hand)
 
+  /**
+   * Ask for a card to draw to end the current turn
+   *
+   * @param playerId current player id
+   */
   case class EndTurnAndDraw(playerId: String)
 
+  /**
+   * Send the drawn card to the current player
+   *
+   * @param card drawn card
+   */
   case class CardDrawn(card: Card)
 
+  /**
+   * Tells the current player his turn is finished
+   */
+  case object TurnEnded
+
+
+  /**
+   * Tells the client the game ended with his victory
+   */
+  case object Won
+
+  /**
+   * Tells the client the game ended with a lost
+   *
+   * @param winnerPlayerName the name of the winner player
+   */
+  case class Lost(winnerPlayerName: String)
 
 
 }

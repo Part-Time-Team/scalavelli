@@ -46,5 +46,19 @@ class GameStateSpec extends AnyFunSpec {
         assert((updated getPlayer fakePlayer.id).isEmpty)
       }
     }
+
+    describe("can determine if a player won") {
+      val winnerPlayer = Player("Winner", "5", Hand())
+      val game2 = GameState(Deck.shuffled, Board(Nil), winnerPlayer :: list)
+      it("return true if the player has an empty hand") {
+        assert(game2.playerWon(winnerPlayer.id))
+      }
+
+      it("return false if the player has an empty hand") {
+        assert(!game2.playerWon(player1.id))
+      }
+
+    }
+
   }
 }
