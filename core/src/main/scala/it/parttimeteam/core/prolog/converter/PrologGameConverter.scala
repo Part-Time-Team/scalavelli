@@ -2,7 +2,7 @@ package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.{Term, Var}
 import it.parttimeteam.core.cards.Rank.{Ace, King}
-import it.parttimeteam.core.cards.{Card, Rank, Suit}
+import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 
 
 /**
@@ -15,14 +15,14 @@ class PrologGameConverter extends PrologConverter {
 
   override def resultToBoolean(list: Seq[Term]): Boolean = list.nonEmpty
 
-  override def resultToStringAndReplace(term: Term, replace: String): String = term.toString.replace(replace, "")
+  override def toString(term: Term, replace: String): String = term.toString.replace(replace, "")
 
   override def cardsConvertToString(cards: Seq[Card])(variable: Option[Var]): String = {
     val tupleCard = for (card <- optionalValueCards(cards)) yield (card.rank.value, "\"" + card.suit.name + "\"")
     listInProlog(tupleCard)(variable)
   }
 
-  // TODO da testare
+  // TODO add scalaDoc and test
   def sortedCard(cards: Seq[Term]): List[(Rank, Suit)] = {
 
     val cardsList = PrologUtils.utils(cards)
@@ -32,6 +32,11 @@ class PrologGameConverter extends PrologConverter {
       (split(0), split(1))
     })
     tupleCard.map(item => (Rank.string2rank(item._1), Suit.string2suit(item._2)))
+  }
+
+  // TODO add scalaDoc and test
+  def getCard(color: Term, suit: Term, rank: Term): Card = {
+    Card(Rank.string2rank(toString(rank, "'")), Suit.string2suit(toString(suit, "'")), Color.string2color(toString(color,"'")))
   }
 
   /**

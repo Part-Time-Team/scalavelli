@@ -41,8 +41,7 @@ class PrologGame() {
     @tailrec
     def _loadDeck(deck: Seq[Card])(deckToLoad: Seq[Seq[Term]]): Seq[Card] = deckToLoad match {
 
-      case h :: t => _loadDeck(Card(Rank.string2rank(conversion resultToStringAndReplace(h(2), "'")),
-        Suit.string2suit(conversion resultToStringAndReplace(h(1), "'")), Color.string2color(conversion resultToStringAndReplace(h.head, "'"))) +: deck)(t)
+      case h :: t => _loadDeck(deck :+ conversion.getCard(h.head, h(1), h(2)) )(t)
       case _ => deck
     }
 
@@ -73,24 +72,24 @@ class PrologGame() {
     conversion resultToBoolean validate
   }
 
-  // TODO add scalaDoc
+  // TODO add scalaDoc and test
   def sortByValue(cards: Seq[Card]): Seq[Card] = {
 
     val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(x))
     completedResult(cards, prologResult)
   }
 
-  // TODO add scalaDoc
+  // TODO add scalaDoc and test
   def sortBySuit(cards: Seq[Card]): Seq[Card] = {
 
     val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(x))
     completedResult(cards, prologResult)
   }
 
-  // TODO add scalaDoc
+  // TODO add scalaDoc and test
   def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
 
-    var tmpInputCards = inputCards
+    var tmpInputCards : Seq[Card] = inputCards
     conversion.sortedCard(sortedCards).map(tuple => {
       val foundCard: Card = tmpInputCards.find(card => card.rank == tuple._1 && card.suit == tuple._2).get
       tmpInputCards = tmpInputCards.filter(_ != foundCard)
