@@ -1,7 +1,12 @@
 package it.parttimeteam.core.cards
 
 import it.parttimeteam.core.cards
+import it.parttimeteam.core.cards.Rank.{Ace, Eight, Five, Four, Jack, King, Nine, Queen, Seven, Six, Ten, Three, Two}
+import it.parttimeteam.core.cards.Suit.{Clubs, Diamonds, Hearts, Spades}
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should
+import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
+import org.scalatest.propspec.AnyPropSpec
 
 class CardSuite extends AnyFunSuite {
   test("Naming and ShortNaming") {
@@ -45,16 +50,3 @@ class CardSuite extends AnyFunSuite {
     }
   }
 }
-
-/*
-This test take too much time to reach 100 passed tests.
-import org.scalacheck.Prop.{forAll, propBoolean}
-
-object CardPropertySpec extends Properties("Cards") {
-  property("Check if a card is next of another one") = forAll {
-    (a: Int) =>
-      (a >= 1 && a < 14) ==>
-        (Card(Rank.value2rank(a % 13 + 1), Suit.Spades()).isNext(
-            Card(Rank.value2rank(a), Suit.Spades())))
-  }
-}*/

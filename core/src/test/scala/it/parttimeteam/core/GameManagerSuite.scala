@@ -1,8 +1,7 @@
 package it.parttimeteam.core
 
-import it.parttimeteam.Board
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{CardCombination, Deck, Hand}
+import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import org.scalamock.matchers.Matchers
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funspec.AnyFunSpec
@@ -14,6 +13,13 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
     // Use the same instance of GameManager for all tests.
     val gameManager: GameManager = new GameManagerImpl()
     val ids = Seq("Daniele", "Lorenzo", "Luca", "Matteo")
+    val c1: Card = Card.string2card("2♣R")
+    val c2: Card = Card.string2card("3♣B")
+    val c3: Card = Card.string2card("4♣B")
+    val c4: Card = Card.string2card("5♣B")
+    val c5: Card = Card.string2card("5♠R")
+    val c6: Card = Card.string2card("5♦B")
+    val c7: Card = Card.string2card("5♥R")
 
     describe("Can create a game") {
       it("Empty if no players are added") {
@@ -47,55 +53,36 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
     }
 
     describe("Validate a turn") {
-      val stubManager = stub[GameManager]
-      // If the board is empty and the hand too, return a valid turn.
-      stubManager.validateTurn _ when(Board(Seq.empty), Hand(Nil, Nil)) returns true
-
-      // If the board is filled with a combination and the hand is empty, return a valid turn
-      stubManager.validateTurn _ when(Board(Seq(CardCombination("#1", Seq(Card.string2card("2♣R"))))), Hand(Nil, Nil)) returns true
       // TODO: Waiting for PROLOG part.
-      it("With complex op") {
-        // assert(stubManager.validateTurn(Board(Nil), Hand(Nil, Nil)) equals true)
-        // assert(stubManager.validateTurn(Board(List(CardCombination(Card.string2card("2♣R") :: Nil))), Hand(Nil, Nil)) equals true)
-        pending
-      }
-    }
-
-    describe("Validate a combination") {
-      // TODO: Waiting for PROLOG part.
-      // TODO: Make a test for each possible combination.
-      describe("Valid combinations") {
-        it("Tris") {
-          pending
-        }
-
-        it("Poker") {
-          pending
-        }
-
-        it("Chair") {
-          pending
-        }
+      it("True with complex op") {
+        val comb1 = CardCombination("#1", Seq(c1, c2, c3))
+        val comb2 = CardCombination("#2", Seq(c5, c6, c7))
+        val board = Board(Seq(comb1, comb2))
+        val hand = Hand(List(c4))
+        assert(gameManager validateTurn(board, hand))
       }
 
-      describe("Don't validate a invalid combination") {
-        it("Tris with same suit cards") {
-          pending
+      describe("False with complex op") {
+        it("With invalid board") {
+          val comb1 = CardCombination("#1", Seq(c1, c2, c7))
+          val comb2 = CardCombination("#2", Seq(c5, c6, c7))
+          val board = Board(Seq(comb1, comb2))
+          val hand = Hand(List(c4))
+          assert(!(gameManager validateTurn(board, hand)))
         }
 
-        it("Chair with same rank cards") {
-          pending
+        it("With invalid hand") {
+          val comb1 = CardCombination("#1", Seq(c1, c2, c3))
+          val comb2 = CardCombination("#2", Seq(c5, c6, c7))
+          val board = Board(Seq(comb1, comb2))
+          val hand = Hand(tableCards = List(c4))
+          assert(!(gameManager validateTurn(board, hand)))
         }
       }
     }
 
-    // TODO: Check when a player have played a combination in this hand and not.
     describe("Play a combination") {
       val state = gameManager.create(ids)
-      val c1 = Card.string2card("2♣R")
-      val c2 = Card.string2card("3♣B")
-      val c3 = Card.string2card("4♣B")
-      val c4 = Card.string2card("5♣B")
 
       it("Play a valid comb") {
         val seq = Seq(c1, c2, c3)
@@ -122,11 +109,9 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       }
     }
 
-    // TODO: Check whan a player pick up a combination that is present or not.
     describe("Pick table cards") {
       it("Pick from table some cards") {
-        val c1 = Card.string2card("2♣R")
-        val seq = Seq(c1, Card.string2card("3♣B"), Card.string2card("4♣B"))
+        val seq = Seq(c1, c2, c3)
         val comb = CardCombination("#2", seq)
         var state = gameManager.create(ids)
         val daniele = (state getPlayer "Daniele").get
