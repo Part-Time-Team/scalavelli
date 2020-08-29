@@ -43,7 +43,7 @@ object Rank {
   val SEVEN = "7"
   val EIGHT = "8"
   val NINE = "9"
-  val TEN = "10"
+  val TEN = "0"
   val JACK = "11"
   val JACK_SYMBOL = "J"
   val QUEEN = "12"
