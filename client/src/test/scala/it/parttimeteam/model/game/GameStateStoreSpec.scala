@@ -1,8 +1,7 @@
 package it.parttimeteam.model.game
 
-import it.parttimeteam.Board
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{CardCombination, Hand}
+import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
 import it.parttimeteam.gamestate.PlayerGameState
 import org.scalatest.wordspec.AnyWordSpecLike
 
