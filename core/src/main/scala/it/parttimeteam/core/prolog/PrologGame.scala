@@ -18,7 +18,8 @@ class PrologGame() {
   private val card: String = "card"
   private val validationQuarter: String = "validationQuarter"
   private val validationChain: String = "validationChain"
-  private val order: String = "quicksort"
+  private val orderByValue: String = "quicksortValue"
+  private val orderBySuit: String = "quicksortSuit"
 
   /**
    * Variable for the goals of the prolog
@@ -73,23 +74,28 @@ class PrologGame() {
 
 
   def sortByValue(cards: Seq[Card]): Unit = {
-    val sortedSeq: Seq[Term] = engine goal order + conversion.cardsConvertToString(cards)(Some(x))
+    val sortedSeq: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(x))
     conversion sortedCard sortedSeq
   }
 
-  def sortBySuit(cards: Seq[Card]): Unit = {
+  def sortBySuit(cards: Seq[Card]): Seq[Card] = {
 
     val sortedSuit: Seq[Seq[Card]] = conversion collectSuit cards
 
-    val result = sortedSuit.foldLeft(Seq.empty[Term]) {
+    val prologResult : Seq[Term] = sortedSuit.foldLeft(Seq.empty[Term]) {
       (acc, seq) =>
         seq match {
           case Seq() => acc
-          case _ => {println(conversion.cardsConvertToString(seq)(Some(x)))}; acc ++ (engine goal order + conversion.cardsConvertToString(seq)(Some(x)))
+          case _ => acc ++ (engine goal orderByValue + conversion.cardsConvertToString(seq)(Some(x)))
         }
     }
-    // TODO convert prolog result in card
-    println(result)
+
+    var tmpInputCards = cards
+    conversion.sortedCard(prologResult).map(tuple => {
+      val foundCard : Card = tmpInputCards.find(card => card.rank == tuple._1 && card.suit == tuple._2).get
+      tmpInputCards = tmpInputCards.filter(_ != foundCard)
+      foundCard
+    })
   }
 }
 
@@ -106,5 +112,5 @@ object PrologGame extends App {
   val ace: Card = Card(Rank.Ace(), Suit.Spades(), Color.Blue())
   val two: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
 
-  game.sortBySuit(Seq(ace, two, queen))
+  game.sortBySuit(Seq(ace, two, queen)) foreach(println(_))
 }

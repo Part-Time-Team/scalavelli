@@ -2,8 +2,8 @@ package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.{Prolog, Term, Var}
 import it.parttimeteam.core.cards.Rank.{Ace, King}
-import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.cards.Suit.{Clubs, Diamonds, Hearts, Spades}
+import it.parttimeteam.core.cards.{Card, Rank, Suit}
 
 
 /**
@@ -25,8 +25,16 @@ class PrologGameConverter extends PrologConverter {
     listInProlog(tupleCard)(variable)
   }
 
-  // TODO implements def convert prolog result in card
-  def sortedCard(cards: Seq[Term]): Seq[Card] = ???
+  def sortedCard(cards: Seq[Term]): List[(Rank, Suit)] = {
+
+    val cardsList = PrologUtils.utils(cards)
+
+    val tupleCard = cardsList map (card => {
+      val split = card.toString().split(",")
+      (split(0).toInt, split(1))
+    })
+    tupleCard.map(item => (Rank.value2rank(item._1), Suit.name2suit(item._2)))
+  }
 
   def collectSuit(cards: Seq[Card]): Seq[Seq[Card]] = cards.collectHearts +: cards.collectDiamonds +: cards.collectClubs +: cards.collectSpades +: Nil
 
@@ -102,5 +110,6 @@ class PrologGameConverter extends PrologConverter {
           }
       }
   }
+
 }
 
