@@ -31,7 +31,7 @@ class PrologGameConverterSpec extends AnyFunSuite {
 
     val term: Term = prolog toTerm "['1']"
 
-    assert(gameConverter.resultToStringAndReplace(term, "'") equals "[1]")
+    assert(gameConverter.toString(term, "'") equals "[1]")
   }
 
   test("Change optional value of the card Ace if it is after King card"){

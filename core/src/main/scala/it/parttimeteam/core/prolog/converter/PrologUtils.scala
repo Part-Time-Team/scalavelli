@@ -3,6 +3,7 @@ package it.parttimeteam.core.prolog.converter
 import alice.tuprolog.Term
 import scala.util.matching.Regex
 
+// TODO add scalaDoc and test
 object PrologUtils {
 
   val pattern: Regex = "[0-9]+,[a-zA-Z]+".r

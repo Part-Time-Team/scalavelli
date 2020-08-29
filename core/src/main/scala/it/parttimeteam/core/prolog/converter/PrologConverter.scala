@@ -15,7 +15,7 @@ trait PrologConverter {
    * @param replace sequence of characters to replace
    * @return string to return
    */
-  def resultToStringAndReplace(term: Term, replace: String): String
+  def toString(term: Term, replace: String): String
 
   /**
    * Convert result of goal in boolean
