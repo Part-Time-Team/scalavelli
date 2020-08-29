@@ -33,7 +33,6 @@ class PrologGame() {
    *
    * @return deck entity
    */
-  // TODO refactor method
   def loadDeck: Seq[Card] = {
 
     val deckToLoad: Iterator[Seq[Term]] = engine goals PrologStruct(card, x, y, z) grouped 3
@@ -108,9 +107,9 @@ object PrologGame extends App {
   val game = new PrologGame()
 
   val queen: Card = Card(Rank.Queen(), Suit.Spades(), Color.Blue())
-  val king: Card = Card(Rank.King(), Suit.Diamonds(), Color.Blue())
-  val ace: Card = Card(Rank.Ace(), Suit.Spades(), Color.Blue())
+  val king: Card = Card(Rank.Queen(), Suit.Diamonds(), Color.Blue())
+  val ace: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
   val two: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
 
-  game.sortByValue(Seq(two, king, queen, ace)) foreach (println(_))
+ println(game.validateQuarter(Seq(king, queen, ace)))
 }
