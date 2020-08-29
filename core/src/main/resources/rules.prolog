@@ -105,8 +105,12 @@ quicksortSuit([(X,Sx)|Xs],Ys):- partitionSuit(Xs,(X,Sx),Ls,Bs),
 												    		append(LOs,[(X,Sx)|BOs],Ys).
 												
 partitionSuit([],_,[],[]).
-partitionSuit([(X,Sx)|Xs],(Y,Sy),[(X,Sx)|Ls],Bs):- priority(Sx,Px), priority(Sy,Py), Px<Py, !, partitionSuit(Xs,(Y,Sy),Ls,Bs).
+partitionSuit([(X,Sx)|Xs],(Y,Sy),[(X,Sx)|Ls],Bs):- priority(Sx,Px), priority(Sy,Py), compareCard((X,Px),(Y,Py)), !, partitionSuit(Xs,(Y,Sy),Ls,Bs).
 partitionSuit([(X,Sx)|Xs],(Y,Sy),Ls,[(X,Sx)|Bs]):- partitionSuit(Xs,(Y,Sy),Ls,Bs).
+
+%compareCard(+Tuple1, +Tuple2)
+compareCard((_, S1),(_, S2)):- S1<S2.
+compareCard((N1, S1),(N2, S2)):- S1 =:= S2, N1<N2.
 
 
 
