@@ -23,6 +23,13 @@ case class CardCombination(id: String, cards: Seq[Card]) {
       PrologGame().validateSequence(cards.toList)
 
   /**
+   * Return if the combination is empty or not.
+   *
+   * @return True if combination has no cards, false anywhere.
+   */
+  def isEmpty: Boolean = cards.isEmpty
+
+  /**
    * Pick some cards from the combination.
    *
    * @param cards Cards to pick up.
