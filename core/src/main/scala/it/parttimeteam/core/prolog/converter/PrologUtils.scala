@@ -9,7 +9,7 @@ object PrologUtils {
 
   def utils(cards: Seq[Term]): List[Regex.Match] = {
 
-    val cardsString: String = replaceString(replaceSeq(cards.filter(term => term.isList), "','"))
+    val cardsString: String = replaceString(replaceSeq(cards, "','"))
     pattern findAllMatchIn substring(cardsString, 1, cardsString.length-1) toList
   }
 
@@ -17,7 +17,7 @@ object PrologUtils {
 
   private def replaceString(stringToReplace: String): String = {
     stringToReplace.replace("List", "").replace("[", "")
-      .replace("]", "").replace(" ", "")
+      .replace("]", "").replace(" ", "").replace("'", "")
   }
 
   private def substring(cardsString:String, start: Int, end:Int) : String = {
