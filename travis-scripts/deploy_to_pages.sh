@@ -5,7 +5,7 @@ if [ ! -d "public" ]; then
   mkdir public
 fi
 
-if [ ! -d "public/scoverage-reports"]; then
+if [ ! -d "public/scoverage-reports" ]; then
   mkdir public/scoverage-reports
 
   if [ ! -d "public/scoverage-reports/client" ]; then
@@ -41,13 +41,13 @@ echo "************************************************"
 echo "**           Copy scoverage reports           **"
 echo "************************************************"
 
-ls -lhRG
+ls -lhG
 
 cp -fr source/index.html public/index.html # Copy site main page.
 cd source/doc/
 pdflatex rel.tex
 cd ../../
-cp -fr source/doc/rel.pdf public/doc/rel.pdf
+cp -fr source/doc/rel.pdf public/api/rel.pdf
 
 # Copy scoverage report html files.
 cp -r target/scala-*/scoverage-report/* public/scoverage-reports/
