@@ -30,7 +30,7 @@ case class Board(combinations: Seq[CardCombination]) {
         (acc: Seq[CardCombination], boardCombination: CardCombination) => {
           boardCombination.pickCards(cards) +: acc
         }
-      }),
+      }.reverse),
       "No cards in the board")
   }
 
