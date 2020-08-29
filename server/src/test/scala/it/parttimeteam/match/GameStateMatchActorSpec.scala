@@ -88,7 +88,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
      * @param cards Cards to pur in the combination.
      * @return Updated board.
      */
-    override def updateCombination(board: Board, id: String, cards: Card*): Board = ???
+    override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = ???
   }
 
 }
