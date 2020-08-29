@@ -2,7 +2,7 @@ package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Prolog, Term}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
-import it.parttimeteam.core.prolog.converter.{PrologConverter, PrologGameConverter}
+import it.parttimeteam.core.prolog.converter.PrologGameConverter
 import org.scalatest.funsuite.AnyFunSuite
 
 class PrologGameConverterSpec extends AnyFunSuite {
@@ -42,8 +42,8 @@ class PrologGameConverterSpec extends AnyFunSuite {
     val card4: Card = Card(Rank.Two(), Suit.Clubs(), Color.Blue())
     val card5: Card = Card(Rank.Three(), Suit.Clubs(), Color.Red())
 
-    assertResult(Seq(card1, card2, card3.copy(rank = 14)))(gameConverter.optionalValueCards(Seq(card1, card2, card3)))
-    assertResult(Seq(card1, card2, card3.copy(rank = 14), card4, card5))(gameConverter.optionalValueCards(Seq(card1, card2, card3, card4, card5)))
+    assertResult(Seq(card1, card2, card3.copy(rank = "14")))(gameConverter.optionalValueCards(Seq(card1, card2, card3)))
+    assertResult(Seq(card1, card2, card3.copy(rank = "14"), card4, card5))(gameConverter.optionalValueCards(Seq(card1, card2, card3, card4, card5)))
     assertResult(Seq(card3, card4, card5))(gameConverter.optionalValueCards(Seq(card3, card4, card5)))
   }
 }
