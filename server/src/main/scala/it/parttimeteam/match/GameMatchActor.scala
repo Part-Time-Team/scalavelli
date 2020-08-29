@@ -2,14 +2,14 @@ package it.parttimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props, Stash}
 import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, StateResult}
-import it.parttimeteam.core.GameManager
 import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.{GameManager, GameState}
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 import it.parttimeteam.messages.PlayerActionNotValidError
-import it.parttimeteam.{DrawCard, GameState, PlayedMove, PlayerAction}
+import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 
 object GameMatchActor {
   def props(numberOfPlayers: Int, gameManager: GameManager): Props = Props(new GameMatchActor(numberOfPlayers, gameManager: GameManager))
