@@ -79,6 +79,16 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
     override def pickBoardCards(hand: Hand, board: Board, cards: Card*): Either[String, (Hand, Board)] = ???
 
     override def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board) = ???
+
+    /**
+     * Update a combination in the board by his id with some cards.
+     *
+     * @param board Board with the combination to update.
+     * @param id    Id of the combnation to update.
+     * @param cards Cards to pur in the combination.
+     * @return Updated board.
+     */
+    override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = ???
   }
 
 }

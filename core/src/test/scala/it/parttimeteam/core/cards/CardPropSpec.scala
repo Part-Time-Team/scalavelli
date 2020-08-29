@@ -49,7 +49,7 @@ class CardPropSpec
     forAll(suits) { suit =>
       val card = Card(Rank.Five(), suit, Color.Blue())
       card compareTo tester should be(
-        if(suit == tester.suit)
+        if (suit == tester.suit)
           card.rank compareTo tester.rank
         else
           suit compareTo tester.suit

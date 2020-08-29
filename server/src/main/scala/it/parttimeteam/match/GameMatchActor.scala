@@ -192,7 +192,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
         val updatedState = currentState
           .getPlayer(playerInTurn.id)
           .map(p => currentState.updatePlayer(p.copy(
-            hand = p.hand.copy(playerCards = cardDrawn :: p.hand.playerCards))))
+            hand = p.hand.copy(playerCards = cardDrawn +: p.hand.playerCards))))
           .get.copy(deck = updateDeck)
 
         Right(StateResult(
