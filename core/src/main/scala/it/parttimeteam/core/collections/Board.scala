@@ -28,7 +28,8 @@ case class Board(combinations: Seq[CardCombination]) {
       cardsInBoard(cards),
       Board(combinations.foldLeft(Seq.empty[CardCombination]) {
         (acc: Seq[CardCombination], boardCombination: CardCombination) => {
-          boardCombination.pickCards(cards) +: acc
+          val comb = boardCombination.pickCards(cards)
+          if (comb.isEmpty) acc else comb +: acc
         }
       }.reverse),
       "No cards in the board")

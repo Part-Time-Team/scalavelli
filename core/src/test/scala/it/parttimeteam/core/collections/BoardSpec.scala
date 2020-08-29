@@ -41,4 +41,12 @@ class BoardSpec extends AnyFunSuite {
     board = board.putCards("#1", Seq(c1))
     assertResult(Board(Seq(comb, comb2)))(board)
   }
+
+  test("Pick cards from a combination and leave it empty") {
+    val comb = board.combinations.head
+    val tail = board.combinations.tail
+    val res = board.pickCards(comb.cards)
+    assert(res.isRight)
+    assertResult(tail)(res.right.get.combinations)
+  }
 }
