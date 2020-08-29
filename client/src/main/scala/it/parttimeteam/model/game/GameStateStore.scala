@@ -1,8 +1,7 @@
 package it.parttimeteam.model.game
 
-import it.parttimeteam.Board
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.Hand
+import it.parttimeteam.core.collections.{Board, Hand}
 import it.parttimeteam.gamestate.PlayerGameState
 
 /**

@@ -44,21 +44,4 @@ class CardSuite extends AnyFunSuite {
       Card string2card s
     }
   }
-
-  test("Test the ordering") {
-
-  }
 }
-
-/*
-This test take too much time to reach 100 passed tests.
-import org.scalacheck.Prop.{forAll, propBoolean}
-
-object CardPropertySpec extends Properties("Cards") {
-  property("Check if a card is next of another one") = forAll {
-    (a: Int) =>
-      (a >= 1 && a < 14) ==>
-        (Card(Rank.value2rank(a % 13 + 1), Suit.Spades()).isNext(
-            Card(Rank.value2rank(a), Suit.Spades())))
-  }
-}*/

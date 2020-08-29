@@ -3,7 +3,7 @@ package it.parttimeteam.core.player
 import it.parttimeteam.core.collections.Hand
 import org.scalatest.funspec.AnyFunSpec
 
-object PlayerSpec extends AnyFunSpec {
+class PlayerSpec extends AnyFunSpec {
   describe("A player") {
     describe("Made full") {
       val player = Player("Lorenzo", "#001", Hand(Nil, Nil))

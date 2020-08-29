@@ -1,11 +1,11 @@
 package it.parttimeteam.core
 
+import it.parttimeteam.core
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.core.collections._
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player._
-import it.parttimeteam.{Board, GameState}
 
 trait GameManager {
 
@@ -86,7 +86,7 @@ class GameManagerImpl extends GameManager {
       Player("", i, Hand(playerCards._2.toList))
     })
 
-    GameState(deck,
+    core.GameState(deck,
       Board.empty,
       playerList)
   }

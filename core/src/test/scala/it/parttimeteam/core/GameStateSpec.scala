@@ -1,7 +1,7 @@
-package it.parttimeteam
+package it.parttimeteam.core
 
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{Deck, Hand}
+import it.parttimeteam.core.collections.{Board, Deck, Hand}
 import it.parttimeteam.core.player.Player
 import org.scalatest.funspec.AnyFunSpec
 
@@ -30,20 +30,20 @@ class GameStateSpec extends AnyFunSpec {
 
       it("If player is not present") {
         val p = game getPlayer fakePlayer.id
-        assert(p isEmpty)
+        assert(p.isEmpty)
       }
     }
 
     describe("Can update a player") {
       it("Can update a player if is already present") {
         player1 = player1.copy(name = "Davide")
-        assert((game updatePlayer player1 getPlayer player1.id get).name == "Davide")
+        assert((game updatePlayer player1 getPlayer player1.id).get.name == "Davide")
       }
 
       it("Dosen't update an unexsisting player") {
         fakePlayer = fakePlayer.copy(name = "Davide")
         val updated = game updatePlayer fakePlayer
-        assert(updated getPlayer fakePlayer.id isEmpty)
+        assert((updated getPlayer fakePlayer.id).isEmpty)
       }
     }
 

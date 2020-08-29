@@ -1,6 +1,6 @@
-package it.parttimeteam
+package it.parttimeteam.core
 
-import it.parttimeteam.core.collections.Deck
+import it.parttimeteam.core.collections.{Board, Deck}
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player.PlayerId
 
