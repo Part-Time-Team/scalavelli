@@ -1,17 +1,34 @@
 package it.parttimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props, Stash}
-import it.parttimeteam.GameState
+import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, StateResult}
 import it.parttimeteam.core.GameManager
+import it.parttimeteam.core.cards.Card
 import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
-import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStateUpdated, PlayerActionMade, PlayerTurn, Ready}
+import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
+import it.parttimeteam.messages.PlayerActionNotValidError
+import it.parttimeteam.{DrawCard, GameState, PlayedMove, PlayerAction}
 
 object GameMatchActor {
   def props(numberOfPlayers: Int, gameManager: GameManager): Props = Props(new GameMatchActor(numberOfPlayers, gameManager: GameManager))
+
+
+  case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
+
+  sealed class AdditionalInfo
+
+  case class CardDrawnInfo(card: Card) extends AdditionalInfo
+
 }
 
+/**
+ * Responsible for a game match
+ *
+ * @param numberOfPlayers number of players
+ * @param gameManager
+ */
 class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager) extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
@@ -71,37 +88,62 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
 
-      // TODO handle player action
+      this.determineNextState(gameState, playerInTurn, action) match {
+        case Right(stateResult) =>
+          this.handleStateResult(stateResult, playerInTurn)
 
-      // TODO update the state
-      val newState = gameState
-
-
-      // notify the state
-      this.broadcastGameStateToPlayers(gameState)
-
-      // if game not ended
-      if (true) { // TODO check game ended
-        // update the turn
-        val nextPlayerId = this.turnManager.nextTurn
-
-        // notify the next player it's his turn
-        this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
-
-        //switch the actor behaviour
-        context.become(inTurn(newState, getPlayerForCurrentTurn))
-      } else {
-
-        // game ended
-
+        case Left(errorMessage) =>
+          log.error("Error resolving player action")
+          playerInTurn.actorRef ! PlayerActionNotValidError(errorMessage)
       }
 
     }
   }
 
+  private def handleStateResult(stateResult: StateResult, playerInTurn: GamePlayer): Unit = {
 
+
+    // notify the state
+    this.broadcastGameStateToPlayers(stateResult.updatedState)
+
+    // if game not ended
+    if (!stateResult.updatedState.playerWon(playerInTurn.id)) {
+
+      stateResult.additionalInformation match {
+        case Some(CardDrawnInfo(card)) => playerInTurn.actorRef ! CardDrawn(card)
+        case _ => playerInTurn.actorRef ! TurnEnded
+      }
+
+      // update the turn
+      this.turnManager.nextTurn
+
+      // notify the next player it's his turn
+      this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
+
+      //switch the actor behaviour
+      context.become(inTurn(stateResult.updatedState, getPlayerForCurrentTurn))
+
+    } else {
+      log.debug(s"Game ended, player ${playerInTurn.username} won")
+      // game ended
+      playerInTurn.actorRef ! Won
+      this.broadcastMessageToNonCurrentPlayers(playerInTurn.id)(Lost(playerInTurn.username))
+
+    }
+  }
+
+
+  /**
+   * Broadcast a generic message to all game players
+   *
+   * @param message a generic message
+   */
   private def broadcastMessageToPlayers(message: Any): Unit = {
     this.players.foreach(p => p.actorRef ! message)
+  }
+
+  private def broadcastMessageToNonCurrentPlayers(currentPlayerId: String)(message: Any): Unit = {
+    this.players.filter(_.id != currentPlayerId).foreach(_.actorRef ! message)
   }
 
   /**
@@ -124,9 +166,63 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
     //this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))
   }
 
+  /**
+   * returns the current player
+   *
+   * @return the current player
+   */
   private def getPlayerForCurrentTurn: GamePlayer =
     this.players.find(_.id == turnManager.playerInTurnId).get
 
+
+  /**
+   * Determines the next game state based on the player action
+   *
+   * @param currentState current state of the game
+   * @param playerInTurn player making the action
+   * @param playerAction action made my the player
+   * @return a state result or a string representing an error
+   */
+  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
+    playerAction match {
+      case DrawCard => {
+        val (updateDeck, cardDrawn) = gameManager.draw(currentState.deck)
+
+        // updated player with the new card on his hand
+        val updatedState = currentState
+          .getPlayer(playerInTurn.id)
+          .map(p => currentState.updatePlayer(p.copy(
+            hand = p.hand.copy(playerCards = cardDrawn :: p.hand.playerCards))))
+          .get.copy(deck = updateDeck)
+
+        Right(StateResult(
+          updatedState = updatedState,
+          additionalInformation = Some(CardDrawnInfo(cardDrawn))
+        ))
+      }
+
+      case PlayedMove(updatedHand, updatedBoard) => {
+        if (gameManager.validateTurn(updatedBoard, updatedHand)) {
+          val updatedState = currentState
+            .getPlayer(playerInTurn.id)
+            .map(p => currentState.updatePlayer(p.copy(
+              hand = updatedHand)))
+            .get.copy(board = updatedBoard)
+
+          Right(StateResult(
+            updatedState = updatedState,
+            additionalInformation = None
+          ))
+
+        } else {
+          Left("Non valid plays")
+        }
+      }
+
+
+      case _ => Left("Non supported action")
+    }
+  }
 
   // TODO receive function for disconnection and error events
 

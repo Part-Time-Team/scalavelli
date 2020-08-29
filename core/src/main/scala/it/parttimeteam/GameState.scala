@@ -17,4 +17,8 @@ case class GameState(deck: Deck, board: Board, players: Seq[Player]) {
 
   def updatePlayer(player: Player): GameState =
     this.copy(players = players.map(p => if (p.id equals player.id) player else p))
+
+  def playerWon(id: PlayerId): Boolean = {
+    this.players.find(_.id == id).exists(_.hand.playerCards.isEmpty)
+  }
 }

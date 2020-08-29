@@ -24,12 +24,12 @@ class GameStateSpec extends AnyFunSpec {
 
     describe("Can get an Option of the player") {
       it("If the player is present") {
-        val p = game getPlayer  player1.id
+        val p = game getPlayer player1.id
         assert(p contains player1)
       }
 
       it("If player is not present") {
-        val p = game getPlayer  fakePlayer.id
+        val p = game getPlayer fakePlayer.id
         assert(p isEmpty)
       }
     }
@@ -37,14 +37,28 @@ class GameStateSpec extends AnyFunSpec {
     describe("Can update a player") {
       it("Can update a player if is already present") {
         player1 = player1.copy(name = "Davide")
-        assert((game updatePlayer player1 getPlayer  player1.id get).name == "Davide")
+        assert((game updatePlayer player1 getPlayer player1.id get).name == "Davide")
       }
 
       it("Dosen't update an unexsisting player") {
         fakePlayer = fakePlayer.copy(name = "Davide")
         val updated = game updatePlayer fakePlayer
-        assert(updated getPlayer  fakePlayer.id isEmpty)
+        assert(updated getPlayer fakePlayer.id isEmpty)
       }
     }
+
+    describe("can determine if a player won") {
+      val winnerPlayer = Player("Winner", "5", Hand())
+      val game2 = GameState(Deck.shuffled, Board(Nil), winnerPlayer :: list)
+      it("return true if the player has an empty hand") {
+        assert(game2.playerWon(winnerPlayer.id))
+      }
+
+      it("return false if the player has an empty hand") {
+        assert(!game2.playerWon(player1.id))
+      }
+
+    }
+
   }
 }
