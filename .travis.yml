@@ -47,7 +47,6 @@ jobs:
         - bash texlive/texlive_install.sh
       script:
         - sbt coverage test coverageReport coverageAggregate doc
-        - bash <(curl -s https://codecov.io/bash)
       before_deploy:
         - bash travis-scripts/deploy_to_pages.sh
       deploy:
@@ -59,6 +58,8 @@ jobs:
         local_dir: public
         on:
           all_branches: true
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
     - stage: Deploy to Github Releases
       before_deploy:
         - sbt "project server" universal:packageBin
