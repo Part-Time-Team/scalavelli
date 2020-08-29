@@ -10,9 +10,17 @@ class CardCombinationSpec extends AnyFunSpec {
     val card1 = cards.Card(Rank.Three(), Suit.Spades(), Color.Red())
     val card2 = cards.Card(Rank.Four(), Suit.Spades(), Color.Blue())
     val card3 = cards.Card(Rank.Five(), Suit.Spades(), Color.Blue())
+    val card4 = cards.Card(Rank.Five(), Suit.Diamonds(), Color.Blue())
+    val card5 = cards.Card(Rank.Five(), Suit.Clubs(), Color.Blue())
+
     describe("Is invalid") {
       it("When is composed by less than 3 cards") {
         val comb = CardCombination("#1", card1 +: (card2 +: Nil))
+        assert(!comb.isValid)
+      }
+
+      it("Contains 3 unconsecutive cards or not same-rank cards") {
+        val comb = CardCombination("#2", Seq(card1, card3, card5))
         assert(!comb.isValid)
       }
     }
@@ -20,6 +28,10 @@ class CardCombinationSpec extends AnyFunSpec {
     describe("Is valid") {
       it("When is composed by 3 consecutive cards") {
         val comb = CardCombination("#2", card1 +: (card2 +: (card3 +: Nil)))
+        assert(comb.isValid)
+      }
+      it("When is composed by 3 same-rank cards") {
+        val comb = CardCombination("#2", Seq(card3, card4, card5))
         assert(comb.isValid)
       }
     }

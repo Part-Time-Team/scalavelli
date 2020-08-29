@@ -1,7 +1,7 @@
 package it.parttimeteam.view.game.scenes
 
-import it.parttimeteam.Board
 import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.collections.Board
 import it.parttimeteam.view.game.listeners.GameSceneListener
 import it.parttimeteam.view.utils.CardUtils
 import scalafx.geometry.Insets
