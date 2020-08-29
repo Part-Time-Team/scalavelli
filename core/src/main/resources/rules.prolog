@@ -9,10 +9,10 @@ suit("♣").
 suit("♠").
 
 % priority(+Suit, -value)
-priority("Hearts", X) :- X is 4.
-priority("Diamonds", X) :- X is 3.
-priority("Clubs", X) :- X is 2.
-priority("Spades", X) :- X is 1.
+priority("Hearts", X) :- X is 1.
+priority("Diamonds", X) :- X is 2.
+priority("Clubs", X) :- X is 3.
+priority("Spades", X) :- X is 4.
 
 % card(+Number, -Suit, -color)
 card("A", Suit, Color)     :- suit(Suit), color(Color).
@@ -105,7 +105,7 @@ quicksortSuit([(X,Sx)|Xs],Ys):- partitionSuit(Xs,(X,Sx),Ls,Bs),
 												    		append(LOs,[(X,Sx)|BOs],Ys).
 												
 partitionSuit([],_,[],[]).
-partitionSuit([(X,Sx)|Xs],(Y,Sy),[(X,Sx)|Ls],Bs):- X<Y, !, partitionSuit(Xs,(Y,Sy),Ls,Bs).
+partitionSuit([(X,Sx)|Xs],(Y,Sy),[(X,Sx)|Ls],Bs):- priority(Sx,Px), priority(Sy,Py), Px<Py, !, partitionSuit(Xs,(Y,Sy),Ls,Bs).
 partitionSuit([(X,Sx)|Xs],(Y,Sy),Ls,[(X,Sx)|Bs]):- partitionSuit(Xs,(Y,Sy),Ls,Bs).
 
 
