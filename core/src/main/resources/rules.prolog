@@ -1,18 +1,18 @@
-%color(+color)
+%color(+Color)
 color("R").
 color("B").
 
-% suit(+suit)
+% suit(+Suit)
 suit("♥").
 suit("♦").
 suit("♣").
 suit("♠").
 
-% priority(+Suit, -value)
-priority("Hearts", X) :- X is 1.
+% priority(+Suit, -Value)
+priority("Hearts", X) 	:- X is 1.
 priority("Diamonds", X) :- X is 2.
-priority("Clubs", X) :- X is 3.
-priority("Spades", X) :- X is 4.
+priority("Clubs", X) 		:- X is 3.
+priority("Spades", X) 	:- X is 4.
 
 % card(+Number, -Suit, -color)
 card("A", Suit, Color)     :- suit(Suit), color(Color).
