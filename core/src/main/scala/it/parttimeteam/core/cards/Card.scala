@@ -46,6 +46,7 @@ case class Card(rank: Rank, suit: Suit, color: Color)
       this.suit compareTo t.suit
 }
 
+
 object Card {
   private val pattern = "^([AJKQ2-9])\\s*([♣♠♦♥])\\s*([RB])$".r
 
@@ -53,4 +54,29 @@ object Card {
     case pattern(rank, suit, color) => cards.Card(rank, suit, color)
     case _ => throw new RuntimeException(s"Invalid card string $s")
   }
+
+  /**
+   * Provide to a Card Sequence new functions to sort them by Rank and Suit.
+   *
+   * @param base Poor Card Sequence.
+   */
+  implicit class MyRichCardSeq(base: Seq[Card]) {
+    // TODO: Use implicits to change order strategy.
+    // TODO: Connect prolog.
+    /**
+     * Sort first by rank, then by suit.
+     *
+     * @return Ordered Sequence.
+     */
+    def sortByRank(): Seq[Card] = base.sortBy(c => c.rank)
+
+    // TODO: Connect prolog.
+    /**
+     * Sort first by suit, then by rank.
+     *
+     * @return Ordered Sequence.
+     */
+    def sortBySuit(): Seq[Card] = base.sortBy(c => c.suit)
+  }
+
 }

@@ -8,7 +8,7 @@ import it.parttimeteam.core.cards.Card
  * @param playerCards list of cards in the player's hand
  * @param tableCards  list of cards in the player's hand to put at the table
  */
-case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List()) {
+case class Hand(playerCards: Seq[Card] = Seq.empty, tableCards: Seq[Card] = Seq.empty) {
 
   /**
    * Get player's hand
@@ -25,7 +25,7 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
    * @param cards cards to add
    * @return new Hand with the updated playerCards list
    */
-  def addPlayerCards(cards: Seq[Card]): Hand = this.copy(playerCards = playerCards ::: cards.toList)
+  def addPlayerCards(cards: Seq[Card]): Hand = this.copy(playerCards = playerCards ++ cards)
 
   /**
    * Add cards to the list tablePlayer
@@ -33,7 +33,7 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
    * @param cards cards to add
    * @return new Hand the updated tableCards list
    */
-  def addTableCards(cards: Seq[Card]): Hand = this.copy(tableCards = tableCards ::: cards.toList)
+  def addTableCards(cards: Seq[Card]): Hand = this.copy(tableCards = tableCards ++ cards)
 
   /**
    * Check if hand contain some cards.
@@ -87,25 +87,5 @@ case class Hand(playerCards: List[Card] = List(), tableCards: List[Card] = List(
     }
 
     Either.cond(cards forall (c => this containsCards c), remove(cards), s"$this doesn't contain $cards")
-  }
-
-  /**
-   * Sort cards by value
-   *
-   * @param cards cards to order
-   * @return sorted list of cards
-   */
-  def sortByValue(cards: Card*): List[Card] = {
-    cards.sortWith((s: Card, t: Card) => s.rank.value < t.rank.value).toList
-  }
-
-  /**
-   * Sort cards by suit
-   *
-   * @param cards cards to order
-   * @return sorted list of cards
-   */
-  def sortBySuit(cards: Card*): List[Card] = {
-    cards.sortWith((s: Card, t: Card) => s.suit.order < t.suit.order).toList
   }
 }
