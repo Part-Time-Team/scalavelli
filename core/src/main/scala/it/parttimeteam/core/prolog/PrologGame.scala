@@ -33,6 +33,7 @@ class PrologGame() {
    *
    * @return deck entity
    */
+  // TODO refactor method
   def loadDeck: Seq[Card] = {
 
     val deckToLoad: Iterator[Seq[Term]] = engine goals PrologStruct(card, x, y, z) grouped 3
@@ -72,31 +73,31 @@ class PrologGame() {
     conversion resultToBoolean validate
   }
 
+  // TODO add scalaDoc
+  def sortByValue(cards: Seq[Card]): Seq[Card] = {
 
-  def sortByValue(cards: Seq[Card]): Unit = {
-    val sortedSeq: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(x))
-    conversion sortedCard sortedSeq
+    val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(x))
+    completedResult(cards, prologResult)
   }
 
+  // TODO add scalaDoc
   def sortBySuit(cards: Seq[Card]): Seq[Card] = {
 
-    val sortedSuit: Seq[Seq[Card]] = conversion collectSuit cards
+    val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(x))
+    completedResult(cards, prologResult)
+  }
 
-    val prologResult : Seq[Term] = sortedSuit.foldLeft(Seq.empty[Term]) {
-      (acc, seq) =>
-        seq match {
-          case Seq() => acc
-          case _ => acc ++ (engine goal orderByValue + conversion.cardsConvertToString(seq)(Some(x)))
-        }
-    }
+  // TODO add scalaDoc
+  def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
 
-    var tmpInputCards = cards
-    conversion.sortedCard(prologResult).map(tuple => {
-      val foundCard : Card = tmpInputCards.find(card => card.rank == tuple._1 && card.suit == tuple._2).get
+    var tmpInputCards = inputCards
+    conversion.sortedCard(sortedCards).map(tuple => {
+      val foundCard: Card = tmpInputCards.find(card => card.rank == tuple._1 && card.suit == tuple._2).get
       tmpInputCards = tmpInputCards.filter(_ != foundCard)
       foundCard
     })
   }
+
 }
 
 /**
@@ -112,5 +113,5 @@ object PrologGame extends App {
   val ace: Card = Card(Rank.Ace(), Suit.Spades(), Color.Blue())
   val two: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
 
-  game.sortBySuit(Seq(ace, two, queen)) foreach(println(_))
+  game.sortByValue(Seq(two, king, queen, ace)) foreach (println(_))
 }

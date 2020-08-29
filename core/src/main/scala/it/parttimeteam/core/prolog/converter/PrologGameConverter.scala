@@ -1,8 +1,7 @@
 package it.parttimeteam.core.prolog.converter
 
-import alice.tuprolog.{Prolog, Term, Var}
+import alice.tuprolog.{Term, Var}
 import it.parttimeteam.core.cards.Rank.{Ace, King}
-import it.parttimeteam.core.cards.Suit.{Clubs, Diamonds, Hearts, Spades}
 import it.parttimeteam.core.cards.{Card, Rank, Suit}
 
 
@@ -10,8 +9,6 @@ import it.parttimeteam.core.cards.{Card, Rank, Suit}
  * Class to improve conversions results in prolog
  */
 class PrologGameConverter extends PrologConverter {
-
-  val prolog = new Prolog()
 
   private val startList: String = "(["
   private val endList: String = "])."
@@ -21,22 +18,21 @@ class PrologGameConverter extends PrologConverter {
   override def resultToStringAndReplace(term: Term, replace: String): String = term.toString.replace(replace, "")
 
   override def cardsConvertToString(cards: Seq[Card])(variable: Option[Var]): String = {
-    val tupleCard = for (card <- optionalValueCards(cards)) yield (card.rank.value, card.suit.name)
+    val tupleCard = for (card <- optionalValueCards(cards)) yield (card.rank.value, "\"" + card.suit.name + "\"")
     listInProlog(tupleCard)(variable)
   }
 
+  // TODO da testare
   def sortedCard(cards: Seq[Term]): List[(Rank, Suit)] = {
 
     val cardsList = PrologUtils.utils(cards)
 
     val tupleCard = cardsList map (card => {
       val split = card.toString().split(",")
-      (split(0).toInt, split(1))
+      (split(0), split(1))
     })
-    tupleCard.map(item => (Rank.value2rank(item._1), Suit.string2suit(item._2)))
+    tupleCard.map(item => (Rank.string2rank(item._1), Suit.string2suit(item._2)))
   }
-
-  def collectSuit(cards: Seq[Card]): Seq[Seq[Card]] = cards.collectHearts +: cards.collectDiamonds +: cards.collectClubs +: cards.collectSpades +: Nil
 
   /**
    * Converts the value card Ace if it is after King card
@@ -51,7 +47,7 @@ class PrologGameConverter extends PrologConverter {
         case Nil => card +: Nil
         case _ => (acc.last.rank, card.rank) match {
           case (King(), Ace()) =>
-            acc ++ (card.copy(rank = 14) +: Nil)
+            acc ++ (card.copy(rank = "14") +: Nil)
           case _ => acc ++ (card +: Nil)
         }
       }
@@ -71,45 +67,5 @@ class PrologGameConverter extends PrologConverter {
     } else {
       startList + tupleCard.mkString(",") + endList
     }
-
-  implicit class collect(cards: Seq[Card]) {
-
-    def collectClubs: Seq[Card] =
-      cards.foldLeft(Seq.empty[Card]) {
-        (acc, card) =>
-          card.suit match {
-            case Clubs() => acc ++ (card +: Nil)
-            case _ => acc
-          }
-      }
-
-    def collectSpades: Seq[Card] =
-      cards.foldLeft(Seq.empty[Card]) {
-        (acc, card) =>
-          card.suit match {
-            case Spades() => acc ++ (card +: Nil)
-            case _ => acc
-          }
-      }
-
-    def collectDiamonds: Seq[Card] =
-      cards.foldLeft(Seq.empty[Card]) {
-        (acc, card) =>
-          card.suit match {
-            case Diamonds() => acc ++ (card +: Nil)
-            case _ => acc
-          }
-      }
-
-    def collectHearts: Seq[Card] =
-      cards.foldLeft(Seq.empty[Card]) {
-        (acc, card) =>
-          card.suit match {
-            case Hearts() => acc ++ (card +: Nil)
-            case _ => acc
-          }
-      }
-  }
-
 }
 
