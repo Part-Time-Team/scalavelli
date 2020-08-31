@@ -38,14 +38,19 @@ trait PrologEngine {
   def hasOpenAlternatives: Boolean
 
   /**
-   * Get value by term and variable
+   * Get value from the variables of a term
    *
    * @param info solution to get value
    * @return sequence of values
    */
   def bindingVars(info: SolveInfo): Seq[Term]
 
-  //TODO da testare
+  /**
+   * Check if the predicate has a solution
+   *
+   * @param predicate to get solution
+   * @return true if the predicate has solution otherwise false
+   */
   def isSuccess(predicate : String) : Boolean
 
 }

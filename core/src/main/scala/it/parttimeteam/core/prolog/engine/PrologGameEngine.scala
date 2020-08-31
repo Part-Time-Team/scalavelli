@@ -15,22 +15,37 @@ class PrologGameEngine() extends PrologEngine {
    */
   engine.setTheory(new Theory(getClass.getResourceAsStream("/rules.prolog")))
 
+  /**
+   * @inheritdoc
+   */
   override def goal(predicate: Term): Seq[Term] = {
     val info: SolveInfo = engine solve predicate
     if (info isSuccess) bindingVars(info)
     else Seq()
   }
 
+  /**
+   * @inheritdoc
+   */
   override def goal(predicate: String): Seq[Term] = {
     val info: SolveInfo = engine solve predicate
     if (info isSuccess) bindingVars(info)
     else Seq()
   }
 
+  /**
+   * @inheritdoc
+   */
   override def isSuccess(predicate: String): Boolean = engine solve predicate isSuccess
 
+  /**
+   * @inheritdoc
+   */
   override def hasOpenAlternatives: Boolean = engine hasOpenAlternatives
 
+  /**
+   * @inheritdoc
+   */
   override def goals(goal: Term): Seq[Term] = {
 
     @scala.annotation.tailrec
@@ -44,6 +59,9 @@ class PrologGameEngine() extends PrologEngine {
     _goals(engine solve goal)(Seq())
   }
 
+  /**
+   * @inheritdoc
+   */
   override def bindingVars(info: SolveInfo): Seq[Term] = {
 
     var varList: Seq[Term] = Seq()
@@ -58,7 +76,7 @@ class PrologGameEngine() extends PrologEngine {
  * Object Prolog Struct to execute the goals
  */
 object PrologStruct {
-  // TODO eliminari gli Struct? poco utilizzati?
+  // TODO eliminare gli Struct? poco utilizzati?
 
   def apply(rule: String, variable: Var): Struct = new Struct(rule, variable)
 
