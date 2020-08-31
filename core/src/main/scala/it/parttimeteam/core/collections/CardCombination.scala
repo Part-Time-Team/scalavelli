@@ -7,10 +7,10 @@ import it.parttimeteam.core.prolog.PrologGame
  * Represent a combination of cards. Can be a Quarter or a Chair.
  * A Combination cannot be empty.
  *
+ * @param id    Id of the Combination.
  * @param cards Combinations of cards.
  */
 case class CardCombination(id: String, cards: Seq[Card]) {
-
   /**
    * Check if the combination is valid.
    *
@@ -23,4 +23,8 @@ case class CardCombination(id: String, cards: Seq[Card]) {
       PrologGame().validateChain(cards.toList)
 
   // TODO: Can be a Seq or need to be a List?
+}
+
+object CardCombination {
+  def apply(id: String, cards: Seq[Card]): CardCombination = new CardCombination(id, cards.sortByRank())
 }
