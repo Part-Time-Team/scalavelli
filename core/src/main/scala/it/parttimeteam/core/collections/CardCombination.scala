@@ -21,8 +21,6 @@ case class CardCombination(id: String, cards: Seq[Card]) {
       PrologGame().validateQuarter(cards.toList)
     else
       PrologGame().validateChain(cards.toList)
-
-  // TODO: Can be a Seq or need to be a List?
 }
 
 object CardCombination {
