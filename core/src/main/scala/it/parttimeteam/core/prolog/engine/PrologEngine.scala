@@ -45,5 +45,7 @@ trait PrologEngine {
    */
   def bindingVars(info: SolveInfo): Seq[Term]
 
+  //TODO da testare
+  def isSuccess(predicate : String) : Boolean
+
 }
-// TODO creare object per settare path per la risorsa

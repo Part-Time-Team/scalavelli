@@ -16,15 +16,7 @@ class PrologGameConverterSpec extends AnyFunSuite {
     val card2: Card = Card(Rank.Four(), Suit.Spades(), Color.Blue())
     val card3: Card = Card(Rank.King(), Suit.Diamonds(), Color.Red())
 
-    assert(gameConverter.cardsConvertToString(Seq(card1, card2, card3))(None) equals "([(1,Clubs),(4,Spades),(13,Diamonds)]).")
-  }
-
-  test("Convert term to boolean") {
-
-    val term1: Term = prolog toTerm "[1]"
-    val term2: Term = prolog toTerm "[2]"
-
-    assert(gameConverter.resultToBoolean(Seq(term1, term2)) equals true)
+    assert(gameConverter.cardsConvertToString(Seq(card1, card2, card3))(None) equals "([(1,\"Clubs\"),(4,\"Spades\"),(13,\"Diamonds\")]).")
   }
 
   test("Convert term to string and replace character ' ") {

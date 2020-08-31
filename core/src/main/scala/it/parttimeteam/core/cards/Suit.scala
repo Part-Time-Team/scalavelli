@@ -20,8 +20,8 @@ object Suit {
 
   val HEART_SYMBOL = "♥"
   val DIAMONDS_SYMBOL = "♦"
-  val SPADES_SYMBOL = "♣"
-  val CLUBS_SYMBOL = "♠"
+  val SPADES_SYMBOL = "♠"
+  val CLUBS_SYMBOL = "♣"
 
   /**
    * The heart suit.

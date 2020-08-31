@@ -40,7 +40,7 @@ class PrologGame() {
     @tailrec
     def _loadDeck(deck: Seq[Card])(deckToLoad: Seq[Seq[Term]]): Seq[Card] = deckToLoad match {
 
-      case h :: t => _loadDeck(deck :+ conversion.getCard(h.head, h(1), h(2)) )(t)
+      case h :: t => _loadDeck(deck :+ conversion.getCard(h.head, h(1), h(2)))(t)
       case _ => deck
     }
 
@@ -54,9 +54,7 @@ class PrologGame() {
    * @return True if the goal is successful, False otherwise.
    */
   def validateQuarter(cards: Seq[Card]): Boolean = {
-
-    val validate: Seq[Term] = engine goal validationQuarter + conversion.cardsConvertToString(cards)(None)
-    conversion resultToBoolean validate
+    engine isSuccess validationQuarter + conversion.cardsConvertToString(cards)(None)
   }
 
   /**
@@ -66,9 +64,7 @@ class PrologGame() {
    * @return true if the goal is successful, false otherwise
    */
   def validateChain(cards: Seq[Card]): Boolean = {
-
-    val validate: Seq[Term] = engine goal validationChain + conversion.cardsConvertToString(cards)(None)
-    conversion resultToBoolean validate
+    engine isSuccess validationChain + conversion.cardsConvertToString(cards)(None)
   }
 
   // TODO add scalaDoc and test
@@ -88,7 +84,7 @@ class PrologGame() {
   // TODO add scalaDoc and test
   def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
 
-    var tmpInputCards : Seq[Card] = inputCards
+    var tmpInputCards: Seq[Card] = inputCards
     conversion.sortedCard(sortedCards).map(tuple => {
       val foundCard: Card = tmpInputCards.find(card => card.rank == tuple._1 && card.suit == tuple._2).get
       tmpInputCards = tmpInputCards.filter(_ != foundCard)
@@ -106,10 +102,9 @@ object PrologGame extends App {
 
   val game = new PrologGame()
 
-  val queen: Card = Card(Rank.Queen(), Suit.Spades(), Color.Blue())
-  val king: Card = Card(Rank.Queen(), Suit.Diamonds(), Color.Blue())
-  val ace: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
-  val two: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
+  val card1: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
+  val card2: Card = Card(Rank.Ace(), Suit.Spades(), Color.Blue())
+  val card3: Card = Card(Rank.Ace(), Suit.Diamonds(), Color.Red())
 
- println(game.validateQuarter(Seq(king, queen, ace)))
+  println(game.validateQuarter(Seq(card1, card2, card3)))
 }

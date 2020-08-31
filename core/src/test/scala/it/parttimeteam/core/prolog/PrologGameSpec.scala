@@ -38,7 +38,7 @@ class PrologGameSpec extends AnyFunSuite {
   }
 
 
-  test("Validate a valid sequence") {
+  test("Validate a valid chain") {
 
     val card1: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Red())
     val card2: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
@@ -48,7 +48,7 @@ class PrologGameSpec extends AnyFunSuite {
     assert(prologGame.validateChain(Seq(card1, card2, card3, card4)) equals true)
   }
 
-  test("Validate an invalid sequence") {
+  test("Validate an invalid chain") {
 
     val card1: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
     val card2: Card = Card(Rank.Two(), Suit.Clubs(), Color.Blue())
@@ -58,7 +58,7 @@ class PrologGameSpec extends AnyFunSuite {
     assert(prologGame.validateChain(Seq(card1, card2, card3, card4)) equals false)
   }
 
-  test("Validate an invalid sequence with different suit") {
+  test("Validate an invalid chain with different suit") {
 
     val card1: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
     val card2: Card = Card(Rank.Two(), Suit.Clubs(), Color.Blue())

@@ -13,8 +13,6 @@ class PrologGameConverter extends PrologConverter {
   private val startList: String = "(["
   private val endList: String = "])."
 
-  override def resultToBoolean(list: Seq[Term]): Boolean = list.nonEmpty
-
   override def toString(term: Term, replace: String): String = term.toString.replace(replace, "")
 
   override def cardsConvertToString(cards: Seq[Card])(variable: Option[Var]): String = {

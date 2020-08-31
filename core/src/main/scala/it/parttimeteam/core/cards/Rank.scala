@@ -50,6 +50,7 @@ object Rank {
   val QUEEN_SYMBOL = "Q"
   val KING = "13"
   val KING_SYMBOL = "K"
+  val OVERFLOW_ACE = "14"
 
   /**
    * The first rank.
@@ -164,6 +165,7 @@ object Rank {
     case JACK   | JACK_SYMBOL => Jack()
     case QUEEN  | QUEEN_SYMBOL => Queen()
     case KING   | KING_SYMBOL=> King()
+    case OVERFLOW_ACE => OverflowAce()
     case _ => throw new RuntimeException(f"Unknown rank $s")
   }
 }

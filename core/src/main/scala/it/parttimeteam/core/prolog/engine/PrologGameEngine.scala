@@ -27,6 +27,8 @@ class PrologGameEngine() extends PrologEngine {
     else Seq()
   }
 
+  override def isSuccess(predicate: String): Boolean = engine solve predicate isSuccess
+
   override def hasOpenAlternatives: Boolean = engine hasOpenAlternatives
 
   override def goals(goal: Term): Seq[Term] = {
@@ -56,6 +58,7 @@ class PrologGameEngine() extends PrologEngine {
  * Object Prolog Struct to execute the goals
  */
 object PrologStruct {
+  // TODO eliminari gli Struct? poco utilizzati?
 
   def apply(rule: String, variable: Var): Struct = new Struct(rule, variable)
 
