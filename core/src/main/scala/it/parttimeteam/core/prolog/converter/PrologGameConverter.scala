@@ -22,7 +22,7 @@ class PrologGameConverter extends PrologConverter {
    */
   override def cardsConvertToString(cards: Seq[Card])(variable: Option[Var]): String = {
     val tupleCard = for (card <- optionalValueCards(cards)) yield (card.rank.value, "\"" + card.suit.name + "\"")
-    prologList(tupleCard)(variable)
+    this.prologList(tupleCard)(variable)
   }
 
   /**

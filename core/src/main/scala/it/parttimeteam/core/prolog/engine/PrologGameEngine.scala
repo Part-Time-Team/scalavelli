@@ -20,7 +20,7 @@ class PrologGameEngine() extends PrologEngine {
    */
   override def goal(predicate: Term): Seq[Term] = {
     val info: SolveInfo = engine solve predicate
-    if (info isSuccess) bindingVars(info)
+    if (info isSuccess) this.bindingVars(info)
     else Seq()
   }
 
@@ -29,7 +29,7 @@ class PrologGameEngine() extends PrologEngine {
    */
   override def goal(predicate: String): Seq[Term] = {
     val info: SolveInfo = engine solve predicate
-    if (info isSuccess) bindingVars(info)
+    if (info isSuccess) this.bindingVars(info)
     else Seq()
   }
 
@@ -51,7 +51,7 @@ class PrologGameEngine() extends PrologEngine {
     @scala.annotation.tailrec
     def _goals(info: SolveInfo)(solution: Seq[Term]): Seq[Term] = {
       if (info isSuccess) {
-        val newSolutions = solution ++ bindingVars(info)
+        val newSolutions = solution ++ this.bindingVars(info)
         if (engine hasOpenAlternatives) _goals(engine solveNext)(newSolutions) else newSolutions
       } else solution
     }
