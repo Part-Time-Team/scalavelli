@@ -4,7 +4,6 @@ import alice.tuprolog.{Term, Var}
 import it.parttimeteam.core.cards.Rank.{Ace, King}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 
-
 /**
  * Class to improve conversions results in prolog
  */
@@ -13,15 +12,23 @@ class PrologGameConverter extends PrologConverter {
   private val startList: String = "(["
   private val endList: String = "])."
 
+  /**
+   * @inheritdoc
+   */
   override def toString(term: Term, replace: String): String = term.toString.replace(replace, "")
 
+  /**
+   * @inheritdoc
+   */
   override def cardsConvertToString(cards: Seq[Card])(variable: Option[Var]): String = {
     val tupleCard = for (card <- optionalValueCards(cards)) yield (card.rank.value, "\"" + card.suit.name + "\"")
-    listInProlog(tupleCard)(variable)
+    prologList(tupleCard)(variable)
   }
 
-  // TODO add scalaDoc and test
-  def sortedCard(cards: Seq[Term]): List[(Rank, Suit)] = {
+  /**
+   * @inheritdoc
+   */
+  override def sortedCard(cards: Seq[Term]): Seq[(Rank, Suit)] = {
 
     val cardsList = PrologUtils.utils(cards)
 
@@ -32,19 +39,17 @@ class PrologGameConverter extends PrologConverter {
     tupleCard.map(item => (Rank.string2rank(item._1), Suit.string2suit(item._2)))
   }
 
-  // TODO add scalaDoc and test
-  def getCard(color: Term, suit: Term, rank: Term): Card = {
-    Card(Rank.string2rank(toString(rank, "'")), Suit.string2suit(toString(suit, "'")), Color.string2color(toString(color,"'")))
+  /**
+   * @inheritdoc
+   */
+  override def getCard(color: Term, suit: Term, rank: Term): Card = {
+    Card(Rank.string2rank(toString(rank, "'")), Suit.string2suit(toString(suit, "'")), Color.string2color(toString(color, "'")))
   }
 
   /**
-   * Converts the value card Ace if it is after King card
-   *
-   * @param cards sequence of cards
-   * @return new sequence of cards
+   * @inheritdoc
    */
-  // TODO renderlo PRIVATE - cambiare i test
-  def optionalValueCards(cards: Seq[Card]): Seq[Card] = cards.foldLeft(Seq.empty[Card]) {
+  override def optionalValueCards(cards: Seq[Card]): Seq[Card] = cards.foldLeft(Seq.empty[Card]) {
     (acc, card) =>
       acc match {
         case Nil => card +: Nil
@@ -57,16 +62,12 @@ class PrologGameConverter extends PrologConverter {
   }
 
   /**
-   * Convert tuple sequence in a prolog list
-   *
-   * @param tupleCard tuple sequence to convert
-   * @param variable  variable defined
-   * @return prolog string list
+   * @inheritdoc
    */
-  private def listInProlog(tupleCard: Seq[(Int, String)])(variable: Option[Var]): String =
+  override def prologList(tupleCard: Seq[(Int, String)])(variable: Option[Var]): String =
 
     if (variable.isDefined) {
-      startList + tupleCard.mkString(",") + "]" + "," + variable.get.getName + ")."
+      startList + tupleCard.mkString(",") + "]," + variable.get.getName + ")."
     } else {
       startList + tupleCard.mkString(",") + endList
     }
