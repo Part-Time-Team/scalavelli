@@ -4,12 +4,9 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class PrologUtilsSpec extends AnyFunSuite{
 
-  test("Convert sequence cards into regex sequence"){
+  // TODO completed test
+  test("Convert sequence cards into regex sequence"){}
 
-  }
-
-  test("Replace specific characters in a sequence of terms"){
-
-  }
+  test("Replace specific characters in a sequence of terms"){}
 
 }

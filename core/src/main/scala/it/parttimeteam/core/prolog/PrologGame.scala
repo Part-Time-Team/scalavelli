@@ -112,6 +112,6 @@ class PrologGame() {
 /**
  * Object to initialize the class PrologGame
  */
-object PrologGame extends App { 
+object PrologGame extends App {
   def apply(): PrologGame = new PrologGame()
 }

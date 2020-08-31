@@ -37,7 +37,6 @@ class PrologGameSpec extends AnyFunSuite {
     assert(prologGame.validateQuarter(Seq(card1, card2, card3)) equals false)
   }
 
-
   test("Validate a valid chain") {
 
     val card1: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Red())
@@ -79,6 +78,13 @@ class PrologGameSpec extends AnyFunSuite {
     assert(prologGame.validateChain(Seq(queen, king, ace, two)) equals false)
     assert(prologGame.validateChain(Seq(king, queen, ace, two)) equals false)
   }
+
+  // TODO completed test
+  test("Order a sequence of cards by value"){}
+
+  test("Order a sequence of cards by suit"){}
+
+  test("Add color to ordered cards"){}
 }
 
 
