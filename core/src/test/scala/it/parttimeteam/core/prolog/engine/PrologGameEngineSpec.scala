@@ -1,9 +1,8 @@
-package it.parttimeteam.core.prolog
+package it.parttimeteam.core.prolog.engine
 
 import alice.tuprolog.{Prolog, Term, Var}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 import it.parttimeteam.core.prolog.converter.PrologGameConverter
-import it.parttimeteam.core.prolog.engine.{PrologGameEngine, PrologStruct}
 import org.scalatest.funsuite.AnyFunSuite
 
 class PrologGameEngineSpec extends AnyFunSuite {

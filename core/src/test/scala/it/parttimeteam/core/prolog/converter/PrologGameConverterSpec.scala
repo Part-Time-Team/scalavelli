@@ -1,8 +1,7 @@
-package it.parttimeteam.core.prolog
+package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.{Prolog, Term, Var}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
-import it.parttimeteam.core.prolog.converter.PrologGameConverter
 import it.parttimeteam.core.prolog.engine.PrologGameEngine
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -11,7 +10,7 @@ class PrologGameConverterSpec extends AnyFunSuite {
   val prologConverter: PrologGameConverter = new PrologGameConverter
   val prolog: Prolog = new Prolog
 
-  test("Convert list of cards in string") {
+  test("Convert sequence of cards in string") {
 
     val card1: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Red())
     val card2: Card = Card(Rank.Four(), Suit.Spades(), Color.Blue())
