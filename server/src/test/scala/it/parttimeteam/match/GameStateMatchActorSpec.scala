@@ -8,7 +8,7 @@ import it.parttimeteam.`match`.GameMatchActor.GamePlayers
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import it.parttimeteam.core.player.Player
-import it.parttimeteam.core.player.Player.PlayerId
+import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
 import it.parttimeteam.core.{GameManager, GameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
@@ -64,10 +64,10 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
      * @param players List of players ids.
      * @return New Game State.
      */
-    override def create(players: Seq[PlayerId]): GameState = core.GameState(
+    override def create(players: Seq[(PlayerId, PlayerName)]): GameState = core.GameState(
       Deck(List()),
       Board.empty,
-      players.map(id => Player(id, id, Hand(List(), List()))))
+      players.map(pair => Player(pair._2, pair._1, Hand(List(), List()))))
 
     override def draw(deck: Deck): (Deck, Card) = (deck, FakeGameManager.cardToDraw)
 

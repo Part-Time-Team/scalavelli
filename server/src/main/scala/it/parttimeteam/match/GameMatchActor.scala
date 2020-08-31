@@ -86,7 +86,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
    */
   private def initializeGame(): Unit = {
     log.debug("initializing game..")
-    val gameState = gameManager.create(players.map(_.id))
+    val gameState = gameManager.create(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
     this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
     context.become(inTurn(gameState, getPlayerForCurrentTurn))

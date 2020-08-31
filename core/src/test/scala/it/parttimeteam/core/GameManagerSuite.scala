@@ -12,7 +12,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
   describe("A game manager") {
     // Use the same instance of GameManager for all tests.
     val gameManager: GameManager = new GameManagerImpl()
-    val ids = Seq("Daniele", "Lorenzo", "Luca", "Matteo")
+    val playerInfos = Seq(("1", "Daniele"), ("2", "Lorenzo"), ("3", "Luca"), ("4", "Matteo"))
     val c1: Card = Card.string2card("2♣R")
     val c2: Card = Card.string2card("3♣B")
     val c3: Card = Card.string2card("4♣B")
@@ -27,11 +27,11 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       }
 
       describe("When there are player to add") {
-        val state = gameManager.create(ids)
+        val state = gameManager.create(playerInfos)
 
         it("Game state players are created") {
           assert(state.players.nonEmpty)
-          assert(state.players.map(m => m.id) equals ids)
+          assert(state.players.map(m => (m.id, m.name)) equals playerInfos)
           assert(state.players.forall(p => p.hand.playerCards.size == 13))
         }
       }
@@ -82,7 +82,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
     }
 
     describe("Play a combination") {
-      val state = gameManager.create(ids)
+      val state = gameManager.create(playerInfos)
 
       it("Play a valid comb") {
         val seq = Seq(c1, c2, c3)
@@ -113,8 +113,8 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       it("Pick from table some cards") {
         val seq = Seq(c1, c2, c3)
         val comb = CardCombination("#2", seq)
-        var state = gameManager.create(ids)
-        val daniele = (state getPlayer "Daniele").get
+        var state = gameManager.create(playerInfos)
+        val daniele = (state getPlayer "1").get
 
         // First play a combination.
         val played = gameManager.playCombination(
