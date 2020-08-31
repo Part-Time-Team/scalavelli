@@ -15,7 +15,7 @@ class PrologGameConverter extends PrologConverter {
   /**
    * @inheritdoc
    */
-  override def toString(term: Term, replace: String): String = term.toString.replace(replace, "")
+  def toString(term: Term, replace: String): String = PrologUtils.replaceTermToString(term, replace)
 
   /**
    * @inheritdoc
