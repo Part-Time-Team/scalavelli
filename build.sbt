@@ -108,7 +108,7 @@ lazy val commons = (project in file("commons")).settings(
 lazy val server = (project in file("server")).settings(
   name := "server",
   settings,
-  mainClass in Compile := Some("it.parttimeteam.ScalavelliServer"),
+  mainClass in (Compile, assembly) := Some("it.parttimeteam.ScalavelliServer"),
   libraryDependencies ++= (
     akkaDependencies ++
       testDependencies
@@ -121,7 +121,7 @@ lazy val server = (project in file("server")).settings(
 lazy val client = (project in file("client")).settings(
   name := "client",
   settings,
-  mainClass in Compile := Some("it.parttimeteam.AppLauncher"),
+  mainClass in (Compile, assembly) := Some("it.parttimeteam.AppLauncher"),
   libraryDependencies ++= (akkaDependencies ++
     testDependencies ++
     scalaFXDep.union(Seq(scalafx))
