@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
+import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.prolog.converter.PrologGameConverter
 import it.parttimeteam.core.prolog.engine.{PrologGameEngine, PrologStruct}
 
@@ -67,22 +67,38 @@ class PrologGame() {
     engine isSuccess validationChain + conversion.cardsConvertToString(cards)(None)
   }
 
-  // TODO add scalaDoc and test
+  /**
+   * Sort by value a sequence of cards
+   *
+   * @param cards cards to sort
+   * @return ordered card sequence
+   */
   def sortByValue(cards: Seq[Card]): Seq[Card] = {
 
     val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(x))
-    completedResult(cards, prologResult)
+    this.completedResult(cards, prologResult)
   }
 
-  // TODO add scalaDoc and test
+  /**
+   * Sort by suit a sequence of cards
+   *
+   * @param cards cards to sort
+   * @return ordered card sequence
+   */
   def sortBySuit(cards: Seq[Card]): Seq[Card] = {
 
     val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(x))
-    completedResult(cards, prologResult)
+    this.completedResult(cards, prologResult)
   }
 
-  // TODO add scalaDoc and test
-  def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
+  /**
+   * Add color to ordered cards
+   *
+   * @param inputCards input cards
+   * @param sortedCards ordered cards
+   * @return ordered cards with color
+   */
+  private def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
 
     var tmpInputCards: Seq[Card] = inputCards
     conversion.sortedCard(sortedCards).map(tuple => {
@@ -91,20 +107,11 @@ class PrologGame() {
       foundCard
     })
   }
-
 }
 
 /**
  * Object to initialize the class PrologGame
  */
-object PrologGame extends App {
+object PrologGame extends App { 
   def apply(): PrologGame = new PrologGame()
-
-  val game = new PrologGame()
-
-  val card1: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
-  val card2: Card = Card(Rank.Ace(), Suit.Spades(), Color.Blue())
-  val card3: Card = Card(Rank.Ace(), Suit.Diamonds(), Color.Red())
-
-  println(game.validateQuarter(Seq(card1, card2, card3)))
 }
