@@ -1,6 +1,6 @@
 package it.parttimeteam.lobby
 
-import it.parttimeteam.entities.{GamePlayer, Player}
+import it.parttimeteam.common.{GamePlayer, Player}
 
 object LobbyManager {
   def apply(): LobbyManager[GamePlayer] = new LobbyManagerImpl[GamePlayer]()

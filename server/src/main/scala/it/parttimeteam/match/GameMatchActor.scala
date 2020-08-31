@@ -1,10 +1,10 @@
 package it.parttimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, Props, Stash}
-import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, StateResult}
+import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, GamePlayers, StateResult}
+import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.{GameManager, GameState}
-import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
@@ -20,6 +20,13 @@ object GameMatchActor {
   sealed class AdditionalInfo
 
   case class CardDrawnInfo(card: Card) extends AdditionalInfo
+
+  /**
+   * Sent to the gameactor to specify the players to add to the match
+   *
+   * @param players players to add to the match
+   */
+  case class GamePlayers(players: Seq[GamePlayer])
 
 }
 
