@@ -4,16 +4,15 @@ import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
 import it.parttimeteam.`match`.GameMatchActor
-import it.parttimeteam.core
-import it.parttimeteam.core.{GameManager, GameState}
+import it.parttimeteam.`match`.GameMatchActor.GamePlayers
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player.PlayerId
-import it.parttimeteam.entities.GamePlayer
-import it.parttimeteam.messages.GameMessage.{CardDrawn, GamePlayers, GameStateUpdated, PlayerActionMade, PlayerTurn, Ready}
+import it.parttimeteam.core.{GameManager, GameState}
+import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
-import it.parttimeteam.DrawCard
+import it.parttimeteam.{DrawCard, common, core}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -35,7 +34,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       val player1 = TestProbe()
       val player2 = TestProbe()
 
-      gameActor ! GamePlayers(Seq(GamePlayer("id1", "player1", player1.ref), GamePlayer("id2", "player2", player2.ref)))
+      gameActor ! GamePlayers(Seq(common.GamePlayer("id1", "player1", player1.ref), common.GamePlayer("id2", "player2", player2.ref)))
       player1.expectMsgType[MatchFound]
       player1.send(gameActor, Ready("id1", player1.ref))
       player2.expectMsgType[MatchFound]
