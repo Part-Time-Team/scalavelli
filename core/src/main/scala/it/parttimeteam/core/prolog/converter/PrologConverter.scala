@@ -9,15 +9,6 @@ import it.parttimeteam.core.cards.{Card, Rank, Suit}
 trait PrologConverter {
 
   /**
-   * Convert string and replace specific character
-   *
-   * @param term term to convert
-   * @param replace sequence of characters to replace
-   * @return string to return
-   */
-  def toString(term: Term, replace: String): String
-
-  /**
    * Convert a sequence of cards in string
    *
    * @param cards cards to convert
