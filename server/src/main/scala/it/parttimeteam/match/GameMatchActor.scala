@@ -1,6 +1,6 @@
 package it.parttimeteam.`match`
 
-import akka.actor.{Actor, ActorLogging, Props, Stash}
+import akka.actor.{Actor, ActorLogging, Props, Stash, Terminated}
 import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, GamePlayers, StateResult}
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.cards.Card
@@ -8,7 +8,7 @@ import it.parttimeteam.core.{GameManager, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
-import it.parttimeteam.messages.PlayerActionNotValidError
+import it.parttimeteam.messages.{PlayerActionNotValidError, PlayerLeftGameError}
 import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 
 object GameMatchActor {
@@ -49,10 +49,9 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
       this.turnManager = TurnManager(players.map(_.id))
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
-      context.become(initializing(Seq.empty))
-      unstashAll()
+      this.players.foreach(p => context.watch(p.actorRef))
+      context.become(initializing(Seq.empty) orElse termination())
     }
-    case _ => stash()
   }
 
   /**
@@ -72,11 +71,20 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
             log.debug("All players ready")
             this.initializeGame()
           } else {
-            context.become(initializing(updatedReadyPlayers))
+            context.become(initializing(updatedReadyPlayers) orElse termination())
           }
         }
         case None => log.debug(s"Player id $id not found")
       }
+    }
+  }
+
+  private def termination(): Receive = {
+    case Terminated(ref) => this.players.find(_.actorRef == ref) match {
+      case Some(player) =>
+        log.debug(s"Player ${player.username} left the game")
+        // TODO notify all the player the game ended
+        this.broadcastMessageToPlayers(Error(PlayerLeftGameError))
     }
   }
 
@@ -89,7 +97,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
     val gameState = gameManager.create(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
     this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
-    context.become(inTurn(gameState, getPlayerForCurrentTurn))
+    context.become(inTurn(gameState, getPlayerForCurrentTurn) orElse termination())
   }
 
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
