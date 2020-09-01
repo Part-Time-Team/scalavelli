@@ -56,12 +56,6 @@ class RankPropSpec
     }
   }
 
-  property("value2rank must return Rank at value input") {
-    forAll(examples) { rank =>
-      Rank value2rank rank.value should be(rank)
-    }
-  }
-
   property("equals must return boolean values") {
     forAll(examples) { rank =>
       rank equals rank should be(true)
@@ -73,12 +67,4 @@ class RankPropSpec
     -1,
     14,
   )
-
-  property("Invoking value2rank with other values must return RuntimeException") {
-    forAll(int2fails) { fail =>
-      a[RuntimeException] should be thrownBy {
-        Rank value2rank fail
-      }
-    }
-  }
 }
