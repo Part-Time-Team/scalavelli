@@ -69,21 +69,37 @@ class PrologGameSpec extends AnyFunSuite {
 
   test("Special case validation") {
 
-    val queen: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
-    val king: Card = Card(Rank.King(), Suit.Clubs(), Color.Blue())
-    val ace: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
-    val two: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
+    val card1: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
+    val card2: Card = Card(Rank.King(), Suit.Clubs(), Color.Blue())
+    val card3: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
+    val card4: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
 
-    assert(prologGame.validateChain(Seq(queen, king, ace)) equals true)
-    assert(prologGame.validateChain(Seq(queen, king, ace, two)) equals false)
-    assert(prologGame.validateChain(Seq(king, queen, ace, two)) equals false)
+    assert(prologGame.validateChain(Seq(card1, card2, card3)) equals true)
+    assert(prologGame.validateChain(Seq(card1, card2, card3, card4)) equals false)
+    assert(prologGame.validateChain(Seq(card2, card1, card3, card4)) equals false)
   }
 
-  // TODO completed test
-  test("Order a sequence of cards by value"){}
+  test("Order a sequence of cards by value"){
 
-  test("Order a sequence of cards by suit"){}
+    val card1: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
+    val card2: Card = Card(Rank.King(), Suit.Spades(), Color.Blue())
+    val card3: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
+    val card4: Card = Card(Rank.Two(), Suit.Hearts(), Color.Red())
 
+    assertResult(Seq(card3, card4, card1, card2))(prologGame.sortByValue(Seq(card1,card2,card3,card4)))
+  }
+
+  test("Order a sequence of cards by suit"){
+
+    val card1: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
+    val card2: Card = Card(Rank.King(), Suit.Spades(), Color.Blue())
+    val card3: Card = Card(Rank.Three(), Suit.Hearts(), Color.Blue())
+    val card4: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
+
+    assertResult(Seq(card3, card4, card1, card2))(prologGame.sortBySuit(Seq(card1,card2,card3,card4)))
+  }
+
+  // TODO da finire
   test("Add color to ordered cards"){}
 }
 
