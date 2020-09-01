@@ -1,9 +1,5 @@
 package it.parttimeteam.lobby
 
-import it.parttimeteam.common.IdGenerator
-
-import scala.util.Random
-
 class PrivateLobbyServiceImpl extends PrivateLobbyService with PrivateLobbyCodeGenerator {
 
   private var lobbies = Set[PrivateLobby]()
