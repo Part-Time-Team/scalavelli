@@ -8,7 +8,6 @@ case object InvalidPlaysError extends ErrorMessage
 
 case class PlayerActionNotValidError(reason: String) extends ErrorMessage
 
-case object PlayerLeftGameError extends ErrorMessage
-
 case object PrivateLobbyIdNotValidError extends ErrorMessage
+
 

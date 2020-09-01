@@ -1,9 +1,10 @@
 package it.parttimeteam.`match`
 
-import akka.actor.{Actor, ActorLogging, Props, Stash, Terminated}
+import akka.actor.{Actor, ActorLogging, PoisonPill, Props, Stash, Terminated}
 import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, GamePlayers, StateResult}
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.player.Player.PlayerId
 import it.parttimeteam.core.{GameManager, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
@@ -61,20 +62,17 @@ class GameMatchActor(numberOfPlayers: Int, private val gameApi: GameManager) ext
    */
   private def initializing(playersReady: Seq[GamePlayer]): Receive = {
     case Ready(id, ref) => {
-      this.players.find(_.id == id) match {
-        case Some(p) => {
-          log.debug(s"player ${p.username} ready")
-          players = players.map(p => if (p.id == id) p.copy(actorRef = ref) else p)
-          val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
+      this.withPlayer(id) { p =>
+        log.debug(s"player ${p.username} ready")
+        players = players.map(p => if (p.id == id) p.copy(actorRef = ref) else p)
+        val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
 
-          if (updatedReadyPlayers.length == numberOfPlayers) {
-            log.debug("All players ready")
-            this.initializeGame()
-          } else {
-            context.become(initializing(updatedReadyPlayers) orElse termination())
-          }
+        if (updatedReadyPlayers.length == numberOfPlayers) {
+          log.debug("All players ready")
+          this.initializeGame()
+        } else {
+          context.become(initializing(updatedReadyPlayers) orElse termination())
         }
-        case None => log.debug(s"Player id $id not found")
       }
     }
   }
@@ -83,8 +81,13 @@ class GameMatchActor(numberOfPlayers: Int, private val gameApi: GameManager) ext
     case Terminated(ref) => this.players.find(_.actorRef == ref) match {
       case Some(player) =>
         log.debug(s"Player ${player.username} left the game")
-        // TODO notify all the player the game ended
-        this.broadcastMessageToPlayers(Error(PlayerLeftGameError))
+        this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
+        self ! PoisonPill
+    }
+    case LeaveGame(playerId) => withPlayer(playerId) { player =>
+      log.debug(s"Player ${player.username} left the game")
+      this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
+      self ! PoisonPill
     }
   }
 
@@ -239,6 +242,11 @@ class GameMatchActor(numberOfPlayers: Int, private val gameApi: GameManager) ext
     }
   }
 
-  // TODO receive function for disconnection and error events
+  private def withPlayer(playerId: PlayerId)(f: GamePlayer => Unit): Unit = {
+    this.players.find(_.id == playerId) match {
+      case Some(p) => f(p)
+      case None => log.debug(s"Player id $playerId not found")
+    }
+  }
 
 }

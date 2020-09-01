@@ -100,4 +100,6 @@ object GameMessage {
   case class Lost(winnerPlayerName: String)
 
 
+  case object GameEndedForPlayerLeft
+
 }
