@@ -1,7 +1,8 @@
 package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.cards.Rank.OverflowAce
+import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 import it.parttimeteam.core.prolog.converter.PrologGameConverter
 import it.parttimeteam.core.prolog.engine.{PrologGameEngine, PrologStruct}
 
@@ -64,7 +65,7 @@ class PrologGame() {
    * @return true if the goal is successful, false otherwise
    */
   def validateChain(cards: Seq[Card]): Boolean = {
-    engine isSuccess validationChain + conversion.cardsConvertToString(cards)(None)
+    engine isSuccess validationChain + conversion.cardsConvertToString(conversion optionalValueCards cards)(None)
   }
 
   /**
@@ -73,7 +74,7 @@ class PrologGame() {
    * @param cards cards to sort
    * @return ordered card sequence
    */
-  def sortByValue(cards: Seq[Card]): Seq[Card] = {
+  def sortByRank(cards: Seq[Card]): Seq[Card] = {
 
     val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(x))
     this.completedResult(cards, prologResult)
@@ -94,7 +95,7 @@ class PrologGame() {
   /**
    * Add color to ordered cards
    *
-   * @param inputCards input cards
+   * @param inputCards  input cards
    * @param sortedCards ordered cards
    * @return ordered cards with color
    */
@@ -103,6 +104,7 @@ class PrologGame() {
     var tmpInputCards: Seq[Card] = inputCards
     conversion.sortedCard(sortedCards).map(tuple => {
       val foundCard: Card = tmpInputCards.find(card => card.rank == tuple._1 && card.suit == tuple._2).get
+
       tmpInputCards = tmpInputCards.filter(_ != foundCard)
       foundCard
     })
@@ -114,4 +116,13 @@ class PrologGame() {
  */
 object PrologGame extends App {
   def apply(): PrologGame = new PrologGame()
+
+  val game = new PrologGame()
+
+  val card1: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
+  val card2: Card = Card(Rank.King(), Suit.Spades(), Color.Blue())
+  val card3: Card = Card(Rank.Three(), Suit.Hearts(), Color.Blue())
+  val card4: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
+
+  println(game.sortBySuit(Seq(card1, card2, card3, card4)))
 }
