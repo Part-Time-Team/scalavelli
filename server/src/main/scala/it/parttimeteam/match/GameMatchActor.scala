@@ -9,7 +9,7 @@ import it.parttimeteam.core.{GameManager, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
-import it.parttimeteam.messages.{PlayerActionNotValidError, PlayerLeftGameError}
+import it.parttimeteam.messages.PlayerActionNotValidError
 import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 
 object GameMatchActor {
