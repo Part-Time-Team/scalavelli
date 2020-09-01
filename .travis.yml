@@ -17,10 +17,10 @@ git:
 cache:
   directories:
     - $HOME/.ivy2/cache
-    - $HOME/.sbt/boot/
-    - $HOME/.sbt/launchers
     - /tmp/texlive
     - $HOME/.texlive
+    - $HOME/.cache/coursier
+    - $HOME/.sbt
 
 notifications:
   email:
@@ -42,11 +42,11 @@ jobs:
       script: sbt test
     - stage: Generate coverage and scaladoc
       before_install:
-        - bash sudo apt-get -qq update
-        - bash sudo apt-get install -y texlive-base texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+        - bash sudo apt-get install python-pygments
+      install:
+        - bash texlive/texlive_install.sh
       script:
         - sbt coverage test coverageReport coverageAggregate doc
-        - bash <(curl -s https://codecov.io/bash)
       before_deploy:
         - bash travis-scripts/deploy_to_pages.sh
       deploy:
@@ -58,6 +58,8 @@ jobs:
         local_dir: public
         on:
           all_branches: true
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
     - stage: Deploy to Github Releases
       before_deploy:
         - sbt "project server" universal:packageBin

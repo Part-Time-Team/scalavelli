@@ -2,11 +2,10 @@ package it.parttimeteam.lobby
 
 import akka.actor.{Actor, ActorRef, Props}
 import it.parttimeteam.`match`.GameMatchActor
-import it.parttimeteam.common.IdGenerator
+import it.parttimeteam.`match`.GameMatchActor.GamePlayers
+import it.parttimeteam.common.{GamePlayer, IdGenerator}
 import it.parttimeteam.core.GameManagerImpl
-import it.parttimeteam.entities
-import it.parttimeteam.entities.GamePlayer
-import it.parttimeteam.messages.GameMessage.GamePlayers
+import it.parttimeteam.{common}
 import it.parttimeteam.messages.LobbyMessages._
 
 object LobbyManagerActor {
@@ -36,7 +35,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
     case JoinPublicLobby(clientId, username, numberOfPlayers) => {
       this.executeOnClientRefPresent(clientId) { ref =>
         val lobbyType = PlayerNumberLobby(numberOfPlayers)
-        this.lobbyManger.addPlayer(entities.GamePlayer(clientId, username, ref), lobbyType)
+        this.lobbyManger.addPlayer(common.GamePlayer(clientId, username, ref), lobbyType)
         ref ! UserAddedToLobby()
         this.checkAndCreateGame(lobbyType)
       }
@@ -45,7 +44,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
     case CreatePrivateLobby(clientId, username, numberOfPlayers) => {
       this.executeOnClientRefPresent(clientId) { ref =>
         val lobbyType = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
-        this.lobbyManger.addPlayer(entities.GamePlayer(clientId, username, ref), lobbyType)
+        this.lobbyManger.addPlayer(common.GamePlayer(clientId, username, ref), lobbyType)
         ref ! PrivateLobbyCreated(lobbyType.lobbyId)
       }
     }
@@ -53,7 +52,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
       this.executeOnClientRefPresent(clientId) { ref =>
         privateLobbyService.retrieveExistingLobby(lobbyCode) match {
           case Some(lobbyType) => {
-            val player = entities.GamePlayer(clientId, username, ref)
+            val player = common.GamePlayer(clientId, username, ref)
             this.lobbyManger.addPlayer(player, lobbyType)
             ref ! UserAddedToLobby()
             this.checkAndCreateGame(lobbyType)

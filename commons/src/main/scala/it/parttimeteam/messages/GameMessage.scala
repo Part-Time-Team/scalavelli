@@ -1,20 +1,12 @@
 package it.parttimeteam.messages
 
 import akka.actor.ActorRef
+import it.parttimeteam.PlayerAction
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, Hand}
-import it.parttimeteam.PlayerAction
-import it.parttimeteam.entities.GamePlayer
 import it.parttimeteam.gamestate.PlayerGameState
 
 object GameMessage {
-
-  /**
-   * Sent to the gameactor to specify the players to add to the match
-   *
-   * @param players players to add to the match
-   */
-  case class GamePlayers(players: Seq[GamePlayer])
 
   /**
    * Client response to the game start message

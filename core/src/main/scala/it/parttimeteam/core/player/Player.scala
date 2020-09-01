@@ -14,4 +14,5 @@ case class Player(name: String, id: PlayerId, var hand: Hand)
 
 object Player {
   type PlayerId = String
+  type PlayerName = String
 }
