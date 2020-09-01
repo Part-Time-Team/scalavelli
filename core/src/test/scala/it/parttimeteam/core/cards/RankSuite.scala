@@ -56,6 +56,10 @@ class RankSuite extends AnyFunSuite {
     assert(King().name equals "King")
     assert(King().shortName equals "K")
     assert(King().value equals 13)
+
+    assert(OverflowAce().name equals "Ace")
+    assert(OverflowAce().shortName equals "A")
+    assert(OverflowAce().value equals 14)
   }
 
   test("Compare King and Ace ranks") {
@@ -70,7 +74,32 @@ class RankSuite extends AnyFunSuite {
     assert(Ace() compareTo Two() equals -1)
   }
 
-  test("Check Equals with other objs") {
+  test("Check all string2rank properties"){
+    assert(Rank.string2rank(ACE_SYMBOL) equals Ace())
+    assert(Rank.string2rank(ACE) equals Ace())
+    assert(Rank.string2rank(OVERFLOW_ACE) equals OverflowAce())
+
+    assert(Rank.string2rank(TWO) equals Two())
+    assert(Rank.string2rank(THREE) equals Three())
+    assert(Rank.string2rank(FOUR) equals Four())
+    assert(Rank.string2rank(FIVE) equals Five())
+    assert(Rank.string2rank(SIX) equals Six())
+    assert(Rank.string2rank(SEVEN) equals Seven())
+    assert(Rank.string2rank(EIGHT) equals Eight())
+    assert(Rank.string2rank(NINE) equals Nine())
+    assert(Rank.string2rank(TEN) equals Ten())
+
+    assert(Rank.string2rank(JACK) equals Jack())
+    assert(Rank.string2rank(JACK_SYMBOL) equals Jack())
+
+    assert(Rank.string2rank(QUEEN) equals Queen())
+    assert(Rank.string2rank(QUEEN_SYMBOL) equals Queen())
+
+    assert(Rank.string2rank(KING) equals King())
+    assert(Rank.string2rank(KING_SYMBOL) equals King())
+  }
+
+  test("Check Equals with other obs") {
     assert(!(Rank.Ace().name equals "A2"))
   }
 }

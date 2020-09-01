@@ -150,7 +150,6 @@ object Rank {
    * @param s String to convert.
    * @return Rank converted.
    */
-    //TODO da testare
   implicit def string2rank(s: String): Rank = s match {
     case ACE | ACE_SYMBOL => Ace()
     case TWO => Two()
