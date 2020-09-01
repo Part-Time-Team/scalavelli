@@ -21,9 +21,14 @@ object PrologUtils {
    */
   def utils(cards: Seq[Term]): Seq[Regex.Match] = {
 
-    val cardsString: String = replaceString(replaceSeqToString(cards))
+    val cardsString: String = replace(cards)
     (pattern findAllMatchIn substring(cardsString, cardsString.length - 1)).toList
   }
+
+  /**
+   * Invoke replaceSeqToString and replaceString
+   */
+  private def replace(term: Seq[Term]): String = replaceString(replaceSeqToString(term))
 
   /**
    * Replace specific characters in a sequence of terms

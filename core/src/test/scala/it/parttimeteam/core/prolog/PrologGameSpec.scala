@@ -86,7 +86,7 @@ class PrologGameSpec extends AnyFunSuite {
     val card3: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
     val card4: Card = Card(Rank.Two(), Suit.Hearts(), Color.Red())
 
-    assertResult(Seq(card3, card4, card1, card2))(prologGame.sortByValue(Seq(card1,card2,card3,card4)))
+    assertResult(Seq(card3, card4, card1, card2))(prologGame.sortByRank(Seq(card1,card2,card3,card4)))
   }
 
   test("Order a sequence of cards by suit"){
@@ -98,9 +98,6 @@ class PrologGameSpec extends AnyFunSuite {
 
     assertResult(Seq(card3, card4, card1, card2))(prologGame.sortBySuit(Seq(card1,card2,card3,card4)))
   }
-
-  // TODO da finire
-  test("Add color to ordered cards"){}
 }
 
 
