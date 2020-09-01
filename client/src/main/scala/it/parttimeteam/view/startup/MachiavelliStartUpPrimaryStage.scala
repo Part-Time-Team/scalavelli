@@ -5,9 +5,10 @@ import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.listeners._
 import it.parttimeteam.view.startup.scenes._
 import it.parttimeteam.view.utils.MachiavelliAlert
-import scalafx.application.JFXApp
+import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
+
 
 
 /**
@@ -72,16 +73,17 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
 
   // Controller actions
   override def notifyPrivateCode(privateCode: String): Unit = {
-    createPrivateGame.showCode(privateCode)
+    Platform.runLater(createPrivateGame.showCode(privateCode))
+    notifyLobbyJoined()
   }
 
   override def notifyLobbyJoined(): Unit = {
-    currentInnerScene.showMessage("Waiting for other players")
+    Platform.runLater(currentInnerScene.showMessage("Waiting for other players"))
   }
 
   override def notifyError(result: String): Unit = {
     val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
-    alert.showAndWait()
+    Platform.runLater(alert.showAndWait())
   }
 }
 
