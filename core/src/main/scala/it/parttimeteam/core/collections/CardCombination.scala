@@ -20,8 +20,16 @@ case class CardCombination(id: String, cards: Seq[Card]) {
     if (cards.forall(c => c.rank equals cards.head.rank))
       PrologGame().validateQuarter(cards.toList)
     else
+<<<<<<< HEAD
       PrologGame().validateChain(cards.toList)
 
+<<<<<<< Updated upstream
+=======
+  // TODO: Can be a Seq or need to be a List?
+=======
+      PrologGame().validateSequence(cards.toList)
+
+>>>>>>> Stashed changes
   /**
    * Return if the combination is empty or not.
    *
@@ -48,4 +56,8 @@ case class CardCombination(id: String, cards: Seq[Card]) {
 
 object CardCombination {
   def apply(id: String, cards: Seq[Card]): CardCombination = new CardCombination(id, cards.sortByRank())
+<<<<<<< Updated upstream
+=======
+>>>>>>> dev
+>>>>>>> Stashed changes
 }
