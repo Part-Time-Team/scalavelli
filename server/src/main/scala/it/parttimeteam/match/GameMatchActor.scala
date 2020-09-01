@@ -12,7 +12,7 @@ import it.parttimeteam.messages.{PlayerActionNotValidError, PlayerLeftGameError}
 import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 
 object GameMatchActor {
-  def props(numberOfPlayers: Int, gameManager: GameManager): Props = Props(new GameMatchActor(numberOfPlayers, gameManager: GameManager))
+  def props(numberOfPlayers: Int, gameApi: GameManager): Props = Props(new GameMatchActor(numberOfPlayers, gameApi: GameManager))
 
 
   case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
@@ -34,9 +34,9 @@ object GameMatchActor {
  * Responsible for a game match
  *
  * @param numberOfPlayers number of players
- * @param gameManager
+ * @param gameApi
  */
-class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager) extends Actor with ActorLogging with Stash {
+class GameMatchActor(numberOfPlayers: Int, private val gameApi: GameManager) extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
 
@@ -94,7 +94,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
    */
   private def initializeGame(): Unit = {
     log.debug("initializing game..")
-    val gameState = gameManager.create(players.map(p => (p.id, p.username)))
+    val gameState = gameApi.create(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
     this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
     context.become(inTurn(gameState, getPlayerForCurrentTurn) orElse termination())
@@ -201,7 +201,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
   def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
     playerAction match {
       case DrawCard => {
-        val (updateDeck, cardDrawn) = gameManager.draw(currentState.deck)
+        val (updateDeck, cardDrawn) = gameApi.draw(currentState.deck)
 
         // updated player with the new card on his hand
         val updatedState = currentState
@@ -217,7 +217,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
       }
 
       case PlayedMove(updatedHand, updatedBoard) => {
-        if (gameManager.validateTurn(updatedBoard, updatedHand)) {
+        if (gameApi.validateTurn(updatedBoard, updatedHand)) {
           val updatedState = currentState
             .getPlayer(playerInTurn.id)
             .map(p => currentState.updatePlayer(p.copy(
