@@ -15,7 +15,7 @@ trait GameManager {
    * @param players List of players ids.
    * @return New Game State.
    */
-  def create(players: Seq[PlayerId]): GameState
+  def create(players: Seq[(PlayerId, PlayerName)]): GameState
 
   /**
    * Draw a card from the top of the deck.
@@ -79,13 +79,13 @@ class GameManagerImpl extends GameManager {
   /**
    * @inheritdoc
    */
-  override def create(ids: Seq[PlayerId]): GameState = {
+  override def create(ids: Seq[(PlayerId, PlayerName)]): GameState = {
 
     var deck: Deck = Deck.shuffled
     val playerList = ids.map(i => {
       val playerCards = deck.draw(13)
       deck = playerCards._1
-      Player("", i, Hand(playerCards._2.toList))
+      Player(i._2, i._1, Hand(playerCards._2.toList))
     })
 
     core.GameState(deck,

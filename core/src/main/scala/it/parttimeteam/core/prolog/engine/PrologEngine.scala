@@ -13,7 +13,7 @@ trait PrologEngine {
    * @param predicate predicate (Term) to solve
    * @return goal result
    */
-  def goal(predicate: Term): List[Term]
+  def goal(predicate: Term): Seq[Term]
 
   /**
    * Resolve a specific goal
@@ -21,14 +21,14 @@ trait PrologEngine {
    * @param predicate predicate (String) to solve
    * @return goal result
    */
-  def goal(predicate: String): List[Term]
+  def goal(predicate: String): Seq[Term]
 
   /**
    * Get all solution a specific goal
    *
-   * @return list of terms with respect to the specific goal
+   * @return sequence of terms with respect to the specific goal
    */
-  def goals(goal: Term): List[Term]
+  def goals(goal: Term): Seq[Term]
 
   /**
    * Check if there are open alternatives.
@@ -38,18 +38,19 @@ trait PrologEngine {
   def hasOpenAlternatives: Boolean
 
   /**
-   * Get value by term and variable
+   * Get value from the variables of a term
    *
    * @param info solution to get value
-   * @return list of values
+   * @return sequence of values
    */
-  def bindingVars(info: SolveInfo): List[Term]
+  def bindingVars(info: SolveInfo): Seq[Term]
 
-}
+  /**
+   * Check if the predicate has a solution
+   *
+   * @param predicate to get solution
+   * @return true if the predicate has solution otherwise false
+   */
+  def isSuccess(predicate : String) : Boolean
 
-/**
- * Object to initialize the class PrologGameEngine
- */
-object PrologEngine {
-  def apply(): PrologGameEngine = new PrologGameEngine()
 }

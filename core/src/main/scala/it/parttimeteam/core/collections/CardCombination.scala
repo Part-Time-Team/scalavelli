@@ -20,7 +20,7 @@ case class CardCombination(id: String, cards: Seq[Card]) {
     if (cards.forall(c => c.rank equals cards.head.rank))
       PrologGame().validateQuarter(cards.toList)
     else
-      PrologGame().validateSequence(cards.toList)
+      PrologGame().validateChain(cards.toList)
 
   /**
    * Return if the combination is empty or not.

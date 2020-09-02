@@ -1,12 +1,18 @@
-%color(+color)
+%color(+Color)
 color("R").
 color("B").
 
-% suit(+suit)
+% suit(+Suit)
 suit("♥").
 suit("♦").
 suit("♣").
 suit("♠").
+
+% priority(+Suit, -Value)
+priority("Hearts", X) 	:- X is 1.
+priority("Diamonds", X) :- X is 2.
+priority("Clubs", X) 		:- X is 3.
+priority("Spades", X) 	:- X is 4.
 
 % card(+Number, -Suit, -color)
 card("A", Suit, Color)     :- suit(Suit), color(Color).
@@ -61,25 +67,68 @@ endSequence([(N1,_), (N2,_) | T]):- ( N1 =:= 13, N2 =:= 14 -> lengthList(T, S), 
 																		).
 
 % orderByValue(+List)
-orderByValue([(N,_)]).
-orderByValue([(N1,_), (N2,_) | T]) :- integer(N1),
-																			integer(N2),
-																			X is N1 + 1,
-                                      N2 =:= X, 
-                                      orderByValue([(N2,_) | T]).
+checkOrderByValue([(N,_)]).
+checkOrderByValue([(N1,_), (N2,_) | T]) :- integer(N1),
+																					 integer(N2),
+																					 X is N1 + 1,
+                                      		 N2 =:= X, 
+                                      		 checkOrderByValue([(N2,_) | T]).
                             
 % validationQuarter(+Cards)
-	
-validationQuarter(L) :-
- lengthList(L, X), X >= 3, X =< 4,
+validationQuarter(L) :- lengthList(L, X), X >= 3, X =< 4,
                         sameNumber(L),
                         differentSuit(L).
 
 
-% validationSequence(+Cards)
-validationSequence(L) :- lengthList(L, X), X >= 3, X =< 14,
-                         sameSuit(L),
-                         endSequence(L),
-                         orderByValue(L).
+% validationChain(+Cards)
+validationChain(L) :- lengthList(L, X), X >= 3, X =< 14,
+                      sameSuit(L),
+                      endSequence(L),
+                      checkOrderByValue(L).
 
-% modellare l'asso con valore opzionale 1 o 14 a seconda della posizione che � in sequenza
+% quicksortValue(+ListToOrder, -SortedList) 
+quicksortValue([],[]).
+quicksortValue([(X,Sx)|Xs],Ys):-partitionValue(Xs,(X,Sx),Ls,Bs),
+												    		quicksortValue(Ls,LOs),
+												    		quicksortValue(Bs,BOs),
+												    		append(LOs,[(X,Sx)|BOs],Ys).
+												
+partitionValue([],_,[],[]).
+partitionValue([(X,Sx)|Xs],(Y,Sy),[(X,Sx)|Ls],Bs):- X<Y, !, partitionValue(Xs,(Y,Sy),Ls,Bs).
+partitionValue([(X,Sx)|Xs],(Y,Sy),Ls,[(X,Sx)|Bs]):- partitionValue(Xs,(Y,Sy),Ls,Bs).
+
+% quicksortSuit(+ListToOrder, -SortedList) 
+quicksortSuit([],[]).
+quicksortSuit([(X,Sx)|Xs],Ys):- partitionSuit(Xs,(X,Sx),Ls,Bs),
+												    		quicksortSuit(Ls,LOs),
+												    		quicksortSuit(Bs,BOs),
+												    		append(LOs,[(X,Sx)|BOs],Ys).
+												
+partitionSuit([],_,[],[]).
+partitionSuit([(X,Sx)|Xs],(Y,Sy),[(X,Sx)|Ls],Bs):- priority(Sx,Px), priority(Sy,Py), compareCard((X,Px),(Y,Py)), !, partitionSuit(Xs,(Y,Sy),Ls,Bs).
+partitionSuit([(X,Sx)|Xs],(Y,Sy),Ls,[(X,Sx)|Bs]):- partitionSuit(Xs,(Y,Sy),Ls,Bs).
+
+%compareCard(+Tuple1, +Tuple2)
+compareCard((_, S1),(_, S2)):- S1<S2.
+compareCard((N1, S1),(N2, S2)):- S1 =:= S2, N1<N2.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
