@@ -1,7 +1,6 @@
 package it.parttimeteam.core.prolog.engine
 
 import alice.tuprolog._
-
 import scala.language.postfixOps
 
 /**
@@ -16,38 +15,58 @@ class PrologGameEngine() extends PrologEngine {
    */
   engine.setTheory(new Theory(getClass.getResourceAsStream("/rules.prolog")))
 
-  override def goal(predicate: Term): List[Term] = {
+  /**
+   * @inheritdoc
+   */
+  override def goal(predicate: Term): Seq[Term] = {
     val info: SolveInfo = engine solve predicate
-    if (info isSuccess) bindingVars(info)
-    else List()
+    if (info isSuccess) this.bindingVars(info)
+    else Seq()
   }
 
-  override def goal(predicate: String): List[Term] = {
+  /**
+   * @inheritdoc
+   */
+  override def goal(predicate: String): Seq[Term] = {
     val info: SolveInfo = engine solve predicate
-    if (info isSuccess) bindingVars(info)
-    else List()
+    if (info isSuccess) this.bindingVars(info)
+    else Seq()
   }
 
+  /**
+   * @inheritdoc
+   */
+  override def isSuccess(predicate: String): Boolean = engine solve predicate isSuccess
+
+  /**
+   * @inheritdoc
+   */
   override def hasOpenAlternatives: Boolean = engine hasOpenAlternatives
 
-  override def goals(goal: Term): List[Term] = {
+  /**
+   * @inheritdoc
+   */
+  override def goals(goal: Term): Seq[Term] = {
 
     @scala.annotation.tailrec
-    def _goals(info: SolveInfo)(solution: List[Term]): List[Term] = {
+    def _goals(info: SolveInfo)(solution: Seq[Term]): Seq[Term] = {
       if (info isSuccess) {
-        val newSolutions = solution ++ bindingVars(info)
+        val newSolutions = solution ++ this.bindingVars(info)
         if (engine hasOpenAlternatives) _goals(engine solveNext)(newSolutions) else newSolutions
       } else solution
     }
 
-    _goals(engine solve goal)(List())
+    _goals(engine solve goal)(Seq())
   }
 
-  override def bindingVars(info: SolveInfo): List[Term] = {
+  /**
+   * @inheritdoc
+   */
+  override def bindingVars(info: SolveInfo): Seq[Term] = {
 
-    var varList: List[Term] = List()
+    var varList: Seq[Term] = Seq()
     info.getBindingVars.forEach(v => {
-      varList = info.getTerm(v.getName) :: varList
+      varList = info.getTerm(v.getName) +: varList
     })
     varList
   }
@@ -57,6 +76,7 @@ class PrologGameEngine() extends PrologEngine {
  * Object Prolog Struct to execute the goals
  */
 object PrologStruct {
+  // TODO eliminare gli Struct? poco utilizzati?
 
   def apply(rule: String, variable: Var): Struct = new Struct(rule, variable)
 
