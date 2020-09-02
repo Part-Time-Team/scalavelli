@@ -31,8 +31,7 @@ class StartUpControllerImpl extends StartUpController {
       System.out.println(s"CreatePrivateGameSubmitViewEvent $username - $playersNumber")
       this.startUpService.createPrivateLobby(username, playersNumber)
     }
-    case LeaveLobbyViewEvent(userId) => {
-      System.out.println(s"LeaveLobbyViewEvent $userId")
+    case LeaveLobbyViewEvent => {
       this.startUpService.leaveLobby()
     }
     case _ =>
