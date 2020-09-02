@@ -1,5 +1,6 @@
 package it.parttimeteam.view.game
 
+import it.parttimeteam.Constants
 import it.parttimeteam.controller.game.GameListener
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
@@ -37,7 +38,7 @@ trait MachiavelliGamePrimaryStage extends JFXApp.PrimaryStage with PrimaryStageL
  * @param windowWidth  the width of app window
  * @param windowHeight the height of app window  */
 class MachiavelliGamePrimaryStageImpl(gameListener: GameListener, windowWidth: Double, windowHeight: Double) extends MachiavelliGamePrimaryStage {
-  title = "Machiavelli"
+  title = Constants.Client.GAME_NAME
   resizable = true
   width = windowWidth
   height = windowHeight

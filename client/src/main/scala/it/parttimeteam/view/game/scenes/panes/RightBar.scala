@@ -1,4 +1,4 @@
-package it.parttimeteam.view.game.scenes
+package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.gamestate.Opponent
 import it.parttimeteam.view.game.listeners.GameSceneListener
@@ -81,17 +81,17 @@ class RightBar(val listener: GameSceneListener) extends BorderPane
   }
 
   private def redoClick(): Unit = {
-    System.out.println("redoClick")
+    println("redoClick")
     listener.nextState()
   }
 
   private def undoClick(): Unit = {
-    System.out.println("undoClick")
+    println("undoClick")
     listener.previousState()
   }
 
   private def endTurnClick(): Unit = {
-    System.out.println(s"nextTurnClick")
+    println(s"nextTurnClick")
     listener.endTurn()
   }
 

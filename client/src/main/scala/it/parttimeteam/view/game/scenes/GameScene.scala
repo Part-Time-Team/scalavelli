@@ -2,6 +2,8 @@ package it.parttimeteam.view.game.scenes
 
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.view.game.listeners.GameSceneListener
+import it.parttimeteam.view.game.scenes.panes.{BottomBar, CenterPane, RightBar}
+import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.Scene
 import scalafx.scene.control._
@@ -43,46 +45,56 @@ class GameSceneImpl(val parentStage: Stage, val listener: GameSceneListener) ext
 
 
   override def setState(state: PlayerGameState): Unit = {
+    Platform.runLater({
+      centerPane.setBoard(state.board)
 
-    centerPane.setBoard(state.board)
+      bottomBar.setHand(state.hand)
 
-    bottomBar.setHand(state.hand)
-
-    rightBar.setOtherPlayers(state.otherPlayers)
+      rightBar.setOtherPlayers(state.otherPlayers)
+    })
   }
 
   override def showInitMatch(): Unit = {
-    initMatchDialog = new Stage()
-    val progressBar: ProgressBar = new ProgressBar()
-    initMatchDialog.initStyle(StageStyle.Decorated)
-    initMatchDialog.setResizable(false)
-    initMatchDialog.initModality(Modality.WindowModal)
-    initMatchDialog.setTitle("Game loading")
-    initMatchDialog.setMinWidth(200)
-    initMatchDialog.setMinHeight(100)
+    Platform.runLater({
+      initMatchDialog = new Stage()
+      val progressBar: ProgressBar = new ProgressBar()
+      initMatchDialog.initStyle(StageStyle.Decorated)
+      initMatchDialog.setResizable(false)
+      initMatchDialog.initModality(Modality.WindowModal)
+      initMatchDialog.setTitle("Game loading")
+      initMatchDialog.setMinWidth(200)
+      initMatchDialog.setMinHeight(100)
 
-    val label = new Label("Preparing your cards...")
+      val label = new Label("Preparing your cards...")
 
-    val vb = new VBox()
-    vb.setSpacing(5)
-    vb.setAlignment(Pos.Center)
-    vb.getChildren.addAll(label, progressBar)
-    val scene = new Scene(vb)
-    initMatchDialog.setScene(scene)
-    initMatchDialog.initOwner(parentStage)
-    initMatchDialog.showAndWait()
-    initMatchDialog.setAlwaysOnTop(true)
+      val vb = new VBox()
+      vb.setSpacing(5)
+      vb.setAlignment(Pos.Center)
+      vb.getChildren.addAll(label, progressBar)
+      val scene = new Scene(vb)
+      initMatchDialog.setScene(scene)
+      initMatchDialog.initOwner(parentStage)
+      initMatchDialog.showAndWait()
+      initMatchDialog.setAlwaysOnTop(true)
+    })
+
   }
 
   override def hideInitMatch(): Unit = {
-    initMatchDialog.hide()
+    Platform.runLater({
+      initMatchDialog.hide()
+    })
   }
 
   override def setMessage(message: String): Unit = {
-    rightBar.setMessage(message)
+    Platform.runLater({
+      rightBar.setMessage(message)
+    })
   }
 
   override def showTimer(): Unit = {
-    rightBar.showTimer()
+    Platform.runLater({
+      rightBar.showTimer()
+    })
   }
 }

@@ -1,4 +1,4 @@
-package it.parttimeteam.view.game.scenes
+package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.Board
@@ -52,7 +52,7 @@ class CenterPane(listener: GameSceneListener) extends ScrollPane {
   }
 
   private def pickCombinationClick(combinationIndex: Int): Unit = {
-    System.out.println(s"pickCombinationClick $combinationIndex")
+    println(s"pickCombinationClick $combinationIndex")
     listener.pickCombination(combinationIndex)
   }
 }

@@ -1,10 +1,12 @@
-package it.parttimeteam.view.game.scenes
+package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.Hand
+import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.listeners.GameSceneListener
 import it.parttimeteam.view.utils.{CardUtils, MachiavelliButton}
 import javafx.scene.layout.StackPane
+import scalafx.geometry.Pos.BottomCenter
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.ScrollPane
 import scalafx.scene.image.{Image, ImageView}
@@ -23,7 +25,7 @@ class BottomBar(listener: GameSceneListener) extends VBox {
 
   val handCardsContainer = new HBox()
   handCardsContainer.spacing = 5d
-  handCardsContainer.padding = Insets(5d)
+  handCardsContainer.padding = Insets(ViewConfig.CARD_Y_TRANSLATION + 5d, 5d, 5d, 5d)
 
   handPane.setContent(handCardsContainer)
 
@@ -41,21 +43,27 @@ class BottomBar(listener: GameSceneListener) extends VBox {
 
   private def addHandCard(card: Card, isTableCard: Boolean): Unit = {
     val cardImage: ImageView = new ImageView(new Image(CardUtils.getCardPath(card)))
-    cardImage.fitWidth = 80d
+    cardImage.fitHeight = ViewConfig.HAND_CARD_HEIGHT
     cardImage.preserveRatio = true
 
     val imageViewWrapper = new StackPane()
     imageViewWrapper.setAlignment(Pos.TopRight)
+    imageViewWrapper.getStyleClass.add("baseCard")
 
     if (isTableCard) {
       val prohibitionIcon: ImageView = new ImageView(new Image("images/prohibitionSign.png", 15, 15, false, false))
       prohibitionIcon.margin = Insets(5d)
+      imageViewWrapper.getStyleClass.remove("baseCard")
+      imageViewWrapper.getStyleClass.add("boardCard")
+
       imageViewWrapper.getChildren.addAll(cardImage, prohibitionIcon)
     } else {
       imageViewWrapper.getChildren.add(cardImage)
     }
 
+
     handCardsContainer.children.add(imageViewWrapper)
+    handCardsContainer.alignment = BottomCenter
 
     imageViewWrapper.setOnMouseClicked(_ => {
       if (selectedCards.contains(card)) {
@@ -68,18 +76,20 @@ class BottomBar(listener: GameSceneListener) extends VBox {
 
   private def removeCardToSelection(imageViewWrapper: StackPane, card: Card): Unit = {
     selectedCards = selectedCards.filter(c => c != card)
-    System.out.println(s"Selected Cards ${selectedCards.toString()}")
+    println(s"Selected Cards ${selectedCards.toString()}")
     imageViewWrapper.getStyleClass.remove("cardSelected")
+    imageViewWrapper.setTranslateY(imageViewWrapper.getTranslateY + ViewConfig.CARD_Y_TRANSLATION)
   }
 
   private def addCardToSelection(imageViewWrapper: StackPane, card: Card): Unit = {
     selectedCards = selectedCards :+ card
-    System.out.println(s"Selected Cards ${selectedCards.toString()}")
+    println(s"Selected Cards ${selectedCards.toString()}")
     imageViewWrapper.getStyleClass.add("cardSelected")
+    imageViewWrapper.setTranslateY(imageViewWrapper.getTranslateY - ViewConfig.CARD_Y_TRANSLATION)
   }
 
   private def makeCombinationClick(): Unit = {
-    System.out.println("makeCombinationClick")
+    println("makeCombinationClick")
     listener.makeCombination(selectedCards)
   }
 
@@ -90,6 +100,6 @@ class BottomBar(listener: GameSceneListener) extends VBox {
     })
 
     selectedCards = List()
-    System.out.println(s"Selected Cards ${selectedCards.toString()}")
+    println(s"Selected Cards ${selectedCards.toString()}")
   }
 }
