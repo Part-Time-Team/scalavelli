@@ -2,6 +2,7 @@ package it.parttimeteam.core.cards
 
 import it.parttimeteam.core.cards
 import it.parttimeteam.core.cards.Rank.{Ace, King}
+import it.parttimeteam.core.prolog.PrologGame
 
 /**
  * Card of deck.
@@ -62,21 +63,25 @@ object Card {
    */
   implicit class MyRichCardSeq(base: Seq[Card]) {
     // TODO: Use implicits to change order strategy.
-    // TODO: Connect prolog.
+
+    /**
+     * Class PrologGame
+     */
+    val prologGame = new PrologGame
+
     /**
      * Sort first by rank, then by suit.
      *
      * @return Ordered Sequence.
      */
-    def sortByRank(): Seq[Card] = base.sortBy(c => c.rank)
+    def sortByRank(): Seq[Card] = prologGame.sortByRank(base)
 
-    // TODO: Connect prolog.
     /**
      * Sort first by suit, then by rank.
      *
      * @return Ordered Sequence.
      */
-    def sortBySuit(): Seq[Card] = base.sortBy(c => c.suit)
+    def sortBySuit(): Seq[Card] = prologGame.sortBySuit(base)
   }
 
 }
