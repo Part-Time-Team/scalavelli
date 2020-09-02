@@ -75,7 +75,7 @@ class MachiavelliGamePrimaryStageImpl(gameListener: GameListener, windowWidth: D
   override def matchReady(): Unit = gameScene.hideInitMatch()
 
   // view actions
-  override def pickCombination(combinationIndex: Int): Unit = ??? //gameListener.onViewEvent(PickCardCombinationViewEvent(combinationIndex))
+  override def pickCombination(combinationId: String): Unit = gameListener.onViewEvent(PickCardCombinationViewEvent(combinationId))
 
   override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationViewEvent(cards))
 

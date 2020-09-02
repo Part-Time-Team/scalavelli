@@ -3,7 +3,7 @@ package it.parttimeteam.view.game.listeners
 import it.parttimeteam.core.cards.Card
 
 trait GameSceneListener {
-  def pickCombination(combinationIndex: Int)
+  def pickCombination(combinationId: String)
 
   def makeCombination(cards: Seq[Card])
 

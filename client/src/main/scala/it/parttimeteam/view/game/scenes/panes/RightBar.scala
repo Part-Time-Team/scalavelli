@@ -7,8 +7,7 @@ import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, HBox, TilePane, VBox}
 
-class RightBar(val listener: GameSceneListener) extends BorderPane
-{
+class RightBar(val listener: GameSceneListener) extends BorderPane {
   padding = Insets(10d)
 
   val rightTop = new VBox()

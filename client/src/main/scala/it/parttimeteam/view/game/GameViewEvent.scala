@@ -25,8 +25,7 @@ case class MakeCombinationViewEvent(cards: Seq[Card]) extends GameViewEvent
 
 case class PickCardCombinationViewEvent(combinationId: String) extends GameViewEvent
 
-// TODO: discuss with other developers
 case class PickCardsViewEvent(cards: Card*) extends GameViewEvent
 
-case class UpdateCardCombinationViewEvent(combinationId: String, card: Card, indexToAdd: Int) extends GameViewEvent
+case class UpdateCardCombinationViewEvent(combinationId: String, card: Card) extends GameViewEvent
 

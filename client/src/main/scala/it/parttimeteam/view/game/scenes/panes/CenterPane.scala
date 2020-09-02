@@ -51,8 +51,8 @@ class CenterPane(listener: GameSceneListener) extends ScrollPane {
     }
   }
 
-  private def pickCombinationClick(combinationIndex: Int): Unit = {
-    println(s"pickCombinationClick $combinationIndex")
-    listener.pickCombination(combinationIndex)
+  private def pickCombinationClick(combinationId: String): Unit = {
+    println(s"pickCombinationClick $combinationId")
+    listener.pickCombination(combinationId)
   }
 }
