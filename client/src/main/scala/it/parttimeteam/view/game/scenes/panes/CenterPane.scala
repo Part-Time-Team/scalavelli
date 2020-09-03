@@ -5,7 +5,7 @@ import it.parttimeteam.core.collections.{Board, CardCombination}
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.PlayerCard
 import it.parttimeteam.view.game.listeners.GameSceneToStageListener
-import it.parttimeteam.view.game.scenes.BoardListener
+import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 import scalafx.geometry.Insets
 import scalafx.scene.control.{Button, ScrollPane}
 import scalafx.scene.image.{Image, ImageView}

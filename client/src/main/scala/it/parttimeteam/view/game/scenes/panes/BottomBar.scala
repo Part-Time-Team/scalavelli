@@ -5,7 +5,7 @@ import it.parttimeteam.core.collections.Hand
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.PlayerCard
 import it.parttimeteam.view.game.listeners.GameSceneToStageListener
-import it.parttimeteam.view.game.scenes.HandListener
+import it.parttimeteam.view.game.scenes.GameScene.HandListener
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.BottomCenter
 import scalafx.scene.control.ScrollPane
