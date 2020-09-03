@@ -1,7 +1,7 @@
 package it.parttimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, PoisonPill, Props, Stash, Terminated}
-import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, GamePlayers, StateResult}
+import it.parttimeteam.`match`.GameMatchManagerActor.{CardDrawnInfo, GamePlayers, StateResult}
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.player.Player.PlayerId
@@ -12,8 +12,8 @@ import it.parttimeteam.messages.LobbyMessages.MatchFound
 import it.parttimeteam.messages.PlayerActionNotValidError
 import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 
-object GameMatchActor {
-  def props(numberOfPlayers: Int, gameApi: GameManager): Props = Props(new GameMatchActor(numberOfPlayers, gameApi: GameManager))
+object GameMatchManagerActor {
+  def props(numberOfPlayers: Int, gameApi: GameManager): Props = Props(new GameMatchManagerActor(numberOfPlayers, gameApi: GameManager))
 
 
   case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
@@ -37,7 +37,7 @@ object GameMatchActor {
  * @param numberOfPlayers number of players
  * @param gameApi
  */
-class GameMatchActor(numberOfPlayers: Int, private val gameApi: GameManager) extends Actor with ActorLogging with Stash {
+class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManager) extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
 
