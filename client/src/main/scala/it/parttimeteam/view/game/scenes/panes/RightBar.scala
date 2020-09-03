@@ -7,91 +7,107 @@ import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, HBox, TilePane, VBox}
 
-class RightBar(val listener: GameSceneToStageListener) extends BorderPane {
-  padding = Insets(10d)
+trait RightBar extends BorderPane {
+  def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit
 
-  val rightTop = new VBox()
-  val rightBottom = new VBox()
 
-  val stateContainer = new VBox()
+  def setMessage(message: String): Unit
 
-  val messageLabel = MachiavelliLabel()
+  def showTimer(): Unit
 
-  val timerLabel = MachiavelliLabel("Timer 03:00")
-  hideTimer()
+  def hideTimer(): Unit
+}
 
-  stateContainer.children.addAll(messageLabel, timerLabel)
+object RightBar {
 
-  val otherPlayersContainer = new TilePane()
-  otherPlayersContainer.setPrefColumns(2)
+  class RightBarImpl(val listener: GameSceneToStageListener) extends RightBar {
+    padding = Insets(10d)
 
-  val btnContainer = new VBox()
-  btnContainer.spacing = 5d
+    val rightTop = new VBox()
+    val rightBottom = new VBox()
 
-  val undoBtn = MachiavelliButton("Undo", () => undoClick(), "images/undo.png", 15d)
-  val redoBtn = MachiavelliButton("Redo", () => redoClick(), "images/redo.png", 15d)
-  val nextBtn = MachiavelliButton("Next", () => endTurnClick())
+    val stateContainer = new VBox()
 
-  nextBtn.prefWidth <== rightBottom.width
+    val messageLabel = MachiavelliLabel()
 
-  val historyBtnContainer = new HBox()
-  historyBtnContainer.prefWidth <== btnContainer.width
-  historyBtnContainer.alignment = Pos.Center
-  historyBtnContainer.spacing = 5d
+    val timerLabel = MachiavelliLabel("Timer 03:00")
+    hideTimer()
 
-  historyBtnContainer.children.addAll(undoBtn, redoBtn)
-  btnContainer.children.addAll(nextBtn, historyBtnContainer)
+    stateContainer.children.addAll(messageLabel, timerLabel)
 
-  rightTop.children.addAll(stateContainer, otherPlayersContainer)
-  rightBottom.children.add(btnContainer)
+    val otherPlayersContainer = new TilePane()
+    otherPlayersContainer.setPrefColumns(2)
 
-  top = rightTop
-  bottom = rightBottom
+    val btnContainer = new VBox()
+    btnContainer.spacing = 5d
 
-  def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
-    for (player: Opponent <- otherPlayers) {
-      val nameLabel = MachiavelliLabel(player.name)
-      val cardsNumberLabel = MachiavelliLabel(player.cardsNumber.toString)
+    val undoBtn = MachiavelliButton("Undo", () => undoClick(), "images/undo.png", 15d)
+    val redoBtn = MachiavelliButton("Redo", () => redoClick(), "images/redo.png", 15d)
+    val nextBtn = MachiavelliButton("Next", () => endTurnClick())
 
-      val playerInfoContainer: VBox = new VBox()
-      val cardInfoContainer: HBox = new HBox()
+    nextBtn.prefWidth <== rightBottom.width
 
-      val cardImage: ImageView = new ImageView(new Image("images/cards/backBlue.png"))
-      cardImage.fitWidth = 20d
-      cardImage.preserveRatio = true
+    val historyBtnContainer = new HBox()
+    historyBtnContainer.prefWidth <== btnContainer.width
+    historyBtnContainer.alignment = Pos.Center
+    historyBtnContainer.spacing = 5d
 
-      cardInfoContainer.children.addAll(cardImage, cardsNumberLabel)
-      playerInfoContainer.children.addAll(nameLabel, cardInfoContainer)
+    historyBtnContainer.children.addAll(undoBtn, redoBtn)
+    btnContainer.children.addAll(nextBtn, historyBtnContainer)
 
-      otherPlayersContainer.children.add(playerInfoContainer)
+    rightTop.children.addAll(stateContainer, otherPlayersContainer)
+    rightBottom.children.add(btnContainer)
+
+    top = rightTop
+    bottom = rightBottom
+
+    override def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
+      for (player: Opponent <- otherPlayers) {
+        val nameLabel = MachiavelliLabel(player.name)
+        val cardsNumberLabel = MachiavelliLabel(player.cardsNumber.toString)
+
+        val playerInfoContainer: VBox = new VBox()
+        val cardInfoContainer: HBox = new HBox()
+
+        val cardImage: ImageView = new ImageView(new Image("images/cards/backBlue.png"))
+        cardImage.fitWidth = 20d
+        cardImage.preserveRatio = true
+
+        cardInfoContainer.children.addAll(cardImage, cardsNumberLabel)
+        playerInfoContainer.children.addAll(nameLabel, cardInfoContainer)
+
+        otherPlayersContainer.children.add(playerInfoContainer)
+      }
     }
-  }
 
-  def setMessage(message: String): Unit = {
-    messageLabel.text = message
-  }
+    override def setMessage(message: String): Unit = {
+      messageLabel.text = message
+    }
 
-  def showTimer(): Unit = {
-    timerLabel.visible = true
-  }
+    override def showTimer(): Unit = {
+      timerLabel.visible = true
+    }
 
-  def hideTimer(): Unit = {
-    timerLabel.visible = false
-  }
+    override def hideTimer(): Unit = {
+      timerLabel.visible = false
+    }
 
-  private def redoClick(): Unit = {
-    println("redoClick")
-    listener.nextState()
-  }
+    private def redoClick(): Unit = {
+      println("redoClick")
+      listener.nextState()
+    }
 
-  private def undoClick(): Unit = {
-    println("undoClick")
-    listener.previousState()
-  }
+    private def undoClick(): Unit = {
+      println("undoClick")
+      listener.previousState()
+    }
 
-  private def endTurnClick(): Unit = {
-    println(s"nextTurnClick")
-    listener.endTurn()
+    private def endTurnClick(): Unit = {
+      println(s"nextTurnClick")
+      listener.endTurn()
+    }
+
   }
 
 }
+

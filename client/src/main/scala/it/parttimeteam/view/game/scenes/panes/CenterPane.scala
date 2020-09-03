@@ -11,50 +11,59 @@ import scalafx.scene.control.{Button, ScrollPane}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
 
-class CenterPane(listener: GameSceneToStageListener, boardListener: BoardListener) extends ScrollPane {
-  val tableCombinations = new VBox()
-  tableCombinations.spacing = 10d
-  tableCombinations.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
+trait CenterPane extends ScrollPane {
+  def setBoard(board: Board): Unit
+}
 
-  var selectedCards: Seq[Card] = Seq()
+object CenterPane {
 
-  this.setContent(tableCombinations)
+  class CenterPaneImpl(listener: GameSceneToStageListener, boardListener: BoardListener) extends CenterPane {
+    val tableCombinations = new VBox()
+    tableCombinations.spacing = 10d
+    tableCombinations.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
 
-  def setBoard(board: Board): Unit = {
-    for (combination: CardCombination <- board.combinations) {
-      val combinationContainer = new BorderPane()
+    var selectedCards: Seq[Card] = Seq()
 
-      combinationContainer.setPadding(Insets(10d))
+    this.setContent(tableCombinations)
 
-      val combinationCards = new HBox()
-      combinationCards.spacing = 10d
+    override def setBoard(board: Board): Unit = {
+      for (combination: CardCombination <- board.combinations) {
+        val combinationContainer = new BorderPane()
 
-      val pickBtn = new Button()
-      val img = new ImageView(new Image("images/pick.png"))
-      img.fitHeight = 15d
-      img.preserveRatio = true
+        combinationContainer.setPadding(Insets(10d))
 
-      pickBtn.setGraphic(img)
-      pickBtn.onAction = _ => pickCombinationClick(combination.id)
+        val combinationCards = new HBox()
+        combinationCards.spacing = 10d
 
-      pickBtn.margin = Insets(0, 0, 0, 5)
+        val pickBtn = new Button()
+        val img = new ImageView(new Image("images/pick.png"))
+        img.fitHeight = 15d
+        img.preserveRatio = true
 
-      combinationContainer.left = combinationCards
-      combinationContainer.right = pickBtn
-      combinationContainer.getStyleClass.add("combination")
+        pickBtn.setGraphic(img)
+        pickBtn.onAction = _ => pickCombinationClick(combination.id)
 
-      for (card: Card <- combination.cards) {
-        val playerCard: PlayerCard = PlayerCard(card)
+        pickBtn.margin = Insets(0, 0, 0, 5)
 
-        combinationCards.children.add(playerCard)
-        playerCard.setOnMouseClicked(_ => boardListener.onBoardCardClicked(playerCard))
+        combinationContainer.left = combinationCards
+        combinationContainer.right = pickBtn
+        combinationContainer.getStyleClass.add("combination")
+
+        for (card: Card <- combination.cards) {
+          val playerCard: PlayerCard = PlayerCard(card)
+
+          combinationCards.children.add(playerCard)
+          playerCard.setOnMouseClicked(_ => boardListener.onBoardCardClicked(playerCard))
+        }
+
+        tableCombinations.children.add(combinationContainer)
       }
+    }
 
-      tableCombinations.children.add(combinationContainer)
+    private def pickCombinationClick(combinationId: String): Unit = {
+      listener.pickCombination(combinationId)
     }
   }
 
-  private def pickCombinationClick(combinationId: String): Unit = {
-    listener.pickCombination(combinationId)
-  }
 }
+

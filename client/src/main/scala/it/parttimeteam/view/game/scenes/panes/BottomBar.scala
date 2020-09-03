@@ -6,80 +6,49 @@ import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.PlayerCard
 import it.parttimeteam.view.game.listeners.GameSceneToStageListener
 import it.parttimeteam.view.game.scenes.HandListener
-import it.parttimeteam.view.utils.MachiavelliButton
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.BottomCenter
 import scalafx.scene.control.ScrollPane
-import scalafx.scene.layout.{HBox, VBox}
+import scalafx.scene.layout.HBox
 
-class BottomBar(listener: GameSceneToStageListener, handListener: HandListener) extends VBox {
-  val actionBar = new HBox()
+trait BottomBar extends ScrollPane {
+  def setHand(hand: Hand): Unit
+}
 
-  val combinationBtn = MachiavelliButton("Make Combination", () => makeCombinationClick())
-  val clearHandSelectionBtn = MachiavelliButton("Clear Selection", () => clearSelectionClick())
-  val pickCardsBtn = MachiavelliButton("Pick Cards", () => pickCardsClick())
+object BottomBar {
 
-  combinationBtn.setDisable(true)
-  clearHandSelectionBtn.setDisable(true)
-  pickCardsBtn.setDisable(true)
+  class BottomBarImpl(listener: GameSceneToStageListener, handListener: HandListener) extends BottomBar {
 
-  actionBar.children.addAll(combinationBtn, clearHandSelectionBtn, pickCardsBtn)
+    val handCardsContainer = new HBox()
+    handCardsContainer.spacing = 5d
+    handCardsContainer.padding = Insets(ViewConfig.CARD_Y_TRANSLATION + 5d, 5d, 5d, 5d)
 
-  val handPane = new ScrollPane()
+    this.setContent(handCardsContainer)
 
-  val handCardsContainer = new HBox()
-  handCardsContainer.spacing = 5d
-  handCardsContainer.padding = Insets(ViewConfig.CARD_Y_TRANSLATION + 5d, 5d, 5d, 5d)
+    override def setHand(hand: Hand): Unit = {
+      for (card <- hand.playerCards) {
+        addHandCard(card, isBoardCard = false)
+      }
 
-  handPane.setContent(handCardsContainer)
-
-  children.addAll(actionBar, handPane)
-
-  def setHand(hand: Hand): Unit = {
-    for (card <- hand.playerCards) {
-      addHandCard(card, isBoardCard = false)
+      for (card <- hand.tableCards) {
+        addHandCard(card, isBoardCard = true)
+      }
     }
 
-    for (card <- hand.tableCards) {
-      addHandCard(card, isBoardCard = true)
+    private def addHandCard(card: Card, isBoardCard: Boolean): Unit = {
+      val playerCard: PlayerCard = PlayerCard(card)
+      if (isBoardCard) {
+        playerCard.setAsBoardCard()
+      }
+
+
+      handCardsContainer.children.add(playerCard)
+      handCardsContainer.alignment = BottomCenter
+
+      playerCard.setOnMouseClicked(_ => handListener.onHandCardClicked(playerCard))
     }
-  }
-
-  private def addHandCard(card: Card, isBoardCard: Boolean): Unit = {
-    val playerCard: PlayerCard = PlayerCard(card)
-    if (isBoardCard) {
-      playerCard.setAsBoardCard()
-    }
-
-
-    handCardsContainer.children.add(playerCard)
-    handCardsContainer.alignment = BottomCenter
-
-    playerCard.setOnMouseClicked(_ => handListener.onHandCardClicked(playerCard))
-  }
-
-  private def makeCombinationClick(): Unit = {
-    listener.makeCombination()
-  }
-
-  def setMakeCombinationEnabled(enable: Boolean): Unit = {
-    combinationBtn.setDisable(!enable)
-  }
-
-  def setPickCardsEnabled(enable: Boolean): Unit = {
-    pickCardsBtn.setDisable(!enable)
-  }
-
-  def setClearSelectionEnabled(enable: Boolean): Unit = {
-    clearHandSelectionBtn.setDisable(!enable)
-  }
-
-  private def clearSelectionClick(): Unit = {
-    listener.clearHandSelection()
-  }
-
-  def pickCardsClick(): Unit = {
-    listener.pickCards()
   }
 
 }
+
+
