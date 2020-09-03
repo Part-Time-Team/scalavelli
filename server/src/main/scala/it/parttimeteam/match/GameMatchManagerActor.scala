@@ -11,6 +11,7 @@ import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 import it.parttimeteam.messages.PlayerActionNotValidError
 
+
 object GameMatchManagerActor {
   def props(numberOfPlayers: Int, gameApi: GameManager): Props = Props(new GameMatchManagerActor(numberOfPlayers, gameApi: GameManager))
 
@@ -42,7 +43,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
   override def receive: Receive = idle
 
   private var players: Seq[GamePlayer] = _
-  private var turnManager: TurnManager[String] = _
+  private var turnManager: TurnManager[GamePlayer] = _
 
   // TODO spostare in costruzione a posto di gameApi
   private val gameMatchManager = new GameMatchManager(gameApi)
@@ -50,7 +51,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
   private def idle: Receive = {
     case GamePlayers(players) => {
       this.players = players
-      this.turnManager = TurnManager(players.map(_.id))
+      this.turnManager = TurnManager[GamePlayer](players)
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
       this.players.foreach(p => context.watch(p.actorRef))
@@ -102,8 +103,8 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
     log.debug("initializing game..")
     val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
-    this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
-    context.become(inTurn(gameState, getPlayerForCurrentTurn) orElse termination())
+    this.turnManager.getInTurn.actorRef ! PlayerTurn
+    context.become(inTurn(gameState, this.turnManager.getInTurn) orElse termination())
   }
 
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
@@ -139,10 +140,10 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
       this.turnManager.nextTurn
 
       // notify the next player it's his turn
-      this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
+      this.turnManager.getInTurn.actorRef ! PlayerTurn
 
       //switch the actor behaviour
-      context.become(inTurn(stateResult.updatedState, getPlayerForCurrentTurn))
+      context.become(inTurn(stateResult.updatedState, this.turnManager.getInTurn))
 
     } else {
       log.debug(s"Game ended, player ${playerInTurn.username} won")
@@ -186,14 +187,6 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
     })
     //this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))
   }
-
-  /**
-   * returns the current player
-   *
-   * @return the current player
-   */
-  private def getPlayerForCurrentTurn: GamePlayer =
-    this.players.find(_.id == turnManager.getInTurn).get
 
 
   private def withPlayer(playerId: PlayerId)(f: GamePlayer => Unit): Unit = {
