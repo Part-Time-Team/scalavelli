@@ -11,7 +11,7 @@ trait PrologConverter {
   /**
    * Convert a sequence of cards in string
    *
-   * @param cards cards to convert
+   * @param cards    cards to convert
    * @param variable optional variable present in the prolog predicate
    * @return cards sequence converted into string
    */
@@ -29,8 +29,8 @@ trait PrologConverter {
    * Create card entity
    *
    * @param color color of card
-   * @param suit suit of card
-   * @param rank rank of card
+   * @param suit  suit of card
+   * @param rank  rank of card
    * @return entity card
    */
   def getCard(color: Term, suit: Term, rank: Term): Card
@@ -47,7 +47,7 @@ trait PrologConverter {
    * Convert tuple sequence in a prolog list
    *
    * @param tupleCard tuple sequence to convert
-   * @param variable optional variable present in the prolog predicate
+   * @param variable  optional variable present in the prolog predicate
    * @return prolog string list
    */
   def prologList(tupleCard: Seq[(Int, String)])(variable: Option[Var]): String

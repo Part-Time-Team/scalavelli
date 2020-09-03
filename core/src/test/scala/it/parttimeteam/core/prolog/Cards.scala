@@ -68,6 +68,8 @@ case class Cards() {
   /**
    * King cards
    */
+  val KING_DIAMONDS: Card = Card(Rank.King(), Suit.Diamonds(), Color.Red())
   val KING_HEARTS: Card = Card(Rank.King(), Suit.Hearts(), Color.Red())
   val KING_SPADES: Card = Card(Rank.King(), Suit.Spades(), Color.Blue())
+  val KING_CLUBS: Card = Card(Rank.King(), Suit.Clubs(), Color.Blue())
 }

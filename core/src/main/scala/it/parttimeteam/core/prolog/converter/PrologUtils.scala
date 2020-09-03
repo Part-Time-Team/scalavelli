@@ -41,7 +41,7 @@ object PrologUtils {
   /**
    * Replace specific characters in a terms
    *
-   * @param term term to clean
+   * @param term    term to clean
    * @param replace specific characters to replace
    * @return converted string
    */
@@ -62,7 +62,7 @@ object PrologUtils {
    * Determines a substring
    *
    * @param cardsString starting string
-   * @param endString termination character
+   * @param endString   termination character
    * @return substring
    */
   private def substring(cardsString: String, endString: Int): String = {
