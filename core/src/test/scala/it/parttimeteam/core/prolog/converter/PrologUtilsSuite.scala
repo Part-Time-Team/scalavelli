@@ -7,10 +7,10 @@ import org.scalatest.funsuite.AnyFunSuite
 
 import scala.util.matching.Regex
 
-class PrologUtilsSuite extends AnyFunSuite{
+class PrologUtilsSuite extends AnyFunSuite {
 
-  val prologEngine : PrologGameEngine = new PrologGameEngine
-  val prologConversion : PrologGameConverter = new PrologGameConverter
+  val prologEngine: PrologGameEngine = new PrologGameEngine
+  val prologConversion: PrologGameConverter = new PrologGameConverter
 
   // TODO fallisce sempre 
   /*test("Convert sequence cards into regex sequence"){
@@ -25,7 +25,7 @@ class PrologUtilsSuite extends AnyFunSuite{
   }*/
 
   // TODO lasciare il test solo qui o solo nei test del converter o in tutti e due?
-  test("Replace specific characters in a terms"){
+  test("Replace specific characters in a terms") {
 
     val prolog = new Prolog()
     val term: Term = prolog toTerm "['1']"

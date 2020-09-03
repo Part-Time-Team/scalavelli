@@ -103,25 +103,25 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
 
   property("Validate a valid quarter") {
     forAll(validQuarter) { quarter =>
-      prologGame.validateQuarter(quarter) should be (true)
+      prologGame.validateQuarter(quarter) should be(true)
     }
   }
 
   property("Validate an invalid quarter") {
     forAll(invalidQuarter) { quarter =>
-      prologGame.validateQuarter(quarter) should be (false)
+      prologGame.validateQuarter(quarter) should be(false)
     }
   }
 
   property("Validate a valid chain") {
     forAll(validChain) { chain =>
-      prologGame.validateChain(chain) should be (true)
+      prologGame.validateChain(chain) should be(true)
     }
   }
 
   property("Validate an invalid chain") {
     forAll(invalidChain) { chain =>
-      prologGame.validateChain(chain) should be (false)
+      prologGame.validateChain(chain) should be(false)
 
     }
   }
