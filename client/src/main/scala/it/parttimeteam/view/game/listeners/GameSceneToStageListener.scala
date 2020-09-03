@@ -1,9 +1,17 @@
 package it.parttimeteam.view.game.listeners
 
-trait GameSceneListener {
+trait GameSceneToStageListener {
+  def clearHandSelection(): Unit
+
   def pickCombination(combinationId: String)
 
   def makeCombination()
+
+  def pickCards()
+
+  def sortHandBySuit()
+
+  def sortHandByRank()
 
   def endTurn()
 
