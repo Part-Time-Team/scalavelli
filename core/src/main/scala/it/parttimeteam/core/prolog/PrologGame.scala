@@ -116,13 +116,4 @@ class PrologGame() {
  */
 object PrologGame extends App {
   def apply(): PrologGame = new PrologGame()
-
-  val game = new PrologGame()
-
-  val card1: Card = Card(Rank.Queen(), Suit.Clubs(), Color.Blue())
-  val card2: Card = Card(Rank.King(), Suit.Spades(), Color.Blue())
-  val card3: Card = Card(Rank.Three(), Suit.Hearts(), Color.Blue())
-  val card4: Card = Card(Rank.Two(), Suit.Clubs(), Color.Red())
-
-  println(game.sortBySuit(Seq(card1, card2, card3, card4)))
 }
