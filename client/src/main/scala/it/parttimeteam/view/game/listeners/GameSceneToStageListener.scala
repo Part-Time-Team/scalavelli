@@ -9,6 +9,8 @@ trait GameSceneToStageListener {
 
   def pickCards()
 
+  def updateCombination()
+
   def sortHandBySuit()
 
   def sortHandByRank()

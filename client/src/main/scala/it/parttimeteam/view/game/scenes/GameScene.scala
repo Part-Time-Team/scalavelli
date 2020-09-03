@@ -15,10 +15,6 @@ import scalafx.application.Platform
 import scalafx.scene.Scene
 import scalafx.scene.layout.{BorderPane, VBox}
 
-/**
-  * Allow to participate to create a private game by inserting the number of players.
-  * Obtains a private code to share to invite other players.
-  **/
 trait GameScene extends Scene {
 
   def hideInitMatch(): Unit
@@ -51,7 +47,6 @@ object GameScene {
     val boardSelectionManager: SelectionManager[PlayerCard] = SelectionManager()
     val combinationSelectionManager: SelectionManager[PlayerCombination] = SelectionManager()
     val initMatchDialog = new InitMatchDialogImpl(parentStage)
-
 
     val sceneListener: GameSceneToStageListener = new GameSceneToStageListener {
       override def pickCombination(combinationId: String): Unit = {
@@ -90,6 +85,13 @@ object GameScene {
 
       override def clearHandSelection(): Unit = {
         handSelectionManager.clearSelection()
+        updateActionBarButtons()
+      }
+
+      override def updateCombination(): Unit = {
+        val combination = combinationSelectionManager.getSelectedItems.head
+        val selectedCard = handSelectionManager.getSelectedItems.head
+        parentStage.updateCardCombination(combination.getCombination.id, selectedCard.getCard)
       }
     }
 
@@ -100,8 +102,7 @@ object GameScene {
 
     val bottomBar: BottomBar = new BottomBarImpl((card: PlayerCard) => {
       handSelectionManager.onItemSelected(card)
-      actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty)
-      actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty)
+      updateActionBarButtons()
     })
 
     bottom.children.addAll(actionBar, bottomBar)
@@ -109,12 +110,12 @@ object GameScene {
     val centerPane: CenterPane = new CenterPaneImpl(new BoardListener {
       override def onCombinationClicked(cardCombination: PlayerCombination): Unit = {
         combinationSelectionManager.onItemSelected(cardCombination)
-        // logica per gestire update
+        updateActionBarButtons()
       }
 
       override def onBoardCardClicked(card: PlayerCard): Unit = {
         boardSelectionManager.onItemSelected(card)
-        actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty)
+        updateActionBarButtons()
       }
 
       override def onPickCombinationClick(cardCombination: PlayerCombination): Unit = {
@@ -165,7 +166,13 @@ object GameScene {
         rightBar.showTimer()
       })
     }
-  }
 
+    private def updateActionBarButtons(): Unit = {
+      actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty)
+      actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty)
+      actionBar.enableUpdateCardCombination(combinationSelectionManager.getSelectedItems.size == 1 && handSelectionManager.getSelectedItems.size == 1)
+      actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty)
+    }
+  }
 }
 

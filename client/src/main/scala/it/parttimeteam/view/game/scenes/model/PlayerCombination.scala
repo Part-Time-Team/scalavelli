@@ -6,6 +6,7 @@ import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 import scalafx.geometry.Insets
 import scalafx.scene.control.Button
 import scalafx.scene.image.{Image, ImageView}
+import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.{BorderPane, HBox}
 
 trait PlayerCombination extends BorderPane with SelectableItem {
@@ -51,6 +52,7 @@ object PlayerCombination {
       val playerCard: PlayerCard = PlayerCard(card)
 
       combinationCards.children.add(playerCard)
+
       playerCard.setOnMouseClicked(_ => boardListener.onBoardCardClicked(playerCard))
     }
 

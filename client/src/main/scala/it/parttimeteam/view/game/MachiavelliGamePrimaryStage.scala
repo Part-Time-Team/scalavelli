@@ -102,6 +102,8 @@ object MachiavelliGamePrimaryStage {
     override def sortHandBySuit(): Unit = gameControllerListener.onViewEvent(SortHandBySuitViewEvent)
 
     override def sortHandByRank(): Unit = gameControllerListener.onViewEvent(SortHandByRankViewEvent)
+
+    override def updateCardCombination(combinationId: String, card: Card): Unit = gameControllerListener.onViewEvent(UpdateCardCombinationViewEvent(combinationId, card))
   }
 
 }

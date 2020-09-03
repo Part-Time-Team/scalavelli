@@ -7,7 +7,9 @@ trait GameStageToControllerListener {
   def pickCombination(combinationId: String)
 
   def makeCombination(cards: Seq[Card])
-  
+
+  def updateCardCombination(combinationId: String, card: Card)
+
   def pickCards(cards: Seq[Card])
   
   def sortHandBySuit()
