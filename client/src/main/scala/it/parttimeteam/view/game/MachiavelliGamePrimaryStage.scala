@@ -5,7 +5,7 @@ import it.parttimeteam.controller.game.GameListener
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.view._
-import it.parttimeteam.view.game.listeners.GameSceneListener
+import it.parttimeteam.view.game.listeners.GameStageToControllerListener
 import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
 import it.parttimeteam.view.utils.MachiavelliAlert
 import scalafx.application.JFXApp
@@ -13,8 +13,8 @@ import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
 
 /**
- * Stage for game scenes
- */
+  * Stage for game scenes
+  */
 trait MachiavelliGamePrimaryStage extends JFXApp.PrimaryStage with PrimaryStageListener {
   def showTimer(): Unit
 
@@ -32,12 +32,12 @@ trait MachiavelliGamePrimaryStage extends JFXApp.PrimaryStage with PrimaryStageL
 }
 
 /**
- * Stage for game scenes
- *
- * @param gameListener enables to call actions exposed by controller
- * @param windowWidth  the width of app window
- * @param windowHeight the height of app window  */
-class MachiavelliGamePrimaryStageImpl(gameListener: GameListener, windowWidth: Double, windowHeight: Double) extends MachiavelliGamePrimaryStage {
+  * Stage for game scenes
+  *
+  * @param gameControllerListener enables to call actions exposed by controller
+  * @param windowWidth            the width of app window
+  * @param windowHeight           the height of app window  */
+class MachiavelliGamePrimaryStageImpl(gameControllerListener: GameListener, windowWidth: Double, windowHeight: Double) extends MachiavelliGamePrimaryStage {
   title = Constants.Client.GAME_NAME
   resizable = true
   width = windowWidth
@@ -45,7 +45,7 @@ class MachiavelliGamePrimaryStageImpl(gameListener: GameListener, windowWidth: D
 
   val stage: MachiavelliGamePrimaryStage = this
 
-  val gameScene: GameScene = new GameSceneImpl(stage, this)
+  val gameScene: GameScene = new GameSceneImpl(stage)
 
   scene = gameScene
 
@@ -75,20 +75,26 @@ class MachiavelliGamePrimaryStageImpl(gameListener: GameListener, windowWidth: D
   override def matchReady(): Unit = gameScene.hideInitMatch()
 
   // view actions
-  override def pickCombination(combinationId: String): Unit = gameListener.onViewEvent(PickCardCombinationViewEvent(combinationId))
+  override def pickCombination(combinationId: String): Unit = gameControllerListener.onViewEvent(PickCardCombinationViewEvent(combinationId))
 
-  override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationViewEvent(cards))
+  override def endTurn(): Unit = gameControllerListener.onViewEvent(EndTurnViewEvent)
 
-  override def endTurn(): Unit = gameListener.onViewEvent(EndTurnViewEvent)
+  override def nextState(): Unit = gameControllerListener.onViewEvent(RedoViewEvent)
 
-  override def nextState(): Unit = gameListener.onViewEvent(RedoViewEvent)
+  override def previousState(): Unit = gameControllerListener.onViewEvent(UndoViewEvent)
 
-  override def previousState(): Unit = gameListener.onViewEvent(UndoViewEvent)
+  override def makeCombination(cards: Seq[Card]): Unit = gameControllerListener.onViewEvent(MakeCombinationViewEvent(cards))
+
+  override def pickCards(cards: Seq[Card]): Unit = gameControllerListener.onViewEvent(PickCardsViewEvent(cards))
+
+  override def sortHandBySuit(): Unit = gameControllerListener.onViewEvent(SortHandBySuitViewEvent)
+
+  override def sortHandByRank(): Unit = gameControllerListener.onViewEvent(SortHandByRankViewEvent)
 }
 
 /**
- * Companion object for MachiavelliGamePrimaryStage
- */
+  * Companion object for MachiavelliGamePrimaryStage
+  */
 object MachiavelliGamePrimaryStage {
   val windowWidth: Double = ViewConfig.screenWidth
   val windowHeight: Double = ViewConfig.screenHeight
@@ -98,4 +104,4 @@ object MachiavelliGamePrimaryStage {
   def apply(): MachiavelliGamePrimaryStage = new MachiavelliGamePrimaryStageImpl(null, windowWidth, windowHeight)
 }
 
-trait PrimaryStageListener extends GameSceneListener
+trait PrimaryStageListener extends GameStageToControllerListener

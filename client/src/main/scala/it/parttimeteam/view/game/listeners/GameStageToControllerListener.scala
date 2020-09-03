@@ -2,10 +2,17 @@ package it.parttimeteam.view.game.listeners
 
 import it.parttimeteam.core.cards.Card
 
-trait GameSceneListener {
+trait GameSceneToStageListener {
+
   def pickCombination(combinationId: String)
 
-  def makeCombination(cards: Seq[Card])
+  def makeCombination(cards: Card*)
+
+  def pickCards(cards: Card*)
+
+  def sortHandBySuit()
+
+  def sortHandByRank()
 
   def endTurn()
 

@@ -46,15 +46,7 @@ class GameControllerImpl extends GameController {
     case _ =>
   }
 
-  override def onViewEvent(viewEvent: GameViewEvent): Unit = viewEvent match {
-    // TODO: To be implementedc
-    case MakeCombinationViewEvent(cards) =>
-    case UndoViewEvent =>
-    case RedoViewEvent =>
-    case PickCardCombinationViewEvent(cardCombinationIndex) =>
-    case EndTurnViewEvent =>
-    case _ =>
-  }
+  override def onViewEvent(viewEvent: GameViewEvent): Unit = gameService.notifyUserAction(viewEvent)
 
   private def getMockState: PlayerGameState = {
     val board: Board = Board(

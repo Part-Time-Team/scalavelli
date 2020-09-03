@@ -1,8 +1,10 @@
 package it.parttimeteam.view.game.scenes
 
+import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.view.game.listeners.GameSceneListener
+import it.parttimeteam.view.game.listeners.GameSceneToStageListener
 import it.parttimeteam.view.game.scenes.panes.{BottomBar, CenterPane, RightBar}
+import it.parttimeteam.view.game.{MachiavelliGamePrimaryStage, PlayerCard, SelectionManager}
 import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.Scene
@@ -26,10 +28,71 @@ trait GameScene extends Scene {
   def showTimer(): Unit
 }
 
-class GameSceneImpl(val parentStage: Stage, val listener: GameSceneListener) extends GameScene {
-  val rightBar: RightBar = new RightBar(listener)
-  val bottomBar: BottomBar = new BottomBar(listener)
-  val centerPane: CenterPane = new CenterPane(listener)
+trait BoardListener {
+  def onBoardCardClicked(card: PlayerCard)
+}
+
+trait HandListener {
+  def onHandCardClicked(card: PlayerCard)
+}
+
+class GameSceneImpl(val parentStage: MachiavelliGamePrimaryStage) extends GameScene {
+  val handSelectionManager: SelectionManager = SelectionManager()
+  val boardSelectionManager: SelectionManager = SelectionManager()
+
+  val sceneListener: GameSceneToStageListener = new GameSceneToStageListener {
+    override def pickCombination(combinationId: String): Unit = {
+      parentStage.pickCombination(combinationId)
+    }
+
+    override def makeCombination(): Unit = {
+      val cards: Seq[Card] = handSelectionManager.getSelectedItems.map(p => p.getCard)
+      parentStage.makeCombination(cards)
+    }
+
+    override def pickCards(): Unit = {
+      val cards: Seq[Card] = boardSelectionManager.getSelectedItems.map(p => p.getCard)
+      parentStage.pickCards(cards)
+    }
+
+    override def sortHandBySuit(): Unit = {
+      parentStage.sortHandBySuit()
+    }
+
+    override def sortHandByRank(): Unit = {
+      parentStage.sortHandByRank()
+    }
+
+    override def endTurn(): Unit = {
+      parentStage.endTurn()
+    }
+
+    override def nextState(): Unit = {
+      parentStage.nextState()
+    }
+
+    override def previousState(): Unit = {
+      parentStage.previousState()
+    }
+
+    override def clearHandSelection(): Unit = {
+      handSelectionManager.clearSelection()
+    }
+  }
+
+  val rightBar: RightBar = new RightBar(sceneListener)
+
+  val bottomBar: BottomBar = new BottomBar(sceneListener, (card: PlayerCard) => {
+    handSelectionManager.onItemSelected(card)
+    bottomBar.setMakeCombinationEnabled(!handSelectionManager.isSelectionEmpty)
+    bottomBar.setClearSelectionEnabled(!handSelectionManager.isSelectionEmpty)
+  })
+
+  val centerPane: CenterPane = new CenterPane(sceneListener, (card: PlayerCard) => {
+    boardSelectionManager.onItemSelected(card)
+    bottomBar.setPickCardsEnabled(!boardSelectionManager.isSelectionEmpty)
+  })
+
 
   stylesheets.add("/styles/gameStyle.css")
 
@@ -42,7 +105,6 @@ class GameSceneImpl(val parentStage: Stage, val listener: GameSceneListener) ext
   borderPane.center = centerPane
 
   root = borderPane
-
 
   override def setState(state: PlayerGameState): Unit = {
     Platform.runLater({
