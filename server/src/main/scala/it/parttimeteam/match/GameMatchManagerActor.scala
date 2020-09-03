@@ -42,8 +42,9 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
   override def receive: Receive = idle
 
   private var players: Seq[GamePlayer] = _
-  private var turnManager: TurnManager = _
+  private var turnManager: TurnManager[String] = _
 
+  // TODO spostare in costruzione a posto di gameApi
   private val gameMatchManager = new GameMatchManager(gameApi)
 
   private def idle: Receive = {
@@ -192,7 +193,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
    * @return the current player
    */
   private def getPlayerForCurrentTurn: GamePlayer =
-    this.players.find(_.id == turnManager.playerInTurnId).get
+    this.players.find(_.id == turnManager.getInTurn).get
 
 
   private def withPlayer(playerId: PlayerId)(f: GamePlayer => Unit): Unit = {

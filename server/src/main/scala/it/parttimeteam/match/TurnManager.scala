@@ -1,12 +1,12 @@
 package it.parttimeteam.`match`
 
-trait TurnManager {
+trait TurnManager[T] {
 
   /**
    *
    * @return the id of the current player in turn
    */
-  def playerInTurnId: String
+  def getInTurn: T
 
   /**
    *
@@ -14,15 +14,15 @@ trait TurnManager {
    *
    * @return the next player id
    */
-  def nextTurn: String
+  def nextTurn: T
 
 }
 
 object TurnManager {
 
-  def apply(ids: Seq[String]): TurnManager = new TurnManagerImpl(ids)
+  def apply[T](ids: Seq[T]): TurnManager[T] = new TurnManagerImpl(ids)
 
-  private class TurnManagerImpl(ids: Seq[String]) extends TurnManager {
+  private class TurnManagerImpl[T](ids: Seq[T]) extends TurnManager[T] {
 
     private var currentTurnIndex = 0
 
@@ -30,7 +30,7 @@ object TurnManager {
      *
      * @return the id of the current player in turn
      */
-    override def playerInTurnId: String = ids(currentTurnIndex)
+    override def getInTurn: T = ids(currentTurnIndex)
 
     /**
      *
@@ -38,9 +38,9 @@ object TurnManager {
      *
      * @return the next player id
      */
-    override def nextTurn: String = {
+    override def nextTurn: T = {
       currentTurnIndex = (currentTurnIndex + 1) % ids.size
-      playerInTurnId
+      getInTurn
     }
   }
 

@@ -10,7 +10,7 @@ import it.parttimeteam.core.{GameManager, GameState}
 class GameMatchManager(private val gameApi: GameManager) {
 
 
-  def retrieveInitialState(players: Seq[(PlayerId, PlayerName)]) =
+  def retrieveInitialState(players: Seq[(PlayerId, PlayerName)]): GameState =
     gameApi.create(players)
 
 
