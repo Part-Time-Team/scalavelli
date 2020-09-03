@@ -7,7 +7,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 import scala.util.matching.Regex
 
-class PrologUtilsSpec extends AnyFunSuite{
+class PrologUtilsSuite extends AnyFunSuite{
 
   val prologEngine : PrologGameEngine = new PrologGameEngine
   val prologConversion : PrologGameConverter = new PrologGameConverter
