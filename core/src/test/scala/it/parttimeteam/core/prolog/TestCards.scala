@@ -3,9 +3,9 @@ package it.parttimeteam.core.prolog
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 
 /**
- * Case class cards test
+ * Object TestCards
  */
-case class Cards() {
+object TestCards {
 
   /**
    * Ace cards

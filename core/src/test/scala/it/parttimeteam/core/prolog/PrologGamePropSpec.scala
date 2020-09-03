@@ -57,8 +57,8 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val validQuarter: TableFor1[Seq[Card]] = Table(
     "valid quarter",
-    Seq(Cards().ACE_CLUBS, Cards().ACE_DIAMONDS, Cards().ACE_SPADES),
-    Seq(Cards().TEN_CLUBS, Cards().TEN_HEARTS, Cards().TEN_SPADES, Cards().TEN_DIAMONDS)
+    Seq(TestCards.ACE_CLUBS, TestCards.ACE_DIAMONDS, TestCards.ACE_SPADES),
+    Seq(TestCards.TEN_CLUBS, TestCards.TEN_HEARTS, TestCards.TEN_SPADES, TestCards.TEN_DIAMONDS)
   )
 
   /**
@@ -66,8 +66,8 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val invalidQuarter: TableFor1[Seq[Card]] = Table(
     "invalid quarter",
-    Seq(Cards().ACE_SPADES, Cards().ACE_DIAMONDS, Cards().TEN_CLUBS),
-    Seq(Cards().TEN_CLUBS, Cards().TEN_CLUBS, Cards().TEN_SPADES)
+    Seq(TestCards.ACE_SPADES, TestCards.ACE_DIAMONDS, TestCards.TEN_CLUBS),
+    Seq(TestCards.TEN_CLUBS, TestCards.TEN_CLUBS, TestCards.TEN_SPADES)
   )
 
   /**
@@ -75,8 +75,8 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val validChain: TableFor1[Seq[Card]] = Table(
     "valid chain",
-    Seq(Cards().ACE_CLUBS, Cards().TWO_CLUBS, Cards().THREE_CLUBS),
-    Seq(Cards().JACK_HEARTS, Cards().QUEEN_HEARTS, Cards().KING_HEARTS, Cards().ACE_HEARTS)
+    Seq(TestCards.ACE_CLUBS, TestCards.TWO_CLUBS, TestCards.THREE_CLUBS),
+    Seq(TestCards.JACK_HEARTS, TestCards.QUEEN_HEARTS, TestCards.KING_HEARTS, TestCards.ACE_HEARTS)
   )
 
   /**
@@ -84,9 +84,9 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val invalidChain: TableFor1[Seq[Card]] = Table(
     "invalid chain",
-    Seq(Cards().ACE_CLUBS, Cards().TWO_CLUBS, Cards().THREE_CLUBS, Cards().FOUR_SPADES),
-    Seq(Cards().ACE_CLUBS, Cards().THREE_CLUBS, Cards().FOUR_SPADES),
-    Seq(Cards().JACK_HEARTS, Cards().QUEEN_HEARTS, Cards().KING_HEARTS, Cards().ACE_HEARTS, Cards().TWO_HEARTS)
+    Seq(TestCards.ACE_CLUBS, TestCards.TWO_CLUBS, TestCards.THREE_CLUBS, TestCards.FOUR_SPADES),
+    Seq(TestCards.ACE_CLUBS, TestCards.THREE_CLUBS, TestCards.FOUR_SPADES),
+    Seq(TestCards.JACK_HEARTS, TestCards.QUEEN_HEARTS, TestCards.KING_HEARTS, TestCards.ACE_HEARTS, TestCards.TWO_HEARTS)
   )
 
   property("loadDeck must return any possible card in the deck") {

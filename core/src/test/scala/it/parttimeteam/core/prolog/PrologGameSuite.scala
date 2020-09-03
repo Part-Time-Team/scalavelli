@@ -13,26 +13,26 @@ class PrologGameSuite extends AnyFunSuite {
 
   test("Sort a sequence of cards by value") {
 
-    val seq1: Seq[Card] = Seq(Cards().QUEEN_CLUBS, Cards().KING_SPADES, Cards().ACE_CLUBS, Cards().TWO_HEARTS)
-    val resultSeq1: Seq[Card] = Seq(Cards().ACE_CLUBS, Cards().TWO_HEARTS, Cards().QUEEN_CLUBS, Cards().KING_SPADES)
+    val seq1: Seq[Card] = Seq(TestCards.QUEEN_CLUBS, TestCards.KING_SPADES, TestCards.ACE_CLUBS, TestCards.TWO_HEARTS)
+    val resultSeq1: Seq[Card] = Seq(TestCards.ACE_CLUBS, TestCards.TWO_HEARTS, TestCards.QUEEN_CLUBS, TestCards.KING_SPADES)
 
     assertResult(resultSeq1)(prologGame.sortByRank(seq1))
 
-    val seq2: Seq[Card] = Seq(Cards().SIX_HEARTS, Cards().SEVEN_HEARTS, Cards().FIVE_HEARTS)
-    val resultSeq2: Seq[Card] = Seq(Cards().FIVE_HEARTS, Cards().SIX_HEARTS, Cards().SEVEN_HEARTS)
+    val seq2: Seq[Card] = Seq(TestCards.SIX_HEARTS, TestCards.SEVEN_HEARTS, TestCards.FIVE_HEARTS)
+    val resultSeq2: Seq[Card] = Seq(TestCards.FIVE_HEARTS, TestCards.SIX_HEARTS, TestCards.SEVEN_HEARTS)
 
     assertResult(resultSeq2)(prologGame.sortByRank(seq2))
   }
 
   test("Sort a sequence of cards by suit") {
 
-    val seq1: Seq[Card] = Seq(Cards().QUEEN_CLUBS, Cards().KING_SPADES, Cards().ACE_CLUBS, Cards().TWO_HEARTS)
-    val resultSeq1: Seq[Card] = Seq(Cards().TWO_HEARTS, Cards().ACE_CLUBS, Cards().QUEEN_CLUBS, Cards().KING_SPADES)
+    val seq1: Seq[Card] = Seq(TestCards.QUEEN_CLUBS, TestCards.KING_SPADES, TestCards.ACE_CLUBS, TestCards.TWO_HEARTS)
+    val resultSeq1: Seq[Card] = Seq(TestCards.TWO_HEARTS, TestCards.ACE_CLUBS, TestCards.QUEEN_CLUBS, TestCards.KING_SPADES)
 
     assertResult(resultSeq1)(prologGame.sortBySuit(seq1))
 
-    val seq2: Seq[Card] = Seq(Cards().SIX_HEARTS, Cards().KING_SPADES, Cards().ACE_CLUBS, Cards().TWO_HEARTS)
-    val resultSeq2: Seq[Card] = Seq(Cards().TWO_HEARTS, Cards().SIX_HEARTS, Cards().ACE_CLUBS, Cards().KING_SPADES)
+    val seq2: Seq[Card] = Seq(TestCards.SIX_HEARTS, TestCards.KING_SPADES, TestCards.ACE_CLUBS, TestCards.TWO_HEARTS)
+    val resultSeq2: Seq[Card] = Seq(TestCards.TWO_HEARTS, TestCards.SIX_HEARTS, TestCards.ACE_CLUBS, TestCards.KING_SPADES)
 
     assertResult(resultSeq2)(prologGame.sortBySuit(seq2))
   }
