@@ -1,22 +1,23 @@
 package it.parttimeteam.view.game
 
-import it.parttimeteam.view.game.scenes.model.PlayerCard
+import it.parttimeteam.view.game.scenes.model.SelectableItem
 
-trait SelectionManager {
+trait SelectionManager[T <: SelectableItem] {
   def clearSelection(): Unit
 
-  def onItemSelected(item: PlayerCard): Unit
+  def onItemSelected(item: T): Unit
 
-  def getSelectedItems: Seq[PlayerCard]
+  def getSelectedItems: Seq[T]
 
   def isSelectionEmpty: Boolean
 }
 
 object SelectionManager {
-  def apply(): SelectionManager = new SelectionManagerImpl()
 
-  private class SelectionManagerImpl(private var selectedItems: Seq[PlayerCard] = List.empty) extends SelectionManager {
-    override def onItemSelected(item: PlayerCard): Unit = {
+  def apply[T <: SelectableItem](): SelectionManager[T] = new SelectionManagerImpl[T]()
+
+  private class SelectionManagerImpl[T <: SelectableItem](private var selectedItems: Seq[T] = List.empty) extends SelectionManager[T] {
+    override def onItemSelected(item: T): Unit = {
       if (selectedItems.contains(item)) {
         selectedItems = selectedItems.filter(i => i != item)
         item.setSelected(false)
@@ -28,13 +29,13 @@ object SelectionManager {
       println(s"Selected cards: ${getSelectedItems.toString}")
     }
 
-    override def getSelectedItems: Seq[PlayerCard] = selectedItems
+    override def getSelectedItems: Seq[T] = selectedItems
 
     override def isSelectionEmpty: Boolean = selectedItems.isEmpty
 
     override def clearSelection(): Unit = {
-      for (playerCard: PlayerCard <- selectedItems){
-        playerCard.setSelected(false)
+      for (item: SelectableItem <- selectedItems) {
+        item.setSelected(false)
       }
 
       selectedItems = List.empty

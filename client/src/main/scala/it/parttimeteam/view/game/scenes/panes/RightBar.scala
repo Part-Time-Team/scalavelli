@@ -10,7 +10,6 @@ import scalafx.scene.layout.{BorderPane, HBox, TilePane, VBox}
 trait RightBar extends BorderPane {
   def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit
 
-
   def setMessage(message: String): Unit
 
   def showTimer(): Unit

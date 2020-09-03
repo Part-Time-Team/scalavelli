@@ -3,7 +3,6 @@ package it.parttimeteam.view.game.scenes.panes
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.Hand
 import it.parttimeteam.view.ViewConfig
-import it.parttimeteam.view.game.listeners.GameSceneToStageListener
 import it.parttimeteam.view.game.scenes.GameScene.HandListener
 import it.parttimeteam.view.game.scenes.model.PlayerCard
 import scalafx.geometry.Insets
@@ -17,7 +16,7 @@ trait BottomBar extends ScrollPane {
 
 object BottomBar {
 
-  class BottomBarImpl(listener: GameSceneToStageListener, handListener: HandListener) extends BottomBar {
+  class BottomBarImpl(handListener: HandListener) extends BottomBar {
 
     val handCardsContainer = new HBox()
     handCardsContainer.spacing = 5d

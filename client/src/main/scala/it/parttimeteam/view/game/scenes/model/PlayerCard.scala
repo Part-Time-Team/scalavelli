@@ -7,9 +7,7 @@ import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.StackPane
 
-trait PlayerCard extends StackPane {
-  def setSelected(selected: Boolean): Unit
-
+trait PlayerCard extends StackPane with SelectableItem {
   def setAsBoardCard(): Unit
 
   def getCard: Card

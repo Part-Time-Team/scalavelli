@@ -13,6 +13,7 @@ trait InitMatchDialog extends Stage {
 }
 
 object InitMatchDialog {
+
   class InitMatchDialogImpl(parentStage: Stage) extends InitMatchDialog {
     val progressBar: ProgressBar = new ProgressBar()
     this.initStyle(StageStyle.Decorated)
@@ -41,5 +42,6 @@ object InitMatchDialog {
       this.close()
     }
   }
+
 }
 

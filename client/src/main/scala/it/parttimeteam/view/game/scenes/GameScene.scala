@@ -3,7 +3,7 @@ package it.parttimeteam.view.game.scenes
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.view.game.listeners.GameSceneToStageListener
-import it.parttimeteam.view.game.scenes.model.PlayerCard
+import it.parttimeteam.view.game.scenes.model.{PlayerCard, PlayerCombination}
 import it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl
 import it.parttimeteam.view.game.scenes.panes.BottomBar.BottomBarImpl
 import it.parttimeteam.view.game.scenes.panes.CenterPane.CenterPaneImpl
@@ -12,11 +12,8 @@ import it.parttimeteam.view.game.scenes.panes.RightBar.RightBarImpl
 import it.parttimeteam.view.game.scenes.panes.{ActionBar, BottomBar, CenterPane, RightBar}
 import it.parttimeteam.view.game.{MachiavelliGamePrimaryStage, SelectionManager}
 import scalafx.application.Platform
-import scalafx.geometry.Pos
 import scalafx.scene.Scene
-import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, VBox}
-import scalafx.stage.{Modality, Stage, StageStyle}
 
 /**
   * Allow to participate to create a private game by inserting the number of players.
@@ -38,6 +35,10 @@ trait GameScene extends Scene {
 object GameScene {
 
   trait BoardListener {
+    def onPickCombinationClick(cardCombination: PlayerCombination): Unit
+
+    def onCombinationClicked(cardCombination: PlayerCombination): Unit
+
     def onBoardCardClicked(card: PlayerCard)
   }
 
@@ -46,8 +47,9 @@ object GameScene {
   }
 
   class GameSceneImpl(val parentStage: MachiavelliGamePrimaryStage) extends GameScene {
-    val handSelectionManager: SelectionManager = SelectionManager()
-    val boardSelectionManager: SelectionManager = SelectionManager()
+    val handSelectionManager: SelectionManager[PlayerCard] = SelectionManager()
+    val boardSelectionManager: SelectionManager[PlayerCard] = SelectionManager()
+    val combinationSelectionManager: SelectionManager[PlayerCombination] = SelectionManager()
     val initMatchDialog = new InitMatchDialogImpl(parentStage)
 
 
@@ -96,7 +98,7 @@ object GameScene {
     val bottom = new VBox()
     val actionBar: ActionBar = new ActionBarImpl(sceneListener)
 
-    val bottomBar: BottomBar = new BottomBarImpl(sceneListener, (card: PlayerCard) => {
+    val bottomBar: BottomBar = new BottomBarImpl((card: PlayerCard) => {
       handSelectionManager.onItemSelected(card)
       actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty)
       actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty)
@@ -104,9 +106,20 @@ object GameScene {
 
     bottom.children.addAll(actionBar, bottomBar)
 
-    val centerPane: CenterPane = new CenterPaneImpl(sceneListener, (card: PlayerCard) => {
-      boardSelectionManager.onItemSelected(card)
-      actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty)
+    val centerPane: CenterPane = new CenterPaneImpl(new BoardListener {
+      override def onCombinationClicked(cardCombination: PlayerCombination): Unit = {
+        combinationSelectionManager.onItemSelected(cardCombination)
+        // logica per gestire update
+      }
+
+      override def onBoardCardClicked(card: PlayerCard): Unit = {
+        boardSelectionManager.onItemSelected(card)
+        actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty)
+      }
+
+      override def onPickCombinationClick(cardCombination: PlayerCombination): Unit = {
+        parentStage.pickCombination(cardCombination.getCombination.id)
+      }
     })
 
     stylesheets.add("/styles/gameStyle.css")
