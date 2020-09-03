@@ -10,7 +10,6 @@ import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 import it.parttimeteam.messages.PlayerActionNotValidError
-import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 
 object GameMatchManagerActor {
   def props(numberOfPlayers: Int, gameApi: GameManager): Props = Props(new GameMatchManagerActor(numberOfPlayers, gameApi: GameManager))
@@ -37,12 +36,15 @@ object GameMatchManagerActor {
  * @param numberOfPlayers number of players
  * @param gameApi
  */
-class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManager) extends Actor with ActorLogging with Stash {
+class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManager)
+  extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
 
   private var players: Seq[GamePlayer] = _
   private var turnManager: TurnManager = _
+
+  private val gameMatchManager = new GameMatchManager(gameApi)
 
   private def idle: Receive = {
     case GamePlayers(players) => {
@@ -97,7 +99,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
    */
   private def initializeGame(): Unit = {
     log.debug("initializing game..")
-    val gameState = gameApi.create(players.map(p => (p.id, p.username)))
+    val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
     this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
     context.become(inTurn(gameState, getPlayerForCurrentTurn) orElse termination())
@@ -106,7 +108,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
 
-      this.determineNextState(gameState, playerInTurn, action) match {
+      this.gameMatchManager.determineNextState(gameState, playerInTurn, action) match {
         case Right(stateResult) =>
           this.handleStateResult(stateResult, playerInTurn)
 
@@ -192,55 +194,6 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
   private def getPlayerForCurrentTurn: GamePlayer =
     this.players.find(_.id == turnManager.playerInTurnId).get
 
-
-  /**
-   * Determines the next game state based on the player action
-   *
-   * @param currentState current state of the game
-   * @param playerInTurn player making the action
-   * @param playerAction action made my the player
-   * @return a state result or a string representing an error
-   */
-  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
-    playerAction match {
-      case DrawCard => {
-        val (updateDeck, cardDrawn) = gameApi.draw(currentState.deck)
-
-        // updated player with the new card on his hand
-        val updatedState = currentState
-          .getPlayer(playerInTurn.id)
-          .map(p => currentState.updatePlayer(p.copy(
-            hand = p.hand.copy(playerCards = cardDrawn +: p.hand.playerCards))))
-          .get.copy(deck = updateDeck)
-
-        Right(StateResult(
-          updatedState = updatedState,
-          additionalInformation = Some(CardDrawnInfo(cardDrawn))
-        ))
-      }
-
-      case PlayedMove(updatedHand, updatedBoard) => {
-        if (gameApi.validateTurn(updatedBoard, updatedHand)) {
-          val updatedState = currentState
-            .getPlayer(playerInTurn.id)
-            .map(p => currentState.updatePlayer(p.copy(
-              hand = updatedHand)))
-            .get.copy(board = updatedBoard)
-
-          Right(StateResult(
-            updatedState = updatedState,
-            additionalInformation = None
-          ))
-
-        } else {
-          Left("Non valid plays")
-        }
-      }
-
-
-      case _ => Left("Non supported action")
-    }
-  }
 
   private def withPlayer(playerId: PlayerId)(f: GamePlayer => Unit): Unit = {
     this.players.find(_.id == playerId) match {
