@@ -10,7 +10,8 @@ class BoardSpec extends AnyFunSuite {
   val c3: Card = "4♣B"
   val c4: Card = "4♦B"
   val c5: Card = "4♠B"
-  val comb2: CardCombination = CardCombination("#2", Seq(c4, c5))
+  val comb1: CardCombination = CardCombination("#1", Seq(c1, c2, c3))
+  var comb2: CardCombination = CardCombination("#2", Seq(c4, c5))
 
   test("Game Board created with 0 combinations at start") {
     assertResult(Seq.empty)(board.combinations)
@@ -23,9 +24,14 @@ class BoardSpec extends AnyFunSuite {
   }
 
   test("Add combination to game board") {
-    val comb = CardCombination("#1", Seq(c1, c2, c3))
-    board = board.putCombination(comb, comb2)
-    assertResult(Board(Seq(comb, comb2)))(board)
+    board = board.putCombination(comb1)
+    assertResult(Board(Seq(comb1)))(board)
+  }
+
+  test("Add a sequence of cards to gameboard") {
+    board = board.putCombination(comb2.cards)
+    comb2 = board.combinations.last
+    assertResult(Board(Seq(comb1, comb2)))(board)
   }
 
   test("Pick a combination from non empty board") {
@@ -48,5 +54,9 @@ class BoardSpec extends AnyFunSuite {
     val res = board.pickCards(comb.cards)
     assert(res.isRight)
     assertResult(tail)(res.right.get.combinations)
+  }
+
+  test("Generate 1000 ids") {
+    (0 until 1000).map(_ => board = board.putCombination(Seq(c1, c2)))
   }
 }
