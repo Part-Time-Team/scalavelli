@@ -3,12 +3,14 @@ package it.parttimeteam.view.game.scenes
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.view.game.listeners.GameSceneToStageListener
+import it.parttimeteam.view.game.scenes.model.PlayerCard
 import it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl
 import it.parttimeteam.view.game.scenes.panes.BottomBar.BottomBarImpl
 import it.parttimeteam.view.game.scenes.panes.CenterPane.CenterPaneImpl
+import it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl
 import it.parttimeteam.view.game.scenes.panes.RightBar.RightBarImpl
 import it.parttimeteam.view.game.scenes.panes.{ActionBar, BottomBar, CenterPane, RightBar}
-import it.parttimeteam.view.game.{MachiavelliGamePrimaryStage, PlayerCard, SelectionManager}
+import it.parttimeteam.view.game.{MachiavelliGamePrimaryStage, SelectionManager}
 import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.Scene
@@ -46,6 +48,8 @@ object GameScene {
   class GameSceneImpl(val parentStage: MachiavelliGamePrimaryStage) extends GameScene {
     val handSelectionManager: SelectionManager = SelectionManager()
     val boardSelectionManager: SelectionManager = SelectionManager()
+    val initMatchDialog = new InitMatchDialogImpl(parentStage)
+
 
     val sceneListener: GameSceneToStageListener = new GameSceneToStageListener {
       override def pickCombination(combinationId: String): Unit = {
@@ -107,8 +111,6 @@ object GameScene {
 
     stylesheets.add("/styles/gameStyle.css")
 
-    var initMatchDialog: Stage = _
-
     val borderPane: BorderPane = new BorderPane()
 
     borderPane.bottom = bottom
@@ -129,33 +131,13 @@ object GameScene {
 
     override def showInitMatch(): Unit = {
       Platform.runLater({
-        initMatchDialog = new Stage()
-        val progressBar: ProgressBar = new ProgressBar()
-        initMatchDialog.initStyle(StageStyle.Decorated)
-        initMatchDialog.setResizable(false)
-        initMatchDialog.initModality(Modality.WindowModal)
-        initMatchDialog.setTitle("Game loading")
-        initMatchDialog.setMinWidth(200)
-        initMatchDialog.setMinHeight(100)
-
-        val label = new Label("Preparing your cards...")
-
-        val vb = new VBox()
-        vb.setSpacing(5)
-        vb.setAlignment(Pos.Center)
-        vb.getChildren.addAll(label, progressBar)
-        val scene = new Scene(vb)
-        initMatchDialog.setScene(scene)
-        initMatchDialog.initOwner(parentStage)
-        initMatchDialog.showAndWait()
-        initMatchDialog.setAlwaysOnTop(true)
+        initMatchDialog.showDialog()
       })
-
     }
 
     override def hideInitMatch(): Unit = {
       Platform.runLater({
-        initMatchDialog.hide()
+        initMatchDialog.hideDialog()
       })
     }
 

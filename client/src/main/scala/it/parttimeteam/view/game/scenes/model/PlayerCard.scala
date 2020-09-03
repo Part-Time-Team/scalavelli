@@ -1,4 +1,4 @@
-package it.parttimeteam.view.game
+package it.parttimeteam.view.game.scenes.model
 
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.view.ViewConfig

@@ -3,9 +3,9 @@ package it.parttimeteam.view.game.scenes.panes
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination}
 import it.parttimeteam.view.ViewConfig
-import it.parttimeteam.view.game.PlayerCard
 import it.parttimeteam.view.game.listeners.GameSceneToStageListener
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
+import it.parttimeteam.view.game.scenes.model.PlayerCard
 import scalafx.geometry.Insets
 import scalafx.scene.control.{Button, ScrollPane}
 import scalafx.scene.image.{Image, ImageView}

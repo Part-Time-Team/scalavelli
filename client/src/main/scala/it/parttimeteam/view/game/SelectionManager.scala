@@ -1,5 +1,7 @@
 package it.parttimeteam.view.game
 
+import it.parttimeteam.view.game.scenes.model.PlayerCard
+
 trait SelectionManager {
   def clearSelection(): Unit
 
