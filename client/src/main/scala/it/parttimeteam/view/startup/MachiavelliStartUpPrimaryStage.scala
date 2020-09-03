@@ -5,9 +5,10 @@ import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.listeners._
 import it.parttimeteam.view.startup.scenes._
 import it.parttimeteam.view.utils.MachiavelliAlert
-import scalafx.application.JFXApp
+import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
+
 
 
 /**
@@ -34,13 +35,6 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
   width = windowWidth
   height = windowHeight
 
-  val stage: MachiavelliStartUpPrimaryStage = this
-  val publicGameScene: PublicGameStartUpScene = new PublicGameStartUpScene(this)
-  val privateGameScene: PrivateGameStartUpScene = new PrivateGameStartUpScene(this)
-  val createPrivateGame: CreatePrivateGameStartUpSceneImpl = new CreatePrivateGameStartUpSceneImpl(this)
-
-  var currentInnerScene: BaseStartUpScene = _
-
   private val mainScene = new SelectScene(this, new SelectSceneListener {
 
     override def onSelectedPublicGame(): Unit = setCurrentScene(publicGameScene)
@@ -50,19 +44,30 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
     override def onSelectedCreatePrivateGame(): Unit = setCurrentScene(createPrivateGame)
   })
 
+  val stage: MachiavelliStartUpPrimaryStage = this
+  val publicGameScene: PublicGameStartUpScene = new PublicGameStartUpScene(this, this)
+  val privateGameScene: PrivateGameStartUpScene = new PrivateGameStartUpScene(this, this)
+  val createPrivateGame: CreatePrivateGameStartUpSceneImpl = new CreatePrivateGameStartUpSceneImpl(this, this)
+
+  var currentInnerScene: BaseStartUpFormScene = _
+
   scene = mainScene
 
   onCloseRequest = _ => {
     System.exit(0)
   }
 
-  def setCurrentScene(newScene: BaseStartUpScene): Unit = {
+  def setCurrentScene(newScene: BaseStartUpFormScene): Unit = {
     scene = newScene
     currentInnerScene = newScene
   }
 
   // View actions
   override def onBackPressed(): Unit = {
+    // TODO: Luca - Call leave lobby only when joined
+    gameStartUpListener.onViewEvent(LeaveLobbyViewEvent)
+
+    currentInnerScene.resetScreen()
     scene = mainScene
   }
 
@@ -72,16 +77,17 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
 
   // Controller actions
   override def notifyPrivateCode(privateCode: String): Unit = {
-    createPrivateGame.showCode(privateCode)
+    Platform.runLater(createPrivateGame.showCode(privateCode))
+    notifyLobbyJoined()
   }
 
   override def notifyLobbyJoined(): Unit = {
-    currentInnerScene.showMessage("Waiting for other players")
+    Platform.runLater(currentInnerScene.showMessage("Waiting for other players"))
   }
 
   override def notifyError(result: String): Unit = {
     val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
-    alert.showAndWait()
+    Platform.runLater(alert.showAndWait())
   }
 }
 

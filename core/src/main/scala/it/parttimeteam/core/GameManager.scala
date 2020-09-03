@@ -59,6 +59,7 @@ trait GameManager {
    * @param board       Board where put cards.
    * @param combination Combination to pick.
    * @return Hand and Board updated. If hand doesn't contain any combination card, return exactly the same hand and board.
+   * @todo Take only a card seq to add to board.
    */
   def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board)
 
