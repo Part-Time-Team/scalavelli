@@ -3,6 +3,7 @@ package it.parttimeteam.view.game.scenes.model
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
+import scalafx.event.Event
 import scalafx.geometry.Insets
 import scalafx.scene.control.Button
 import scalafx.scene.image.{Image, ImageView}
@@ -19,7 +20,7 @@ object PlayerCombination {
 
     override def toString: String = combination.toString
 
-    this.setPadding(Insets(10d))
+    this.padding = Insets(10d)
 
     val combinationCards = new HBox()
     combinationCards.spacing = 10d
@@ -53,7 +54,10 @@ object PlayerCombination {
 
       combinationCards.children.add(playerCard)
 
-      playerCard.setOnMouseClicked(_ => boardListener.onBoardCardClicked(playerCard))
+      playerCard.setOnMouseClicked(e => {
+        e.consume()
+        boardListener.onBoardCardClicked(playerCard)
+      })
     }
 
     override def setSelected(selected: Boolean): Unit = {
