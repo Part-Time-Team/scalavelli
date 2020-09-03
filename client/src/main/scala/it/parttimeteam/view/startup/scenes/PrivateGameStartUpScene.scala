@@ -4,18 +4,18 @@ import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.PrivateGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartUpSceneListener
 import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
-import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
-import scalafx.scene.layout.{BorderPane, VBox}
+import scalafx.scene.layout.VBox
+import scalafx.stage.Stage
 
 /**
   * Allow to participate to a private game by inserting a private code.
   *
   * @param listener to interact with parent stage
   */
-class PrivateGameStartUpScene(val listener: StartUpSceneListener) extends BaseStartUpScene() {
+class PrivateGameStartUpScene(override val parentStage: Stage, val listener: StartUpSceneListener) extends BaseStartUpFormScene(parentStage) {
   val topBar: StartUpSceneTopBar = new StartUpSceneTopBar(listener)
   val bottomBar: StartUpSceneBottomBar = new StartUpSceneBottomBar(() => submit())
 
@@ -24,9 +24,6 @@ class PrivateGameStartUpScene(val listener: StartUpSceneListener) extends BaseSt
 
   val codeLabel: Label = MachiavelliLabel("Code", ViewConfig.formLabelFontSize)
   val codeField: TextField = MachiavelliTextField("Code")
-
-  val borderPane: BorderPane = new BorderPane()
-  borderPane.setPadding(Insets(ViewConfig.screenPadding))
 
   val center: VBox = new VBox()
   center.spacing = ViewConfig.formSpacing
@@ -41,16 +38,14 @@ class PrivateGameStartUpScene(val listener: StartUpSceneListener) extends BaseSt
 
   center.getChildren.addAll(usernameLabel, usernameField, codeLabel, codeField)
 
-  borderPane.center = center
-  borderPane.top = topBar
-  borderPane.bottom = bottomBar
+  mainContent.center = center
+  mainContent.top = topBar
+  mainContent.bottom = bottomBar
 
   bottomBar.hideLoading()
   bottomBar.hideMessage()
 
   val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and code.", AlertType.Warning)
-
-  root = borderPane
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 
@@ -63,9 +58,23 @@ class PrivateGameStartUpScene(val listener: StartUpSceneListener) extends BaseSt
     if (!username.isEmpty && !code.isEmpty) {
       listener.onSubmit(PrivateGameSubmitViewEvent(username, code))
       bottomBar.showLoading()
-      bottomBar.disableButtons()
+      disableButtons()
     } else {
       alert.showAndWait()
     }
+  }
+
+  override def disableButtons(): Unit = {
+    bottomBar.disableButtons()
+    usernameField.setEditable(false)
+    codeField.setEditable(false)
+  }
+
+  override def resetScreen(): Unit = {
+    usernameField.text = ""
+    codeField.text = ""
+    usernameField.setEditable(true)
+    codeField.setEditable(true)
+    bottomBar.reset()
   }
 }

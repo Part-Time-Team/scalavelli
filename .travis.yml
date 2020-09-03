@@ -8,7 +8,7 @@ install: true
 
 scala:
   # 2.12.11 # Scala version. Add other Scala versions under this.
-  - 2.12.8 Last stable version
+  - 2.12.8
 
 git:
   autocrlf: input
@@ -36,15 +36,13 @@ jobs:
   include:
     - stage: Run sbt with OpenJdk11
       os: linux
-      script: sbt test
     - stage: Run sbt with OpenJdk11
       os: osx
-      script: sbt test
     - stage: Generate coverage and scaladoc
-      before_install:
-        - bash sudo apt-get install python-pygments
+      # before_install:
+      #   - bash sudo apt-get install python-pygments
       install:
-        - bash texlive/texlive_install.sh
+        - bash travis-scripts/texlive_install.sh
       script:
         - sbt coverage test coverageReport coverageAggregate doc
       before_deploy:
@@ -62,16 +60,15 @@ jobs:
         - bash <(curl -s https://codecov.io/bash)
     - stage: Deploy to Github Releases
       before_deploy:
-        - sbt "project server" universal:packageBin
-        - sbt "project client" universal:packageBin
+        - sbt packArchive
       deploy:
         provider: releases
         skip_cleanup: true
         token: $GH_TOKEN
         file_glob: true
         file:
-          - client/target/universal/client-*.zip
-          - server/target/universal/server-*.zip
+          - client/target/pack/client-*.zip
+          - server/target/pack/server-*.zip
         on:
           branch: master
           tags: true

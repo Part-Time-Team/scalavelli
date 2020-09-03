@@ -1,6 +1,29 @@
 package it.parttimeteam.core.collections
 
+import java.util.UUID
+
 import it.parttimeteam.core.cards.Card
+
+import scala.annotation.tailrec
+
+trait IdGenerator {
+  def generateId: String = UUID.randomUUID().toString
+}
+
+object CombinationIdGenerator extends IdGenerator {
+  private var cache = Set.empty[String]
+
+  @tailrec
+  def generateUniqueId: String = {
+    val id = super.generateId
+    if (!(cache contains id)) {
+      cache = cache + id
+      id
+    } else {
+      generateUniqueId
+    }
+  }
+}
 
 /**
  * Represent the game board.
@@ -11,17 +34,23 @@ case class Board(combinations: Seq[CardCombination]) {
   /**
    * Add new combination to game board.
    *
-   * @param others Combinations to add.
+   * @param combination Combinations to add.
    * @return Updated game board.
    */
-  def putCombination(others: CardCombination*): Board = Board(combinations ++ others)
+  def putCombination(combination: CardCombination): Board = copy(combinations = (combination +: combinations).reverse)
+
+  /**
+   * Add new combination by card sequence.
+   * @param cards Cards to add.
+   * @return Updated game board.
+   */
+  def putCombination(cards: Seq[Card]): Board = putCombination(CardCombination(CombinationIdGenerator.generateUniqueId, cards))
 
   /**
    * Pick a card seq from the actual game board.
    *
    * @param cards Combinations to pick up.
    * @return Error string or the updated board.
-   * @todo Clean empty combinations.
    */
   def pickCards(cards: Seq[Card]): Either[String, Board] = {
     Either.cond(
@@ -40,7 +69,8 @@ case class Board(combinations: Seq[CardCombination]) {
    *
    * @param id    Id id the combination where to put cards.
    * @param cards Cards to put.
-   * @return Error string or the updated board.
+   * @return Updated game board.
+   * @todo This function maybe override without id.
    */
   def putCards(id: String, cards: Seq[Card]): Board = copy(combinations = this.combinations.map(comb =>
     if (comb.id == id) {

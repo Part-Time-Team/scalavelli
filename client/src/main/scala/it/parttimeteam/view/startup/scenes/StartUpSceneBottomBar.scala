@@ -19,6 +19,8 @@ class StartUpSceneBottomBar(onSubmit: () => Unit) extends HBox {
 
   def disableButtons(): Unit = btnSubmit.setDisable(true)
 
+  def enableButtons(): Unit = btnSubmit.setDisable(false)
+
   def showLoading(): Unit = progress.setVisible(true)
 
   def hideLoading(): Unit = progress.setVisible(false)
@@ -35,5 +37,11 @@ class StartUpSceneBottomBar(onSubmit: () => Unit) extends HBox {
       messageContainer.setText("")
       messageContainer.setVisible(false)
     })
+  }
+
+  def reset(): Unit = {
+    enableButtons()
+    hideLoading()
+    hideMessage()
   }
 }
