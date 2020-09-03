@@ -3,6 +3,7 @@ package it.parttimeteam.view.game.scenes.panes
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.listeners.GameSceneToStageListener
 import it.parttimeteam.view.utils.MachiavelliButton
+import scalafx.geometry.Insets
 import scalafx.scene.layout.HBox
 
 trait ActionBar extends HBox {
@@ -19,6 +20,7 @@ object ActionBar {
 
   class ActionBarImpl(listener: GameSceneToStageListener) extends ActionBar {
     this.spacing = ViewConfig.formSpacing
+    this.padding = Insets(5)
 
     val combinationBtn = MachiavelliButton("Make Combination", () => listener.makeCombination())
     val clearHandSelectionBtn = MachiavelliButton("Clear Selection", () => listener.clearHandSelection())

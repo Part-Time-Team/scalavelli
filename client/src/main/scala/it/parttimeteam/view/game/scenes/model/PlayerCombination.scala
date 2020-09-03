@@ -3,11 +3,9 @@ package it.parttimeteam.view.game.scenes.model
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
-import scalafx.event.Event
 import scalafx.geometry.Insets
 import scalafx.scene.control.Button
 import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.{BorderPane, HBox}
 
 trait PlayerCombination extends BorderPane with SelectableItem {

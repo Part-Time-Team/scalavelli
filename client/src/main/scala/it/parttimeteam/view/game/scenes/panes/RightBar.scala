@@ -40,8 +40,8 @@ object RightBar {
     val btnContainer = new VBox()
     btnContainer.spacing = 5d
 
-    val undoBtn = MachiavelliButton("Undo", () => undoClick(), "images/undo.png", 15d)
-    val redoBtn = MachiavelliButton("Redo", () => redoClick(), "images/redo.png", 15d)
+    val undoBtn = MachiavelliButton("Undo", () => undoClick(), "images/undo.png", 15d, 80d)
+    val redoBtn = MachiavelliButton("Redo", () => redoClick(), "images/redo.png", 15d, 80d)
     val nextBtn = MachiavelliButton("Next", () => endTurnClick())
 
     nextBtn.prefWidth <== rightBottom.width
