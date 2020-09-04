@@ -175,7 +175,6 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
    * @param gameState the global game state
    */
   private def broadcastGameStateToPlayers(gameState: GameState) {
-    println(this.players.toString())
 
     println(gameState.toString)
     this.players.foreach(player => {
