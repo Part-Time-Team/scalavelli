@@ -7,17 +7,29 @@ import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.StackPane
 
-trait PlayerCard extends StackPane with SelectableItem {
+/**
+  * Represents the single card wrapped inside a StackPane.
+  * Allows the player to select the card.
+  */
+trait GameCard extends StackPane with SelectableItem {
+  /**
+    * Mark the GameCard as a BoardCard. The player will be forced to play this card before passing his turn.
+    */
   def setAsBoardCard(): Unit
 
+  /**
+    * Get the Card wrapped by GameCard
+    *
+    * @return the GameCard entity
+    */
   def getCard: Card
 }
 
-object PlayerCard {
+object GameCard {
 
-  def apply(card: Card): PlayerCard = new PlayerCardImpl(card: Card)
+  def apply(card: Card): GameCard = new GameCardImpl(card: Card)
 
-  class PlayerCardImpl(private val card: Card) extends PlayerCard {
+  class GameCardImpl(private val card: Card) extends GameCard {
 
     override def toString: String = card.toString
 
@@ -29,6 +41,9 @@ object PlayerCard {
     this.getStyleClass.add("baseCard")
     this.getChildren.add(cardImage)
 
+    /**
+      * @inheritdoc
+      */
     override def setSelected(selected: Boolean): Unit = {
       if (selected) {
         this.getStyleClass.add("cardSelected")
@@ -39,6 +54,9 @@ object PlayerCard {
       }
     }
 
+    /**
+      * @inheritdoc
+      */
     override def setAsBoardCard(): Unit = {
       val prohibitionIcon: ImageView = new ImageView(new Image("images/prohibitionSign.png", 15, 15, false, false))
       prohibitionIcon.margin = Insets(5d)
@@ -49,6 +67,9 @@ object PlayerCard {
       this.getChildren.add(prohibitionIcon)
     }
 
+    /**
+      * @inheritdoc
+      */
     override def getCard: Card = card
   }
 

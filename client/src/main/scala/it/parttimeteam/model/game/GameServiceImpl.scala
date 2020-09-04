@@ -78,9 +78,11 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
         remoteMatchGameRef ! EndTurnWithPlays(this.playerId, currentState.board, currentState.hand)
       }
+
       case MakeCombinationViewEvent(cards) => {
         // validate and play
       }
+
       case PickCardsViewEvent(cards) => {
         gameManager.pickBoardCards(currentState.hand, currentState.board, cards) match {
           case Right((hand, board)) => {
@@ -91,9 +93,11 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
         }
 
       }
-      case UpdateCardCombinationViewEvent(combinationId, card, indexToAdd) => {
+
+      case UpdateCardCombinationViewEvent(combinationId, card) => {
 
       }
+
       case UndoViewEvent => {
         val (optState, updatedHistory) = turnHistory.previous()
         this.turnHistory = updatedHistory
@@ -102,6 +106,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           this.notifyEvent(StateUpdatedEvent(optState.get))
         }
       }
+
       case RedoViewEvent => {
         val (optState, updatedHistory) = turnHistory.next()
         this.turnHistory = updatedHistory
@@ -110,6 +115,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           this.notifyEvent(StateUpdatedEvent(optState.get))
         }
       }
+
       case ResetHistoryViewEvent => {
         val (optState, updatedHistory) = turnHistory.reset()
         this.turnHistory = updatedHistory
@@ -118,6 +124,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           this.notifyEvent(StateUpdatedEvent(optState.get))
         }
       }
+
       case LeaveGameViewEvent => this.remoteMatchGameRef ! LeaveGame(this.playerId)
 
       case SortHandByRankViewEvent =>

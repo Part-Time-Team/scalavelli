@@ -3,18 +3,28 @@ package it.parttimeteam.view.game.scenes.model
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
+import it.parttimeteam.view.game.scenes.panes.BaseGamePane
 import scalafx.geometry.Insets
 import scalafx.scene.control.Button
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, HBox}
 
-trait PlayerCombination extends BorderPane with SelectableItem {
+/**
+  * Represents the CardCombination wrapped inside a BorderPane.
+  * Allows the player to select the CardCombination or to pick it from the game board.
+  */
+trait GameCardCombination extends BorderPane with BaseGamePane with SelectableItem {
+
+  /**
+    * Return the CardCombination wrapper by GameCardCombination
+    * @return the CardCombination entity
+    */
   def getCombination: CardCombination
 }
 
-object PlayerCombination {
+object GameCardCombination {
 
-  class PlayerCombinationImpl(combination: CardCombination, boardListener: BoardListener) extends PlayerCombination {
+  class GameCardCombinationImpl(combination: CardCombination, boardListener: BoardListener) extends GameCardCombination {
 
     override def toString: String = combination.toString
 
@@ -48,7 +58,7 @@ object PlayerCombination {
     this.setOnMouseClicked(_ => boardListener.onCombinationClicked(this))
 
     for (card: Card <- combination.cards) {
-      val playerCard: PlayerCard = PlayerCard(card)
+      val playerCard: GameCard = GameCard(card)
 
       combinationCards.children.add(playerCard)
 
@@ -58,6 +68,9 @@ object PlayerCombination {
       })
     }
 
+    /**
+      * @inheritdoc
+      */
     override def setSelected(selected: Boolean): Unit = {
       if (selected) {
         this.getStyleClass.add("combinationSelected")
@@ -66,7 +79,29 @@ object PlayerCombination {
       }
     }
 
+    /**
+      * @inheritdoc
+      */
     override def getCombination: CardCombination = combination
+
+    /**
+      * @inheritdoc
+      */
+    override def disableActions(): Unit = {
+      combinationCards.children.forEach(playerCard => playerCard.setOnMouseClicked(e => {
+        e.consume()
+      }))
+    }
+
+    /**
+      * @inheritdoc
+      */
+    override def enableActions(): Unit = {
+      combinationCards.children.forEach(playerCard => playerCard.setOnMouseClicked(e => {
+        e.consume()
+        boardListener.onBoardCardClicked(playerCard.asInstanceOf[GameCard])
+      }))
+    }
   }
 
 }

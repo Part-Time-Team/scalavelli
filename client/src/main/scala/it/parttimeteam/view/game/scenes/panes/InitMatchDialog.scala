@@ -6,9 +6,19 @@ import scalafx.scene.control.{Label, ProgressBar}
 import scalafx.scene.layout.VBox
 import scalafx.stage.{Modality, Stage, StageStyle}
 
+/**
+  * Blocking dialog which can be displayed while setting up the game view.
+  */
 trait InitMatchDialog extends Stage {
+
+  /**
+    * Allows to display the dialog.
+    */
   def showDialog(): Unit
 
+  /**
+    * Allows to hide the dialog.
+    */
   def hideDialog(): Unit
 }
 
@@ -33,11 +43,13 @@ object InitMatchDialog {
     this.setScene(dialogScene)
     this.initOwner(parentStage)
 
+    /** @inheritdoc */
     override def showDialog(): Unit = {
       this.showAndWait()
       this.setAlwaysOnTop(true)
     }
 
+    /** @inheritdoc */
     override def hideDialog(): Unit = {
       this.close()
     }

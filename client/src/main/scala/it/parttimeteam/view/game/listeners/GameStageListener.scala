@@ -8,7 +8,7 @@ trait GameStageToControllerListener {
 
   def makeCombination(cards: Seq[Card])
 
-  def updateCardCombination(combinationId: String, card: Card)
+  def updateCardCombination(combinationId: String, cards: Seq[Card])
 
   def pickCards(cards: Seq[Card])
   
@@ -18,7 +18,13 @@ trait GameStageToControllerListener {
 
   def endTurn()
 
+  def endTurnAndDraw()
+
   def nextState()
 
   def previousState()
+
+  def leaveGame()
+
+  def resetHistory()
 }

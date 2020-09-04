@@ -50,7 +50,7 @@ trait GameManager {
    * @param cards Cards to pick.
    * @return Hand and Board updated.
    */
-  def pickBoardCards(hand: Hand, board: Board, cards: Card*): Either[String, (Hand, Board)]
+  def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
 
   /**
    * Play cards from hand to board.
@@ -115,7 +115,7 @@ class GameManagerImpl extends GameManager {
    */
   override def pickBoardCards(hand: Hand,
                               board: Board,
-                              cards: Card*): Either[String, (Hand, Board)] = {
+                              cards: Seq[Card]): Either[String, (Hand, Board)] = {
     board.pickCards(cards).map(updatedBoard => (hand.addTableCards(cards), updatedBoard))
   }
 
