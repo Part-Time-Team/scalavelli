@@ -68,6 +68,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
     case Ready(id, ref) => {
       this.withPlayer(id) { p =>
         log.debug(s"player ${p.username} ready")
+
         players = players.map(p => if (p.id == id) p.copy(actorRef = ref) else p)
         val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
 

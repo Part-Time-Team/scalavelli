@@ -4,7 +4,7 @@ trait TurnManager[T] {
 
   /**
    *
-   * @return the id of the current player in turn
+   * @return the current participant in turn
    */
   def getInTurn: T
 
@@ -12,7 +12,7 @@ trait TurnManager[T] {
    *
    * Go to next turn
    *
-   * @return the next player id
+   * @return the next participant
    */
   def nextTurn: T
 
@@ -20,26 +20,22 @@ trait TurnManager[T] {
 
 object TurnManager {
 
-  def apply[T](ids: Seq[T]): TurnManager[T] = new TurnManagerImpl(ids)
+  def apply[T](participants: Seq[T]): TurnManager[T] = new TurnManagerImpl(participants)
 
-  private class TurnManagerImpl[T](ids: Seq[T]) extends TurnManager[T] {
+  private class TurnManagerImpl[T](participants: Seq[T]) extends TurnManager[T] {
 
     private var currentTurnIndex = 0
 
     /**
-     *
-     * @return the id of the current player in turn
+     * @inheritdoc
      */
-    override def getInTurn: T = ids(currentTurnIndex)
+    override def getInTurn: T = participants(currentTurnIndex)
 
     /**
-     *
-     * Go to next turn
-     *
-     * @return the next player id
+     * @inheritdoc
      */
     override def nextTurn: T = {
-      currentTurnIndex = (currentTurnIndex + 1) % ids.size
+      currentTurnIndex = (currentTurnIndex + 1) % participants.size
       getInTurn
     }
   }
