@@ -59,6 +59,13 @@ trait GameScene extends Scene {
   def setState(state: PlayerGameState): Unit
 
   /**
+    * Set history possible actions
+    * @param canUndo if the undo action is available
+    * @param canRedo if the redo action is available
+    */
+  def setHistoryState(canUndo: Boolean, canRedo: Boolean): Unit
+
+  /**
     * Display a message in the RightBar.
     *
     * @param message the message to be displayed
@@ -162,6 +169,11 @@ object GameScene {
       /** @inheritdoc*/
       override def previousState(): Unit = {
         parentStage.previousState()
+      }
+
+      /** @inheritdoc*/
+      override def resetState(): Unit = {
+        parentStage.resetHistory()
       }
 
       /** @inheritdoc*/
@@ -290,6 +302,12 @@ object GameScene {
       centerPane.enableActions()
       actionBar.enableActions()
       bottomBar.enableActions()
+    }
+
+    /** @inheritdoc*/
+    override def setHistoryState(canUndo: Boolean, canRedo: Boolean): Unit = {
+      rightBar.setUndoEnabled(canUndo)
+      rightBar.setRedoEnabled(canRedo)
     }
   }
 }

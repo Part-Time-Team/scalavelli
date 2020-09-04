@@ -10,12 +10,12 @@ import scalafx.application.{JFXApp, Platform}
 
 class GameControllerImpl extends GameController {
 
-  private var gameStage: MachiavelliGamePrimaryStage = _
+  private var gameStage: MachiavelliGameStage = _
   private var gameService: GameService = _
 
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
-      gameStage = MachiavelliGamePrimaryStage(this)
+      gameStage = MachiavelliGameStage(this)
       gameStage.initMatch()
       app.stage = gameStage
     })
@@ -24,12 +24,14 @@ class GameControllerImpl extends GameController {
     this.gameService.playerReady()
   }
 
-  def notifyEvent(gameEvent: GameEvent): Unit = gameEvent match {
+  def notifyEvent(serverGameEvent: ServerGameEvent): Unit = serverGameEvent match {
 
     case StateUpdatedEvent(state: PlayerGameState) => {
+      var historyState = gameService.getHistoryState
       Platform.runLater({
         gameStage.matchReady()
         gameStage.updateState(state)
+        gameStage.updateHistoryState(historyState._1, historyState._2)
       })
     }
 
@@ -40,13 +42,68 @@ class GameControllerImpl extends GameController {
     case InTurnEvent => {
       gameStage.notifyInfo("It's your turn")
       gameStage.setMessage("Your turn")
+      gameStage.enableActions()
       gameStage.showTimer()
+    }
+
+    case InfoEvent(message: String) => {
+      gameStage.notifyInfo(message)
+    }
+
+    case ErrorEvent(reason: String) => {
+      gameStage.notifyError(reason)
+    }
+
+    case GameWonEvent => {
+      gameStage.notifyGameEnd(GameWon)
+    }
+
+    case GameLostEvent(winnerName: String) => {
+      gameStage.notifyGameEnd(GameLost(winnerName))
+    }
+
+    case GameEndedWithErrorEvent(reason: String) => {
+      gameStage.notifyGameEnd(GameEndWithError(reason))
+    }
+
+    case TurnEndedEvent => {
+      gameStage.hideTimer()
+      gameStage.disableActions()
     }
 
     case _ =>
   }
 
-  override def onViewEvent(viewEvent: GameViewEvent): Unit = gameService.notifyUserAction(viewEvent)
+  override def onViewEvent(viewEvent: ViewGameEvent): Unit = viewEvent match {
+    case LeaveGameEvent => gameService.notifyUserAction(LeaveGameAction)
+
+    case UndoEvent => gameService.notifyUserAction(UndoAction)
+
+    case RedoEvent => gameService.notifyUserAction(RedoAction)
+
+    case ResetEvent => gameService.notifyUserAction(ResetAction)
+
+    case SortHandBySuitEvent => gameService.notifyUserAction(SortHandBySuitAction)
+
+    case SortHandByRankEvent => gameService.notifyUserAction(SortHandByRankAction)
+
+    case EndTurnEvent => {
+      if (gameService.playerMadeAnAction()) {
+        gameService.notifyUserAction(EndTurnAction)
+      } else {
+        gameService.notifyUserAction(EndTurnAndDrawAction)
+      }
+    }
+
+    case MakeCombinationEvent(cards: Seq[Card]) => gameService.notifyUserAction(MakeCombinationAction(cards))
+
+    case PickCardCombinationEvent(combinationId: String) => gameService.notifyUserAction(PickCardCombinationAction(combinationId))
+
+    case PickCardsEvent(cards: Seq[Card]) => gameService.notifyUserAction(PickCardsAction(cards))
+
+    case UpdateCardCombinationEvent(combinationId: String, cards: Seq[Card]) => gameService.notifyUserAction(UpdateCardCombinationAction(combinationId, cards))
+
+  }
 
   private def getMockState: PlayerGameState = {
     val board: Board = Board(

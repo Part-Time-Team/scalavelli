@@ -12,8 +12,22 @@ import scalafx.scene.layout.{BorderPane, HBox, TilePane, VBox}
   * Allows to navigate turn history and pass the turn to an other player.
   */
 trait RightBar extends BorderPane with BaseGamePane {
+  /**
+    * Enables/disables the redo button
+    *
+    * @param enabled if the button should be enabled or not
+    */
+  def setRedoEnabled(enabled: Boolean): Unit
 
-  /** Sets other player information, like name and number of available cards in hand.
+  /**
+    * Enables/disables the undo button
+    *
+    * @param enabled if the button should be enabled or not
+    */
+  def setUndoEnabled(enabled: Boolean): Unit
+
+  /**
+    * Sets other player information, like name and number of available cards in hand.
     *
     * @param opponents the sequence of other players information
     */
@@ -60,8 +74,9 @@ object RightBar {
     val btnContainer = new VBox()
     btnContainer.spacing = 5d
 
-    val undoBtn = MachiavelliButton("Undo", () => undoClick(), "images/undo.png", 15d, 80d)
-    val redoBtn = MachiavelliButton("Redo", () => redoClick(), "images/redo.png", 15d, 80d)
+    val undoBtn = MachiavelliButton("", () => undoClick(), "images/undo.png", 15d, 30d)
+    val redoBtn = MachiavelliButton("", () => redoClick(), "images/redo.png", 15d, 30d)
+    val resetBtn = MachiavelliButton("Reset", () => resetClick(), 60d)
     val nextBtn = MachiavelliButton("Next", () => endTurnClick())
 
     nextBtn.prefWidth <== rightBottom.width
@@ -71,7 +86,7 @@ object RightBar {
     historyBtnContainer.alignment = Pos.Center
     historyBtnContainer.spacing = 5d
 
-    historyBtnContainer.children.addAll(undoBtn, redoBtn)
+    historyBtnContainer.children.addAll(undoBtn, redoBtn, resetBtn)
     btnContainer.children.addAll(nextBtn, historyBtnContainer)
 
     rightTop.children.addAll(stateContainer, otherPlayersContainer)
@@ -80,7 +95,7 @@ object RightBar {
     top = rightTop
     bottom = rightBottom
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
       for (player: Opponent <- otherPlayers) {
         val nameLabel = MachiavelliLabel(player.name)
@@ -100,38 +115,54 @@ object RightBar {
       }
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setMessage(message: String): Unit = {
       messageLabel.text = message
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def showTimer(): Unit = {
       timerLabel.visible = true
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def hideTimer(): Unit = {
       timerLabel.visible = false
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def disableActions(): Unit = {
       undoBtn.setDisable(true)
       redoBtn.setDisable(true)
       nextBtn.setDisable(true)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def enableActions(): Unit = {
       undoBtn.setDisable(false)
       redoBtn.setDisable(false)
       nextBtn.setDisable(false)
     }
 
+
+    /** @inheritdoc */
+    override def setRedoEnabled(enabled: Boolean): Unit = {
+      redoBtn.setDisable(!enabled)
+    }
+
+    /** @inheritdoc */
+    override def setUndoEnabled(enabled: Boolean): Unit = {
+      undoBtn.setDisable(!enabled)
+    }
+
     private def redoClick(): Unit = {
       println("redoClick")
       listener.nextState()
+    }
+
+    private def resetClick(): Unit = {
+      println("redoClick")
+      listener.resetState()
     }
 
     private def undoClick(): Unit = {
@@ -144,6 +175,5 @@ object RightBar {
       listener.endTurn()
     }
   }
-
 }
 

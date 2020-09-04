@@ -5,68 +5,63 @@ import it.parttimeteam.core.cards.Card
 /**
   * Possible game view events which can be triggered by player.
   */
-sealed class GameViewEvent
+sealed class ViewGameEvent
 
 /**
   * The player leaves the game.
   */
-case object LeaveGameViewEvent extends GameViewEvent
+case object LeaveGameEvent extends ViewGameEvent
 
 /**
   * The player goes backward in turn history.
   */
-case object UndoViewEvent extends GameViewEvent
+case object UndoEvent extends ViewGameEvent
 
 /**
   * The player goes forward in turn history.
   */
-case object RedoViewEvent extends GameViewEvent
+case object RedoEvent extends ViewGameEvent
 
 /**
   * The player goes to the starting state of his turn.
   */
-case object ResetHistoryViewEvent extends GameViewEvent
+case object ResetEvent extends ViewGameEvent
 
 /**
   * The player sorts hand cards by suit.
   */
-case object SortHandBySuitViewEvent extends GameViewEvent
+case object SortHandBySuitEvent extends ViewGameEvent
 
 /**
   * The player sorts hand cards by rank.
   */
-case object SortHandByRankViewEvent extends GameViewEvent
+case object SortHandByRankEvent extends ViewGameEvent
 
 /**
-  * The player pass his turn without drawing a card
+  * The player pass his turn.
   */
-case object EndTurnViewEvent extends GameViewEvent
-
-/**
-  * The player pass his turn and draws a card
-  */
-case object EndTurnAndDrawViewEvent extends GameViewEvent
+case object EndTurnEvent extends ViewGameEvent
 
 /**
   * The player plays a combination of card from his hand.
   *
   * @param cards the sequence of card played by the player
   */
-case class MakeCombinationViewEvent(cards: Seq[Card]) extends GameViewEvent
+case class MakeCombinationEvent(cards: Seq[Card]) extends ViewGameEvent
 
 /**
   * The player picks a combination of card from the game board.
   *
   * @param combinationId the identifier of the card combination
   */
-case class PickCardCombinationViewEvent(combinationId: String) extends GameViewEvent
+case class PickCardCombinationEvent(combinationId: String) extends ViewGameEvent
 
 /**
   * The player picks some cards from the game board.
   *
   * @param cards the sequence of card picked by the player
   */
-case class PickCardsViewEvent(cards: Seq[Card]) extends GameViewEvent
+case class PickCardsEvent(cards: Seq[Card]) extends ViewGameEvent
 
 /**
   * The player updates an existing combination with some cards from his hand.
@@ -74,5 +69,5 @@ case class PickCardsViewEvent(cards: Seq[Card]) extends GameViewEvent
   * @param combinationId the identifier of the card combination
   * @param cards         the sequence of card to be added to the card combination
   */
-case class UpdateCardCombinationViewEvent(combinationId: String, cards: Seq[Card]) extends GameViewEvent
+case class UpdateCardCombinationEvent(combinationId: String, cards: Seq[Card]) extends ViewGameEvent
 

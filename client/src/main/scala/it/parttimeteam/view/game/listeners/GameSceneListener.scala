@@ -4,6 +4,7 @@ package it.parttimeteam.view.game.listeners
   * Action which can be made by GameScene
   */
 trait GameSceneListener {
+
   def clearHandSelection(): Unit
 
   /**
@@ -11,45 +12,51 @@ trait GameSceneListener {
     *
     * @param combinationId the CardCombination identifier picked by player
     */
-  def pickCombination(combinationId: String)
+  def pickCombination(combinationId: String): Unit
 
   /**
     * The player clicked the make combination button.
     */
-  def makeCombination()
+  def makeCombination(): Unit
 
   /**
     * The player clicked the pick cards button.
     */
-  def pickCards()
+  def pickCards(): Unit
 
   /**
     * The player clicked the update combination button.
     */
-  def updateCombination()
+  def updateCombination(): Unit
 
   /**
     * The player sorts his hand cards by suit.
     */
-  def sortHandBySuit()
+  def sortHandBySuit(): Unit
 
   /**
     * The player sorts his hand cards by rank.
     */
-  def sortHandByRank()
+  def sortHandByRank(): Unit
 
   /**
     * The player ends his turn.
     */
-  def endTurn()
+  def endTurn(): Unit
 
   /**
     * The player goes forward in turn history.
     */
-  def nextState()
+  def nextState(): Unit
 
   /**
     * The player goes backward in turn history.
     */
-  def previousState()
+  def previousState(): Unit
+
+  /**
+    * The player goes back to initial turn state.
+    */
+  def resetState(): Unit
+
 }

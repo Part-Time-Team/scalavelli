@@ -9,15 +9,14 @@ import it.parttimeteam.view.game.listeners.GameStageListener
 import it.parttimeteam.view.game.scenes.GameScene
 import it.parttimeteam.view.game.scenes.GameScene.GameSceneImpl
 import it.parttimeteam.view.utils.MachiavelliAlert
-import scalafx.application.JFXApp
-import scalafx.scene.control.Alert
+import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.{Alert, ButtonType}
 
 /**
   * Main stage for the game view, interacts with GameScene
   */
 trait MachiavelliGameStage extends JFXApp.PrimaryStage with GameStageListener {
-
   /**
     * Make the timer countdown visible.
     */
@@ -83,6 +82,13 @@ trait MachiavelliGameStage extends JFXApp.PrimaryStage with GameStageListener {
     * @param error the error occurred
     */
   def notifyError(error: String): Unit
+
+  /**
+    * Set history possible actions
+    * @param canUndo if the undo action is available
+    * @param canRedo if the redo action is available
+    */
+  def updateHistoryState(canUndo: Boolean, canRedo: Boolean): Unit
 }
 
 /**
@@ -93,8 +99,6 @@ object MachiavelliGameStage {
   val windowHeight: Double = ViewConfig.screenHeight
 
   def apply(listener: GameListener): MachiavelliGameStage = new MachiavelliGameStageImpl(listener, windowWidth, windowHeight)
-
-  //def apply(): MachiavelliGameStage = new MachiavelliGameStageImpl(null, windowWidth, windowHeight)
 
   class MachiavelliGameStageImpl(gameListener: GameListener, windowWidth: Double, windowHeight: Double) extends MachiavelliGameStage {
     title = Constants.Client.GAME_NAME
@@ -108,85 +112,139 @@ object MachiavelliGameStage {
 
     scene = gameScene
 
-    onCloseRequest = _ => {
-      System.exit(0)
+    onCloseRequest = e => {
+      val alert: Alert = MachiavelliAlert("Leave the game", "Are you sure you want to leave the game? The action cannot be undone.", AlertType.Confirmation)
+
+      alert.showAndWait match {
+        case Some(b) =>
+          if (b == ButtonType.OK) {
+            gameListener.onViewEvent(LeaveGameEvent)
+            System.exit(0)
+          }
+
+        case None =>
+      }
+      e.consume()
     }
 
     /** @inheritdoc */
-    override def showTimer(): Unit = gameScene.showTimer()
+    override def showTimer(): Unit = {
+      Platform.runLater({
+        gameScene.showTimer()
+      })
+    }
 
     /** @inheritdoc */
-    override def setMessage(message: String): Unit = gameScene.setMessage(message)
+    override def setMessage(message: String): Unit = {
+      Platform.runLater({
+        gameScene.setMessage(message)
+      })
+    }
 
     /** @inheritdoc */
-    override def updateState(state: PlayerGameState): Unit = gameScene.setState(state)
+    override def updateState(state: PlayerGameState): Unit = {
+      Platform.runLater({
+        gameScene.setState(state)
+      })
+    }
 
     /** @inheritdoc */
-    override def initMatch(): Unit = gameScene.showInitMatch()
+    override def updateHistoryState(canUndo: Boolean, canRedo: Boolean): Unit = {
+      gameScene.setHistoryState(canUndo, canRedo)
+    }
 
     /** @inheritdoc */
-    override def matchReady(): Unit = gameScene.hideInitMatch()
+    override def initMatch(): Unit = {
+      Platform.runLater({
+        gameScene.showInitMatch()
+      })
+    }
 
     /** @inheritdoc */
-    override def notifyGameEnd(gameEndType: GameEndType): Unit = gameScene.gameEnded(gameEndType)
+    override def matchReady(): Unit = {
+      Platform.runLater({
+        gameScene.hideInitMatch()
+      })
+    }
 
     /** @inheritdoc */
-    override def enableActions(): Unit = gameScene.enableActions()
+    override def notifyGameEnd(gameEndType: GameEndType): Unit = {
+      Platform.runLater({
+        gameScene.gameEnded(gameEndType)
+      })
+    }
 
     /** @inheritdoc */
-    override def disableActions(): Unit = gameScene.disableActions()
+    override def enableActions(): Unit = {
+      Platform.runLater({
+        gameScene.enableActions()
+      })
+    }
 
     /** @inheritdoc */
-    override def hideTimer(): Unit = gameScene.hideTimer()
+    override def disableActions(): Unit = {
+      Platform.runLater({
+        gameScene.disableActions()
+      })
+    }
+
+    /** @inheritdoc */
+    override def hideTimer(): Unit = {
+      Platform.runLater({
+        gameScene.hideTimer()
+      })
+    }
 
     /** @inheritdoc */
     override def notifyError(result: String): Unit = {
-      val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
-      alert.showAndWait()
+      Platform.runLater({
+        val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
+        alert.showAndWait()
+      })
     }
 
     /** @inheritdoc */
     override def notifyInfo(message: String): Unit = {
-      val alert: Alert = MachiavelliAlert("", message, AlertType.Information)
-      alert.showAndWait()
+      Platform.runLater({
+        val alert: Alert = MachiavelliAlert("", message, AlertType.Information)
+        alert.showAndWait()
+      })
     }
 
 
     // view actions
     /** @inheritdoc*/
-    override def pickCombination(combinationId: String): Unit = gameListener.onViewEvent(PickCardCombinationViewEvent(combinationId))
+    override def pickCombination(combinationId: String): Unit = gameListener.onViewEvent(PickCardCombinationEvent(combinationId))
 
     /** @inheritdoc*/
-    override def endTurn(): Unit = gameListener.onViewEvent(EndTurnViewEvent)
+    override def endTurn(): Unit = gameListener.onViewEvent(EndTurnEvent)
 
     /** @inheritdoc*/
-    override def nextState(): Unit = gameListener.onViewEvent(RedoViewEvent)
+    override def nextState(): Unit = gameListener.onViewEvent(RedoEvent)
 
     /** @inheritdoc*/
-    override def previousState(): Unit = gameListener.onViewEvent(UndoViewEvent)
+    override def previousState(): Unit = gameListener.onViewEvent(UndoEvent)
 
     /** @inheritdoc*/
-    override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationViewEvent(cards))
+    override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationEvent(cards))
 
     /** @inheritdoc*/
-    override def pickCards(cards: Seq[Card]): Unit = gameListener.onViewEvent(PickCardsViewEvent(cards))
+    override def pickCards(cards: Seq[Card]): Unit = gameListener.onViewEvent(PickCardsEvent(cards))
 
     /** @inheritdoc*/
-    override def sortHandBySuit(): Unit = gameListener.onViewEvent(SortHandBySuitViewEvent)
+    override def sortHandBySuit(): Unit = gameListener.onViewEvent(SortHandBySuitEvent)
 
     /** @inheritdoc*/
-    override def sortHandByRank(): Unit = gameListener.onViewEvent(SortHandByRankViewEvent)
+    override def sortHandByRank(): Unit = gameListener.onViewEvent(SortHandByRankEvent)
 
     /** @inheritdoc*/
-    override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = gameListener.onViewEvent(UpdateCardCombinationViewEvent(combinationId, cards))
+    override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = gameListener.onViewEvent(UpdateCardCombinationEvent(combinationId, cards))
 
     /** @inheritdoc*/
-    override def endTurnAndDraw(): Unit = gameListener.onViewEvent(EndTurnAndDrawViewEvent)
+    override def leaveGame(): Unit = gameListener.onViewEvent(LeaveGameEvent)
 
     /** @inheritdoc*/
-    override def leaveGame(): Unit = gameListener.onViewEvent(LeaveGameViewEvent)
-
-    /** @inheritdoc*/
-    override def resetHistory(): Unit = gameListener.onViewEvent(ResetHistoryViewEvent)
+    override def resetHistory(): Unit = gameListener.onViewEvent(ResetEvent)
   }
+
 }
