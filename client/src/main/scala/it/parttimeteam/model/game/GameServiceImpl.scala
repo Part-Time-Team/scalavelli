@@ -39,7 +39,10 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def turnStarted(): Unit = notifyEvent(InTurnEvent)
 
-    override def turnEnded(): Unit = notifyEvent(TurnEndedEvent)
+    override def turnEnded(): Unit = {
+      turnHistory = turnHistory.clear()
+      notifyEvent(TurnEndedEvent)
+    }
 
     override def opponentInTurn(opponentName: String): Unit = notifyEvent(OpponentInTurnEvent(opponentName))
 
