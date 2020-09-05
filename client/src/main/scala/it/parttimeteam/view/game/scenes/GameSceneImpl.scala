@@ -131,6 +131,9 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
 
   /** @inheritdoc */
   override def setState(state: PlayerGameState): Unit = {
+    this.handSelectionManager.clearSelection()
+    this.boardSelectionManager.clearSelection()
+    this.combinationSelectionManager.clearSelection()
     Platform.runLater({
       centerPane.setBoard(state.board)
 
