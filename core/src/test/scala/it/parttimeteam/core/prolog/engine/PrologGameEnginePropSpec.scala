@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog.engine
 
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.prolog.TestCards
+import it.parttimeteam.core.prolog.TestCards._
 import it.parttimeteam.core.prolog.converter.PrologGameConverter
 import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
@@ -19,8 +19,8 @@ class PrologGameEnginePropSpec extends AnyPropSpec with TableDrivenPropertyCheck
    */
   val quarterCards: TableFor1[Seq[Card]] = Table(
     "sequence cards",
-    Seq(TestCards.ACE_CLUBS, TestCards.ACE_DIAMONDS, TestCards.ACE_SPADES),
-    Seq(TestCards.TEN_CLUBS, TestCards.TEN_HEARTS, TestCards.TEN_SPADES, TestCards.TEN_DIAMONDS)
+    Seq(ACE_CLUBS, ACE_DIAMONDS, ACE_SPADES),
+    Seq(TEN_CLUBS, TEN_HEARTS, TEN_SPADES, TEN_DIAMONDS)
   )
 
   /**
