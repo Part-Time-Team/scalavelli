@@ -55,13 +55,13 @@ trait GameManager {
   /**
    * Play cards from hand to board.
    *
-   * @param hand        Hand where to pick cards.
-   * @param board       Board where put cards.
-   * @param combination Combination to pick.
+   * @param hand  Hand where to pick cards.
+   * @param board Board where put cards.
+   * @param cards cards to pick.
    * @return Hand and Board updated. If hand doesn't contain any combination card, return exactly the same hand and board.
    * @todo Take only a card seq to add to board.
    */
-  def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board)
+  def playCombination(hand: Hand, board: Board, cards: Seq[Card]): (Hand, Board)
 
   /**
    * Update a combination in the board by his id with some cards.
@@ -124,10 +124,10 @@ class GameManagerImpl extends GameManager {
    */
   override def playCombination(hand: Hand,
                                board: Board,
-                               combination: CardCombination): (Hand, Board) = {
-    val removed = hand.removeCards(combination.cards)
+                               cards: Seq[Card]): (Hand, Board) = {
+    val removed = hand.removeCards(cards)
     removed match {
-      case Right(value) => (value._1, board.putCombination(combination))
+      case Right(value) => (value._1, board.putCombination(cards))
       case _ => (hand, board)
     }
   }

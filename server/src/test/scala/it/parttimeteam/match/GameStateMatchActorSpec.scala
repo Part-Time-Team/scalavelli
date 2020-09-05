@@ -73,11 +73,11 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
 
     override def validateTurn(board: Board, hand: Hand): Boolean = ???
 
-    override def validateCombination(cards: CardCombination): Boolean = ???
+    override def validateCombination(cards: Seq[Card]): Boolean = ???
 
     override def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
 
-    override def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board) = ???
+    override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): (Hand, Board) = ???
 
     /**
      * Update a combination in the board by his id with some cards.
