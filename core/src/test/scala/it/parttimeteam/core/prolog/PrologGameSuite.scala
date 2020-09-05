@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog
 
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.prolog.TestCards._
+import it.parttimeteam.core.TestCards._
 import org.scalatest.funsuite.AnyFunSuite
 
 class PrologGameSuite extends AnyFunSuite {

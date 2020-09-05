@@ -4,7 +4,7 @@ import it.parttimeteam.core.cards.Color.{Blue, Red}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 import it.parttimeteam.core.cards.Rank.{Ace, Eight, Five, Four, Jack, King, Nine, Queen, Seven, Six, Ten, Three, Two}
 import it.parttimeteam.core.cards.Suit.{Clubs, Diamonds, Hearts, Spades}
-import it.parttimeteam.core.prolog.TestCards._
+import it.parttimeteam.core.TestCards._
 import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
 import org.scalatest.propspec.AnyPropSpec
