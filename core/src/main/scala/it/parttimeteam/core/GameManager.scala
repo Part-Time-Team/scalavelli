@@ -37,10 +37,10 @@ trait GameManager {
   /**
    * Validate a card combination.
    *
-   * @param combination Combination to validate.
+   * @param cards Combination to validate.
    * @return True if is valid, false anywhere.
    */
-  def validateCombination(combination: CardCombination): Boolean
+  def validateCombination(cards: Seq[Card]): Boolean
 
   /**
    * Pick cards from a combination on the table.
@@ -102,13 +102,13 @@ class GameManagerImpl extends GameManager {
    * @inheritdoc
    */
   override def validateTurn(board: Board, hand: Hand): Boolean =
-    board.combinations.forall(c => validateCombination(c)) && hand.tableCards.isEmpty
+    board.combinations.forall(c => validateCombination(c.cards)) && hand.tableCards.isEmpty
 
   // TODO: This method is useful?
   /**
    * @inheritdoc
    */
-  override def validateCombination(combination: CardCombination): Boolean = combination.isValid
+  override def validateCombination(cards: Seq[Card]): Boolean = cards.isValid
 
   /**
    * @inheritdoc
