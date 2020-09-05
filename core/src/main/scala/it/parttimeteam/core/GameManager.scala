@@ -61,7 +61,7 @@ trait GameManager {
    * @return Hand and Board updated. If hand doesn't contain any combination card, return exactly the same hand and board.
    * @todo Take only a card seq to add to board.
    */
-  def playCombination(hand: Hand, board: Board, cards: Seq[Card]): (Hand, Board)
+  def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
 
   /**
    * Update a combination in the board by his id with some cards.
@@ -124,11 +124,11 @@ class GameManagerImpl extends GameManager {
    */
   override def playCombination(hand: Hand,
                                board: Board,
-                               cards: Seq[Card]): (Hand, Board) = {
-    val removed = hand.removeCards(cards)
-    removed match {
-      case Right(value) => (value._1, board.putCombination(cards))
-      case _ => (hand, board)
+                               cards: Seq[Card]): Either[String, (Hand, Board)] = {
+    if (this.validateCombination(cards)) {
+      hand.removeCards(cards).map(res => (res._1, board.putCombination(res._2)))
+    } else {
+      Left("Combination not valid")
     }
   }
 
