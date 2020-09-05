@@ -36,6 +36,8 @@ object BoardPane {
 
     /** @inheritdoc*/
     override def setBoard(board: Board): Unit = {
+      tableCombinations.children.clear()
+
       for (combination: CardCombination <- board.combinations) {
         val playerCombination: GameCardCombination = new GameCardCombinationImpl(combination, boardListener)
         tableCombinations.children.add(playerCombination)

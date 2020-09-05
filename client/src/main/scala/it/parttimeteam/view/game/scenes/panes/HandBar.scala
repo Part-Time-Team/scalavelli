@@ -35,6 +35,8 @@ object HandBar {
 
     /** @inheritdoc */
     override def setHand(hand: Hand): Unit = {
+      handCardsContainer.children.clear()
+
       for (card <- hand.playerCards) {
         addHandCard(card, isBoardCard = false)
       }

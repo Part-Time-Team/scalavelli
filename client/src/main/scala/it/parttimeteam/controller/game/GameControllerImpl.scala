@@ -27,6 +27,9 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
   def notifyEvent(serverGameEvent: ServerGameEvent): Unit = serverGameEvent match {
 
     case StateUpdatedEvent(state: PlayerGameState) => {
+      println("Board: " + state.board)
+      println("Hand: " + state.hand)
+
       val historyState = gameService.getHistoryState
       Platform.runLater({
         gameStage.matchReady()

@@ -147,6 +147,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
       case SortHandByRankAction =>
       case SortHandBySuitAction =>
+      case PickCardCombinationAction(combinationId: String) =>
+      case _ =>
 
     }
   }
