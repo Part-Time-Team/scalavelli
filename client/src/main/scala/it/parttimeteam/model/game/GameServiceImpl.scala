@@ -56,7 +56,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def gameLost(winnerName: String): Unit = notifyEvent(GameLostEvent(winnerName))
 
-  }))
+  }), "client-game")
 
 
   // region GameService

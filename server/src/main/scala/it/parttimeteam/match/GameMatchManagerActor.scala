@@ -51,10 +51,9 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
   private def idle: Receive = {
     case GamePlayers(players) => {
       this.players = players
-      this.turnManager = TurnManager[GamePlayer](players)
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
-      this.players.foreach(p => context.watch(p.actorRef))
+      //      this.players.foreach(p => context.watch(p.actorRef))
       context.become(initializing(Seq.empty) orElse termination())
     }
   }
@@ -101,6 +100,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
    *
    */
   private def initializeGame(): Unit = {
+    this.turnManager = TurnManager[GamePlayer](players)
     log.debug("initializing game..")
     val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
