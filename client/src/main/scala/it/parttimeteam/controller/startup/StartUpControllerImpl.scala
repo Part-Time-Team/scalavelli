@@ -8,7 +8,7 @@ import scalafx.application.JFXApp
 
 class StartUpControllerImpl extends StartUpController {
 
-  private val startUpStage = MachiavelliStartUpPrimaryStage(this)
+  private val startUpStage = MachiavelliStartUpStage(this)
   private val startUpService: StartupService = new StartupServiceImpl(notifyEvent)
   private var startGameFunction: GameMatchInformations => Unit = _
 

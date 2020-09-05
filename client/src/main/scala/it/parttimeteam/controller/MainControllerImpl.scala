@@ -10,7 +10,7 @@ class MainControllerImpl(app: JFXApp) extends MainController {
 
   val view: View = new ViewImpl(app)
   val startUpController: StartUpController = new StartUpControllerImpl
-  val gameController: GameController = new GameControllerImpl
+  val gameController: GameController = new GameControllerImpl(() => playAgain())
 
   override def start(): Unit = {
     startUpController.start(app, startGame)
@@ -19,5 +19,10 @@ class MainControllerImpl(app: JFXApp) extends MainController {
   def startGame(gameInfo: GameMatchInformations): Unit = {
     startUpController.end()
     gameController.start(app, gameInfo)
+  }
+
+  def playAgain(): Unit = {
+    startUpController.start(app, startGame)
+    gameController.end()
   }
 }

@@ -127,7 +127,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         val picked = gameManager.pickBoardCards(
           Hand(),
           state.board,
-          c1)
+          List(c1))
         assert(picked.isRight)
 
         // This is make secure by previous assertion.

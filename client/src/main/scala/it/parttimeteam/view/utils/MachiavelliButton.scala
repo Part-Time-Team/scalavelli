@@ -31,4 +31,12 @@ object MachiavelliButton {
 
     btn
   }
+
+  def apply(text: String, onClick: () => Unit, iconPath: String, iconHeight: Double, minWidth: Double): Button = {
+    val btn = this (text, onClick, iconPath, iconHeight)
+
+    btn.setMinWidth(minWidth)
+
+    btn
+  }
 }

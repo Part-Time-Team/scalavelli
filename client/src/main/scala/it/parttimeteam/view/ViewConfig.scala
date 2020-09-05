@@ -17,5 +17,9 @@ object ViewConfig {
   // Forms
   val formWidth: Double = 400d
   val formSpacing: Double = 10d
+
+  // Cards
+  val CARD_Y_TRANSLATION: Double = 20d
+  val HAND_CARD_HEIGHT: Double = 100d
 }
 
