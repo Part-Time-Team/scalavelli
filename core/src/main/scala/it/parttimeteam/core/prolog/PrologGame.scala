@@ -1,8 +1,7 @@
 package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.core.cards.Rank.OverflowAce
-import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
+import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.prolog.converter.PrologGameConverter
 import it.parttimeteam.core.prolog.engine.{PrologGameEngine, PrologStruct}
 
@@ -10,24 +9,10 @@ import scala.annotation.tailrec
 
 class PrologGame() {
 
+  import PrologGame._
+
   private val conversion: PrologGameConverter = new PrologGameConverter
   private val engine: PrologGameEngine = new PrologGameEngine
-
-  /**
-   * Predicate for the goals of the prolog
-   */
-  private val card: String = "card"
-  private val validationQuarter: String = "validationQuarter"
-  private val validationChain: String = "validationChain"
-  private val orderByValue: String = "quicksortValue"
-  private val orderBySuit: String = "quicksortSuit"
-
-  /**
-   * Variable for the goals of the prolog
-   */
-  private val x: Var = new Var("X")
-  private val y: Var = new Var("Y")
-  private val z: Var = new Var("Z")
 
   /**
    * Loading deck
@@ -36,7 +21,7 @@ class PrologGame() {
    */
   def loadDeck: Seq[Card] = {
 
-    val deckToLoad: Iterator[Seq[Term]] = engine goals PrologStruct(card, x, y, z) grouped 3
+    val deckToLoad: Iterator[Seq[Term]] = engine goals PrologStruct(card, X, Y, Z) grouped 3
 
     @tailrec
     def _loadDeck(deck: Seq[Card])(deckToLoad: Seq[Seq[Term]]): Seq[Card] = deckToLoad match {
@@ -76,7 +61,7 @@ class PrologGame() {
    */
   def sortByRank(cards: Seq[Card]): Seq[Card] = {
 
-    val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(x))
+    val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(X))
     this.completedResult(cards, prologResult)
   }
 
@@ -88,7 +73,7 @@ class PrologGame() {
    */
   def sortBySuit(cards: Seq[Card]): Seq[Card] = {
 
-    val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(x))
+    val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(X))
     this.completedResult(cards, prologResult)
   }
 
@@ -114,6 +99,22 @@ class PrologGame() {
 /**
  * Object to initialize the class PrologGame
  */
-object PrologGame extends App {
+object PrologGame{
   def apply(): PrologGame = new PrologGame()
+
+  /**
+   * Variable for the goals of the prolog
+   */
+  private val X: Var = new Var("X")
+  private val Y: Var = new Var("Y")
+  private val Z: Var = new Var("Z")
+
+  /**
+   * Predicate for the goals of the prolog
+   */
+  private val card: String = "card"
+  private val validationQuarter: String = "validationQuarter"
+  private val validationChain: String = "validationChain"
+  private val orderByValue: String = "quicksortValue"
+  private val orderBySuit: String = "quicksortSuit"
 }

@@ -4,6 +4,7 @@ import it.parttimeteam.core.cards.Color.{Blue, Red}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 import it.parttimeteam.core.cards.Rank.{Ace, Eight, Five, Four, Jack, King, Nine, Queen, Seven, Six, Ten, Three, Two}
 import it.parttimeteam.core.cards.Suit.{Clubs, Diamonds, Hearts, Spades}
+import it.parttimeteam.core.prolog.TestCards._
 import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
 import org.scalatest.propspec.AnyPropSpec
@@ -57,8 +58,8 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val validQuarter: TableFor1[Seq[Card]] = Table(
     "valid quarter",
-    Seq(TestCards.ACE_CLUBS, TestCards.ACE_DIAMONDS, TestCards.ACE_SPADES),
-    Seq(TestCards.TEN_CLUBS, TestCards.TEN_HEARTS, TestCards.TEN_SPADES, TestCards.TEN_DIAMONDS)
+    Seq(ACE_CLUBS, ACE_DIAMONDS, ACE_SPADES),
+    Seq(TEN_CLUBS, TEN_HEARTS, TEN_SPADES, TEN_DIAMONDS)
   )
 
   /**
@@ -66,8 +67,8 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val invalidQuarter: TableFor1[Seq[Card]] = Table(
     "invalid quarter",
-    Seq(TestCards.ACE_SPADES, TestCards.ACE_DIAMONDS, TestCards.TEN_CLUBS),
-    Seq(TestCards.TEN_CLUBS, TestCards.TEN_CLUBS, TestCards.TEN_SPADES)
+    Seq(ACE_SPADES, ACE_DIAMONDS, TEN_CLUBS),
+    Seq(TEN_CLUBS, TEN_CLUBS, TEN_SPADES)
   )
 
   /**
@@ -75,8 +76,8 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val validChain: TableFor1[Seq[Card]] = Table(
     "valid chain",
-    Seq(TestCards.ACE_CLUBS, TestCards.TWO_CLUBS, TestCards.THREE_CLUBS),
-    Seq(TestCards.JACK_HEARTS, TestCards.QUEEN_HEARTS, TestCards.KING_HEARTS, TestCards.ACE_HEARTS)
+    Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS),
+    Seq(JACK_HEARTS, QUEEN_HEARTS, KING_HEARTS, ACE_HEARTS)
   )
 
   /**
@@ -84,9 +85,9 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val invalidChain: TableFor1[Seq[Card]] = Table(
     "invalid chain",
-    Seq(TestCards.ACE_CLUBS, TestCards.TWO_CLUBS, TestCards.THREE_CLUBS, TestCards.FOUR_SPADES),
-    Seq(TestCards.ACE_CLUBS, TestCards.THREE_CLUBS, TestCards.FOUR_SPADES),
-    Seq(TestCards.JACK_HEARTS, TestCards.QUEEN_HEARTS, TestCards.KING_HEARTS, TestCards.ACE_HEARTS, TestCards.TWO_HEARTS)
+    Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS, FOUR_SPADES),
+    Seq(ACE_CLUBS, THREE_CLUBS, FOUR_SPADES),
+    Seq(JACK_HEARTS, QUEEN_HEARTS, KING_HEARTS, ACE_HEARTS, TWO_HEARTS)
   )
 
   property("loadDeck must return any possible card in the deck") {

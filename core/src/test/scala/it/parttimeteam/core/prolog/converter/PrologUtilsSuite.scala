@@ -1,30 +1,16 @@
 package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.{Prolog, Term, Var}
-import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
+import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.prolog.TestCards._
 import it.parttimeteam.core.prolog.engine.PrologGameEngine
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should
+import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
+import org.scalatest.propspec.AnyPropSpec
 
-import scala.util.matching.Regex
+class PrologUtilsSuite extends AnyFunSuite  with TableDrivenPropertyChecks with should.Matchers {
 
-class PrologUtilsSuite extends AnyFunSuite {
-
-  val prologEngine: PrologGameEngine = new PrologGameEngine
-  val prologConversion: PrologGameConverter = new PrologGameConverter
-
-  // TODO fallisce sempre 
-  /*test("Convert sequence cards into regex sequence"){
-
-    val card1: Card = Card(Rank.Four(), Suit.Clubs(), Color.Red())
-    val termSeq : Seq[Term] = prologEngine goal "quicksortValue" + prologConversion.cardsConvertToString(Seq(card1))(Some(new Var("X")))
-
-    val pattern: Regex = "[0-9]+,[a-zA-Z]+".r
-    val regexSeq : Seq[Regex.Match] = (pattern findAllMatchIn "(4,Clubs)") toList
-
-    assertResult(pattern.findAllMatchIn("4,Clubs").toList)(pattern.findAllMatchIn("4,Clubs").toList)
-  }*/
-
-  // TODO lasciare il test solo qui o solo nei test del converter o in tutti e due?
   test("Replace specific characters in a terms") {
 
     val prolog = new Prolog()
@@ -33,5 +19,27 @@ class PrologUtilsSuite extends AnyFunSuite {
 
     assertResult("[1]")(PrologUtils.replaceTermToString(term, "'"))
     assertResult("[(1,'Clubs'),(1,'Spades')]")(PrologUtils.replaceTermToString(seq, "','"))
+  }
+
+  class PrologUtilsPropSpec extends AnyPropSpec {
+
+    val prologEngine: PrologGameEngine = new PrologGameEngine
+    val prologConversion: PrologGameConverter = new PrologGameConverter
+
+    /**
+     * Card
+     */
+    val card: TableFor1[Seq[Card]] = Table(
+      "card",
+      Seq(FOUR_SPADES, FIVE_HEARTS, ACE_CLUBS),
+      Seq(KING_CLUBS, THREE_CLUBS, JACK_HEARTS)
+    )
+
+    property("Convert sequence cards into regex sequence"){
+      forAll(card){ seq =>
+        val termSeq : Seq[Term] = prologEngine goal "quicksortValue" + prologConversion.cardsConvertToString(seq)(Some(new Var("X")))
+        PrologUtils.utils(termSeq).isEmpty should be (false)
+      }
+    }
   }
 }
