@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
                       private val notifyEvent: ServerGameEvent => Unit) extends GameService {
 
-  private var turnHistory: History[PlayerGameState] = _
+  private var turnHistory: History[PlayerGameState] = History[PlayerGameState]()
   private var storeOpt: Option[GameStateStore] = None
 
   private val gameManager: GameManager = new GameManagerImpl()

@@ -8,7 +8,7 @@ import it.parttimeteam.model.startup.GameMatchInformations
 import it.parttimeteam.view.game._
 import scalafx.application.{JFXApp, Platform}
 
-class GameControllerImpl extends GameController {
+class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
   private var gameStage: MachiavelliGameStage = _
   private var gameService: GameService = _
@@ -27,7 +27,7 @@ class GameControllerImpl extends GameController {
   def notifyEvent(serverGameEvent: ServerGameEvent): Unit = serverGameEvent match {
 
     case StateUpdatedEvent(state: PlayerGameState) => {
-      var historyState = gameService.getHistoryState
+      val historyState = gameService.getHistoryState
       Platform.runLater({
         gameStage.matchReady()
         gameStage.updateState(state)
@@ -103,6 +103,7 @@ class GameControllerImpl extends GameController {
 
     case UpdateCardCombinationEvent(combinationId: String, cards: Seq[Card]) => gameService.notifyUserAction(UpdateCardCombinationAction(combinationId, cards))
 
+    case PlayAgainEvent => playAgain()
   }
 
   private def getMockState: PlayerGameState = {
@@ -139,4 +140,7 @@ class GameControllerImpl extends GameController {
     PlayerGameState(board, hand, players)
   }
 
+  override def end(): Unit = {
+
+  }
 }

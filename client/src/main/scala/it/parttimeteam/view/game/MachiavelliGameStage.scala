@@ -170,7 +170,25 @@ object MachiavelliGameStage {
     /** @inheritdoc */
     override def notifyGameEnd(gameEndType: GameEndType): Unit = {
       Platform.runLater({
-        gameScene.gameEnded(gameEndType)
+        val message = gameEndType match {
+          case GameWon => "Congratulations! You won the game! Do you want to play again?"
+
+          case GameLost(winnerUsername: String) => s"This game has a winner. And the winner is.. $winnerUsername! Do you want to play again?"
+
+          case GameEndWithError(reason: String) => s"The game ended. $reason. Do you want to play again?"
+        }
+
+        val alert = MachiavelliAlert("Game ended", message, AlertType.Information)
+        alert.showAndWait match {
+          case Some(b) =>
+            if (b == ButtonType.OK) {
+              gameListener.playAgain()
+            } else {
+              System.exit(0)
+            }
+
+          case None =>
+        }
       })
     }
 

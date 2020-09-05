@@ -2,6 +2,7 @@ package it.parttimeteam.view.game.scenes
 
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
+import it.parttimeteam.view.game._
 import it.parttimeteam.view.game.listeners.GameSceneListener
 import it.parttimeteam.view.game.scenes.model.{GameCard, GameCardCombination}
 import it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl
@@ -10,7 +11,6 @@ import it.parttimeteam.view.game.scenes.panes.CenterPane.CenterPaneImpl
 import it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl
 import it.parttimeteam.view.game.scenes.panes.RightBar.RightBarImpl
 import it.parttimeteam.view.game.scenes.panes.{ActionBar, BottomBar, CenterPane, RightBar}
-import it.parttimeteam.view.game.{GameEndType, MachiavelliGameStage, SelectionManager}
 import scalafx.application.Platform
 import scalafx.scene.Scene
 import scalafx.scene.layout.{BorderPane, VBox}
@@ -60,6 +60,7 @@ trait GameScene extends Scene {
 
   /**
     * Set history possible actions
+    *
     * @param canUndo if the undo action is available
     * @param canRedo if the redo action is available
     */
@@ -71,13 +72,6 @@ trait GameScene extends Scene {
     * @param message the message to be displayed
     */
   def setMessage(message: String): Unit
-
-  /**
-    * Display a dialog when the game ends.
-    *
-    * @param gameEndType the type of message which should be displayed
-    */
-  def gameEnded(gameEndType: GameEndType): Unit
 }
 
 object GameScene {
@@ -129,60 +123,60 @@ object GameScene {
 
     val sceneListener: GameSceneListener = new GameSceneListener {
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def pickCombination(combinationId: String): Unit = {
         parentStage.pickCombination(combinationId)
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def makeCombination(): Unit = {
         val cards: Seq[Card] = handSelectionManager.getSelectedItems.map(p => p.getCard)
         parentStage.makeCombination(cards)
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def pickCards(): Unit = {
         val cards: Seq[Card] = boardSelectionManager.getSelectedItems.map(p => p.getCard)
         parentStage.pickCards(cards)
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def sortHandBySuit(): Unit = {
         parentStage.sortHandBySuit()
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def sortHandByRank(): Unit = {
         parentStage.sortHandByRank()
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def endTurn(): Unit = {
         parentStage.endTurn()
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def nextState(): Unit = {
         parentStage.nextState()
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def previousState(): Unit = {
         parentStage.previousState()
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def resetState(): Unit = {
         parentStage.resetHistory()
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def clearHandSelection(): Unit = {
         handSelectionManager.clearSelection()
         updateActionBarButtons()
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def updateCombination(): Unit = {
         val combination = combinationSelectionManager.getSelectedItems.head
         val selectedCards = handSelectionManager.getSelectedItems
@@ -204,19 +198,19 @@ object GameScene {
 
     val centerPane: CenterPane = new CenterPaneImpl(new BoardListener {
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def onCombinationClicked(cardCombination: GameCardCombination): Unit = {
         combinationSelectionManager.onItemSelected(cardCombination)
         updateActionBarButtons()
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def onBoardCardClicked(card: GameCard): Unit = {
         boardSelectionManager.onItemSelected(card)
         updateActionBarButtons()
       }
 
-      /** @inheritdoc*/
+      /** @inheritdoc */
       override def onPickCombinationClick(cardCombination: GameCardCombination): Unit = {
         parentStage.pickCombination(cardCombination.getCombination.id)
       }
@@ -232,7 +226,7 @@ object GameScene {
 
     root = borderPane
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setState(state: PlayerGameState): Unit = {
       Platform.runLater({
         centerPane.setBoard(state.board)
@@ -243,35 +237,35 @@ object GameScene {
       })
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def showInitMatch(): Unit = {
       Platform.runLater({
         initMatchDialog.showDialog()
       })
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def hideInitMatch(): Unit = {
       Platform.runLater({
         initMatchDialog.hideDialog()
       })
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setMessage(message: String): Unit = {
       Platform.runLater({
         rightBar.setMessage(message)
       })
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def showTimer(): Unit = {
       Platform.runLater({
         rightBar.showTimer()
       })
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     private def updateActionBarButtons(): Unit = {
       actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty)
       actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty)
@@ -279,16 +273,12 @@ object GameScene {
       actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty)
     }
 
-
-    /** @inheritdoc*/
-    override def gameEnded(gameEndType: GameEndType): Unit = ???
-
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def hideTimer(): Unit = {
       rightBar.hideTimer()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def disableActions(): Unit = {
       rightBar.disableActions()
       centerPane.disableActions()
@@ -296,7 +286,7 @@ object GameScene {
       bottomBar.disableActions()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def enableActions(): Unit = {
       rightBar.enableActions()
       centerPane.enableActions()
@@ -304,11 +294,12 @@ object GameScene {
       bottomBar.enableActions()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setHistoryState(canUndo: Boolean, canRedo: Boolean): Unit = {
       rightBar.setUndoEnabled(canUndo)
       rightBar.setRedoEnabled(canRedo)
     }
   }
+
 }
 

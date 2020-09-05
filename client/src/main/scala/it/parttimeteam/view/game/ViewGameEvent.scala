@@ -71,3 +71,8 @@ case class PickCardsEvent(cards: Seq[Card]) extends ViewGameEvent
   */
 case class UpdateCardCombinationEvent(combinationId: String, cards: Seq[Card]) extends ViewGameEvent
 
+/**
+  * The player decided to play another time.
+  */
+case object PlayAgainEvent extends ViewGameEvent
+
