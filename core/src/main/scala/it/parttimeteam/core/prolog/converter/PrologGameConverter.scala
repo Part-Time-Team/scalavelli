@@ -64,7 +64,6 @@ class PrologGameConverter extends PrologConverter {
   /**
    * @inheritdoc
    */
-  // TODO puo essere una val??
   override def prologList(tupleCard: Seq[(Int, String)])(variable: Option[Var]): String =
 
     if (variable.isDefined) {
