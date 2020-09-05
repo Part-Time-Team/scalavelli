@@ -124,8 +124,10 @@ class GameManagerImpl extends GameManager {
   override def playCombination(hand: Hand,
                                board: Board,
                                cards: Seq[Card]): Either[String, (Hand, Board)] = {
-    if (this.validateCombination(cards)) {
-      hand.removeCards(cards).map(updateHand => (updateHand, board.putCombination(cards)))
+    
+    val orderedCards = cards sortByRank()
+    if (this.validateCombination(orderedCards)) {
+      hand.removeCards(orderedCards).map(updateHand => (updateHand, board.putCombination(orderedCards)))
     } else {
       Left("Combination not valid")
     }
