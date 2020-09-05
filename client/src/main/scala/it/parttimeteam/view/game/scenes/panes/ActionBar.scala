@@ -49,13 +49,15 @@ object ActionBar {
     val clearHandSelectionBtn = MachiavelliButton("Clear Selection", () => listener.clearHandSelection())
     val pickCardsBtn = MachiavelliButton("Pick Cards", () => listener.pickCards())
     val updateCombinationBtn = MachiavelliButton("Update Combination", () => listener.updateCombination())
+    val sortBySuitBtn = MachiavelliButton("Sort Suit", () => listener.sortHandBySuit())
+    val sortByRankBtn = MachiavelliButton("Sort Rank", () => listener.sortHandByRank())
 
     combinationBtn.setDisable(true)
     clearHandSelectionBtn.setDisable(true)
     pickCardsBtn.setDisable(true)
     updateCombinationBtn.setDisable(true)
 
-    this.children.addAll(combinationBtn, clearHandSelectionBtn, pickCardsBtn, updateCombinationBtn)
+    this.children.addAll(sortBySuitBtn, sortByRankBtn, combinationBtn, clearHandSelectionBtn, pickCardsBtn, updateCombinationBtn)
 
     /** @inheritdoc */
     override def enableMakeCombination(enable: Boolean): Unit = combinationBtn.setDisable(!enable)
