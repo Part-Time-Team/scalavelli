@@ -59,9 +59,9 @@ object Card {
   /**
    * Provide to a Card Sequence new functions to sort them by Rank and Suit.
    *
-   * @param base Poor Card Sequence.
+   * @param cards Poor Card Sequence.
    */
-  implicit class MyRichCardSeq(base: Seq[Card]) {
+  implicit class MyRichCardSeq(cards: Seq[Card]) {
     // TODO: Use implicits to change order strategy.
 
     /**
@@ -74,14 +74,22 @@ object Card {
      *
      * @return Ordered Sequence.
      */
-    def sortByRank(): Seq[Card] = prologGame.sortByRank(base)
+    def sortByRank(): Seq[Card] = this.prologGame.sortByRank(cards)
 
     /**
      * Sort first by suit, then by rank.
      *
      * @return Ordered Sequence.
      */
-    def sortBySuit(): Seq[Card] = prologGame.sortBySuit(base)
+    def sortBySuit(): Seq[Card] = this.prologGame.sortBySuit(cards)
+
+
+    def isValid: Boolean =
+      if (cards.forall(c => c.rank equals cards.head.rank))
+        this.prologGame.validateQuarter(cards)
+      else
+        this.prologGame.validateChain(cards)
+
   }
 
 }
