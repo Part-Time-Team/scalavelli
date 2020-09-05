@@ -74,14 +74,22 @@ object Card {
      *
      * @return Ordered Sequence.
      */
-    def sortByRank(): Seq[Card] = prologGame.sortByRank(base)
+    def sortByRank(): Seq[Card] = this.prologGame.sortByRank(base)
 
     /**
      * Sort first by suit, then by rank.
      *
      * @return Ordered Sequence.
      */
-    def sortBySuit(): Seq[Card] = prologGame.sortBySuit(base)
+    def sortBySuit(): Seq[Card] = this.prologGame.sortBySuit(base)
+
+
+    def isValid(cards: Seq[Card]): Boolean =
+      if (cards.forall(c => c.rank equals cards.head.rank))
+        this.prologGame.validateQuarter(cards)
+      else
+        this.prologGame.validateChain(cards)
+
   }
 
 }
