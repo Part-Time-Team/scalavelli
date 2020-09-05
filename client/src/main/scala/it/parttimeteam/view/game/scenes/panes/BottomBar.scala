@@ -47,27 +47,25 @@ object BottomBar {
     /** @inheritdoc */
     override def disableActions(): Unit = {
       handCardsContainer.children.forEach(playerCard => {
-        playerCard.setOnMouseClicked(e => e.consume())
+        playerCard.asInstanceOf[GameCard].disableActions()
       })
     }
 
     /** @inheritdoc */
     override def enableActions(): Unit = {
       handCardsContainer.children.forEach(playerCard => {
-        playerCard.setOnMouseClicked(_ => handListener.onHandCardClicked(playerCard.asInstanceOf[GameCard]))
+        playerCard.asInstanceOf[GameCard].enableActions()
       })
     }
 
     private def addHandCard(card: Card, isBoardCard: Boolean): Unit = {
-      val playerCard: GameCard = GameCard(card)
+      val playerCard: GameCard = GameCard(card, handListener)
       if (isBoardCard) {
         playerCard.setAsBoardCard()
       }
 
       handCardsContainer.children.add(playerCard)
       handCardsContainer.alignment = BottomCenter
-
-      playerCard.setOnMouseClicked(_ => handListener.onHandCardClicked(playerCard))
     }
   }
 }

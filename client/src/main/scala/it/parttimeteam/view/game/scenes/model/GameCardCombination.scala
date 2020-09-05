@@ -17,6 +17,7 @@ trait GameCardCombination extends BorderPane with BaseGamePane with SelectableIt
 
   /**
     * Return the CardCombination wrapper by GameCardCombination
+    *
     * @return the CardCombination entity
     */
   def getCombination: CardCombination
@@ -58,13 +59,13 @@ object GameCardCombination {
     this.setOnMouseClicked(_ => boardListener.onCombinationClicked(this))
 
     for (card: Card <- combination.cards) {
-      val playerCard: GameCard = GameCard(card)
+      val playerCard: GameCard = GameCard(card, boardListener)
 
       combinationCards.children.add(playerCard)
 
       playerCard.setOnMouseClicked(e => {
         e.consume()
-        boardListener.onBoardCardClicked(playerCard)
+        boardListener.onCardClicked(playerCard)
       })
     }
 
@@ -99,7 +100,7 @@ object GameCardCombination {
     override def enableActions(): Unit = {
       combinationCards.children.forEach(playerCard => playerCard.setOnMouseClicked(e => {
         e.consume()
-        boardListener.onBoardCardClicked(playerCard.asInstanceOf[GameCard])
+        boardListener.onCardClicked(playerCard.asInstanceOf[GameCard])
       }))
     }
   }

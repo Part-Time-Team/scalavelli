@@ -65,6 +65,7 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   /** @inheritdoc */
   override def initMatch(): Unit = {
     Platform.runLater({
+      gameScene.disableActions()
       gameScene.showInitMatch()
     })
   }

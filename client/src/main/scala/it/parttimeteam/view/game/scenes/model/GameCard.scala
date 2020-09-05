@@ -2,6 +2,8 @@ package it.parttimeteam.view.game.scenes.model
 
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.view.ViewConfig
+import it.parttimeteam.view.game.scenes.GameScene.CardListener
+import it.parttimeteam.view.game.scenes.panes.BaseGamePane
 import it.parttimeteam.view.utils.CardUtils
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.image.{Image, ImageView}
@@ -11,7 +13,7 @@ import scalafx.scene.layout.StackPane
   * Represents the single card wrapped inside a StackPane.
   * Allows the player to select the card.
   */
-trait GameCard extends StackPane with SelectableItem {
+trait GameCard extends StackPane with BaseGamePane with SelectableItem {
   /**
     * Mark the GameCard as a BoardCard. The player will be forced to play this card before passing his turn.
     */
@@ -27,9 +29,9 @@ trait GameCard extends StackPane with SelectableItem {
 
 object GameCard {
 
-  def apply(card: Card): GameCard = new GameCardImpl(card: Card)
+  def apply(card: Card, cardListener: CardListener): GameCard = new GameCardImpl(card: Card, cardListener: CardListener)
 
-  class GameCardImpl(private val card: Card) extends GameCard {
+  class GameCardImpl(private val card: Card, cardListener: CardListener) extends GameCard {
 
     override def toString: String = card.toString
 
@@ -40,6 +42,7 @@ object GameCard {
     this.setAlignment(Pos.TopRight)
     this.getStyleClass.add("baseCard")
     this.getChildren.add(cardImage)
+    this.setOnMouseClicked(_ => cardListener.onCardClicked(this))
 
     /**
       * @inheritdoc
@@ -71,6 +74,20 @@ object GameCard {
       * @inheritdoc
       */
     override def getCard: Card = card
+
+    /**
+      * Disable all the action buttons inside the pane.
+      */
+    override def disableActions(): Unit = {
+      this.setOnMouseClicked(e => e.consume())
+    }
+
+    /**
+      * Enable all the action buttons inside the pane.
+      */
+    override def enableActions(): Unit = {
+      this.setOnMouseClicked(_ => cardListener.onCardClicked(this))
+    }
   }
 
 }
