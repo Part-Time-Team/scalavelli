@@ -2,7 +2,7 @@ package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.{Prolog, Term, Var}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
-import it.parttimeteam.core.prolog.TestCards._
+import it.parttimeteam.core.TestCards._
 import it.parttimeteam.core.prolog.engine.PrologGameEngine
 import org.scalatest.funsuite.AnyFunSuite
 

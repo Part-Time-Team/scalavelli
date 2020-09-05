@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog.engine
 
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.prolog.TestCards._
+import it.parttimeteam.core.TestCards._
 import it.parttimeteam.core.prolog.converter.PrologGameConverter
 import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
