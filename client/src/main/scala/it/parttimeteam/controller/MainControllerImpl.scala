@@ -10,7 +10,7 @@ class MainControllerImpl(app: JFXApp) extends MainController {
 
   val view: View = new ViewImpl(app)
   val startUpController: StartUpController = new StartUpControllerImpl
-  val gameController: GameController = new GameControllerImpl(playAgain)
+  val gameController: GameController = new GameControllerImpl(() => playAgain())
 
   override def start(): Unit = {
     startUpController.start(app, startGame)
