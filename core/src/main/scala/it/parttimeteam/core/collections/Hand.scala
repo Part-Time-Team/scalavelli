@@ -52,40 +52,14 @@ case class Hand(playerCards: Seq[Card] = Seq.empty, tableCards: Seq[Card] = Seq.
    * @param cards Cards to remove from Hand.
    * @return
    */
-  def removeCards(cards: Seq[Card]): Either[String, (Hand, Seq[Card])] = {
+  def removeCards(cards: Seq[Card]): Either[String, Hand] = {
 
-    /**
-     * Remove cards contained in the hand.
-     *
-     * @param cards Cards that must be removed from the hand.
-     * @return New hand without those cards.
-     */
-    def remove(cards: Seq[Card]): (Hand, Seq[Card]) = {
-      val removedPlayerCards = playerCards.foldLeft((Seq.empty[Card], Seq.empty[Card])) {
-        (acc: (Seq[Card], Seq[Card]), card) => {
-          // If cards contains card
-          if (cards contains card)
-            (acc._1, acc._2 ++ (card +: Nil)) // I remove it from hand and put it into removed cards.
-          else
-            (acc._1 ++ (card +: Nil), acc._2) // I re-add it to playerCards.
-        }
-      }
+    val updatePlayerCards: Seq[Card] = playerCards.filterNot(card => cards contains card)
 
-      val removedBoardCards = tableCards.foldLeft((Seq.empty[Card], Seq.empty[Card])) {
-        (acc: (Seq[Card], Seq[Card]), card) => {
-          if (cards contains card)
-            (acc._1, acc._2 ++ (card +: Nil))
-          else
-            (acc._1 ++ (card +: Nil), acc._2)
-        }
-      }
+    val updateBoardCards: Seq[Card] = tableCards.filterNot(card => cards contains card)
 
-      // Return a new hand with new card lists and the concat of the two sequences of removed cards
-      (this.copy(playerCards = removedPlayerCards._1.toList,
-        tableCards = removedBoardCards._1.toList),
-        removedPlayerCards._2 ++ removedBoardCards._2)
-    }
-
-    Either.cond(cards forall (c => this containsCards c), remove(cards), s"$this doesn't contain $cards")
+    Either.cond(cards forall (c => this containsCards c),
+      this.copy(playerCards = updatePlayerCards, tableCards = updateBoardCards),
+      "Hand doesn't contain given cards")
   }
 }
