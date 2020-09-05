@@ -55,8 +55,4 @@ class BoardSpec extends AnyFunSuite {
     assert(res.isRight)
     assertResult(tail)(res.right.get.combinations)
   }
-
-  test("Generate 1000 ids") {
-    (0 until 1000).map(_ => board = board.putCombination(Seq(TWO_CLUBS, THREE_CLUBS)))
-  }
 }
