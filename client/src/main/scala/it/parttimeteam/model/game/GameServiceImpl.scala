@@ -1,12 +1,12 @@
 package it.parttimeteam.model.game
 
-import it.parttimeteam.ActorSystemManager
 import it.parttimeteam.controller.game._
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.{GameManager, GameManagerImpl}
 import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.messages.GameMessage.{EndTurnAndDraw, EndTurnWithPlays, LeaveGame, Ready}
+import it.parttimeteam.messages.GameMessage.{LeaveGame, PlayerActionMade, Ready}
 import it.parttimeteam.model.startup.GameMatchInformations
+import it.parttimeteam.{ActorSystemManager, DrawCard, PlayedMove}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -82,9 +82,9 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     action match {
 
       case EndTurnAndDrawAction =>
-        remoteMatchGameRef ! EndTurnAndDraw(this.playerId)
+        remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)
       case EndTurnAction => {
-        remoteMatchGameRef ! EndTurnWithPlays(this.playerId, currentState.board, currentState.hand)
+        remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
       }
 
       case MakeCombinationAction(cards) => {
@@ -95,7 +95,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
               this.turnHistory = this.turnHistory.setPresent(updatedState)
               this.notifyEvent(StateUpdatedEvent(updatedState))
 
-            case Left(error) => this.notifyEvent(ErrorEvent("Combiation not valid"))
+            case Left(error) => this.notifyEvent(ErrorEvent(error))
           }
 
         }
@@ -108,6 +108,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
             this.turnHistory = this.turnHistory.setPresent(updatedState)
             this.notifyEvent(StateUpdatedEvent(updatedState))
           }
+          case Left(error) => this.notifyEvent(ErrorEvent(error))
         }
 
       }
@@ -157,5 +158,6 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   private def withState(f: PlayerGameState => Unit): Unit = this.storeOpt match {
     case Some(state) => f(state.currentState)
+    case _ =>
   }
 }
