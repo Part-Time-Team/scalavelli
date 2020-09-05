@@ -83,11 +83,11 @@ object Card {
      */
     def sortBySuit(): Seq[Card] = this.prologGame.sortBySuit(cards)
 
-
     def isValid: Boolean =
       if (cards.forall(c => c.rank equals cards.head.rank))
         this.prologGame.validateQuarter(cards)
       else
+
         this.prologGame.validateChain(cards)
 
   }

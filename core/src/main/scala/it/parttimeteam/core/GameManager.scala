@@ -2,7 +2,6 @@ package it.parttimeteam.core
 
 import it.parttimeteam.core
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.core.collections._
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player._
@@ -125,8 +124,10 @@ class GameManagerImpl extends GameManager {
   override def playCombination(hand: Hand,
                                board: Board,
                                cards: Seq[Card]): Either[String, (Hand, Board)] = {
-    if (this.validateCombination(cards)) {
-      hand.removeCards(cards).map(res => (res._1, board.putCombination(res._2)))
+    
+    val orderedCards = cards sortByRank()
+    if (this.validateCombination(orderedCards)) {
+      hand.removeCards(orderedCards).map(updateHand => (updateHand, board.putCombination(orderedCards)))
     } else {
       Left("Combination not valid")
     }
@@ -138,7 +139,7 @@ class GameManagerImpl extends GameManager {
   override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = {
     val put = hand.removeCards(cards)
     put match {
-      case Right(value) => (value._1, board.putCards(id, cards))
+      case Right(value) => (value, board.putCards(id, cards))
       case _ => (hand, board)
     }
   }

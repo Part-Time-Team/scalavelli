@@ -1,6 +1,6 @@
 package it.parttimeteam.core
 
-import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.TestCards._
 import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import org.scalamock.matchers.Matchers
 import org.scalamock.scalatest.MockFactory
@@ -13,13 +13,6 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
     // Use the same instance of GameManager for all tests.
     val gameManager: GameManager = new GameManagerImpl()
     val playerInfos = Seq(("1", "Daniele"), ("2", "Lorenzo"), ("3", "Luca"), ("4", "Matteo"))
-    val c1: Card = Card.string2card("2♣R")
-    val c2: Card = Card.string2card("3♣B")
-    val c3: Card = Card.string2card("4♣B")
-    val c4: Card = Card.string2card("5♣B")
-    val c5: Card = Card.string2card("5♠R")
-    val c6: Card = Card.string2card("5♦B")
-    val c7: Card = Card.string2card("5♥R")
 
     describe("Can create a game") {
       it("Empty if no players are added") {
@@ -55,27 +48,27 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
     describe("Validate a turn") {
       // TODO: Waiting for PROLOG part.
       it("True with complex op") {
-        val comb1 = CardCombination("#1", Seq(c1, c2, c3))
-        val comb2 = CardCombination("#2", Seq(c5, c6, c7))
+        val comb1 = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS))
+        val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
         val board = Board(Seq(comb1, comb2))
-        val hand = Hand(List(c4))
+        val hand = Hand(List(FIVE_CLUBS))
         assert(gameManager validateTurn(board, hand))
       }
 
       describe("False with complex op") {
         it("With invalid board") {
-          val comb1 = CardCombination("#1", Seq(c1, c2, c7))
-          val comb2 = CardCombination("#2", Seq(c5, c6, c7))
+          val comb1 = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FIVE_HEARTS))
+          val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
           val board = Board(Seq(comb1, comb2))
-          val hand = Hand(List(c4))
+          val hand = Hand(List(FIVE_CLUBS))
           assert(!(gameManager validateTurn(board, hand)))
         }
 
         it("With invalid hand") {
-          val comb1 = CardCombination("#1", Seq(c1, c2, c3))
-          val comb2 = CardCombination("#2", Seq(c5, c6, c7))
+          val comb1 = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS))
+          val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
           val board = Board(Seq(comb1, comb2))
-          val hand = Hand(tableCards = List(c4))
+          val hand = Hand(tableCards = List(FIVE_CLUBS))
           assert(!(gameManager validateTurn(board, hand)))
         }
       }
@@ -85,21 +78,21 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       val state = gameManager.create(playerInfos)
 
       it("Play a valid comb") {
-        val cards = Seq(c1, c2, c3)
-        val result = gameManager.playCombination(Hand((c4 +: cards).toList), state.board, cards)
+        val cards = Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS)
+        val result = gameManager.playCombination(Hand((FIVE_CLUBS +: cards).toList), state.board, cards)
         assert(result.isRight)
         val played = result.right.get
         // Check that seq cards are not in player hand.
         assert(played._1.playerCards.nonEmpty)
         assert(played._1.tableCards.isEmpty)
-        assertResult(Seq(c4))(played._1.playerCards)
+        assertResult(Seq(FIVE_CLUBS))(played._1.playerCards)
         // Check that board contain the new combination.
         assert(played._2.combinations.exists(_.cards == cards))
       }
 
       it("Play cards that are not present in the hand returns error") {
-        val cards = Seq(c1, c2, c3)
-        val handSeq = List(c2, c3, c4)
+        val cards = Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS)
+        val handSeq = List(THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS)
         val result = gameManager.playCombination(Hand(handSeq), state.board, cards)
         assert(result.isLeft)
       }
@@ -107,7 +100,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
 
     describe("Pick table cards") {
       it("Pick from table some cards") {
-        val seq = Seq(c1, c2, c3)
+        val seq = Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS)
         val comb = CardCombination("#2", seq)
         var state = gameManager.create(playerInfos)
         val daniele = (state getPlayer "1").get
@@ -125,27 +118,27 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         val picked = gameManager.pickBoardCards(
           Hand(),
           state.board,
-          List(c1))
+          List(TWO_CLUBS))
         assert(picked.isRight)
 
         // This is make secure by previous assertion.
         val (hand: Hand, board: Board) = picked.right.get
-        assert(hand.tableCards contains c1)
-        assert(!(hand.playerCards contains c1))
-        assert(board.combinations forall (c => !(c.cards contains c1)))
+        assert(hand.tableCards contains TWO_CLUBS)
+        assert(!(hand.playerCards contains TWO_CLUBS))
+        assert(board.combinations forall (c => !(c.cards contains TWO_CLUBS)))
       }
     }
 
     describe("Update a combination") {
       it("Update a simple combination") {
-        val hand = Hand(Seq(c1, c2, c3, c4, c5))
-        val comb = CardCombination("#1", Seq(c1, c2, c3))
+        val hand = Hand(Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS, FIVE_SPADES))
+        val comb = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS))
         assert(comb.isValid)
 
-        val board = Board(Seq(comb)).pickCards(Seq(c2, c3))
+        val board = Board(Seq(comb)).pickCards(Seq(THREE_CLUBS, FOUR_CLUBS))
         assert(board.isRight)
 
-        val res = gameManager.putCardsInCombination(hand, board.right.get, "#1", Seq(c2, c3))
+        val res = gameManager.putCardsInCombination(hand, board.right.get, "#1", Seq(THREE_CLUBS, FOUR_CLUBS))
         assertResult(Board(Seq(comb)))(res._2)
       }
     }
