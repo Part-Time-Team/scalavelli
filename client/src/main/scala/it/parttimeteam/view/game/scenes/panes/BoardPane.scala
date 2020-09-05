@@ -13,7 +13,7 @@ import scalafx.scene.layout.VBox
 /**
   * Pane which contains the game board.
   */
-trait CenterPane extends ScrollPane with BaseGamePane {
+trait BoardPane extends ScrollPane with ActionGamePane {
 
   /**
     * Sets the game board inside a ScrollPane.
@@ -23,9 +23,9 @@ trait CenterPane extends ScrollPane with BaseGamePane {
   def setBoard(board: Board): Unit
 }
 
-object CenterPane {
+object BoardPane {
 
-  class CenterPaneImpl(boardListener: BoardListener) extends CenterPane {
+  class BoardPaneImpl(boardListener: BoardListener) extends BoardPane {
     val tableCombinations = new VBox()
     tableCombinations.spacing = 10d
     tableCombinations.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)

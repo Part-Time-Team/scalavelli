@@ -40,9 +40,9 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     }
 
     case InTurnEvent => {
-      gameStage.notifyInfo("It's your turn")
-      gameStage.setMessage("Your turn")
-      gameStage.enableActions()
+      val historyState = gameService.getHistoryState
+      gameStage.setInTurn()
+      gameStage.updateHistoryState(historyState._1, historyState._2)
       gameStage.showTimer()
     }
 
@@ -67,8 +67,8 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     }
 
     case TurnEndedEvent => {
+      gameStage.setTurnEnded()
       gameStage.hideTimer()
-      gameStage.disableActions()
     }
 
     case _ =>

@@ -9,7 +9,7 @@ import scalafx.scene.layout.HBox
 /**
   * Pane which contains buttons which allows to play/pick cards during the player turn.
   */
-trait ActionBar extends HBox with BaseGamePane {
+trait ActionBar extends HBox with ActionGamePane {
   /**
     * Enable/Disable the action for updating a CardCombination.
     *

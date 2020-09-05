@@ -61,6 +61,12 @@ trait GameScene extends Scene {
     * @param message the message to be displayed
     */
   def setMessage(message: String): Unit
+
+  /**
+    * Set if is the player turn
+    * @param inTurn if is the player turn
+    */
+  def setInTurn(inTurn: Boolean) : Unit
 }
 
 object GameScene {

@@ -3,7 +3,7 @@ package it.parttimeteam.view.game.scenes.model
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.scenes.GameScene.CardListener
-import it.parttimeteam.view.game.scenes.panes.BaseGamePane
+import it.parttimeteam.view.game.scenes.panes.ActionGamePane
 import it.parttimeteam.view.utils.CardUtils
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.image.{Image, ImageView}
@@ -13,7 +13,7 @@ import scalafx.scene.layout.StackPane
   * Represents the single card wrapped inside a StackPane.
   * Allows the player to select the card.
   */
-trait GameCard extends StackPane with BaseGamePane with SelectableItem {
+trait GameCard extends StackPane with ActionGamePane with SelectableItem {
   /**
     * Mark the GameCard as a BoardCard. The player will be forced to play this card before passing his turn.
     */

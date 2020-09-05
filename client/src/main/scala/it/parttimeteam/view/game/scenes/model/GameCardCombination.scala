@@ -3,7 +3,7 @@ package it.parttimeteam.view.game.scenes.model
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
-import it.parttimeteam.view.game.scenes.panes.BaseGamePane
+import it.parttimeteam.view.game.scenes.panes.ActionGamePane
 import scalafx.geometry.Insets
 import scalafx.scene.control.Button
 import scalafx.scene.image.{Image, ImageView}
@@ -13,7 +13,7 @@ import scalafx.scene.layout.{BorderPane, HBox}
   * Represents the CardCombination wrapped inside a BorderPane.
   * Allows the player to select the CardCombination or to pick it from the game board.
   */
-trait GameCardCombination extends BorderPane with BaseGamePane with SelectableItem {
+trait GameCardCombination extends BorderPane with ActionGamePane with SelectableItem {
 
   /**
     * Return the CardCombination wrapper by GameCardCombination
