@@ -1,88 +1,107 @@
 package it.parttimeteam.view.game.scenes
 
 import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.view.game.listeners.GameSceneListener
-import scalafx.geometry.Pos
+import it.parttimeteam.view.game.scenes.model.{GameCard, GameCardCombination}
 import scalafx.scene.Scene
-import scalafx.scene.control._
-import scalafx.scene.layout.{BorderPane, VBox}
-import scalafx.stage.{Modality, Stage, StageStyle}
 
 /**
-  * Allow to participate to create a private game by inserting the number of players.
-  * Obtains a private code to share to invite other players.
-  **/
+  * Main scene for MachiavelliGameStage.
+  * Allows MachiavelliGameStage to interact with each view element.
+  */
 trait GameScene extends Scene {
-  def hideInitMatch(): Unit
 
+  /**
+    * Allows to show timer during the player turn.
+    */
+  def showTimer(): Unit
+
+  /**
+    * Allows to hide timer after the player turn.
+    */
+  def hideTimer(): Unit
+
+  /**
+    * Enable all the view actions during the player turn.
+    */
+  def enableActions(): Unit
+
+  /**
+    * Disable all the view actions when the player turn is ended.
+    */
+  def disableActions(): Unit
+
+  /**
+    * Show a blocking dialog while the game is set up.
+    */
   def showInitMatch(): Unit
 
+  /**
+    * Hide the blocking dialog when the game is set up.
+    */
+  def hideInitMatch(): Unit
+
+  /**
+    * Sets the actual PlayerGameState inside view.
+    *
+    * @param state the actual PlayerGameState
+    */
   def setState(state: PlayerGameState): Unit
 
+  /**
+    * Set history possible actions
+    *
+    * @param canUndo if the undo action is available
+    * @param canRedo if the redo action is available
+    */
+  def setHistoryState(canUndo: Boolean, canRedo: Boolean): Unit
+
+  /**
+    * Display a message in the RightBar.
+    *
+    * @param message the message to be displayed
+    */
   def setMessage(message: String): Unit
-
-  def showTimer(): Unit
 }
 
-class GameSceneImpl(val parentStage: Stage, val listener: GameSceneListener) extends GameScene {
-  val rightBar: RightBar = new RightBar(listener)
-  val bottomBar: BottomBar = new BottomBar(listener)
-  val centerPane: CenterPane = new CenterPane(listener)
+object GameScene {
 
-  stylesheets.add("/styles/gameStyle.css")
+  /**
+    * Actions which should be invoked inside the game board.
+    */
+  trait BoardListener {
+    /**
+      * The player pick a combination from the game board.
+      *
+      * @param cardCombination the GameCardCombination picked by player
+      */
+    def onPickCombinationClick(cardCombination: GameCardCombination): Unit
 
-  var initMatchDialog: Stage = _
+    /**
+      * The player click on a combination on the game board.
+      *
+      * @param cardCombination the GameCardCombination clicked by player
+      */
+    def onCombinationClicked(cardCombination: GameCardCombination): Unit
 
-  val borderPane: BorderPane = new BorderPane()
-
-  borderPane.bottom = bottomBar
-  borderPane.right = rightBar
-  borderPane.center = centerPane
-
-  root = borderPane
-
-
-  override def setState(state: PlayerGameState): Unit = {
-
-    centerPane.setBoard(state.board)
-
-    bottomBar.setHand(state.hand)
-
-    rightBar.setOtherPlayers(state.otherPlayers)
+    /**
+      * The player click a card inside the game board.
+      *
+      * @param card the GameCard clicked by player
+      */
+    def onBoardCardClicked(card: GameCard)
   }
 
-  override def showInitMatch(): Unit = {
-    initMatchDialog = new Stage()
-    val progressBar: ProgressBar = new ProgressBar()
-    initMatchDialog.initStyle(StageStyle.Decorated)
-    initMatchDialog.setResizable(false)
-    initMatchDialog.initModality(Modality.WindowModal)
-    initMatchDialog.setTitle("Game loading")
-    initMatchDialog.setMinWidth(200)
-    initMatchDialog.setMinHeight(100)
+  /**
+    * Actions which should be invoked inside the player hand.
+    */
+  trait HandListener {
 
-    val label = new Label("Preparing your cards...")
-
-    val vb = new VBox()
-    vb.setSpacing(5)
-    vb.setAlignment(Pos.Center)
-    vb.getChildren.addAll(label, progressBar)
-    val scene = new Scene(vb)
-    initMatchDialog.setScene(scene)
-    initMatchDialog.initOwner(parentStage)
-    initMatchDialog.showAndWait()
-    initMatchDialog.setAlwaysOnTop(true)
-  }
-
-  override def hideInitMatch(): Unit = {
-    initMatchDialog.hide()
-  }
-
-  override def setMessage(message: String): Unit = {
-    rightBar.setMessage(message)
-  }
-
-  override def showTimer(): Unit = {
-    rightBar.showTimer()
+    /**
+      * The player click a card inside his hand.
+      *
+      * @param card the GameCard clicked by player
+      */
+    def onHandCardClicked(card: GameCard)
   }
 }
+

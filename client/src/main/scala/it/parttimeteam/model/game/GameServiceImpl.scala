@@ -1,20 +1,20 @@
 package it.parttimeteam.model.game
 
 import it.parttimeteam.ActorSystemManager
+import it.parttimeteam.controller.game._
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.{GameManager, GameManagerImpl}
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{EndTurnAndDraw, EndTurnWithPlays, LeaveGame, Ready}
 import it.parttimeteam.model.startup.GameMatchInformations
-import it.parttimeteam.view.game._
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
-                      private val notifyEvent: GameEvent => Unit) extends GameService {
+                      private val notifyEvent: ServerGameEvent => Unit) extends GameService {
 
-  private var turnHistory: History[PlayerGameState] = _
+  private var turnHistory: History[PlayerGameState] = History[PlayerGameState]()
   private var storeOpt: Option[GameStateStore] = None
 
   private val gameManager: GameManager = new GameManagerImpl()
@@ -66,22 +66,32 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     ActorSystemManager.actorSystem.scheduler.scheduleOnce(1.second) {
       remoteMatchGameRef ! Ready(playerId, gameClientActorRef)
     }
-
   }
 
-  override def notifyUserAction(action: GameViewEvent): Unit = {
+  override def playerMadeAnAction(): Boolean = {
+    !turnHistory.isEmpty
+  }
+
+  override def getHistoryState(): (Boolean, Boolean) = {
+    (turnHistory.canPrevious, turnHistory.canNext)
+  }
+
+  override def notifyUserAction(action: UserGameAction): Unit = {
     val currentState = this.storeOpt.get.currentState
 
     action match {
-      case EndTurnAndDrawViewEvent => remoteMatchGameRef ! EndTurnAndDraw(this.playerId)
-      case EndTurnViewEvent => {
 
+      case EndTurnAndDrawAction =>
+        remoteMatchGameRef ! EndTurnAndDraw(this.playerId)
+      case EndTurnAction => {
         remoteMatchGameRef ! EndTurnWithPlays(this.playerId, currentState.board, currentState.hand)
       }
-      case MakeCombinationViewEvent(cards) => {
+
+      case MakeCombinationAction(cards) => {
         // validate and play
       }
-      case PickCardsViewEvent(cards) => {
+
+      case PickCardsAction(cards) => {
         gameManager.pickBoardCards(currentState.hand, currentState.board, cards) match {
           case Right((hand, board)) => {
             val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
@@ -91,10 +101,12 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
         }
 
       }
-      case UpdateCardCombinationViewEvent(combinationId, card, indexToAdd) => {
+
+      case UpdateCardCombinationAction(combinationId, card) => {
 
       }
-      case UndoViewEvent => {
+
+      case UndoAction => {
         val (optState, updatedHistory) = turnHistory.previous()
         this.turnHistory = updatedHistory
         if (optState.isDefined) {
@@ -102,7 +114,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           this.notifyEvent(StateUpdatedEvent(optState.get))
         }
       }
-      case RedoViewEvent => {
+
+      case RedoAction => {
         val (optState, updatedHistory) = turnHistory.next()
         this.turnHistory = updatedHistory
         if (optState.isDefined) {
@@ -110,7 +123,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           this.notifyEvent(StateUpdatedEvent(optState.get))
         }
       }
-      case ResetHistoryViewEvent => {
+
+      case ResetAction => {
         val (optState, updatedHistory) = turnHistory.reset()
         this.turnHistory = updatedHistory
         if (optState.isDefined) {
@@ -118,16 +132,14 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           this.notifyEvent(StateUpdatedEvent(optState.get))
         }
       }
-      case LeaveGameViewEvent => this.remoteMatchGameRef ! LeaveGame(this.playerId)
 
-      case SortHandByRankViewEvent =>
-      case SortHandBySuitViewEvent =>
+      case LeaveGameAction => this.remoteMatchGameRef ! LeaveGame(this.playerId)
+
+      case SortHandByRankAction =>
+      case SortHandBySuitAction =>
 
     }
   }
 
-
   // endregion
-
-
 }

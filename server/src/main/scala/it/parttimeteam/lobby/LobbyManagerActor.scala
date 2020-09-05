@@ -1,12 +1,12 @@
 package it.parttimeteam.lobby
 
-import akka.actor.{Actor, ActorRef, Props}
-import it.parttimeteam.`match`.GameMatchActor
-import it.parttimeteam.`match`.GameMatchActor.GamePlayers
+import akka.actor.{Actor, ActorRef, Props, Terminated}
+import it.parttimeteam.`match`.GameMatchManagerActor
+import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
 import it.parttimeteam.common.{GamePlayer, IdGenerator}
 import it.parttimeteam.core.GameManagerImpl
-import it.parttimeteam.{common}
 import it.parttimeteam.messages.LobbyMessages._
+import it.parttimeteam.messages.PrivateLobbyIdNotValidError
 
 object LobbyManagerActor {
 
@@ -29,13 +29,14 @@ class LobbyManagerActor extends Actor with IdGenerator {
     case Connect(clientRef) => {
       val clientId = generateId
       connectedPlayers = connectedPlayers + (clientId -> clientRef)
+      context.watch(clientRef)
       clientRef ! Connected(clientId)
     }
 
     case JoinPublicLobby(clientId, username, numberOfPlayers) => {
       this.executeOnClientRefPresent(clientId) { ref =>
         val lobbyType = PlayerNumberLobby(numberOfPlayers)
-        this.lobbyManger.addPlayer(common.GamePlayer(clientId, username, ref), lobbyType)
+        this.lobbyManger.addPlayer(GamePlayer(clientId, username, ref), lobbyType)
         ref ! UserAddedToLobby()
         this.checkAndCreateGame(lobbyType)
       }
@@ -44,7 +45,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
     case CreatePrivateLobby(clientId, username, numberOfPlayers) => {
       this.executeOnClientRefPresent(clientId) { ref =>
         val lobbyType = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
-        this.lobbyManger.addPlayer(common.GamePlayer(clientId, username, ref), lobbyType)
+        this.lobbyManger.addPlayer(GamePlayer(clientId, username, ref), lobbyType)
         ref ! PrivateLobbyCreated(lobbyType.lobbyId)
       }
     }
@@ -52,16 +53,25 @@ class LobbyManagerActor extends Actor with IdGenerator {
       this.executeOnClientRefPresent(clientId) { ref =>
         privateLobbyService.retrieveExistingLobby(lobbyCode) match {
           case Some(lobbyType) => {
-            val player = common.GamePlayer(clientId, username, ref)
+            val player = GamePlayer(clientId, username, ref)
             this.lobbyManger.addPlayer(player, lobbyType)
             ref ! UserAddedToLobby()
             this.checkAndCreateGame(lobbyType)
           }
-          case None => ref ! LobbyJoinError(s"Private lobby with code $lobbyCode does not exist")
+          case None => ref ! LobbyError(PrivateLobbyIdNotValidError)
         }
       }
 
     case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
+
+    case Terminated(actorRef) => {
+      this.connectedPlayers.find(p => p._2 == actorRef) match {
+        case Some((userId, _)) => {
+          this.lobbyManger.removePlayer(userId)
+          this.connectedPlayers = this.connectedPlayers - userId
+        }
+      }
+    }
 
   }
 
@@ -73,7 +83,13 @@ class LobbyManagerActor extends Actor with IdGenerator {
   }
 
   private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
-    val gameActor = context.actorOf(GameMatchActor.props(lobbyType.numberOfPlayers, new GameManagerImpl()))
+    val gameActor = context.actorOf(GameMatchManagerActor.props(lobbyType.numberOfPlayers, new GameManagerImpl()))
+    players.foreach(p => {
+      // remove player form lobby
+      this.lobbyManger.removePlayer(p.id)
+      // remove player from connected players structure
+      this.connectedPlayers = this.connectedPlayers - p.id
+    })
     gameActor ! GamePlayers(players)
   }
 

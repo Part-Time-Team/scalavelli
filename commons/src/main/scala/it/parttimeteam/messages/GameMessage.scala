@@ -52,11 +52,11 @@ object GameMessage {
   case class LeaveGame(playerId: String)
 
   /**
-   * a generic error sent by the server to the client
+   * an error sent by the server to the client
    *
    * @param errorType
    */
-  case class Error(errorType: GameError)
+  case class Error(errorType: ErrorMessage)
 
   /**
    * End the current turn with one or more plays
@@ -99,5 +99,7 @@ object GameMessage {
    */
   case class Lost(winnerPlayerName: String)
 
+
+  case object GameEndedForPlayerLeft
 
 }
