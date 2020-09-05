@@ -88,7 +88,17 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       }
 
       case MakeCombinationAction(cards) => {
-        // validate and play
+        withState { state =>
+          this.gameManager.playCombination(state.hand, state.board, cards) match {
+            case Right((updatedHand, updatedBoard)) =>
+              val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+              this.turnHistory = this.turnHistory.setPresent(updatedState)
+              this.notifyEvent(StateUpdatedEvent(updatedState))
+
+            case Left(error) => this.notifyEvent(ErrorEvent("Combiation not valid"))
+          }
+
+        }
       }
 
       case PickCardsAction(cards) => {
@@ -142,4 +152,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }
 
   // endregion
+
+  private def withState(f: PlayerGameState => Unit): Unit = this.storeOpt match {
+    case Some(state) => f(state.currentState)
+  }
 }
