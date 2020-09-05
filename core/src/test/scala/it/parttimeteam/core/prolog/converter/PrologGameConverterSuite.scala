@@ -19,15 +19,6 @@ class PrologGameConverterSuite extends AnyFunSuite {
     assertResult("([(1,\"Clubs\"),(4,\"Spades\"),(13,\"Diamonds\")],X).")(prologConverter.cardsConvertToString(sequence)(Some(new Var("X"))))
   }
 
-  test("Convert term to string and replace specific characters") {
-
-    val term: Term = prolog toTerm "['1']"
-    val seq: Term = prolog toTerm "([(1,\"Clubs\"),(1,\"Spades\")])"
-
-    assertResult("[1]")(prologConverter toString(term, "'"))
-    assertResult("[(1,'Clubs'),(1,'Spades')]")(prologConverter toString(seq, "','"))
-  }
-
   test("Convert a sequence of term into a tuple sequence") {
 
     val prologEngine = new PrologGameEngine
