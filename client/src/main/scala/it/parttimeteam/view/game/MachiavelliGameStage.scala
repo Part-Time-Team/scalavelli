@@ -182,7 +182,7 @@ object MachiavelliGameStage {
         alert.showAndWait match {
           case Some(b) =>
             if (b == ButtonType.OK) {
-              gameListener.playAgain()
+              gameListener.onViewEvent(PlayAgainEvent)
             } else {
               System.exit(0)
             }
