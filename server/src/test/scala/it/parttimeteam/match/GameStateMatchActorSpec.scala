@@ -3,8 +3,8 @@ package it.parttimeteam.`match`
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
-import it.parttimeteam.`match`.GameMatchActor
-import it.parttimeteam.`match`.GameMatchActor.GamePlayers
+import it.parttimeteam.`match`.GameMatchManagerActor
+import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import it.parttimeteam.core.player.Player
@@ -30,7 +30,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
   "a game actor" should {
 
     "accept players and notify game started with initial state" in {
-      val gameActor = TestActorRef[GameMatchActor](GameMatchActor.props(NUMBER_OF_PLAYERS, new FakeGameManager()))
+      val gameActor = TestActorRef[GameMatchManagerActor](GameMatchManagerActor.props(NUMBER_OF_PLAYERS, new FakeGameManager()))
       val player1 = TestProbe()
       val player2 = TestProbe()
 

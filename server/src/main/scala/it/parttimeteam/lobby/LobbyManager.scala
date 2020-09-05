@@ -6,6 +6,11 @@ object LobbyManager {
   def apply(): LobbyManager[GamePlayer] = new LobbyManagerImpl[GamePlayer]()
 }
 
+/**
+ * Mantains and update the list of all the lobbies available and of all the players inside them
+ *
+ * @tparam T
+ */
 trait LobbyManager[T <: Player] {
 
 
