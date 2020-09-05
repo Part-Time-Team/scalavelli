@@ -24,7 +24,7 @@ class GameManagerPropSpec extends AnyPropSpec with TableDrivenPropertyChecks wit
 
   property("Test valid combinations") {
     forAll(validCombs) { comb =>
-      gameManager validateCombination comb should be(true)
+      gameManager validateCombination comb.cards should be(true)
     }
   }
 
@@ -33,7 +33,7 @@ class GameManagerPropSpec extends AnyPropSpec with TableDrivenPropertyChecks wit
 
   property("Test invalid combinations") {
     forAll(invalidCombs) { comb =>
-      gameManager validateCombination comb should be(false)
+      gameManager validateCombination comb.cards should be(false)
     }
   }
 }

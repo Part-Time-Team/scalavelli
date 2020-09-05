@@ -37,10 +37,10 @@ trait GameManager {
   /**
    * Validate a card combination.
    *
-   * @param combination Combination to validate.
+   * @param cards Combination to validate.
    * @return True if is valid, false anywhere.
    */
-  def validateCombination(combination: CardCombination): Boolean
+  def validateCombination(cards: Seq[Card]): Boolean
 
   /**
    * Pick cards from a combination on the table.
@@ -55,13 +55,13 @@ trait GameManager {
   /**
    * Play cards from hand to board.
    *
-   * @param hand        Hand where to pick cards.
-   * @param board       Board where put cards.
-   * @param combination Combination to pick.
+   * @param hand  Hand where to pick cards.
+   * @param board Board where put cards.
+   * @param cards cards to pick.
    * @return Hand and Board updated. If hand doesn't contain any combination card, return exactly the same hand and board.
    * @todo Take only a card seq to add to board.
    */
-  def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board)
+  def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
 
   /**
    * Update a combination in the board by his id with some cards.
@@ -102,13 +102,13 @@ class GameManagerImpl extends GameManager {
    * @inheritdoc
    */
   override def validateTurn(board: Board, hand: Hand): Boolean =
-    board.combinations.forall(c => validateCombination(c)) && hand.tableCards.isEmpty
+    board.combinations.forall(c => validateCombination(c.cards)) && hand.tableCards.isEmpty
 
   // TODO: This method is useful?
   /**
    * @inheritdoc
    */
-  override def validateCombination(combination: CardCombination): Boolean = combination.isValid
+  override def validateCombination(cards: Seq[Card]): Boolean = cards.isValid
 
   /**
    * @inheritdoc
@@ -124,11 +124,11 @@ class GameManagerImpl extends GameManager {
    */
   override def playCombination(hand: Hand,
                                board: Board,
-                               combination: CardCombination): (Hand, Board) = {
-    val removed = hand.removeCards(combination.cards)
-    removed match {
-      case Right(value) => (value._1, board.putCombination(combination))
-      case _ => (hand, board)
+                               cards: Seq[Card]): Either[String, (Hand, Board)] = {
+    if (this.validateCombination(cards)) {
+      hand.removeCards(cards).map(res => (res._1, board.putCombination(res._2)))
+    } else {
+      Left("Combination not valid")
     }
   }
 

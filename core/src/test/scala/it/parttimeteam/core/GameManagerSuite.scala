@@ -85,27 +85,23 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       val state = gameManager.create(playerInfos)
 
       it("Play a valid comb") {
-        val seq = Seq(c1, c2, c3)
-        val comb = CardCombination("#1", seq)
-        val played = gameManager.playCombination(Hand((c4 +: seq).toList), state.board, comb)
-
+        val cards = Seq(c1, c2, c3)
+        val result = gameManager.playCombination(Hand((c4 +: cards).toList), state.board, cards)
+        assert(result.isRight)
+        val played = result.right.get
         // Check that seq cards are not in player hand.
         assert(played._1.playerCards.nonEmpty)
         assert(played._1.tableCards.isEmpty)
         assertResult(Seq(c4))(played._1.playerCards)
         // Check that board contain the new combination.
-        assert(played._2.combinations contains comb)
+        assert(played._2.combinations.exists(_.cards == cards))
       }
 
-      it("Play cards that are not present in the hand") {
-        val seq = Seq(c1, c2, c3)
+      it("Play cards that are not present in the hand returns error") {
+        val cards = Seq(c1, c2, c3)
         val handSeq = List(c2, c3, c4)
-        val comb = CardCombination("#1", seq)
-        val played = gameManager.playCombination(Hand(handSeq), state.board, comb)
-
-        // Hand and Board must be the same as before the operation.
-        assertResult(played._1)(Hand(handSeq))
-        assertResult(played._2)(state.board)
+        val result = gameManager.playCombination(Hand(handSeq), state.board, cards)
+        assert(result.isLeft)
       }
     }
 
@@ -117,8 +113,10 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         val daniele = (state getPlayer "1").get
 
         // First play a combination.
-        val played = gameManager.playCombination(
-          Hand(seq.toList), state.board, comb)
+        val result = gameManager.playCombination(
+          Hand(seq.toList), state.board, comb.cards)
+        assert(result.isRight)
+        val played = result.right.get
         state = state.copy(board = played._2)
         daniele.hand = played._1
         state = state updatePlayer daniele
