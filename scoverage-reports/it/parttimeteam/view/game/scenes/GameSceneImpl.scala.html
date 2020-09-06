@@ -1,0 +1,2675 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/game/scenes/GameSceneImpl.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game.scenes
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.core.cards.Card
+</span>4 <span style=''>import it.parttimeteam.gamestate.PlayerGameState
+</span>5 <span style=''>import it.parttimeteam.view.game.listeners.GameSceneListener
+</span>6 <span style=''>import it.parttimeteam.view.game.scenes.GameScene.BoardListener
+</span>7 <span style=''>import it.parttimeteam.view.game.scenes.model.{GameCard, GameCardCombination}
+</span>8 <span style=''>import it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl
+</span>9 <span style=''>import it.parttimeteam.view.game.scenes.panes.HandBar.HandBarImpl
+</span>10 <span style=''>import it.parttimeteam.view.game.scenes.panes.BoardPane.BoardPaneImpl
+</span>11 <span style=''>import it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl
+</span>12 <span style=''>import it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl
+</span>13 <span style=''>import it.parttimeteam.view.game.scenes.panes.{ActionBar, HandBar, BoardPane, GameInfoBar}
+</span>14 <span style=''>import it.parttimeteam.view.game.{MachiavelliGameStage, SelectionManager}
+</span>15 <span style=''>import scalafx.application.Platform
+</span>16 <span style=''>import scalafx.scene.layout.{BorderPane, VBox}
+</span>17 <span style=''>
+</span>18 <span style=''>/** @inheritdoc */
+</span>19 <span style=''>class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
+</span>20 <span style=''>  var inTurn = </span><span style='background: #F0ADAD'>false</span><span style=''>
+</span>21 <span style=''>
+</span>22 <span style=''>  val handSelectionManager: SelectionManager[GameCard] = </span><span style='background: #F0ADAD'>SelectionManager()</span><span style=''>
+</span>23 <span style=''>  val boardSelectionManager: SelectionManager[GameCard] = </span><span style='background: #F0ADAD'>SelectionManager()</span><span style=''>
+</span>24 <span style=''>  val combinationSelectionManager: SelectionManager[GameCardCombination] = </span><span style='background: #F0ADAD'>SelectionManager()</span><span style=''>
+</span>25 <span style=''>  val initMatchDialog = </span><span style='background: #F0ADAD'>new InitMatchDialogImpl(parentStage)</span><span style=''>
+</span>26 <span style=''>
+</span>27 <span style=''>  val sceneListener: GameSceneListener = </span><span style='background: #F0ADAD'>new</span><span style=''> GameSceneListener {
+</span>28 <span style=''>
+</span>29 <span style=''>    /** @inheritdoc */
+</span>30 <span style=''>    override def pickCombination(combinationId: String): Unit = {
+</span>31 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.pickCombination(combinationId)</span><span style=''>
+</span>32 <span style=''>    }
+</span>33 <span style=''>
+</span>34 <span style=''>    /** @inheritdoc */
+</span>35 <span style=''>    override def makeCombination(): Unit = {
+</span>36 <span style=''>      val cards: Seq[Card] = </span><span style='background: #F0ADAD'>handSelectionManager.getSelectedItems.map(p =&gt; p.getCard)</span><span style=''>
+</span>37 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.makeCombination(cards)</span><span style=''>
+</span>38 <span style=''>    }
+</span>39 <span style=''>
+</span>40 <span style=''>    /** @inheritdoc */
+</span>41 <span style=''>    override def pickCards(): Unit = {
+</span>42 <span style=''>      val cards: Seq[Card] = </span><span style='background: #F0ADAD'>boardSelectionManager.getSelectedItems.map(p =&gt; p.getCard)</span><span style=''>
+</span>43 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.pickCards(cards)</span><span style=''>
+</span>44 <span style=''>    }
+</span>45 <span style=''>
+</span>46 <span style=''>    /** @inheritdoc */
+</span>47 <span style=''>    override def sortHandBySuit(): Unit = {
+</span>48 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.sortHandBySuit()</span><span style=''>
+</span>49 <span style=''>    }
+</span>50 <span style=''>
+</span>51 <span style=''>    /** @inheritdoc */
+</span>52 <span style=''>    override def sortHandByRank(): Unit = {
+</span>53 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.sortHandByRank()</span><span style=''>
+</span>54 <span style=''>    }
+</span>55 <span style=''>
+</span>56 <span style=''>    /** @inheritdoc */
+</span>57 <span style=''>    override def endTurn(): Unit = {
+</span>58 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.endTurn()</span><span style=''>
+</span>59 <span style=''>    }
+</span>60 <span style=''>
+</span>61 <span style=''>    /** @inheritdoc */
+</span>62 <span style=''>    override def nextState(): Unit = {
+</span>63 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.nextState()</span><span style=''>
+</span>64 <span style=''>    }
+</span>65 <span style=''>
+</span>66 <span style=''>    /** @inheritdoc */
+</span>67 <span style=''>    override def previousState(): Unit = {
+</span>68 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.previousState()</span><span style=''>
+</span>69 <span style=''>    }
+</span>70 <span style=''>
+</span>71 <span style=''>    /** @inheritdoc */
+</span>72 <span style=''>    override def resetState(): Unit = {
+</span>73 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.resetHistory()</span><span style=''>
+</span>74 <span style=''>    }
+</span>75 <span style=''>
+</span>76 <span style=''>    /** @inheritdoc */
+</span>77 <span style=''>    override def clearHandSelection(): Unit = {
+</span>78 <span style=''>      </span><span style='background: #F0ADAD'>handSelectionManager.clearSelection()</span><span style=''>
+</span>79 <span style=''>      </span><span style='background: #F0ADAD'>updateActionBarButtons()</span><span style=''>
+</span>80 <span style=''>    }
+</span>81 <span style=''>
+</span>82 <span style=''>    /** @inheritdoc */
+</span>83 <span style=''>    override def updateCombination(): Unit = {
+</span>84 <span style=''>      val combination = </span><span style='background: #F0ADAD'>combinationSelectionManager.getSelectedItems.head</span><span style=''>
+</span>85 <span style=''>      val selectedCards = </span><span style='background: #F0ADAD'>handSelectionManager.getSelectedItems</span><span style=''>
+</span>86 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.updateCardCombination(combination.getCombination.id, selectedCards.map(c =&gt; c.getCard))</span><span style=''>
+</span>87 <span style=''>    }
+</span>88 <span style=''>  }
+</span>89 <span style=''>
+</span>90 <span style=''>  val rightBar: GameInfoBar = </span><span style='background: #F0ADAD'>new GameInfoBarImpl(sceneListener)</span><span style=''>
+</span>91 <span style=''>
+</span>92 <span style=''>  val bottom = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
+</span>93 <span style=''>  val actionBar: ActionBar = </span><span style='background: #F0ADAD'>new ActionBarImpl(sceneListener)</span><span style=''>
+</span>94 <span style=''>
+</span>95 <span style=''>  val bottomBar: HandBar = </span><span style='background: #F0ADAD'>new HandBarImpl((card: GameCard) =&gt; {
+</span>96 <span style=''></span><span style='background: #F0ADAD'>    handSelectionManager.onItemSelected(card)
+</span>97 <span style=''></span><span style='background: #F0ADAD'>    updateActionBarButtons()
+</span>98 <span style=''></span><span style='background: #F0ADAD'>  })</span><span style=''>
+</span>99 <span style=''>
+</span>100 <span style=''>  </span><span style='background: #F0ADAD'>bottom.children.addAll(actionBar, bottomBar)</span><span style=''>
+</span>101 <span style=''>
+</span>102 <span style=''>  val centerPane: BoardPane = </span><span style='background: #F0ADAD'>new BoardPaneImpl(new BoardListener {
+</span>103 <span style=''></span><span style='background: #F0ADAD'>
+</span>104 <span style=''></span><span style='background: #F0ADAD'>    /** @inheritdoc */
+</span>105 <span style=''></span><span style='background: #F0ADAD'>    override def onCombinationClicked(cardCombination: GameCardCombination): Unit = {
+</span>106 <span style=''></span><span style='background: #F0ADAD'>      combinationSelectionManager.onItemSelected(cardCombination)
+</span>107 <span style=''></span><span style='background: #F0ADAD'>      updateActionBarButtons()
+</span>108 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>109 <span style=''></span><span style='background: #F0ADAD'>
+</span>110 <span style=''></span><span style='background: #F0ADAD'>    /** @inheritdoc */
+</span>111 <span style=''></span><span style='background: #F0ADAD'>    override def onCardClicked(card: GameCard): Unit = {
+</span>112 <span style=''></span><span style='background: #F0ADAD'>      boardSelectionManager.onItemSelected(card)
+</span>113 <span style=''></span><span style='background: #F0ADAD'>      updateActionBarButtons()
+</span>114 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>115 <span style=''></span><span style='background: #F0ADAD'>
+</span>116 <span style=''></span><span style='background: #F0ADAD'>    /** @inheritdoc */
+</span>117 <span style=''></span><span style='background: #F0ADAD'>    override def onPickCombinationClick(cardCombination: GameCardCombination): Unit = {
+</span>118 <span style=''></span><span style='background: #F0ADAD'>      parentStage.pickCombination(cardCombination.getCombination.id)
+</span>119 <span style=''></span><span style='background: #F0ADAD'>    }
+</span>120 <span style=''></span><span style='background: #F0ADAD'>  })</span><span style=''>
+</span>121 <span style=''>
+</span>122 <span style=''>  </span><span style='background: #F0ADAD'>stylesheets.add(&quot;/styles/gameStyle.css&quot;)</span><span style=''>
+</span>123 <span style=''>
+</span>124 <span style=''>  val borderPane: BorderPane = </span><span style='background: #F0ADAD'>new BorderPane()</span><span style=''>
+</span>125 <span style=''>
+</span>126 <span style=''>  </span><span style='background: #F0ADAD'>borderPane.bottom = bottom</span><span style=''>
+</span>127 <span style=''>  </span><span style='background: #F0ADAD'>borderPane.right = rightBar</span><span style=''>
+</span>128 <span style=''>  </span><span style='background: #F0ADAD'>borderPane.center = centerPane</span><span style=''>
+</span>129 <span style=''>
+</span>130 <span style=''>  </span><span style='background: #F0ADAD'>root = borderPane</span><span style=''>
+</span>131 <span style=''>
+</span>132 <span style=''>  /** @inheritdoc */
+</span>133 <span style=''>  override def setState(state: PlayerGameState): Unit = {
+</span>134 <span style=''>    </span><span style='background: #F0ADAD'>this.handSelectionManager.clearSelection()</span><span style=''>
+</span>135 <span style=''>    </span><span style='background: #F0ADAD'>this.boardSelectionManager.clearSelection()</span><span style=''>
+</span>136 <span style=''>    </span><span style='background: #F0ADAD'>this.combinationSelectionManager.clearSelection()</span><span style=''>
+</span>137 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>138 <span style=''></span><span style='background: #F0ADAD'>      centerPane.setBoard(state.board)
+</span>139 <span style=''></span><span style='background: #F0ADAD'>
+</span>140 <span style=''></span><span style='background: #F0ADAD'>      bottomBar.setHand(state.hand)
+</span>141 <span style=''></span><span style='background: #F0ADAD'>
+</span>142 <span style=''></span><span style='background: #F0ADAD'>      rightBar.setOtherPlayers(state.otherPlayers)
+</span>143 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>144 <span style=''>  }
+</span>145 <span style=''>
+</span>146 <span style=''>  /** @inheritdoc */
+</span>147 <span style=''>  override def showInitMatch(): Unit = {
+</span>148 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>149 <span style=''></span><span style='background: #F0ADAD'>      initMatchDialog.showDialog()
+</span>150 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>151 <span style=''>  }
+</span>152 <span style=''>
+</span>153 <span style=''>  /** @inheritdoc */
+</span>154 <span style=''>  override def hideInitMatch(): Unit = {
+</span>155 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>156 <span style=''></span><span style='background: #F0ADAD'>      initMatchDialog.hideDialog()
+</span>157 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>158 <span style=''>  }
+</span>159 <span style=''>
+</span>160 <span style=''>  /** @inheritdoc */
+</span>161 <span style=''>  override def setMessage(message: String): Unit = {
+</span>162 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>163 <span style=''></span><span style='background: #F0ADAD'>      rightBar.setMessage(message)
+</span>164 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>165 <span style=''>  }
+</span>166 <span style=''>
+</span>167 <span style=''>  /** @inheritdoc */
+</span>168 <span style=''>  override def showTimer(): Unit = {
+</span>169 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>170 <span style=''></span><span style='background: #F0ADAD'>      rightBar.showTimer()
+</span>171 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>172 <span style=''>  }
+</span>173 <span style=''>
+</span>174 <span style=''>  /** @inheritdoc */
+</span>175 <span style=''>  override def setInTurn(inTurn: Boolean): Unit = {
+</span>176 <span style=''>    </span><span style='background: #F0ADAD'>this.inTurn = inTurn</span><span style=''>
+</span>177 <span style=''>    </span><span style='background: #F0ADAD'>updateActionBarButtons()</span><span style=''>
+</span>178 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.setNextEnabled(inTurn)</span><span style=''>
+</span>179 <span style=''>  }
+</span>180 <span style=''>  
+</span>181 <span style=''>  /** @inheritdoc */
+</span>182 <span style=''>  private def updateActionBarButtons(): Unit = {
+</span>183 <span style=''>    </span><span style='background: #F0ADAD'>actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty &amp;&amp; inTurn)</span><span style=''>
+</span>184 <span style=''>    </span><span style='background: #F0ADAD'>actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty)</span><span style=''>
+</span>185 <span style=''>    </span><span style='background: #F0ADAD'>actionBar.enableUpdateCardCombination(combinationSelectionManager.getSelectedItems.size == 1 &amp;&amp; handSelectionManager.getSelectedItems.size == 1 &amp;&amp; inTurn)</span><span style=''>
+</span>186 <span style=''>    </span><span style='background: #F0ADAD'>actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty &amp;&amp; inTurn)</span><span style=''>
+</span>187 <span style=''>  }
+</span>188 <span style=''>
+</span>189 <span style=''>  /** @inheritdoc */
+</span>190 <span style=''>  override def hideTimer(): Unit = {
+</span>191 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.hideTimer()</span><span style=''>
+</span>192 <span style=''>  }
+</span>193 <span style=''>
+</span>194 <span style=''>  /** @inheritdoc */
+</span>195 <span style=''>  override def disableActions(): Unit = {
+</span>196 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.disableActions()</span><span style=''>
+</span>197 <span style=''>    </span><span style='background: #F0ADAD'>centerPane.disableActions()</span><span style=''>
+</span>198 <span style=''>    </span><span style='background: #F0ADAD'>actionBar.disableActions()</span><span style=''>
+</span>199 <span style=''>    </span><span style='background: #F0ADAD'>bottomBar.disableActions()</span><span style=''>
+</span>200 <span style=''>  }
+</span>201 <span style=''>
+</span>202 <span style=''>  /** @inheritdoc */
+</span>203 <span style=''>  override def enableActions(): Unit = {
+</span>204 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.enableActions()</span><span style=''>
+</span>205 <span style=''>    </span><span style='background: #F0ADAD'>centerPane.enableActions()</span><span style=''>
+</span>206 <span style=''>    </span><span style='background: #F0ADAD'>actionBar.enableActions()</span><span style=''>
+</span>207 <span style=''>    </span><span style='background: #F0ADAD'>bottomBar.enableActions()</span><span style=''>
+</span>208 <span style=''>  }
+</span>209 <span style=''>
+</span>210 <span style=''>  /** @inheritdoc */
+</span>211 <span style=''>  override def setHistoryState(canUndo: Boolean, canRedo: Boolean): Unit = {
+</span>212 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.setUndoEnabled(canUndo &amp;&amp; inTurn)</span><span style=''>
+</span>213 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.setRedoEnabled(canRedo &amp;&amp; inTurn)</span><span style=''>
+</span>214 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.setResetEnabled(inTurn)</span><span style=''>
+</span>215 <span style=''>  }
+</span>216 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1821
+        </td>
+        <td>
+          1057
+          -
+          1062
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          false
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1184
+        </td>
+        <td>
+          1121
+          -
+          1139
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.game.SelectionManager.apply[it.parttimeteam.view.game.scenes.model.GameCard]()
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          2200
+        </td>
+        <td>
+          1198
+          -
+          1216
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.game.SelectionManager.apply[it.parttimeteam.view.game.scenes.model.GameCard]()
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1572
+        </td>
+        <td>
+          1292
+          -
+          1310
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.game.SelectionManager.apply[it.parttimeteam.view.game.scenes.model.GameCardCombination]()
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          989
+        </td>
+        <td>
+          1359
+          -
+          1370
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.parentStage
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          2229
+        </td>
+        <td>
+          1335
+          -
+          1371
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl(GameSceneImpl.this.parentStage)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          1573
+        </td>
+        <td>
+          1414
+          -
+          1417
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1694
+        </td>
+        <td>
+          1534
+          -
+          1576
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.pickCombination
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.pickCombination(combinationId)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1824
+        </td>
+        <td>
+          1681
+          -
+          1738
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.map
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.handSelectionManager.getSelectedItems.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((p: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; p.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1158
+        </td>
+        <td>
+          1728
+          -
+          1737
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.model.GameCard.getCard
+        </td>
+        <td style="background: #F0ADAD">
+          p.getCard
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          2109
+        </td>
+        <td>
+          1722
+          -
+          1722
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #F0ADAD">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1187
+        </td>
+        <td>
+          1745
+          -
+          1779
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.makeCombination
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.makeCombination(cards)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          2176
+        </td>
+        <td>
+          1926
+          -
+          1935
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.model.GameCard.getCard
+        </td>
+        <td style="background: #F0ADAD">
+          p.getCard
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1637
+        </td>
+        <td>
+          1920
+          -
+          1920
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #F0ADAD">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1062
+        </td>
+        <td>
+          1878
+          -
+          1936
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.map
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.boardSelectionManager.getSelectedItems.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((p: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; p.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          2292
+        </td>
+        <td>
+          1943
+          -
+          1971
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.pickCards
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.pickCards(cards)
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1700
+        </td>
+        <td>
+          2052
+          -
+          2080
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.sortHandBySuit
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.sortHandBySuit()
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          1141
+        </td>
+        <td>
+          2161
+          -
+          2189
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.sortHandByRank
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.sortHandByRank()
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          2079
+        </td>
+        <td>
+          2263
+          -
+          2284
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.endTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.endTurn()
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          1469
+        </td>
+        <td>
+          2360
+          -
+          2383
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.nextState
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.nextState()
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          1213
+        </td>
+        <td>
+          2463
+          -
+          2490
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.previousState
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.previousState()
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          2179
+        </td>
+        <td>
+          2567
+          -
+          2593
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.resetHistory
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.resetHistory()
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          1568
+        </td>
+        <td>
+          2678
+          -
+          2715
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.clearSelection
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.handSelectionManager.clearSelection()
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          1038
+        </td>
+        <td>
+          2722
+          -
+          2746
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.updateActionBarButtons
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.updateActionBarButtons()
+        </td>
+      </tr><tr>
+        <td>
+          84
+        </td>
+        <td>
+          2204
+        </td>
+        <td>
+          2848
+          -
+          2897
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.IterableLike.head
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.combinationSelectionManager.getSelectedItems.head
+        </td>
+      </tr><tr>
+        <td>
+          85
+        </td>
+        <td>
+          1679
+        </td>
+        <td>
+          2924
+          -
+          2961
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.getSelectedItems
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.handSelectionManager.getSelectedItems
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1214
+        </td>
+        <td>
+          3033
+          -
+          3066
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.map
+        </td>
+        <td style="background: #F0ADAD">
+          selectedCards.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((c: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; c.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          2057
+        </td>
+        <td>
+          3056
+          -
+          3065
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.model.GameCard.getCard
+        </td>
+        <td style="background: #F0ADAD">
+          c.getCard
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1500
+        </td>
+        <td>
+          3050
+          -
+          3050
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #F0ADAD">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          2152
+        </td>
+        <td>
+          2968
+          -
+          3067
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.updateCardCombination
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.updateCardCombination(combination.getCombination.id, selectedCards.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((c: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; c.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]))
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1146
+        </td>
+        <td>
+          3002
+          -
+          3031
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CardCombination.id
+        </td>
+        <td style="background: #F0ADAD">
+          combination.getCombination.id
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          1039
+        </td>
+        <td>
+          3129
+          -
+          3142
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.sceneListener
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.sceneListener
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          2288
+        </td>
+        <td>
+          3109
+          -
+          3143
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl(GameSceneImpl.this.sceneListener)
+        </td>
+      </tr><tr>
+        <td>
+          92
+        </td>
+        <td>
+          1683
+        </td>
+        <td>
+          3160
+          -
+          3170
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.VBox.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.VBox()
+        </td>
+      </tr><tr>
+        <td>
+          93
+        </td>
+        <td>
+          1073
+        </td>
+        <td>
+          3218
+          -
+          3231
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.sceneListener
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.sceneListener
+        </td>
+      </tr><tr>
+        <td>
+          93
+        </td>
+        <td>
+          2063
+        </td>
+        <td>
+          3200
+          -
+          3232
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl(GameSceneImpl.this.sceneListener)
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          2158
+        </td>
+        <td>
+          3261
+          -
+          3378
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HandBar.HandBarImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.game.scenes.panes.HandBar.HandBarImpl(((card: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; {
+  GameSceneImpl.this.handSelectionManager.onItemSelected(card);
+  GameSceneImpl.this.updateActionBarButtons()
+}))
+        </td>
+      </tr><tr>
+        <td>
+          96
+        </td>
+        <td>
+          1501
+        </td>
+        <td>
+          3303
+          -
+          3344
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.onItemSelected
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.handSelectionManager.onItemSelected(card)
+        </td>
+      </tr><tr>
+        <td>
+          97
+        </td>
+        <td>
+          1248
+        </td>
+        <td>
+          3349
+          -
+          3373
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.updateActionBarButtons
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.updateActionBarButtons()
+        </td>
+      </tr><tr>
+        <td>
+          100
+        </td>
+        <td>
+          1019
+        </td>
+        <td>
+          3405
+          -
+          3414
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.layout.HBox.sfxHBox2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.HBox.sfxHBox2jfx(GameSceneImpl.this.actionBar)
+        </td>
+      </tr><tr>
+        <td>
+          100
+        </td>
+        <td>
+          1076
+        </td>
+        <td>
+          3382
+          -
+          3426
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.collections.ObservableList.addAll
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.bottom.children.addAll(layout.this.HBox.sfxHBox2jfx(GameSceneImpl.this.actionBar), control.this.ScrollPane.sfxScrollPane2jfx(GameSceneImpl.this.bottomBar))
+        </td>
+      </tr><tr>
+        <td>
+          100
+        </td>
+        <td>
+          1727
+        </td>
+        <td>
+          3416
+          -
+          3425
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.ScrollPane.sfxScrollPane2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ScrollPane.sfxScrollPane2jfx(GameSceneImpl.this.bottomBar)
+        </td>
+      </tr><tr>
+        <td>
+          100
+        </td>
+        <td>
+          1941
+        </td>
+        <td>
+          3416
+          -
+          3425
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.bottomBar
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.bottomBar
+        </td>
+      </tr><tr>
+        <td>
+          100
+        </td>
+        <td>
+          1576
+        </td>
+        <td>
+          3405
+          -
+          3414
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.actionBar
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.actionBar
+        </td>
+      </tr><tr>
+        <td>
+          102
+        </td>
+        <td>
+          2011
+        </td>
+        <td>
+          3476
+          -
+          3479
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
+          102
+        </td>
+        <td>
+          1729
+        </td>
+        <td>
+          3458
+          -
+          4067
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.BoardPane.BoardPaneImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.game.scenes.panes.BoardPane.BoardPaneImpl({
+  final class $anon extends AnyRef with it.parttimeteam.view.game.scenes.GameScene.BoardListener {
+    def &lt;init&gt;(): &lt;$anon: it.parttimeteam.view.game.scenes.GameScene.BoardListener&gt; = {
+      $anon.super.&lt;init&gt;();
+      ()
+    };
+    override def onCombinationClicked(cardCombination: it.parttimeteam.view.game.scenes.model.GameCardCombination): Unit = {
+      GameSceneImpl.this.combinationSelectionManager.onItemSelected(cardCombination);
+      GameSceneImpl.this.updateActionBarButtons()
+    };
+    override def onCardClicked(card: it.parttimeteam.view.game.scenes.model.GameCard): Unit = {
+      GameSceneImpl.this.boardSelectionManager.onItemSelected(card);
+      GameSceneImpl.this.updateActionBarButtons()
+    };
+    override def onPickCombinationClick(cardCombination: it.parttimeteam.view.game.scenes.model.GameCardCombination): Unit = GameSceneImpl.this.parentStage.pickCombination(cardCombination.getCombination.id)
+  };
+  new $anon()
+})
+        </td>
+      </tr><tr>
+        <td>
+          106
+        </td>
+        <td>
+          2068
+        </td>
+        <td>
+          3612
+          -
+          3671
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.onItemSelected
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.combinationSelectionManager.onItemSelected(cardCombination)
+        </td>
+      </tr><tr>
+        <td>
+          107
+        </td>
+        <td>
+          1535
+        </td>
+        <td>
+          3678
+          -
+          3702
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.updateActionBarButtons
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.updateActionBarButtons()
+        </td>
+      </tr><tr>
+        <td>
+          112
+        </td>
+        <td>
+          1252
+        </td>
+        <td>
+          3796
+          -
+          3838
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.onItemSelected
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.boardSelectionManager.onItemSelected(card)
+        </td>
+      </tr><tr>
+        <td>
+          113
+        </td>
+        <td>
+          2146
+        </td>
+        <td>
+          3845
+          -
+          3869
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.updateActionBarButtons
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.updateActionBarButtons()
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          1025
+        </td>
+        <td>
+          3994
+          -
+          4056
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.pickCombination
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.pickCombination(cardCombination.getCombination.id)
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          1556
+        </td>
+        <td>
+          4022
+          -
+          4055
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CardCombination.id
+        </td>
+        <td style="background: #F0ADAD">
+          cardCombination.getCombination.id
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1144
+        </td>
+        <td>
+          4071
+          -
+          4111
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.add
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.stylesheets.add(&quot;/styles/gameStyle.css&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          1539
+        </td>
+        <td>
+          4144
+          -
+          4160
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.BorderPane(layout.this.BorderPane.&lt;init&gt;$default$1)
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          2043
+        </td>
+        <td>
+          4144
+          -
+          4144
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.&lt;init&gt;$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.BorderPane.&lt;init&gt;$default$1
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          963
+        </td>
+        <td>
+          4184
+          -
+          4190
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.bottom
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.bottom
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          2153
+        </td>
+        <td>
+          4164
+          -
+          4190
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.bottom_=
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.borderPane.bottom_=(GameSceneImpl.this.bottom)
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          1629
+        </td>
+        <td>
+          4212
+          -
+          4220
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.rightBar
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          1051
+        </td>
+        <td>
+          4193
+          -
+          4220
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.right_=
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.borderPane.right_=(GameSceneImpl.this.rightBar)
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          2017
+        </td>
+        <td>
+          4243
+          -
+          4253
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.centerPane
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.centerPane
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1663
+        </td>
+        <td>
+          4223
+          -
+          4253
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.center_=
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.borderPane.center_=(GameSceneImpl.this.centerPane)
+        </td>
+      </tr><tr>
+        <td>
+          130
+        </td>
+        <td>
+          2102
+        </td>
+        <td>
+          4257
+          -
+          4274
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.Scene.root_=
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.root_=(GameSceneImpl.this.borderPane)
+        </td>
+      </tr><tr>
+        <td>
+          130
+        </td>
+        <td>
+          1121
+        </td>
+        <td>
+          4264
+          -
+          4274
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.borderPane
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.borderPane
+        </td>
+      </tr><tr>
+        <td>
+          134
+        </td>
+        <td>
+          1514
+        </td>
+        <td>
+          4359
+          -
+          4401
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.clearSelection
+        </td>
+        <td style="background: #F0ADAD">
+          this.handSelectionManager.clearSelection()
+        </td>
+      </tr><tr>
+        <td>
+          135
+        </td>
+        <td>
+          969
+        </td>
+        <td>
+          4406
+          -
+          4449
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.clearSelection
+        </td>
+        <td style="background: #F0ADAD">
+          this.boardSelectionManager.clearSelection()
+        </td>
+      </tr><tr>
+        <td>
+          136
+        </td>
+        <td>
+          2154
+        </td>
+        <td>
+          4454
+          -
+          4503
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.clearSelection
+        </td>
+        <td style="background: #F0ADAD">
+          this.combinationSelectionManager.clearSelection()
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          1491
+        </td>
+        <td>
+          4508
+          -
+          4662
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  GameSceneImpl.this.centerPane.setBoard(state.board);
+  GameSceneImpl.this.bottomBar.setHand(state.hand);
+  GameSceneImpl.this.rightBar.setOtherPlayers(state.otherPlayers)
+})
+        </td>
+      </tr><tr>
+        <td>
+          138
+        </td>
+        <td>
+          1607
+        </td>
+        <td>
+          4554
+          -
+          4565
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.board
+        </td>
+        <td style="background: #F0ADAD">
+          state.board
+        </td>
+      </tr><tr>
+        <td>
+          138
+        </td>
+        <td>
+          1020
+        </td>
+        <td>
+          4534
+          -
+          4566
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.BoardPane.setBoard
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.centerPane.setBoard(state.board)
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          1666
+        </td>
+        <td>
+          4574
+          -
+          4603
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HandBar.setHand
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.bottomBar.setHand(state.hand)
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          1986
+        </td>
+        <td>
+          4592
+          -
+          4602
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.hand
+        </td>
+        <td style="background: #F0ADAD">
+          state.hand
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          1125
+        </td>
+        <td>
+          4636
+          -
+          4654
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.otherPlayers
+        </td>
+        <td style="background: #F0ADAD">
+          state.otherPlayers
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          2034
+        </td>
+        <td>
+          4611
+          -
+          4655
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setOtherPlayers
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.setOtherPlayers(state.otherPlayers)
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          2131
+        </td>
+        <td>
+          4734
+          -
+          4795
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameSceneImpl.this.initMatchDialog.showDialog())
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          876
+        </td>
+        <td>
+          4760
+          -
+          4788
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl.showDialog
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.initMatchDialog.showDialog()
+        </td>
+      </tr><tr>
+        <td>
+          155
+        </td>
+        <td>
+          994
+        </td>
+        <td>
+          4867
+          -
+          4928
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameSceneImpl.this.initMatchDialog.hideDialog())
+        </td>
+      </tr><tr>
+        <td>
+          156
+        </td>
+        <td>
+          1614
+        </td>
+        <td>
+          4893
+          -
+          4921
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl.hideDialog
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.initMatchDialog.hideDialog()
+        </td>
+      </tr><tr>
+        <td>
+          162
+        </td>
+        <td>
+          1386
+        </td>
+        <td>
+          5012
+          -
+          5073
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameSceneImpl.this.rightBar.setMessage(message))
+        </td>
+      </tr><tr>
+        <td>
+          163
+        </td>
+        <td>
+          1956
+        </td>
+        <td>
+          5038
+          -
+          5066
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setMessage
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.setMessage(message)
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          2040
+        </td>
+        <td>
+          5141
+          -
+          5194
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameSceneImpl.this.rightBar.showTimer())
+        </td>
+      </tr><tr>
+        <td>
+          170
+        </td>
+        <td>
+          1094
+        </td>
+        <td>
+          5167
+          -
+          5187
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.showTimer
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.showTimer()
+        </td>
+      </tr><tr>
+        <td>
+          176
+        </td>
+        <td>
+          1470
+        </td>
+        <td>
+          5277
+          -
+          5297
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.inTurn_=
+        </td>
+        <td style="background: #F0ADAD">
+          this.inTurn_=(inTurn)
+        </td>
+      </tr><tr>
+        <td>
+          177
+        </td>
+        <td>
+          964
+        </td>
+        <td>
+          5302
+          -
+          5326
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.updateActionBarButtons
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.updateActionBarButtons()
+        </td>
+      </tr><tr>
+        <td>
+          178
+        </td>
+        <td>
+          2136
+        </td>
+        <td>
+          5331
+          -
+          5362
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setNextEnabled
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.setNextEnabled(inTurn)
+        </td>
+      </tr><tr>
+        <td>
+          183
+        </td>
+        <td>
+          1638
+        </td>
+        <td>
+          5518
+          -
+          5524
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.inTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.inTurn
+        </td>
+      </tr><tr>
+        <td>
+          183
+        </td>
+        <td>
+          998
+        </td>
+        <td>
+          5476
+          -
+          5524
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.handSelectionManager.isSelectionEmpty.unary_!.&amp;&amp;(GameSceneImpl.this.inTurn)
+        </td>
+      </tr><tr>
+        <td>
+          183
+        </td>
+        <td>
+          1958
+        </td>
+        <td>
+          5444
+          -
+          5525
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.enableMakeCombination
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.actionBar.enableMakeCombination(GameSceneImpl.this.handSelectionManager.isSelectionEmpty.unary_!.&amp;&amp;(GameSceneImpl.this.inTurn))
+        </td>
+      </tr><tr>
+        <td>
+          184
+        </td>
+        <td>
+          1097
+        </td>
+        <td>
+          5530
+          -
+          5604
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.enableClearHandSelection
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.actionBar.enableClearHandSelection(GameSceneImpl.this.handSelectionManager.isSelectionEmpty.unary_!)
+        </td>
+      </tr><tr>
+        <td>
+          184
+        </td>
+        <td>
+          1441
+        </td>
+        <td>
+          5565
+          -
+          5603
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Boolean.unary_!
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.handSelectionManager.isSelectionEmpty.unary_!
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          2113
+        </td>
+        <td>
+          5700
+          -
+          5701
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          1
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          1547
+        </td>
+        <td>
+          5609
+          -
+          5763
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.enableUpdateCardCombination
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.actionBar.enableUpdateCardCombination(GameSceneImpl.this.combinationSelectionManager.getSelectedItems.size.==(1).&amp;&amp;(GameSceneImpl.this.handSelectionManager.getSelectedItems.size.==(1)).&amp;&amp;(GameSceneImpl.this.inTurn))
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          1920
+        </td>
+        <td>
+          5647
+          -
+          5762
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.combinationSelectionManager.getSelectedItems.size.==(1).&amp;&amp;(GameSceneImpl.this.handSelectionManager.getSelectedItems.size.==(1)).&amp;&amp;(GameSceneImpl.this.inTurn)
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          966
+        </td>
+        <td>
+          5756
+          -
+          5762
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.inTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.inTurn
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          1477
+        </td>
+        <td>
+          5705
+          -
+          5752
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Int.==
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.handSelectionManager.getSelectedItems.size.==(1)
+        </td>
+      </tr><tr>
+        <td>
+          186
+        </td>
+        <td>
+          1985
+        </td>
+        <td>
+          5794
+          -
+          5843
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.boardSelectionManager.isSelectionEmpty.unary_!.&amp;&amp;(GameSceneImpl.this.inTurn)
+        </td>
+      </tr><tr>
+        <td>
+          186
+        </td>
+        <td>
+          1003
+        </td>
+        <td>
+          5837
+          -
+          5843
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.inTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.inTurn
+        </td>
+      </tr><tr>
+        <td>
+          186
+        </td>
+        <td>
+          1445
+        </td>
+        <td>
+          5768
+          -
+          5844
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.enablePickCards
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.actionBar.enablePickCards(GameSceneImpl.this.boardSelectionManager.isSelectionEmpty.unary_!.&amp;&amp;(GameSceneImpl.this.inTurn))
+        </td>
+      </tr><tr>
+        <td>
+          191
+        </td>
+        <td>
+          1087
+        </td>
+        <td>
+          5912
+          -
+          5932
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.hideTimer
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.hideTimer()
+        </td>
+      </tr><tr>
+        <td>
+          196
+        </td>
+        <td>
+          2026
+        </td>
+        <td>
+          6005
+          -
+          6030
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.disableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.disableActions()
+        </td>
+      </tr><tr>
+        <td>
+          197
+        </td>
+        <td>
+          1480
+        </td>
+        <td>
+          6035
+          -
+          6062
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.disableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.centerPane.disableActions()
+        </td>
+      </tr><tr>
+        <td>
+          198
+        </td>
+        <td>
+          931
+        </td>
+        <td>
+          6067
+          -
+          6093
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.disableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.actionBar.disableActions()
+        </td>
+      </tr><tr>
+        <td>
+          199
+        </td>
+        <td>
+          1923
+        </td>
+        <td>
+          6098
+          -
+          6124
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.disableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.bottomBar.disableActions()
+        </td>
+      </tr><tr>
+        <td>
+          204
+        </td>
+        <td>
+          1577
+        </td>
+        <td>
+          6196
+          -
+          6220
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.enableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.enableActions()
+        </td>
+      </tr><tr>
+        <td>
+          205
+        </td>
+        <td>
+          980
+        </td>
+        <td>
+          6225
+          -
+          6251
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.enableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.centerPane.enableActions()
+        </td>
+      </tr><tr>
+        <td>
+          206
+        </td>
+        <td>
+          1991
+        </td>
+        <td>
+          6256
+          -
+          6281
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.enableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.actionBar.enableActions()
+        </td>
+      </tr><tr>
+        <td>
+          207
+        </td>
+        <td>
+          1416
+        </td>
+        <td>
+          6286
+          -
+          6311
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.enableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.bottomBar.enableActions()
+        </td>
+      </tr><tr>
+        <td>
+          212
+        </td>
+        <td>
+          2093
+        </td>
+        <td>
+          6443
+          -
+          6460
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #F0ADAD">
+          canUndo.&amp;&amp;(GameSceneImpl.this.inTurn)
+        </td>
+      </tr><tr>
+        <td>
+          212
+        </td>
+        <td>
+          1091
+        </td>
+        <td>
+          6454
+          -
+          6460
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.inTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.inTurn
+        </td>
+      </tr><tr>
+        <td>
+          212
+        </td>
+        <td>
+          1503
+        </td>
+        <td>
+          6419
+          -
+          6461
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setUndoEnabled
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.setUndoEnabled(canUndo.&amp;&amp;(GameSceneImpl.this.inTurn))
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          940
+        </td>
+        <td>
+          6501
+          -
+          6507
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.inTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.inTurn
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          1580
+        </td>
+        <td>
+          6466
+          -
+          6508
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setRedoEnabled
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.setRedoEnabled(canRedo.&amp;&amp;(GameSceneImpl.this.inTurn))
+        </td>
+      </tr><tr>
+        <td>
+          213
+        </td>
+        <td>
+          1845
+        </td>
+        <td>
+          6490
+          -
+          6507
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #F0ADAD">
+          canRedo.&amp;&amp;(GameSceneImpl.this.inTurn)
+        </td>
+      </tr><tr>
+        <td>
+          214
+        </td>
+        <td>
+          1043
+        </td>
+        <td>
+          6538
+          -
+          6544
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.inTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.inTurn
+        </td>
+      </tr><tr>
+        <td>
+          214
+        </td>
+        <td>
+          1968
+        </td>
+        <td>
+          6513
+          -
+          6545
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setResetEnabled
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.setResetEnabled(GameSceneImpl.this.inTurn)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

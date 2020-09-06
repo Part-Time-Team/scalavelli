@@ -1,0 +1,907 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/core/prolog/engine/PrologGameEngine.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core.prolog.engine
+</span>2 <span style=''>
+</span>3 <span style=''>import alice.tuprolog._
+</span>4 <span style=''>import scala.language.postfixOps
+</span>5 <span style=''>
+</span>6 <span style=''>/**
+</span>7 <span style=''> * Class to improve TuPrologQuality
+</span>8 <span style=''> */
+</span>9 <span style=''>class PrologGameEngine() extends PrologEngine {
+</span>10 <span style=''>
+</span>11 <span style=''>  val engine: Prolog = </span><span style='background: #AEF1AE'>new Prolog()</span><span style=''>
+</span>12 <span style=''>
+</span>13 <span style=''>  /**
+</span>14 <span style=''>   * Set theory from specific file prolog
+</span>15 <span style=''>   */
+</span>16 <span style=''>  </span><span style='background: #AEF1AE'>engine.setTheory(new Theory(getClass.getResourceAsStream(&quot;/rules.prolog&quot;)))</span><span style=''>
+</span>17 <span style=''>
+</span>18 <span style=''>  /**
+</span>19 <span style=''>   * @inheritdoc
+</span>20 <span style=''>   */
+</span>21 <span style=''>  override def goal(predicate: Term): Seq[Term] = {
+</span>22 <span style=''>    val info: SolveInfo = </span><span style='background: #F0ADAD'>engine solve predicate</span><span style=''>
+</span>23 <span style=''>    if (</span><span style='background: #F0ADAD'>info isSuccess</span><span style=''>) </span><span style='background: #F0ADAD'>this.bindingVars(info)</span><span style=''>
+</span>24 <span style=''>    else </span><span style='background: #F0ADAD'>Seq()</span><span style=''>
+</span>25 <span style=''>  }
+</span>26 <span style=''>
+</span>27 <span style=''>  /**
+</span>28 <span style=''>   * @inheritdoc
+</span>29 <span style=''>   */
+</span>30 <span style=''>  override def goal(predicate: String): Seq[Term] = {
+</span>31 <span style=''>    val info: SolveInfo = </span><span style='background: #AEF1AE'>engine solve predicate</span><span style=''>
+</span>32 <span style=''>    if (</span><span style='background: #AEF1AE'>info isSuccess</span><span style=''>) </span><span style='background: #AEF1AE'>this.bindingVars(info)</span><span style=''>
+</span>33 <span style=''>    else </span><span style='background: #AEF1AE'>Seq()</span><span style=''>
+</span>34 <span style=''>  }
+</span>35 <span style=''>
+</span>36 <span style=''>  /**
+</span>37 <span style=''>   * @inheritdoc
+</span>38 <span style=''>   */
+</span>39 <span style=''>  override def isSuccess(predicate: String): Boolean = </span><span style='background: #AEF1AE'>engine solve predicate isSuccess</span><span style=''>
+</span>40 <span style=''>
+</span>41 <span style=''>  /**
+</span>42 <span style=''>   * @inheritdoc
+</span>43 <span style=''>   */
+</span>44 <span style=''>  override def hasOpenAlternatives: Boolean = </span><span style='background: #F0ADAD'>engine hasOpenAlternatives</span><span style=''>
+</span>45 <span style=''>
+</span>46 <span style=''>  /**
+</span>47 <span style=''>   * @inheritdoc
+</span>48 <span style=''>   */
+</span>49 <span style=''>  override def goals(goal: Term): Seq[Term] = {
+</span>50 <span style=''>
+</span>51 <span style=''>    @scala.annotation.tailrec
+</span>52 <span style=''>    def _goals(info: SolveInfo)(solution: Seq[Term]): Seq[Term] = {
+</span>53 <span style=''>      if (</span><span style='background: #AEF1AE'>info isSuccess</span><span style=''>) </span><span style='background: #AEF1AE'>{
+</span>54 <span style=''></span><span style='background: #AEF1AE'>        val newSolutions = solution ++ this.bindingVars(info)
+</span>55 <span style=''></span><span style='background: #AEF1AE'>        if (engine hasOpenAlternatives) _goals(engine solveNext)(newSolutions) else newSolutions
+</span>56 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''> else </span><span style='background: #F0ADAD'>solution</span><span style=''>
+</span>57 <span style=''>    }
+</span>58 <span style=''>
+</span>59 <span style=''>    </span><span style='background: #AEF1AE'>_goals(engine solve goal)(Seq())</span><span style=''>
+</span>60 <span style=''>  }
+</span>61 <span style=''>
+</span>62 <span style=''>  /**
+</span>63 <span style=''>   * @inheritdoc
+</span>64 <span style=''>   */
+</span>65 <span style=''>  override def bindingVars(info: SolveInfo): Seq[Term] = {
+</span>66 <span style=''>
+</span>67 <span style=''>    var varList: Seq[Term] = </span><span style='background: #AEF1AE'>Seq()</span><span style=''>
+</span>68 <span style=''>    </span><span style='background: #AEF1AE'>info.getBindingVars.forEach(v =&gt; {
+</span>69 <span style=''></span><span style='background: #AEF1AE'>      varList = info.getTerm(v.getName) +: varList
+</span>70 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
+</span>71 <span style=''>    varList
+</span>72 <span style=''>  }
+</span>73 <span style=''>}
+</span>74 <span style=''>
+</span>75 <span style=''>/**
+</span>76 <span style=''> * Object Prolog Struct to execute the goals
+</span>77 <span style=''> */
+</span>78 <span style=''>object PrologStruct {
+</span>79 <span style=''>  def apply(rule: String, variable: Term*): Struct = </span><span style='background: #AEF1AE'>new Struct(rule, variable toArray)</span><span style=''>
+</span>80 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          754
+        </td>
+        <td>
+          218
+          -
+          230
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Prolog.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new alice.tuprolog.Prolog()
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          693
+        </td>
+        <td>
+          288
+          -
+          363
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Prolog.setTheory
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGameEngine.this.engine.setTheory(new alice.tuprolog.Theory(PrologGameEngine.this.getClass().getResourceAsStream(&quot;/rules.prolog&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          425
+        </td>
+        <td>
+          305
+          -
+          362
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Theory.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new alice.tuprolog.Theory(PrologGameEngine.this.getClass().getResourceAsStream(&quot;/rules.prolog&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          601
+        </td>
+        <td>
+          316
+          -
+          361
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Class.getResourceAsStream
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGameEngine.this.getClass().getResourceAsStream(&quot;/rules.prolog&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          522
+        </td>
+        <td>
+          472
+          -
+          494
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Prolog.solve
+        </td>
+        <td style="background: #F0ADAD">
+          PrologGameEngine.this.engine.solve(predicate)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          726
+        </td>
+        <td>
+          519
+          -
+          541
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.bindingVars
+        </td>
+        <td style="background: #F0ADAD">
+          this.bindingVars(info)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          564
+        </td>
+        <td>
+          519
+          -
+          541
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.bindingVars
+        </td>
+        <td style="background: #F0ADAD">
+          this.bindingVars(info)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          459
+        </td>
+        <td>
+          503
+          -
+          517
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.SolveInfo.isSuccess
+        </td>
+        <td style="background: #F0ADAD">
+          info.isSuccess()
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          741
+        </td>
+        <td>
+          551
+          -
+          556
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.Seq.apply[Nothing]()
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          413
+        </td>
+        <td>
+          551
+          -
+          556
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.Seq.apply[Nothing]()
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          588
+        </td>
+        <td>
+          671
+          -
+          693
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Prolog.solve
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGameEngine.this.engine.solve(predicate)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          684
+        </td>
+        <td>
+          718
+          -
+          740
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.bindingVars
+        </td>
+        <td style="background: #AEF1AE">
+          this.bindingVars(info)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          429
+        </td>
+        <td>
+          702
+          -
+          716
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.SolveInfo.isSuccess
+        </td>
+        <td style="background: #AEF1AE">
+          info.isSuccess()
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          542
+        </td>
+        <td>
+          718
+          -
+          740
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.bindingVars
+        </td>
+        <td style="background: #AEF1AE">
+          this.bindingVars(info)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          463
+        </td>
+        <td>
+          750
+          -
+          755
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.Seq.apply[Nothing]()
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          721
+        </td>
+        <td>
+          750
+          -
+          755
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.Seq.apply[Nothing]()
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          554
+        </td>
+        <td>
+          845
+          -
+          877
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.SolveInfo.isSuccess
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGameEngine.this.engine.solve(predicate).isSuccess()
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          417
+        </td>
+        <td>
+          954
+          -
+          980
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Prolog.hasOpenAlternatives
+        </td>
+        <td style="background: #F0ADAD">
+          PrologGameEngine.this.engine.hasOpenAlternatives()
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          399
+        </td>
+        <td>
+          1184
+          -
+          1352
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          {
+  val newSolutions: Seq[alice.tuprolog.Term] = solution.++[alice.tuprolog.Term, Seq[alice.tuprolog.Term]](this.bindingVars(info))(collection.this.Seq.canBuildFrom[alice.tuprolog.Term]);
+  if (PrologGameEngine.this.engine.hasOpenAlternatives())
+    _goals(PrologGameEngine.this.engine.solveNext())(newSolutions)
+  else
+    newSolutions
+}
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          659
+        </td>
+        <td>
+          1168
+          -
+          1182
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.SolveInfo.isSuccess
+        </td>
+        <td style="background: #AEF1AE">
+          info.isSuccess()
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          678
+        </td>
+        <td>
+          1213
+          -
+          1247
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.++
+        </td>
+        <td style="background: #AEF1AE">
+          solution.++[alice.tuprolog.Term, Seq[alice.tuprolog.Term]](this.bindingVars(info))(collection.this.Seq.canBuildFrom[alice.tuprolog.Term])
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          450
+        </td>
+        <td>
+          1222
+          -
+          1222
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[alice.tuprolog.Term]
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          590
+        </td>
+        <td>
+          1225
+          -
+          1247
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.bindingVars
+        </td>
+        <td style="background: #AEF1AE">
+          this.bindingVars(info)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          702
+        </td>
+        <td>
+          1288
+          -
+          1326
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine._goals
+        </td>
+        <td style="background: #AEF1AE">
+          _goals(PrologGameEngine.this.engine.solveNext())(newSolutions)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          453
+        </td>
+        <td>
+          1288
+          -
+          1326
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine._goals
+        </td>
+        <td style="background: #AEF1AE">
+          _goals(PrologGameEngine.this.engine.solveNext())(newSolutions)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          557
+        </td>
+        <td>
+          1332
+          -
+          1344
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.newSolutions
+        </td>
+        <td style="background: #AEF1AE">
+          newSolutions
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          526
+        </td>
+        <td>
+          1260
+          -
+          1286
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Prolog.hasOpenAlternatives
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGameEngine.this.engine.hasOpenAlternatives()
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          660
+        </td>
+        <td>
+          1358
+          -
+          1366
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.solution
+        </td>
+        <td style="background: #F0ADAD">
+          solution
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          423
+        </td>
+        <td>
+          1404
+          -
+          1409
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.Seq.apply[Nothing]()
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          680
+        </td>
+        <td>
+          1378
+          -
+          1410
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine._goals
+        </td>
+        <td style="background: #AEF1AE">
+          _goals(PrologGameEngine.this.engine.solve(goal))(scala.collection.Seq.apply[Nothing]())
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          583
+        </td>
+        <td>
+          1385
+          -
+          1402
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Prolog.solve
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGameEngine.this.engine.solve(goal)
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          539
+        </td>
+        <td>
+          1534
+          -
+          1539
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.Seq.apply[Nothing]()
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          547
+        </td>
+        <td>
+          1544
+          -
+          1636
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Iterable.forEach
+        </td>
+        <td style="background: #AEF1AE">
+          info.getBindingVars().forEach(((v: alice.tuprolog.Var) =&gt; varList = {
+  &lt;synthetic&gt; &lt;artifact&gt; val x$1: alice.tuprolog.Term = info.getTerm(v.getName());
+  varList.+:[alice.tuprolog.Term, Seq[alice.tuprolog.Term]](x$1)(collection.this.Seq.canBuildFrom[alice.tuprolog.Term])
+}))
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          729
+        </td>
+        <td>
+          1619
+          -
+          1629
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.SeqLike.+:
+        </td>
+        <td style="background: #AEF1AE">
+          varList.+:[alice.tuprolog.Term, Seq[alice.tuprolog.Term]](x$1)(collection.this.Seq.canBuildFrom[alice.tuprolog.Term])
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          455
+        </td>
+        <td>
+          1619
+          -
+          1619
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[alice.tuprolog.Term]
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          411
+        </td>
+        <td>
+          1801
+          -
+          1817
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableOnce.toArray
+        </td>
+        <td style="background: #AEF1AE">
+          variable.toArray[alice.tuprolog.Term]((ClassTag.apply[alice.tuprolog.Term](classOf[alice.tuprolog.Term]): scala.reflect.ClassTag[alice.tuprolog.Term]))
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          670
+        </td>
+        <td>
+          1784
+          -
+          1818
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Struct.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new alice.tuprolog.Struct(rule, variable.toArray[alice.tuprolog.Term]((ClassTag.apply[alice.tuprolog.Term](classOf[alice.tuprolog.Term]): scala.reflect.ClassTag[alice.tuprolog.Term])))
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

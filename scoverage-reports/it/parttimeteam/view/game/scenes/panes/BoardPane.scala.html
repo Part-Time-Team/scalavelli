@@ -1,0 +1,571 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/game/scenes/panes/BoardPane.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game.scenes.panes
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.core.cards.Card
+</span>4 <span style=''>import it.parttimeteam.core.collections.{Board, CardCombination}
+</span>5 <span style=''>import it.parttimeteam.view.ViewConfig
+</span>6 <span style=''>import it.parttimeteam.view.game.scenes.GameScene.BoardListener
+</span>7 <span style=''>import it.parttimeteam.view.game.scenes.model.GameCardCombination
+</span>8 <span style=''>import it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl
+</span>9 <span style=''>import scalafx.geometry.Insets
+</span>10 <span style=''>import scalafx.scene.control.ScrollPane
+</span>11 <span style=''>import scalafx.scene.layout.VBox
+</span>12 <span style=''>
+</span>13 <span style=''>/**
+</span>14 <span style=''>  * Pane which contains the game board.
+</span>15 <span style=''>  */
+</span>16 <span style=''>trait BoardPane extends ScrollPane with ActionGamePane {
+</span>17 <span style=''>
+</span>18 <span style=''>  /**
+</span>19 <span style=''>    * Sets the game board inside a ScrollPane.
+</span>20 <span style=''>    *
+</span>21 <span style=''>    * @param board the actual game Board
+</span>22 <span style=''>    */
+</span>23 <span style=''>  def setBoard(board: Board): Unit
+</span>24 <span style=''>}
+</span>25 <span style=''>
+</span>26 <span style=''>object BoardPane {
+</span>27 <span style=''>
+</span>28 <span style=''>  class BoardPaneImpl(boardListener: BoardListener) extends BoardPane {
+</span>29 <span style=''>    val tableCombinations = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
+</span>30 <span style=''>    </span><span style='background: #F0ADAD'>tableCombinations.spacing = 10d</span><span style=''>
+</span>31 <span style=''>    </span><span style='background: #F0ADAD'>tableCombinations.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)</span><span style=''>
+</span>32 <span style=''>
+</span>33 <span style=''>    var selectedCards: Seq[Card] = </span><span style='background: #F0ADAD'>Seq()</span><span style=''>
+</span>34 <span style=''>
+</span>35 <span style=''>    </span><span style='background: #F0ADAD'>this.setContent(tableCombinations)</span><span style=''>
+</span>36 <span style=''>
+</span>37 <span style=''>    /** @inheritdoc*/
+</span>38 <span style=''>    override def setBoard(board: Board): Unit = {
+</span>39 <span style=''>      </span><span style='background: #F0ADAD'>tableCombinations.children.clear()</span><span style=''>
+</span>40 <span style=''>
+</span>41 <span style=''>      </span><span style='background: #F0ADAD'>for (combination: CardCombination &lt;- board.combinations) {
+</span>42 <span style=''></span><span style='background: #F0ADAD'>        val playerCombination: GameCardCombination = new GameCardCombinationImpl(combination, boardListener)
+</span>43 <span style=''></span><span style='background: #F0ADAD'>        tableCombinations.children.add(playerCombination)
+</span>44 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>45 <span style=''>    }
+</span>46 <span style=''>
+</span>47 <span style=''>    /** @inheritdoc*/
+</span>48 <span style=''>    override def disableActions(): Unit = {
+</span>49 <span style=''>      </span><span style='background: #F0ADAD'>tableCombinations.children.forEach(playerCombination =&gt; {
+</span>50 <span style=''></span><span style='background: #F0ADAD'>        playerCombination.asInstanceOf[GameCardCombination].disableActions()
+</span>51 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>52 <span style=''>    }
+</span>53 <span style=''>
+</span>54 <span style=''>    /** @inheritdoc*/
+</span>55 <span style=''>    override def enableActions(): Unit = {
+</span>56 <span style=''>      </span><span style='background: #F0ADAD'>tableCombinations.children.forEach(playerCombination =&gt; {
+</span>57 <span style=''></span><span style='background: #F0ADAD'>        playerCombination.asInstanceOf[GameCardCombination].enableActions()
+</span>58 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>59 <span style=''>    }
+</span>60 <span style=''>  }
+</span>61 <span style=''>
+</span>62 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1128
+        </td>
+        <td>
+          888
+          -
+          898
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.VBox.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.VBox()
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          855
+        </td>
+        <td>
+          903
+          -
+          934
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.VBox.spacing_=
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.tableCombinations.spacing_=(10.0)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1282
+        </td>
+        <td>
+          967
+          -
+          1082
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.geometry.Insets.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION, it.parttimeteam.view.ViewConfig.screenPadding, it.parttimeteam.view.ViewConfig.screenPadding, it.parttimeteam.view.ViewConfig.screenPadding)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          2281
+        </td>
+        <td>
+          939
+          -
+          1082
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.Region.padding_=
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.tableCombinations.padding_=(scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION, it.parttimeteam.view.ViewConfig.screenPadding, it.parttimeteam.view.ViewConfig.screenPadding, it.parttimeteam.view.ViewConfig.screenPadding))
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1633
+        </td>
+        <td>
+          1057
+          -
+          1081
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1818
+        </td>
+        <td>
+          974
+          -
+          1003
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1238
+        </td>
+        <td>
+          1005
+          -
+          1029
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          2162
+        </td>
+        <td>
+          1031
+          -
+          1055
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          1718
+        </td>
+        <td>
+          1119
+          -
+          1124
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.Seq.apply[Nothing]()
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1772
+        </td>
+        <td>
+          1130
+          -
+          1164
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.ScrollPane.setContent
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ScrollPane.sfxScrollPane2jfx(this).setContent(layout.this.VBox.sfxVBox2jfx(BoardPaneImpl.this.tableCombinations))
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1132
+        </td>
+        <td>
+          1146
+          -
+          1163
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.BoardPane.BoardPaneImpl.tableCombinations
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.tableCombinations
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          858
+        </td>
+        <td>
+          1146
+          -
+          1163
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.layout.VBox.sfxVBox2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.VBox.sfxVBox2jfx(BoardPaneImpl.this.tableCombinations)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1243
+        </td>
+        <td>
+          1244
+          -
+          1278
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.clear
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.tableCombinations.children.clear()
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1669
+        </td>
+        <td>
+          1286
+          -
+          1519
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.FilterMonadic.foreach
+        </td>
+        <td style="background: #F0ADAD">
+          board.combinations.withFilter(((check$ifrefutable$1: it.parttimeteam.core.collections.CardCombination) =&gt; (check$ifrefutable$1: it.parttimeteam.core.collections.CardCombination @unchecked) match {
+  case (combination @ (_: it.parttimeteam.core.collections.CardCombination)) =&gt; true
+  case _ =&gt; false
+})).foreach[Boolean](((combination: it.parttimeteam.core.collections.CardCombination) =&gt; {
+  val playerCombination: it.parttimeteam.view.game.scenes.model.GameCardCombination = new it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl(combination, BoardPaneImpl.this.boardListener);
+  BoardPaneImpl.this.tableCombinations.children.add(layout.this.BorderPane.sfxBorderPane2jfx(playerCombination))
+}))
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1620
+        </td>
+        <td>
+          1398
+          -
+          1453
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl(combination, BoardPaneImpl.this.boardListener)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          2139
+        </td>
+        <td>
+          1439
+          -
+          1452
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.BoardPane.BoardPaneImpl.boardListener
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.boardListener
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          1290
+        </td>
+        <td>
+          1493
+          -
+          1510
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.sfxBorderPane2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.BorderPane.sfxBorderPane2jfx(playerCombination)
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          2244
+        </td>
+        <td>
+          1462
+          -
+          1511
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.add
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.tableCombinations.children.add(layout.this.BorderPane.sfxBorderPane2jfx(playerCombination))
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          778
+        </td>
+        <td>
+          1599
+          -
+          1742
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Iterable.forEach
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.tableCombinations.children.forEach(((playerCombination: javafx.scene.Node) =&gt; playerCombination.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCardCombination].disableActions()))
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1136
+        </td>
+        <td>
+          1665
+          -
+          1733
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.disableActions
+        </td>
+        <td style="background: #F0ADAD">
+          playerCombination.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCardCombination].disableActions()
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          1197
+        </td>
+        <td>
+          1821
+          -
+          1963
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Iterable.forEach
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.tableCombinations.children.forEach(((playerCombination: javafx.scene.Node) =&gt; playerCombination.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCardCombination].enableActions()))
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1780
+        </td>
+        <td>
+          1887
+          -
+          1954
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionGamePane.enableActions
+        </td>
+        <td style="background: #F0ADAD">
+          playerCombination.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCardCombination].enableActions()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

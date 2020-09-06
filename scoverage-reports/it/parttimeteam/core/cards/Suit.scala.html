@@ -1,0 +1,460 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/core/cards/Suit.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core.cards
+</span>2 <span style=''>
+</span>3 <span style=''>/**
+</span>4 <span style=''> * One of the 4 suit of the deck.
+</span>5 <span style=''> *
+</span>6 <span style=''> * @param name      Name.
+</span>7 <span style=''> * @param shortName Symbol.
+</span>8 <span style=''> */
+</span>9 <span style=''>sealed class Suit(val name: String, val shortName: String, val order: Int)
+</span>10 <span style=''>  extends Comparable[Suit] with Serializable {
+</span>11 <span style=''>  override def compareTo(t: Suit): Int = </span><span style='background: #AEF1AE'>order compareTo t.order</span><span style=''>
+</span>12 <span style=''>}
+</span>13 <span style=''>
+</span>14 <span style=''>object Suit {
+</span>15 <span style=''>
+</span>16 <span style=''>  val HEARTS = </span><span style='background: #AEF1AE'>&quot;Hearts&quot;</span><span style=''>
+</span>17 <span style=''>  val DIAMONDS = </span><span style='background: #AEF1AE'>&quot;Diamonds&quot;</span><span style=''>
+</span>18 <span style=''>  val SPADES = </span><span style='background: #AEF1AE'>&quot;Spades&quot;</span><span style=''>
+</span>19 <span style=''>  val CLUBS = </span><span style='background: #AEF1AE'>&quot;Clubs&quot;</span><span style=''>
+</span>20 <span style=''>
+</span>21 <span style=''>  val HEART_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♥&quot;</span><span style=''>
+</span>22 <span style=''>  val DIAMONDS_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♦&quot;</span><span style=''>
+</span>23 <span style=''>  val SPADES_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♠&quot;</span><span style=''>
+</span>24 <span style=''>  val CLUBS_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♣&quot;</span><span style=''>
+</span>25 <span style=''>
+</span>26 <span style=''>  /**
+</span>27 <span style=''>   * The heart suit.
+</span>28 <span style=''>   */
+</span>29 <span style=''>  case class Hearts() extends Suit(&quot;Hearts&quot;, &quot;♥&quot;, 0)
+</span>30 <span style=''>
+</span>31 <span style=''>  /**
+</span>32 <span style=''>   * The diamond suit.
+</span>33 <span style=''>   */
+</span>34 <span style=''>  case class Diamonds() extends Suit(&quot;Diamonds&quot;, &quot;♦&quot;, 1)
+</span>35 <span style=''>
+</span>36 <span style=''>  /**
+</span>37 <span style=''>   * The Club suit.
+</span>38 <span style=''>   */
+</span>39 <span style=''>  case class Clubs() extends Suit(&quot;Clubs&quot;, &quot;♣&quot;, 2)
+</span>40 <span style=''>
+</span>41 <span style=''>  /**
+</span>42 <span style=''>   * The spade suit.
+</span>43 <span style=''>   */
+</span>44 <span style=''>  case class Spades() extends Suit(&quot;Spades&quot;, &quot;♠&quot;, 3)
+</span>45 <span style=''>
+</span>46 <span style=''>  /**
+</span>47 <span style=''>   * Transform a string in the matching suit.
+</span>48 <span style=''>   *
+</span>49 <span style=''>   * @param s String to convert.
+</span>50 <span style=''>   * @return Suit converted.
+</span>51 <span style=''>   */
+</span>52 <span style=''>  implicit def string2suit(s: String): Suit = s match {
+</span>53 <span style=''>    case this.HEART_SYMBOL     | this.HEARTS =&gt; </span><span style='background: #AEF1AE'>Hearts()</span><span style=''>
+</span>54 <span style=''>    case this.DIAMONDS_SYMBOL  | this.DIAMONDS =&gt; </span><span style='background: #AEF1AE'>Diamonds()</span><span style=''>
+</span>55 <span style=''>    case this.CLUBS_SYMBOL     | this.CLUBS =&gt; </span><span style='background: #AEF1AE'>Clubs()</span><span style=''>
+</span>56 <span style=''>    case this.SPADES_SYMBOL    | this.SPADES =&gt; </span><span style='background: #AEF1AE'>Spades()</span><span style=''>
+</span>57 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(f&quot;Unknown suit $s&quot;)</span><span style=''>
+</span>58 <span style=''>  }
+</span>59 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          376
+        </td>
+        <td>
+          314
+          -
+          321
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scala.Predef.int2Integer
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.int2Integer(t.order)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          695
+        </td>
+        <td>
+          298
+          -
+          303
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.order
+        </td>
+        <td style="background: #AEF1AE">
+          Suit.this.order
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          530
+        </td>
+        <td>
+          314
+          -
+          321
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.order
+        </td>
+        <td style="background: #AEF1AE">
+          t.order
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          640
+        </td>
+        <td>
+          298
+          -
+          321
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Integer.compareTo
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.int2Integer(Suit.this.order).compareTo(scala.Predef.int2Integer(t.order))
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          552
+        </td>
+        <td>
+          355
+          -
+          363
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;Hearts&quot;
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          418
+        </td>
+        <td>
+          381
+          -
+          391
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;Diamonds&quot;
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          664
+        </td>
+        <td>
+          407
+          -
+          415
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;Spades&quot;
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          503
+        </td>
+        <td>
+          430
+          -
+          437
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;Clubs&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          764
+        </td>
+        <td>
+          460
+          -
+          463
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;♥&quot;
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          686
+        </td>
+        <td>
+          488
+          -
+          491
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;♦&quot;
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          544
+        </td>
+        <td>
+          514
+          -
+          517
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;♠&quot;
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          377
+        </td>
+        <td>
+          539
+          -
+          542
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;♣&quot;
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          633
+        </td>
+        <td>
+          1124
+          -
+          1132
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.Hearts.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Suit.this.Hearts.apply()
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          565
+        </td>
+        <td>
+          1183
+          -
+          1193
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.Diamonds.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Suit.this.Diamonds.apply()
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          420
+        </td>
+        <td>
+          1241
+          -
+          1248
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.Clubs.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Suit.this.Clubs.apply()
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          661
+        </td>
+        <td>
+          1297
+          -
+          1305
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.Spades.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Suit.this.Spades.apply()
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          504
+        </td>
+        <td>
+          1320
+          -
+          1366
+        </td>
+        <td>
+          Throw
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          throw new scala.`package`.RuntimeException(({
+  val arg$macro$1: Any = s;
+  new scala.collection.immutable.StringOps(&quot;Unknown suit %s&quot;).format(arg$macro$1)
+}: String))
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

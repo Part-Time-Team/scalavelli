@@ -1,0 +1,610 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/core/collections/Hand.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core.collections
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.core.cards.Card
+</span>4 <span style=''>
+</span>5 <span style=''>/**
+</span>6 <span style=''> * Player's hand
+</span>7 <span style=''> *
+</span>8 <span style=''> * @param playerCards list of cards in the player's hand
+</span>9 <span style=''> * @param tableCards  list of cards in the player's hand to put at the table
+</span>10 <span style=''> */
+</span>11 <span style=''>case class Hand(playerCards: Seq[Card] = Seq.empty, tableCards: Seq[Card] = Seq.empty) {
+</span>12 <span style=''>
+</span>13 <span style=''>  /**
+</span>14 <span style=''>   * Get player's hand
+</span>15 <span style=''>   *
+</span>16 <span style=''>   * @return player's hand
+</span>17 <span style=''>   */
+</span>18 <span style=''>  def getHand: Hand = {
+</span>19 <span style=''>    </span><span style='background: #AEF1AE'>Hand(playerCards, tableCards)</span><span style=''>
+</span>20 <span style=''>  }
+</span>21 <span style=''>
+</span>22 <span style=''>  /**
+</span>23 <span style=''>   * Add cards to the list playerCards
+</span>24 <span style=''>   *
+</span>25 <span style=''>   * @param cards cards to add
+</span>26 <span style=''>   * @return new Hand with the updated playerCards list
+</span>27 <span style=''>   */
+</span>28 <span style=''>  def addPlayerCards(cards: Seq[Card]): Hand = </span><span style='background: #AEF1AE'>this.copy(playerCards = playerCards ++ cards)</span><span style=''>
+</span>29 <span style=''>
+</span>30 <span style=''>  /**
+</span>31 <span style=''>   * Add cards to the list tablePlayer
+</span>32 <span style=''>   *
+</span>33 <span style=''>   * @param cards cards to add
+</span>34 <span style=''>   * @return new Hand the updated tableCards list
+</span>35 <span style=''>   */
+</span>36 <span style=''>  def addTableCards(cards: Seq[Card]): Hand = </span><span style='background: #AEF1AE'>this.copy(tableCards = tableCards ++ cards)</span><span style=''>
+</span>37 <span style=''>
+</span>38 <span style=''>  /**
+</span>39 <span style=''>   * Check if hand contain some cards.
+</span>40 <span style=''>   *
+</span>41 <span style=''>   * @param cards Cards that must be contained in the hand.
+</span>42 <span style=''>   * @return True if all cards are contained, false anywhere.
+</span>43 <span style=''>   */
+</span>44 <span style=''>  def containsCards(cards: Card*): Boolean =
+</span>45 <span style=''>    </span><span style='background: #AEF1AE'>(cards exists (c =&gt; playerCards contains c)) ||
+</span>46 <span style=''></span><span style='background: #AEF1AE'>      (cards exists (c =&gt; tableCards contains c))</span><span style=''>
+</span>47 <span style=''>
+</span>48 <span style=''>  /**
+</span>49 <span style=''>   * Remove cards contained in the hand or return an error string if the hand
+</span>50 <span style=''>   * doesn't contain all the cards in the parameter.
+</span>51 <span style=''>   *
+</span>52 <span style=''>   * @param cards Cards to remove from Hand.
+</span>53 <span style=''>   * @return
+</span>54 <span style=''>   */
+</span>55 <span style=''>  def removeCards(cards: Seq[Card]): Either[String, Hand] = {
+</span>56 <span style=''>
+</span>57 <span style=''>    val updatePlayerCards: Seq[Card] = </span><span style='background: #AEF1AE'>playerCards.filterNot(card =&gt; cards contains card)</span><span style=''>
+</span>58 <span style=''>
+</span>59 <span style=''>    val updateBoardCards: Seq[Card] = </span><span style='background: #AEF1AE'>tableCards.filterNot(card =&gt; cards contains card)</span><span style=''>
+</span>60 <span style=''>
+</span>61 <span style=''>    </span><span style='background: #AEF1AE'>Either.cond(cards forall (c =&gt; this containsCards c),
+</span>62 <span style=''></span><span style='background: #AEF1AE'>      this.copy(playerCards = updatePlayerCards, tableCards = updateBoardCards),
+</span>63 <span style=''></span><span style='background: #AEF1AE'>      &quot;Hand doesn't contain given cards&quot;)</span><span style=''>
+</span>64 <span style=''>  }
+</span>65 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          627
+        </td>
+        <td>
+          434
+          -
+          445
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.playerCards
+        </td>
+        <td style="background: #AEF1AE">
+          Hand.this.playerCards
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          474
+        </td>
+        <td>
+          447
+          -
+          457
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.tableCards
+        </td>
+        <td style="background: #AEF1AE">
+          Hand.this.tableCards
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          395
+        </td>
+        <td>
+          429
+          -
+          458
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Hand.apply(Hand.this.playerCards, Hand.this.tableCards)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          756
+        </td>
+        <td>
+          659
+          -
+          659
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy$default$2
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy$default$2
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          603
+        </td>
+        <td>
+          654
+          -
+          699
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy(Hand.this.playerCards.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](cards)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]), this.copy$default$2)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          500
+        </td>
+        <td>
+          678
+          -
+          698
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.++
+        </td>
+        <td style="background: #AEF1AE">
+          Hand.this.playerCards.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](cards)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          646
+        </td>
+        <td>
+          690
+          -
+          690
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          768
+        </td>
+        <td>
+          907
+          -
+          926
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.++
+        </td>
+        <td style="background: #AEF1AE">
+          Hand.this.tableCards.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](cards)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          629
+        </td>
+        <td>
+          889
+          -
+          889
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy$default$1
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy$default$1
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          520
+        </td>
+        <td>
+          918
+          -
+          918
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          466
+        </td>
+        <td>
+          884
+          -
+          927
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy(x$2, x$1)
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          391
+        </td>
+        <td>
+          1176
+          -
+          1198
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.SeqLike.contains
+        </td>
+        <td style="background: #AEF1AE">
+          Hand.this.playerCards.contains[it.parttimeteam.core.cards.Card](c)
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          744
+        </td>
+        <td>
+          1156
+          -
+          1253
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.||
+        </td>
+        <td style="background: #AEF1AE">
+          cards.exists(((c: it.parttimeteam.core.cards.Card) =&gt; Hand.this.playerCards.contains[it.parttimeteam.core.cards.Card](c))).||(cards.exists(((c: it.parttimeteam.core.cards.Card) =&gt; Hand.this.tableCards.contains[it.parttimeteam.core.cards.Card](c))))
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          647
+        </td>
+        <td>
+          1230
+          -
+          1251
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.SeqLike.contains
+        </td>
+        <td style="background: #AEF1AE">
+          Hand.this.tableCards.contains[it.parttimeteam.core.cards.Card](c)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          493
+        </td>
+        <td>
+          1211
+          -
+          1252
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.IterableLike.exists
+        </td>
+        <td style="background: #AEF1AE">
+          cards.exists(((c: it.parttimeteam.core.cards.Card) =&gt; Hand.this.tableCards.contains[it.parttimeteam.core.cards.Card](c)))
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          593
+        </td>
+        <td>
+          1593
+          -
+          1612
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.SeqLike.contains
+        </td>
+        <td style="background: #AEF1AE">
+          cards.contains[it.parttimeteam.core.cards.Card](card)
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          506
+        </td>
+        <td>
+          1563
+          -
+          1613
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.TraversableLike.filterNot
+        </td>
+        <td style="background: #AEF1AE">
+          Hand.this.playerCards.filterNot(((card: it.parttimeteam.core.cards.Card) =&gt; cards.contains[it.parttimeteam.core.cards.Card](card)))
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          769
+        </td>
+        <td>
+          1682
+          -
+          1701
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.SeqLike.contains
+        </td>
+        <td style="background: #AEF1AE">
+          cards.contains[it.parttimeteam.core.cards.Card](card)
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          622
+        </td>
+        <td>
+          1653
+          -
+          1702
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.TraversableLike.filterNot
+        </td>
+        <td style="background: #AEF1AE">
+          Hand.this.tableCards.filterNot(((card: it.parttimeteam.core.cards.Card) =&gt; cards.contains[it.parttimeteam.core.cards.Card](card)))
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          387
+        </td>
+        <td>
+          1720
+          -
+          1760
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.IterableLike.forall
+        </td>
+        <td style="background: #AEF1AE">
+          cards.forall(((c: it.parttimeteam.core.cards.Card) =&gt; this.containsCards(c)))
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          468
+        </td>
+        <td>
+          1739
+          -
+          1759
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.containsCards
+        </td>
+        <td style="background: #AEF1AE">
+          this.containsCards(c)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          736
+        </td>
+        <td>
+          1708
+          -
+          1884
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.util.Either.cond
+        </td>
+        <td style="background: #AEF1AE">
+          scala.`package`.Either.cond[String, it.parttimeteam.core.collections.Hand](cards.forall(((c: it.parttimeteam.core.cards.Card) =&gt; this.containsCards(c))), this.copy(updatePlayerCards, updateBoardCards), &quot;Hand doesn\'t contain given cards&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          636
+        </td>
+        <td>
+          1768
+          -
+          1841
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy(updatePlayerCards, updateBoardCards)
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          487
+        </td>
+        <td>
+          1849
+          -
+          1883
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;Hand doesn\'t contain given cards&quot;
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

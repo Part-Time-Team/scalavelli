@@ -1,0 +1,1115 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/model/startup/StartupServiceImpl.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.model.startup
+</span>2 <span style=''>
+</span>3 <span style=''>import akka.actor.ActorRef
+</span>4 <span style=''>import it.parttimeteam.messages.LobbyMessages._
+</span>5 <span style=''>import it.parttimeteam.model.{GameStartUpEvent, GameStartedEvent, LobbyJoinedEvent, PrivateLobbyCreatedEvent}
+</span>6 <span style=''>import it.parttimeteam.{ActorSystemManager, Constants}
+</span>7 <span style=''>
+</span>8 <span style=''>import scala.concurrent.ExecutionContext.Implicits.global
+</span>9 <span style=''>import scala.concurrent.Future
+</span>10 <span style=''>import scala.concurrent.duration._
+</span>11 <span style=''>import scala.util.{Failure, Success}
+</span>12 <span style=''>
+</span>13 <span style=''>class StartupServiceImpl(private val notifyEvent: GameStartUpEvent =&gt; Unit) extends StartupService {
+</span>14 <span style=''>
+</span>15 <span style=''>  private lazy val startupActorRef = ActorSystemManager.actorSystem.actorOf(StartUpActor.props(serverResponseListener), &quot;client-lobby&quot;)
+</span>16 <span style=''>  private var serverLobbyRef: ActorRef = _
+</span>17 <span style=''>  private var clientGeneratedId: String = _
+</span>18 <span style=''>
+</span>19 <span style=''>  private val serverResponseListener = </span><span style='background: #F0ADAD'>new</span><span style=''> StartupServerResponsesListener {
+</span>20 <span style=''>    override def connected(clientId: String, serverLobbyRef: ActorRef): Unit = {
+</span>21 <span style=''>      </span><span style='background: #F0ADAD'>StartupServiceImpl.this.serverLobbyRef = serverLobbyRef</span><span style=''>
+</span>22 <span style=''>      </span><span style='background: #F0ADAD'>clientGeneratedId = clientId</span><span style=''>
+</span>23 <span style=''>    }
+</span>24 <span style=''>
+</span>25 <span style=''>    override def addedToLobby(): Unit = {
+</span>26 <span style=''>      </span><span style='background: #F0ADAD'>notifyEvent(LobbyJoinedEvent)</span><span style=''>
+</span>27 <span style=''>    }
+</span>28 <span style=''>
+</span>29 <span style=''>    override def privateLobbyCreated(privateLobbyId: String): Unit = </span><span style='background: #F0ADAD'>notifyEvent(PrivateLobbyCreatedEvent(privateLobbyId))</span><span style=''>
+</span>30 <span style=''>
+</span>31 <span style=''>    override def matchFound(matchRef: ActorRef): Unit =
+</span>32 <span style=''>      </span><span style='background: #F0ADAD'>notifyEvent(GameStartedEvent(GameMatchInformations(clientGeneratedId, matchRef)))</span><span style=''>
+</span>33 <span style=''>
+</span>34 <span style=''>  }
+</span>35 <span style=''>
+</span>36 <span style=''>  override def connect(address: String, port: Int): Unit = {
+</span>37 <span style=''>    </span><span style='background: #F0ADAD'>resolveRemoteActorPath(generateServerActorPath(address, port)) onComplete ({
+</span>38 <span style=''></span><span style='background: #F0ADAD'>      case Success(ref) =&gt; {
+</span>39 <span style=''></span><span style='background: #F0ADAD'>        ref ! Connect(startupActorRef)
+</span>40 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>41 <span style=''></span><span style='background: #F0ADAD'>      case Failure(t) =&gt; {
+</span>42 <span style=''></span><span style='background: #F0ADAD'>
+</span>43 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>44 <span style=''></span><span style='background: #F0ADAD'>
+</span>45 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>46 <span style=''>  }
+</span>47 <span style=''>
+</span>48 <span style=''>  override def joinPublicLobby(username: String, numberOfPlayers: Int): Unit =
+</span>49 <span style=''>    </span><span style='background: #F0ADAD'>serverLobbyRef ! JoinPublicLobby(clientGeneratedId, username, numberOfPlayers)</span><span style=''>
+</span>50 <span style=''>
+</span>51 <span style=''>  override def createPrivateLobby(username: String, numberOfPlayers: Int): Unit =
+</span>52 <span style=''>    </span><span style='background: #F0ADAD'>serverLobbyRef ! CreatePrivateLobby(clientGeneratedId, username, numberOfPlayers)</span><span style=''>
+</span>53 <span style=''>
+</span>54 <span style=''>  override def joinPrivateLobby(username: String, privateLobbyId: String): Unit =
+</span>55 <span style=''>    </span><span style='background: #F0ADAD'>serverLobbyRef ! JoinPrivateLobby(clientGeneratedId, username, privateLobbyId)</span><span style=''>
+</span>56 <span style=''>
+</span>57 <span style=''>  override def leaveLobby(): Unit = </span><span style='background: #F0ADAD'>serverLobbyRef ! LeaveLobby(clientGeneratedId)</span><span style=''>
+</span>58 <span style=''>
+</span>59 <span style=''>  //  case JoinPublicLobby =&gt; notifyEvent(LobbyJoinedEvent(&quot;&quot;))
+</span>60 <span style=''>  //  case PrivateLobbyCreatedEvent(generatedUserId: String, lobbyCode: String) =&gt; notifyEvent(PrivateLobbyCreatedEvent(generatedUserId, lobbyCode))
+</span>61 <span style=''>  //  case MatchFound(gameRoom: ActorRef) =&gt; notifyEvent(GameStartedEvent(gameRoom))
+</span>62 <span style=''>  //  case LobbyJoinError(reason: String) =&gt; notifyEvent(LobbyJoinErrorEvent(reason))
+</span>63 <span style=''>  //  case Stop() =&gt; context.stop(self)
+</span>64 <span style=''>  //  case _ =&gt;
+</span>65 <span style=''>
+</span>66 <span style=''>  // endregion
+</span>67 <span style=''>
+</span>68 <span style=''>  private def generateServerActorPath(address: String, port: Int): String =
+</span>69 <span style=''>    </span><span style='background: #F0ADAD'>s&quot;akka.tcp://${Constants.Remote.SERVER_ACTOR_SYSTEM_NAME}@$address:$port/user/${Constants.Remote.SERVER_LOBBY_ACTOR_NAME}&quot;</span><span style=''>
+</span>70 <span style=''>
+</span>71 <span style=''>  /**
+</span>72 <span style=''>   * obtains the ActorRef of the corresponding remote actor
+</span>73 <span style=''>   */
+</span>74 <span style=''>  private def resolveRemoteActorPath(actorPath: String): Future[ActorRef] = {
+</span>75 <span style=''>    </span><span style='background: #F0ADAD'>ActorSystemManager.actorSystem.actorSelection(actorPath).resolveOne()(10.seconds)</span><span style=''>
+</span>76 <span style=''>  }
+</span>77 <span style=''>
+</span>78 <span style=''>
+</span>79 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1352
+        </td>
+        <td>
+          807
+          -
+          810
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1931
+        </td>
+        <td>
+          931
+          -
+          986
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.serverLobbyRef_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.serverLobbyRef_=(serverLobbyRef)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1374
+        </td>
+        <td>
+          993
+          -
+          1021
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.clientGeneratedId_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.clientGeneratedId_=(clientId)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          791
+        </td>
+        <td>
+          1089
+          -
+          1105
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.LobbyJoinedEvent
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.model.LobbyJoinedEvent
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          2050
+        </td>
+        <td>
+          1077
+          -
+          1106
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.notifyEvent.apply(it.parttimeteam.model.LobbyJoinedEvent)
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          881
+        </td>
+        <td>
+          1183
+          -
+          1236
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.notifyEvent.apply(it.parttimeteam.model.PrivateLobbyCreatedEvent.apply(privateLobbyId))
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1521
+        </td>
+        <td>
+          1195
+          -
+          1235
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.PrivateLobbyCreatedEvent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.model.PrivateLobbyCreatedEvent.apply(privateLobbyId)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1997
+        </td>
+        <td>
+          1300
+          -
+          1381
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.notifyEvent.apply(it.parttimeteam.model.GameStartedEvent.apply(GameMatchInformations.apply(StartupServiceImpl.this.clientGeneratedId, matchRef)))
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1056
+        </td>
+        <td>
+          1312
+          -
+          1380
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.GameStartedEvent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.model.GameStartedEvent.apply(GameMatchInformations.apply(StartupServiceImpl.this.clientGeneratedId, matchRef))
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1836
+        </td>
+        <td>
+          1351
+          -
+          1368
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.clientGeneratedId
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.clientGeneratedId
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1280
+        </td>
+        <td>
+          1329
+          -
+          1379
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.GameMatchInformations.apply
+        </td>
+        <td style="background: #F0ADAD">
+          GameMatchInformations.apply(StartupServiceImpl.this.clientGeneratedId, matchRef)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1046
+        </td>
+        <td>
+          1453
+          -
+          1649
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.concurrent.Future.onComplete
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.resolveRemoteActorPath(StartupServiceImpl.this.generateServerActorPath(address, port)).onComplete[Unit](((x0$1: scala.util.Try[akka.actor.ActorRef]) =&gt; x0$1 match {
+  case (value: akka.actor.ActorRef)scala.util.Success[akka.actor.ActorRef]((ref @ _)) =&gt; {
+    &lt;artifact&gt; val qual$1: akka.actor.ScalaActorRef = actor.this.`package`.actorRef2Scala(ref);
+    &lt;artifact&gt; val x$1: it.parttimeteam.messages.LobbyMessages.Connect = it.parttimeteam.messages.LobbyMessages.Connect.apply(StartupServiceImpl.this.startupActorRef);
+    &lt;artifact&gt; val x$2: akka.actor.ActorRef = qual$1.!$default$2(x$1);
+    qual$1.!(x$1)(x$2)
+  }
+  case (exception: Throwable)scala.util.Failure[akka.actor.ActorRef]((t @ _)) =&gt; ()
+}))(scala.concurrent.ExecutionContext.Implicits.global)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          797
+        </td>
+        <td>
+          1476
+          -
+          1514
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.generateServerActorPath
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.generateServerActorPath(address, port)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1770
+        </td>
+        <td>
+          1567
+          -
+          1570
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.actor.actorRef2Scala
+        </td>
+        <td style="background: #F0ADAD">
+          actor.this.`package`.actorRef2Scala(ref)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1526
+        </td>
+        <td>
+          1573
+          -
+          1597
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.messages.LobbyMessages.Connect.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.LobbyMessages.Connect.apply(StartupServiceImpl.this.startupActorRef)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          883
+        </td>
+        <td>
+          1571
+          -
+          1571
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!$default$2
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!$default$2(x$1)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1881
+        </td>
+        <td>
+          1567
+          -
+          1597
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!(x$1)(x$2)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1287
+        </td>
+        <td>
+          1631
+          -
+          1641
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1396
+        </td>
+        <td>
+          1738
+          -
+          1752
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.actor.actorRef2Scala
+        </td>
+        <td style="background: #F0ADAD">
+          actor.this.`package`.actorRef2Scala(StartupServiceImpl.this.serverLobbyRef)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          956
+        </td>
+        <td>
+          1738
+          -
+          1816
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!(x$1)(x$2)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1775
+        </td>
+        <td>
+          1755
+          -
+          1816
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.messages.LobbyMessages.JoinPublicLobby.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.LobbyMessages.JoinPublicLobby.apply(StartupServiceImpl.this.clientGeneratedId, username, numberOfPlayers)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          850
+        </td>
+        <td>
+          1771
+          -
+          1788
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.clientGeneratedId
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.clientGeneratedId
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          2001
+        </td>
+        <td>
+          1738
+          -
+          1752
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.serverLobbyRef
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.serverLobbyRef
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1507
+        </td>
+        <td>
+          1753
+          -
+          1753
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!$default$2
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!$default$2(x$1)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1048
+        </td>
+        <td>
+          1940
+          -
+          1957
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.clientGeneratedId
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.clientGeneratedId
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          853
+        </td>
+        <td>
+          1904
+          -
+          1985
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!(x$1)(x$2)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1885
+        </td>
+        <td>
+          1904
+          -
+          1918
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.serverLobbyRef
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.serverLobbyRef
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1334
+        </td>
+        <td>
+          1904
+          -
+          1918
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.actor.actorRef2Scala
+        </td>
+        <td style="background: #F0ADAD">
+          actor.this.`package`.actorRef2Scala(StartupServiceImpl.this.serverLobbyRef)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1373
+        </td>
+        <td>
+          1919
+          -
+          1919
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!$default$2
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!$default$2(x$1)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          2004
+        </td>
+        <td>
+          1921
+          -
+          1985
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.messages.LobbyMessages.CreatePrivateLobby.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.LobbyMessages.CreatePrivateLobby.apply(StartupServiceImpl.this.clientGeneratedId, username, numberOfPlayers)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1510
+        </td>
+        <td>
+          2073
+          -
+          2087
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.actor.actorRef2Scala
+        </td>
+        <td style="background: #F0ADAD">
+          actor.this.`package`.actorRef2Scala(StartupServiceImpl.this.serverLobbyRef)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1336
+        </td>
+        <td>
+          2088
+          -
+          2088
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!$default$2
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!$default$2(x$1)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          2260
+        </td>
+        <td>
+          2073
+          -
+          2151
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!(x$1)(x$2)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1859
+        </td>
+        <td>
+          2090
+          -
+          2151
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.messages.LobbyMessages.JoinPrivateLobby.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.LobbyMessages.JoinPrivateLobby.apply(StartupServiceImpl.this.clientGeneratedId, username, privateLobbyId)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1762
+        </td>
+        <td>
+          2073
+          -
+          2087
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.serverLobbyRef
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.serverLobbyRef
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          903
+        </td>
+        <td>
+          2107
+          -
+          2124
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.clientGeneratedId
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.clientGeneratedId
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1483
+        </td>
+        <td>
+          2204
+          -
+          2204
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!$default$2
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!$default$2(x$1)
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1979
+        </td>
+        <td>
+          2189
+          -
+          2203
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.serverLobbyRef
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.serverLobbyRef
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          830
+        </td>
+        <td>
+          2217
+          -
+          2234
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.clientGeneratedId
+        </td>
+        <td style="background: #F0ADAD">
+          StartupServiceImpl.this.clientGeneratedId
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          896
+        </td>
+        <td>
+          2189
+          -
+          2235
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!(x$1)(x$2)
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1769
+        </td>
+        <td>
+          2206
+          -
+          2235
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.messages.LobbyMessages.LeaveLobby.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.LobbyMessages.LeaveLobby.apply(StartupServiceImpl.this.clientGeneratedId)
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1376
+        </td>
+        <td>
+          2189
+          -
+          2203
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.actor.actorRef2Scala
+        </td>
+        <td style="background: #F0ADAD">
+          actor.this.`package`.actorRef2Scala(StartupServiceImpl.this.serverLobbyRef)
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1864
+        </td>
+        <td>
+          2774
+          -
+          2896
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;akka.tcp://&quot;, &quot;@&quot;, &quot;:&quot;, &quot;/user/&quot;, &quot;&quot;).s(&quot;ScalavelliServer&quot;, address, port, &quot;lobby&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          1363
+        </td>
+        <td>
+          3052
+          -
+          3133
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ActorSelection.resolveOne
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.ActorSystemManager.actorSystem.actorSelection(actorPath).resolveOne()(util.this.Timeout.durationToTimeout(scala.concurrent.duration.`package`.DurationInt(10).seconds))
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          2242
+        </td>
+        <td>
+          3122
+          -
+          3132
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.concurrent.duration.DurationConversions.seconds
+        </td>
+        <td style="background: #F0ADAD">
+          scala.concurrent.duration.`package`.DurationInt(10).seconds
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          2002
+        </td>
+        <td>
+          3122
+          -
+          3132
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.util.Timeout.durationToTimeout
+        </td>
+        <td style="background: #F0ADAD">
+          util.this.Timeout.durationToTimeout(scala.concurrent.duration.`package`.DurationInt(10).seconds)
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          1256
+        </td>
+        <td>
+          3122
+          -
+          3124
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          10
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

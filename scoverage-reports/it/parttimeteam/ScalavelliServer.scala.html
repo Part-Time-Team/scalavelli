@@ -1,0 +1,271 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/ScalavelliServer.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam
+</span>2 <span style=''>
+</span>3 <span style=''>import akka.actor.ActorSystem
+</span>4 <span style=''>import com.typesafe.config.ConfigFactory
+</span>5 <span style=''>import it.parttimeteam.lobby.LobbyManagerActor
+</span>6 <span style=''>
+</span>7 <span style=''>object ScalavelliServer extends App {
+</span>8 <span style=''>  // def main(args: Array[String]): Unit = {
+</span>9 <span style=''>
+</span>10 <span style=''>    val config = </span><span style='background: #F0ADAD'>ConfigFactory.parseString(
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      s&quot;&quot;&quot;
+</span>12 <span style=''></span><span style='background: #F0ADAD'>         |akka.remote.netty.tcp.hostname = ${Constants.Remote.SERVER_ADDRESS}
+</span>13 <span style=''></span><span style='background: #F0ADAD'>         |akka.remote.netty.tcp.port = ${Constants.Remote.SERVER_PORT}
+</span>14 <span style=''></span><span style='background: #F0ADAD'>         |&quot;&quot;&quot;.stripMargin).withFallback(ConfigFactory.load())</span><span style=''>
+</span>15 <span style=''>
+</span>16 <span style=''>    val system = </span><span style='background: #F0ADAD'>ActorSystem(Constants.Remote.SERVER_ACTOR_SYSTEM_NAME, config)</span><span style=''>
+</span>17 <span style=''>    </span><span style='background: #F0ADAD'>system.actorOf(LobbyManagerActor.props(), Constants.Remote.SERVER_LOBBY_ACTOR_NAME)</span><span style=''>
+</span>18 <span style=''>
+</span>19 <span style=''>  // }
+</span>20 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          222
+        </td>
+        <td>
+          278
+          -
+          445
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;\n         |akka.remote.netty.tcp.hostname = &quot;, &quot;\n         |akka.remote.netty.tcp.port = &quot;, &quot;\n         |&quot;).s(&quot;localhost&quot;, 5150)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          89
+        </td>
+        <td>
+          278
+          -
+          457
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.immutable.StringLike.stripMargin
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Predef.augmentString(scala.StringContext.apply(&quot;\n         |akka.remote.netty.tcp.hostname = &quot;, &quot;\n         |akka.remote.netty.tcp.port = &quot;, &quot;\n         |&quot;).s(&quot;localhost&quot;, 5150)).stripMargin
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          313
+        </td>
+        <td>
+          472
+          -
+          492
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          com.typesafe.config.ConfigFactory.load
+        </td>
+        <td style="background: #F0ADAD">
+          com.typesafe.config.ConfigFactory.load()
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          172
+        </td>
+        <td>
+          245
+          -
+          493
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          com.typesafe.config.Config.withFallback
+        </td>
+        <td style="background: #F0ADAD">
+          com.typesafe.config.ConfigFactory.parseString(scala.Predef.augmentString(scala.StringContext.apply(&quot;\n         |akka.remote.netty.tcp.hostname = &quot;, &quot;\n         |akka.remote.netty.tcp.port = &quot;, &quot;\n         |&quot;).s(&quot;localhost&quot;, 5150)).stripMargin).withFallback(com.typesafe.config.ConfigFactory.load())
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          97
+        </td>
+        <td>
+          524
+          -
+          565
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;ScalavelliServer&quot;
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          192
+        </td>
+        <td>
+          512
+          -
+          574
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ActorSystem.apply
+        </td>
+        <td style="background: #F0ADAD">
+          akka.actor.ActorSystem.apply(&quot;ScalavelliServer&quot;, ScalavelliServer.this.config)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          341
+        </td>
+        <td>
+          567
+          -
+          573
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.ScalavelliServer.config
+        </td>
+        <td style="background: #F0ADAD">
+          ScalavelliServer.this.config
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          214
+        </td>
+        <td>
+          579
+          -
+          662
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ActorRefFactory.actorOf
+        </td>
+        <td style="background: #F0ADAD">
+          ScalavelliServer.this.system.actorOf(it.parttimeteam.lobby.LobbyManagerActor.props(), &quot;lobby&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          303
+        </td>
+        <td>
+          621
+          -
+          661
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;lobby&quot;
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          51
+        </td>
+        <td>
+          594
+          -
+          619
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.LobbyManagerActor.props
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.lobby.LobbyManagerActor.props()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

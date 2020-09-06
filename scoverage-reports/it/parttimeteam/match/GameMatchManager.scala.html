@@ -1,0 +1,1003 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/match/GameMatchManager.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.`match`
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
+</span>4 <span style=''>import it.parttimeteam.`match`.GameMatchManagerActor.{CardDrawnInfo, StateResult}
+</span>5 <span style=''>import it.parttimeteam.common.GamePlayer
+</span>6 <span style=''>import it.parttimeteam.core.collections.{Board, Hand}
+</span>7 <span style=''>import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
+</span>8 <span style=''>import it.parttimeteam.core.{GameManager, GameState}
+</span>9 <span style=''>
+</span>10 <span style=''>class GameMatchManager(private val gameApi: GameManager) {
+</span>11 <span style=''>
+</span>12 <span style=''>
+</span>13 <span style=''>  def retrieveInitialState(players: Seq[(PlayerId, PlayerName)]): GameState =
+</span>14 <span style=''>    </span><span style='background: #AEF1AE'>gameApi.create(players)</span><span style=''>
+</span>15 <span style=''>
+</span>16 <span style=''>
+</span>17 <span style=''>  /**
+</span>18 <span style=''>   * Determines the next game state based on the player action
+</span>19 <span style=''>   *
+</span>20 <span style=''>   * @param currentState current state of the game
+</span>21 <span style=''>   * @param playerInTurn player making the action
+</span>22 <span style=''>   * @param playerAction action made my the player
+</span>23 <span style=''>   * @return a state result or a string representing an error
+</span>24 <span style=''>   */
+</span>25 <span style=''>  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
+</span>26 <span style=''>    playerAction match {
+</span>27 <span style=''>      case DrawCard =&gt; {
+</span>28 <span style=''>        </span><span style='background: #AEF1AE'>nextStateOnCardDrawn(currentState, playerInTurn)</span><span style=''>
+</span>29 <span style=''>      }
+</span>30 <span style=''>
+</span>31 <span style=''>      case PlayedMove(updatedHand, updatedBoard) =&gt; {
+</span>32 <span style=''>        </span><span style='background: #F0ADAD'>nextStateOnPlayerMove(currentState, playerInTurn, updatedHand, updatedBoard)</span><span style=''>
+</span>33 <span style=''>      }
+</span>34 <span style=''>
+</span>35 <span style=''>      case _ =&gt; </span><span style='background: #F0ADAD'>Left(&quot;Non supported action&quot;)</span><span style=''>
+</span>36 <span style=''>    }
+</span>37 <span style=''>  }
+</span>38 <span style=''>
+</span>39 <span style=''>  private def nextStateOnPlayerMove(currentState: GameState, playerInTurn: GamePlayer, updatedHand: Hand, updatedBoard: Board) = {
+</span>40 <span style=''>    if (</span><span style='background: #F0ADAD'>gameApi.validateTurn(updatedBoard, updatedHand)</span><span style=''>) </span><span style='background: #F0ADAD'>{
+</span>41 <span style=''></span><span style='background: #F0ADAD'>      val updatedState = currentState
+</span>42 <span style=''></span><span style='background: #F0ADAD'>        .getPlayer(playerInTurn.id)
+</span>43 <span style=''></span><span style='background: #F0ADAD'>        .map(p =&gt; currentState.updatePlayer(p.copy(
+</span>44 <span style=''></span><span style='background: #F0ADAD'>          hand = updatedHand)))
+</span>45 <span style=''></span><span style='background: #F0ADAD'>        .get.copy(board = updatedBoard)
+</span>46 <span style=''></span><span style='background: #F0ADAD'>
+</span>47 <span style=''></span><span style='background: #F0ADAD'>      Right(StateResult(
+</span>48 <span style=''></span><span style='background: #F0ADAD'>        updatedState = updatedState,
+</span>49 <span style=''></span><span style='background: #F0ADAD'>        additionalInformation = None
+</span>50 <span style=''></span><span style='background: #F0ADAD'>      ))
+</span>51 <span style=''></span><span style='background: #F0ADAD'>
+</span>52 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''> else {
+</span>53 <span style=''>      </span><span style='background: #F0ADAD'>Left(&quot;Non valid plays&quot;)</span><span style=''>
+</span>54 <span style=''>    }
+</span>55 <span style=''>  }
+</span>56 <span style=''>
+</span>57 <span style=''>  private def nextStateOnCardDrawn(currentState: GameState, playerInTurn: GamePlayer) = {
+</span>58 <span style=''>    val (updateDeck, cardDrawn) = gameApi.draw(currentState.deck)
+</span>59 <span style=''>
+</span>60 <span style=''>    // updated player with the new card on his hand
+</span>61 <span style=''>    val updatedState = </span><span style='background: #AEF1AE'>currentState
+</span>62 <span style=''></span><span style='background: #AEF1AE'>      .getPlayer(playerInTurn.id)
+</span>63 <span style=''></span><span style='background: #AEF1AE'>      .map(p =&gt; currentState.updatePlayer(p.copy(
+</span>64 <span style=''></span><span style='background: #AEF1AE'>        hand = p.hand.copy(playerCards = cardDrawn +: p.hand.playerCards))))
+</span>65 <span style=''></span><span style='background: #AEF1AE'>      .get.copy(deck = updateDeck)</span><span style=''>
+</span>66 <span style=''>
+</span>67 <span style=''>    </span><span style='background: #AEF1AE'>Right(StateResult(
+</span>68 <span style=''></span><span style='background: #AEF1AE'>      updatedState = updatedState,
+</span>69 <span style=''></span><span style='background: #AEF1AE'>      additionalInformation = Some(CardDrawnInfo(cardDrawn))
+</span>70 <span style=''></span><span style='background: #AEF1AE'>    ))</span><span style=''>
+</span>71 <span style=''>  }
+</span>72 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          14
+        </td>
+        <td>
+          532
+          -
+          555
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameManager.create
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchManager.this.gameApi.create(players)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          242
+        </td>
+        <td>
+          1047
+          -
+          1095
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.GameMatchManager.nextStateOnCardDrawn
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchManager.this.nextStateOnCardDrawn(currentState, playerInTurn)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          177
+        </td>
+        <td>
+          1167
+          -
+          1243
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.GameMatchManager.nextStateOnPlayerMove
+        </td>
+        <td style="background: #F0ADAD">
+          GameMatchManager.this.nextStateOnPlayerMove(currentState, playerInTurn, updatedHand, updatedBoard)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          30
+        </td>
+        <td>
+          1269
+          -
+          1297
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.util.Left.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.`package`.Left.apply[String, Nothing](&quot;Non supported action&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          141
+        </td>
+        <td>
+          1497
+          -
+          1812
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          {
+  val updatedState: it.parttimeteam.core.GameState = {
+    &lt;artifact&gt; val qual$1: it.parttimeteam.core.GameState = currentState.getPlayer(playerInTurn.id).map[it.parttimeteam.core.GameState](((p: it.parttimeteam.core.player.Player) =&gt; currentState.updatePlayer({
+  &lt;artifact&gt; val x$1: it.parttimeteam.core.collections.Hand = updatedHand;
+  &lt;artifact&gt; val x$2: String = p.copy$default$1;
+  &lt;artifact&gt; val x$3: it.parttimeteam.core.player.Player.PlayerId = p.copy$default$2;
+  p.copy(x$2, x$3, x$1)
+}))).get;
+    &lt;artifact&gt; val x$4: it.parttimeteam.core.collections.Board = updatedBoard;
+    &lt;artifact&gt; val x$5: it.parttimeteam.core.collections.Deck = qual$1.copy$default$1;
+    &lt;artifact&gt; val x$6: Seq[it.parttimeteam.core.player.Player] = qual$1.copy$default$3;
+    qual$1.copy(x$5, x$4, x$6)
+  };
+  scala.`package`.Right.apply[Nothing, it.parttimeteam.match.GameMatchManagerActor.StateResult](it.parttimeteam.`match`.GameMatchManagerActor.StateResult.apply(updatedState, scala.None))
+}
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          269
+        </td>
+        <td>
+          1448
+          -
+          1495
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameManager.validateTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameMatchManager.this.gameApi.validateTurn(updatedBoard, updatedHand)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          130
+        </td>
+        <td>
+          1556
+          -
+          1571
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.id
+        </td>
+        <td style="background: #F0ADAD">
+          playerInTurn.id
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          140
+        </td>
+        <td>
+          1617
+          -
+          1654
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.copy
+        </td>
+        <td style="background: #F0ADAD">
+          p.copy(x$2, x$3, x$1)
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          292
+        </td>
+        <td>
+          1619
+          -
+          1619
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.copy$default$2
+        </td>
+        <td style="background: #F0ADAD">
+          p.copy$default$2
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          366
+        </td>
+        <td>
+          1619
+          -
+          1619
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.copy$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          p.copy$default$1
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          15
+        </td>
+        <td>
+          1591
+          -
+          1655
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.updatePlayer
+        </td>
+        <td style="background: #F0ADAD">
+          currentState.updatePlayer({
+  &lt;artifact&gt; val x$1: it.parttimeteam.core.collections.Hand = updatedHand;
+  &lt;artifact&gt; val x$2: String = p.copy$default$1;
+  &lt;artifact&gt; val x$3: it.parttimeteam.core.player.Player.PlayerId = p.copy$default$2;
+  p.copy(x$2, x$3, x$1)
+})
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          32
+        </td>
+        <td>
+          1670
+          -
+          1670
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.copy$default$3
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.copy$default$3
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          253
+        </td>
+        <td>
+          1524
+          -
+          1669
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #F0ADAD">
+          currentState.getPlayer(playerInTurn.id).map[it.parttimeteam.core.GameState](((p: it.parttimeteam.core.player.Player) =&gt; currentState.updatePlayer({
+  &lt;artifact&gt; val x$1: it.parttimeteam.core.collections.Hand = updatedHand;
+  &lt;artifact&gt; val x$2: String = p.copy$default$1;
+  &lt;artifact&gt; val x$3: it.parttimeteam.core.player.Player.PlayerId = p.copy$default$2;
+  p.copy(x$2, x$3, x$1)
+}))).get
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          265
+        </td>
+        <td>
+          1524
+          -
+          1696
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.copy
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.copy(x$5, x$4, x$6)
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          108
+        </td>
+        <td>
+          1670
+          -
+          1670
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.copy$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.copy$default$1
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          286
+        </td>
+        <td>
+          1704
+          -
+          1805
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.util.Right.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.`package`.Right.apply[Nothing, it.parttimeteam.match.GameMatchManagerActor.StateResult](it.parttimeteam.`match`.GameMatchManagerActor.StateResult.apply(updatedState, scala.None))
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          363
+        </td>
+        <td>
+          1710
+          -
+          1804
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.GameMatchManagerActor.StateResult.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.`match`.GameMatchManagerActor.StateResult.apply(updatedState, scala.None)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          131
+        </td>
+        <td>
+          1792
+          -
+          1796
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #F0ADAD">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          8
+        </td>
+        <td>
+          1826
+          -
+          1849
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.util.Left.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.`package`.Left.apply[String, Nothing](&quot;Non valid plays&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          241
+        </td>
+        <td>
+          1826
+          -
+          1849
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          scala.util.Left.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.`package`.Left.apply[String, Nothing](&quot;Non valid plays&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          27
+        </td>
+        <td>
+          1972
+          -
+          1972
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._2
+        </td>
+        <td style="background: #AEF1AE">
+          x$1._2
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          102
+        </td>
+        <td>
+          1960
+          -
+          1960
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._1
+        </td>
+        <td style="background: #AEF1AE">
+          x$1._1
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          266
+        </td>
+        <td>
+          2123
+          -
+          2138
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.id
+        </td>
+        <td style="background: #AEF1AE">
+          playerInTurn.id
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          98
+        </td>
+        <td>
+          2184
+          -
+          2184
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.copy$default$2
+        </td>
+        <td style="background: #AEF1AE">
+          p.copy$default$2
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          31
+        </td>
+        <td>
+          2182
+          -
+          2264
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.copy
+        </td>
+        <td style="background: #AEF1AE">
+          p.copy(x$4, x$5, x$3)
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          261
+        </td>
+        <td>
+          2156
+          -
+          2265
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.updatePlayer
+        </td>
+        <td style="background: #AEF1AE">
+          currentState.updatePlayer({
+  &lt;artifact&gt; val x$3: it.parttimeteam.core.collections.Hand = {
+    &lt;artifact&gt; val qual$1: it.parttimeteam.core.collections.Hand = p.hand;
+    &lt;artifact&gt; val x$1: Seq[it.parttimeteam.core.cards.Card] = {
+      &lt;synthetic&gt; &lt;artifact&gt; val x$2: it.parttimeteam.core.cards.Card = cardDrawn;
+      p.hand.playerCards.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$2)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+    };
+    &lt;artifact&gt; val x$2: Seq[it.parttimeteam.core.cards.Card] = qual$1.copy$default$2;
+    qual$1.copy(x$1, x$2)
+  };
+  &lt;artifact&gt; val x$4: String = p.copy$default$1;
+  &lt;artifact&gt; val x$5: it.parttimeteam.core.player.Player.PlayerId = p.copy$default$2;
+  p.copy(x$4, x$5, x$3)
+})
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          243
+        </td>
+        <td>
+          2184
+          -
+          2184
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.copy$default$1
+        </td>
+        <td style="background: #AEF1AE">
+          p.copy$default$1
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          358
+        </td>
+        <td>
+          2241
+          -
+          2241
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          139
+        </td>
+        <td>
+          2212
+          -
+          2212
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy$default$2
+        </td>
+        <td style="background: #AEF1AE">
+          qual$1.copy$default$2
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          10
+        </td>
+        <td>
+          2205
+          -
+          2263
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy
+        </td>
+        <td style="background: #AEF1AE">
+          qual$1.copy(x$1, x$2)
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          219
+        </td>
+        <td>
+          2241
+          -
+          2262
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.SeqLike.+:
+        </td>
+        <td style="background: #AEF1AE">
+          p.hand.playerCards.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$2)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          132
+        </td>
+        <td>
+          2205
+          -
+          2211
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.hand
+        </td>
+        <td style="background: #AEF1AE">
+          p.hand
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          134
+        </td>
+        <td>
+          2093
+          -
+          2277
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #AEF1AE">
+          currentState.getPlayer(playerInTurn.id).map[it.parttimeteam.core.GameState](((p: it.parttimeteam.core.player.Player) =&gt; currentState.updatePlayer({
+  &lt;artifact&gt; val x$3: it.parttimeteam.core.collections.Hand = {
+    &lt;artifact&gt; val qual$1: it.parttimeteam.core.collections.Hand = p.hand;
+    &lt;artifact&gt; val x$1: Seq[it.parttimeteam.core.cards.Card] = {
+      &lt;synthetic&gt; &lt;artifact&gt; val x$2: it.parttimeteam.core.cards.Card = cardDrawn;
+      p.hand.playerCards.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$2)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+    };
+    &lt;artifact&gt; val x$2: Seq[it.parttimeteam.core.cards.Card] = qual$1.copy$default$2;
+    qual$1.copy(x$1, x$2)
+  };
+  &lt;artifact&gt; val x$4: String = p.copy$default$1;
+  &lt;artifact&gt; val x$5: it.parttimeteam.core.player.Player.PlayerId = p.copy$default$2;
+  p.copy(x$4, x$5, x$3)
+}))).get
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          153
+        </td>
+        <td>
+          2093
+          -
+          2301
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.copy
+        </td>
+        <td style="background: #AEF1AE">
+          qual$2.copy(x$6, x$7, x$8)
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          359
+        </td>
+        <td>
+          2278
+          -
+          2278
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.copy$default$2
+        </td>
+        <td style="background: #AEF1AE">
+          qual$2.copy$default$2
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          215
+        </td>
+        <td>
+          2278
+          -
+          2278
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.copy$default$3
+        </td>
+        <td style="background: #AEF1AE">
+          qual$2.copy$default$3
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          26
+        </td>
+        <td>
+          2307
+          -
+          2428
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.util.Right.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.`package`.Right.apply[Nothing, it.parttimeteam.match.GameMatchManagerActor.StateResult](it.parttimeteam.`match`.GameMatchManagerActor.StateResult.apply(updatedState, scala.Some.apply[it.parttimeteam.match.GameMatchManagerActor.CardDrawnInfo](it.parttimeteam.`match`.GameMatchManagerActor.CardDrawnInfo.apply(cardDrawn))))
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          99
+        </td>
+        <td>
+          2313
+          -
+          2427
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.GameMatchManagerActor.StateResult.apply
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.`match`.GameMatchManagerActor.StateResult.apply(updatedState, scala.Some.apply[it.parttimeteam.match.GameMatchManagerActor.CardDrawnInfo](it.parttimeteam.`match`.GameMatchManagerActor.CardDrawnInfo.apply(cardDrawn)))
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          256
+        </td>
+        <td>
+          2391
+          -
+          2421
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[it.parttimeteam.match.GameMatchManagerActor.CardDrawnInfo](it.parttimeteam.`match`.GameMatchManagerActor.CardDrawnInfo.apply(cardDrawn))
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          12
+        </td>
+        <td>
+          2396
+          -
+          2420
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.GameMatchManagerActor.CardDrawnInfo.apply
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.`match`.GameMatchManagerActor.CardDrawnInfo.apply(cardDrawn)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

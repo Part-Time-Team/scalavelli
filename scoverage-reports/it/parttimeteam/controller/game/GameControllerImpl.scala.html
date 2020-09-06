@@ -1,0 +1,3394 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/controller/game/GameControllerImpl.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.controller.game
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.core.cards.Card
+</span>4 <span style=''>import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
+</span>5 <span style=''>import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
+</span>6 <span style=''>import it.parttimeteam.model.game._
+</span>7 <span style=''>import it.parttimeteam.model.startup.GameMatchInformations
+</span>8 <span style=''>import it.parttimeteam.view.game._
+</span>9 <span style=''>import scalafx.application.{JFXApp, Platform}
+</span>10 <span style=''>
+</span>11 <span style=''>class GameControllerImpl(playAgain: () =&gt; Unit) extends GameController {
+</span>12 <span style=''>
+</span>13 <span style=''>  private var gameStage: MachiavelliGameStage = _
+</span>14 <span style=''>  private var gameService: GameService = _
+</span>15 <span style=''>
+</span>16 <span style=''>  override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
+</span>17 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      gameStage = MachiavelliGameStage(this)
+</span>19 <span style=''></span><span style='background: #F0ADAD'>      gameStage.initMatch()
+</span>20 <span style=''></span><span style='background: #F0ADAD'>      app.stage = gameStage
+</span>21 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>22 <span style=''>
+</span>23 <span style=''>    </span><span style='background: #F0ADAD'>this.gameService = new GameServiceImpl(gameInfo, notifyEvent)</span><span style=''>
+</span>24 <span style=''>    </span><span style='background: #F0ADAD'>this.gameService.playerReady()</span><span style=''>
+</span>25 <span style=''>  }
+</span>26 <span style=''>
+</span>27 <span style=''>  def notifyEvent(serverGameEvent: ServerGameEvent): Unit = serverGameEvent match {
+</span>28 <span style=''>
+</span>29 <span style=''>    case StateUpdatedEvent(state: PlayerGameState) =&gt; {
+</span>30 <span style=''>      </span><span style='background: #F0ADAD'>println(&quot;Board: &quot; + state.board)</span><span style=''>
+</span>31 <span style=''>      </span><span style='background: #F0ADAD'>println(&quot;Hand: &quot; + state.hand)</span><span style=''>
+</span>32 <span style=''>
+</span>33 <span style=''>      val historyState = </span><span style='background: #F0ADAD'>gameService.getHistoryState</span><span style=''>
+</span>34 <span style=''>      </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>35 <span style=''></span><span style='background: #F0ADAD'>        gameStage.matchReady()
+</span>36 <span style=''></span><span style='background: #F0ADAD'>        gameStage.updateState(state)
+</span>37 <span style=''></span><span style='background: #F0ADAD'>        gameStage.updateHistoryState(historyState._1, historyState._2)
+</span>38 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>39 <span style=''>    }
+</span>40 <span style=''>
+</span>41 <span style=''>    case OpponentInTurnEvent(actualPlayerName) =&gt; {
+</span>42 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.setMessage(s&quot;It's $actualPlayerName turn&quot;)</span><span style=''>
+</span>43 <span style=''>    }
+</span>44 <span style=''>
+</span>45 <span style=''>    case InTurnEvent =&gt; {
+</span>46 <span style=''>      val historyState = </span><span style='background: #F0ADAD'>gameService.getHistoryState</span><span style=''>
+</span>47 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.setInTurn()</span><span style=''>
+</span>48 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.updateHistoryState(historyState._1, historyState._2)</span><span style=''>
+</span>49 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.showTimer()</span><span style=''>
+</span>50 <span style=''>    }
+</span>51 <span style=''>
+</span>52 <span style=''>    case InfoEvent(message: String) =&gt; {
+</span>53 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.notifyInfo(message)</span><span style=''>
+</span>54 <span style=''>    }
+</span>55 <span style=''>
+</span>56 <span style=''>    case ErrorEvent(reason: String) =&gt; {
+</span>57 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.notifyError(reason)</span><span style=''>
+</span>58 <span style=''>    }
+</span>59 <span style=''>
+</span>60 <span style=''>    case GameWonEvent =&gt; {
+</span>61 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.notifyGameEnd(GameWon)</span><span style=''>
+</span>62 <span style=''>    }
+</span>63 <span style=''>
+</span>64 <span style=''>    case GameLostEvent(winnerName: String) =&gt; {
+</span>65 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.notifyGameEnd(GameLost(winnerName))</span><span style=''>
+</span>66 <span style=''>    }
+</span>67 <span style=''>
+</span>68 <span style=''>    case GameEndedWithErrorEvent(reason: String) =&gt; {
+</span>69 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.notifyGameEnd(GameEndWithError(reason))</span><span style=''>
+</span>70 <span style=''>    }
+</span>71 <span style=''>
+</span>72 <span style=''>    case TurnEndedEvent =&gt; {
+</span>73 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.setTurnEnded()</span><span style=''>
+</span>74 <span style=''>      </span><span style='background: #F0ADAD'>gameStage.hideTimer()</span><span style=''>
+</span>75 <span style=''>    }
+</span>76 <span style=''>
+</span>77 <span style=''>    case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>78 <span style=''>  }
+</span>79 <span style=''>
+</span>80 <span style=''>  override def onViewEvent(viewEvent: ViewGameEvent): Unit = viewEvent match {
+</span>81 <span style=''>    case LeaveGameEvent =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(LeaveGameAction)</span><span style=''>
+</span>82 <span style=''>
+</span>83 <span style=''>    case UndoEvent =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(UndoAction)</span><span style=''>
+</span>84 <span style=''>
+</span>85 <span style=''>    case RedoEvent =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(RedoAction)</span><span style=''>
+</span>86 <span style=''>
+</span>87 <span style=''>    case ResetEvent =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(ResetAction)</span><span style=''>
+</span>88 <span style=''>
+</span>89 <span style=''>    case SortHandBySuitEvent =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(SortHandBySuitAction)</span><span style=''>
+</span>90 <span style=''>
+</span>91 <span style=''>    case SortHandByRankEvent =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(SortHandByRankAction)</span><span style=''>
+</span>92 <span style=''>
+</span>93 <span style=''>    case EndTurnEvent =&gt; {
+</span>94 <span style=''>      if (</span><span style='background: #F0ADAD'>gameService.playerMadeAnAction()</span><span style=''>) {
+</span>95 <span style=''>        </span><span style='background: #F0ADAD'>gameService.notifyUserAction(EndTurnAction)</span><span style=''>
+</span>96 <span style=''>      } else {
+</span>97 <span style=''>        </span><span style='background: #F0ADAD'>gameService.notifyUserAction(EndTurnAndDrawAction)</span><span style=''>
+</span>98 <span style=''>      }
+</span>99 <span style=''>    }
+</span>100 <span style=''>
+</span>101 <span style=''>    case MakeCombinationEvent(cards: Seq[Card]) =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(MakeCombinationAction(cards))</span><span style=''>
+</span>102 <span style=''>
+</span>103 <span style=''>    case PickCardCombinationEvent(combinationId: String) =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(PickCardCombinationAction(combinationId))</span><span style=''>
+</span>104 <span style=''>
+</span>105 <span style=''>    case PickCardsEvent(cards: Seq[Card]) =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(PickCardsAction(cards))</span><span style=''>
+</span>106 <span style=''>
+</span>107 <span style=''>    case UpdateCardCombinationEvent(combinationId: String, cards: Seq[Card]) =&gt; </span><span style='background: #F0ADAD'>gameService.notifyUserAction(UpdateCardCombinationAction(combinationId, cards))</span><span style=''>
+</span>108 <span style=''>
+</span>109 <span style=''>    case PlayAgainEvent =&gt; </span><span style='background: #F0ADAD'>playAgain()</span><span style=''>
+</span>110 <span style=''>  }
+</span>111 <span style=''>
+</span>112 <span style=''>  private def getMockState: PlayerGameState = {
+</span>113 <span style=''>    val board: Board = </span><span style='background: #F0ADAD'>Board(
+</span>114 <span style=''></span><span style='background: #F0ADAD'>      List(
+</span>115 <span style=''></span><span style='background: #F0ADAD'>        CardCombination(&quot;#1&quot;, Seq(Card(&quot;A&quot;, &quot;♠&quot;, &quot;B&quot;), Card(&quot;2&quot;, &quot;♠&quot;, &quot;B&quot;))),
+</span>116 <span style=''></span><span style='background: #F0ADAD'>        CardCombination(&quot;#2&quot;, Seq(Card(&quot;3&quot;, &quot;♠&quot;, &quot;B&quot;), Card(&quot;4&quot;, &quot;♠&quot;, &quot;B&quot;))),
+</span>117 <span style=''></span><span style='background: #F0ADAD'>        CardCombination(&quot;#3&quot;, Seq(Card(&quot;5&quot;, &quot;♠&quot;, &quot;B&quot;), Card(&quot;6&quot;, &quot;♠&quot;, &quot;B&quot;), Card(&quot;7&quot;, &quot;♠&quot;, &quot;B&quot;)))
+</span>118 <span style=''></span><span style='background: #F0ADAD'>      )
+</span>119 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>120 <span style=''>
+</span>121 <span style=''>    var hand: Hand = </span><span style='background: #F0ADAD'>Hand()</span><span style=''>
+</span>122 <span style=''>    hand = </span><span style='background: #F0ADAD'>hand.addPlayerCards(Seq(
+</span>123 <span style=''></span><span style='background: #F0ADAD'>      Card(&quot;A&quot;, &quot;♥&quot;, &quot;B&quot;),
+</span>124 <span style=''></span><span style='background: #F0ADAD'>      Card(&quot;2&quot;, &quot;♥&quot;, &quot;B&quot;),
+</span>125 <span style=''></span><span style='background: #F0ADAD'>      Card(&quot;3&quot;, &quot;♥&quot;, &quot;B&quot;),
+</span>126 <span style=''></span><span style='background: #F0ADAD'>      Card(&quot;4&quot;, &quot;♥&quot;, &quot;B&quot;),
+</span>127 <span style=''></span><span style='background: #F0ADAD'>      Card(&quot;5&quot;, &quot;♥&quot;, &quot;B&quot;),
+</span>128 <span style=''></span><span style='background: #F0ADAD'>      Card(&quot;6&quot;, &quot;♥&quot;, &quot;B&quot;),
+</span>129 <span style=''></span><span style='background: #F0ADAD'>      Card(&quot;7&quot;, &quot;♥&quot;, &quot;B&quot;)
+</span>130 <span style=''></span><span style='background: #F0ADAD'>    ))</span><span style=''>
+</span>131 <span style=''>
+</span>132 <span style=''>    hand = </span><span style='background: #F0ADAD'>hand.addTableCards(Seq(
+</span>133 <span style=''></span><span style='background: #F0ADAD'>      Card(&quot;K&quot;, &quot;♥&quot;, &quot;B&quot;),
+</span>134 <span style=''></span><span style='background: #F0ADAD'>      Card(&quot;Q&quot;, &quot;♠&quot;, &quot;B&quot;)
+</span>135 <span style=''></span><span style='background: #F0ADAD'>    ))</span><span style=''>
+</span>136 <span style=''>
+</span>137 <span style=''>    val players: Seq[Opponent] = </span><span style='background: #F0ADAD'>List(
+</span>138 <span style=''></span><span style='background: #F0ADAD'>      Opponent(&quot;Matteo&quot;, 5),
+</span>139 <span style=''></span><span style='background: #F0ADAD'>      Opponent(&quot;Daniele&quot;, 7),
+</span>140 <span style=''></span><span style='background: #F0ADAD'>      Opponent(&quot;Lorenzo&quot;, 3),
+</span>141 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>142 <span style=''>
+</span>143 <span style=''>    </span><span style='background: #F0ADAD'>PlayerGameState(board, hand, players)</span><span style=''>
+</span>144 <span style=''>  }
+</span>145 <span style=''>
+</span>146 <span style=''>  override def end(): Unit = </span><span style='background: #F0ADAD'>{
+</span>147 <span style=''></span><span style='background: #F0ADAD'>
+</span>148 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>149 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          875
+        </td>
+        <td>
+          638
+          -
+          765
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  GameControllerImpl.this.gameStage_=(it.parttimeteam.view.game.MachiavelliGameStage.apply(this));
+  GameControllerImpl.this.gameStage.initMatch();
+  app.stage_=(GameControllerImpl.this.gameStage)
+})
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          2021
+        </td>
+        <td>
+          676
+          -
+          702
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.game.MachiavelliGameStage.apply(this)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1705
+        </td>
+        <td>
+          664
+          -
+          702
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameControllerImpl.gameStage_=
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage_=(it.parttimeteam.view.game.MachiavelliGameStage.apply(this))
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1124
+        </td>
+        <td>
+          709
+          -
+          730
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.initMatch
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.initMatch()
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          2027
+        </td>
+        <td>
+          749
+          -
+          758
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameControllerImpl.gameStage
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1517
+        </td>
+        <td>
+          737
+          -
+          758
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.JFXApp.stage_=
+        </td>
+        <td style="background: #F0ADAD">
+          app.stage_=(GameControllerImpl.this.gameStage)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1009
+        </td>
+        <td>
+          771
+          -
+          832
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameControllerImpl.gameService_=
+        </td>
+        <td style="background: #F0ADAD">
+          this.gameService_=(new it.parttimeteam.model.game.GameServiceImpl(gameInfo, {
+  ((serverGameEvent: it.parttimeteam.model.game.ServerGameEvent) =&gt; GameControllerImpl.this.notifyEvent(serverGameEvent))
+}))
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1613
+        </td>
+        <td>
+          790
+          -
+          832
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameServiceImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.model.game.GameServiceImpl(gameInfo, {
+  ((serverGameEvent: it.parttimeteam.model.game.ServerGameEvent) =&gt; GameControllerImpl.this.notifyEvent(serverGameEvent))
+})
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          2130
+        </td>
+        <td>
+          820
+          -
+          831
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameControllerImpl.notifyEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.notifyEvent(serverGameEvent)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1990
+        </td>
+        <td>
+          837
+          -
+          867
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.playerReady
+        </td>
+        <td style="background: #F0ADAD">
+          this.gameService.playerReady()
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1710
+        </td>
+        <td>
+          1028
+          -
+          1037
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Board: &quot;
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1093
+        </td>
+        <td>
+          1040
+          -
+          1051
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.board
+        </td>
+        <td style="background: #F0ADAD">
+          state.board
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          2092
+        </td>
+        <td>
+          1028
+          -
+          1051
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Board: &quot;.+(state.board)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1522
+        </td>
+        <td>
+          1020
+          -
+          1052
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.println
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Predef.println(&quot;Board: &quot;.+(state.board))
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          941
+        </td>
+        <td>
+          1067
+          -
+          1075
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Hand: &quot;
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          997
+        </td>
+        <td>
+          1059
+          -
+          1089
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.println
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Predef.println(&quot;Hand: &quot;.+(state.hand))
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1615
+        </td>
+        <td>
+          1067
+          -
+          1088
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Hand: &quot;.+(state.hand)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          2135
+        </td>
+        <td>
+          1078
+          -
+          1088
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.hand
+        </td>
+        <td style="background: #F0ADAD">
+          state.hand
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          1996
+        </td>
+        <td>
+          1116
+          -
+          1143
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.getHistoryState
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.getHistoryState
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          2124
+        </td>
+        <td>
+          1150
+          -
+          1317
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  GameControllerImpl.this.gameStage.matchReady();
+  GameControllerImpl.this.gameStage.updateState(state);
+  GameControllerImpl.this.gameStage.updateHistoryState(historyState._1, historyState._2)
+})
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1661
+        </td>
+        <td>
+          1178
+          -
+          1200
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.matchReady
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.matchReady()
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1096
+        </td>
+        <td>
+          1209
+          -
+          1237
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.updateState
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.updateState(state)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1476
+        </td>
+        <td>
+          1292
+          -
+          1307
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._2
+        </td>
+        <td style="background: #F0ADAD">
+          historyState._2
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          949
+        </td>
+        <td>
+          1246
+          -
+          1308
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.updateHistoryState
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.updateHistoryState(historyState._1, historyState._2)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          2094
+        </td>
+        <td>
+          1275
+          -
+          1290
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._1
+        </td>
+        <td style="background: #F0ADAD">
+          historyState._1
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1587
+        </td>
+        <td>
+          1404
+          -
+          1434
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;It\'s &quot;, &quot; turn&quot;).s(actualPlayerName)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1002
+        </td>
+        <td>
+          1383
+          -
+          1435
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.setMessage
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.setMessage(scala.StringContext.apply(&quot;It\'s &quot;, &quot; turn&quot;).s(actualPlayerName))
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1949
+        </td>
+        <td>
+          1494
+          -
+          1521
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.getHistoryState
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.getHistoryState
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1369
+        </td>
+        <td>
+          1528
+          -
+          1549
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.setInTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.setInTurn()
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1099
+        </td>
+        <td>
+          1585
+          -
+          1600
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._1
+        </td>
+        <td style="background: #F0ADAD">
+          historyState._1
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1481
+        </td>
+        <td>
+          1556
+          -
+          1618
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.updateHistoryState
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.updateHistoryState(historyState._1, historyState._2)
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          2025
+        </td>
+        <td>
+          1602
+          -
+          1617
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._2
+        </td>
+        <td style="background: #F0ADAD">
+          historyState._2
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          930
+        </td>
+        <td>
+          1625
+          -
+          1646
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.showTimer
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.showTimer()
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          2125
+        </td>
+        <td>
+          1701
+          -
+          1730
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.notifyInfo
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.notifyInfo(message)
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1588
+        </td>
+        <td>
+          1785
+          -
+          1814
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.notifyError
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.notifyError(reason)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          1952
+        </td>
+        <td>
+          1855
+          -
+          1887
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.notifyGameEnd
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.notifyGameEnd(it.parttimeteam.view.game.GameWon)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          978
+        </td>
+        <td>
+          1879
+          -
+          1886
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameWon
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.game.GameWon
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1079
+        </td>
+        <td>
+          1949
+          -
+          1994
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.notifyGameEnd
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.notifyGameEnd(it.parttimeteam.view.game.GameLost.apply(winnerName))
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1415
+        </td>
+        <td>
+          1973
+          -
+          1993
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameLost.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.game.GameLost.apply(winnerName)
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1454
+        </td>
+        <td>
+          2062
+          -
+          2111
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.notifyGameEnd
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.notifyGameEnd(it.parttimeteam.view.game.GameEndWithError.apply(reason))
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          2028
+        </td>
+        <td>
+          2086
+          -
+          2110
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameEndWithError.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.game.GameEndWithError.apply(reason)
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          938
+        </td>
+        <td>
+          2154
+          -
+          2178
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.setTurnEnded
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.setTurnEnded()
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          1826
+        </td>
+        <td>
+          2185
+          -
+          2206
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MachiavelliGameStage.hideTimer
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameStage.hideTimer()
+        </td>
+      </tr><tr>
+        <td>
+          77
+        </td>
+        <td>
+          1634
+        </td>
+        <td>
+          2225
+          -
+          2227
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          982
+        </td>
+        <td>
+          2339
+          -
+          2384
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(LeaveGameAction)
+        </td>
+      </tr><tr>
+        <td>
+          83
+        </td>
+        <td>
+          1933
+        </td>
+        <td>
+          2408
+          -
+          2448
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(UndoAction)
+        </td>
+      </tr><tr>
+        <td>
+          85
+        </td>
+        <td>
+          1419
+        </td>
+        <td>
+          2472
+          -
+          2512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(RedoAction)
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1152
+        </td>
+        <td>
+          2537
+          -
+          2578
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(ResetAction)
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          2105
+        </td>
+        <td>
+          2612
+          -
+          2662
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(SortHandBySuitAction)
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1456
+        </td>
+        <td>
+          2696
+          -
+          2746
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(SortHandByRankAction)
+        </td>
+      </tr><tr>
+        <td>
+          94
+        </td>
+        <td>
+          948
+        </td>
+        <td>
+          2785
+          -
+          2817
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.playerMadeAnAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.playerMadeAnAction()
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          1584
+        </td>
+        <td>
+          2829
+          -
+          2872
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(EndTurnAction)
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          1909
+        </td>
+        <td>
+          2829
+          -
+          2872
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(EndTurnAction)
+        </td>
+      </tr><tr>
+        <td>
+          97
+        </td>
+        <td>
+          1970
+        </td>
+        <td>
+          2896
+          -
+          2946
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(EndTurnAndDrawAction)
+        </td>
+      </tr><tr>
+        <td>
+          97
+        </td>
+        <td>
+          1058
+        </td>
+        <td>
+          2896
+          -
+          2946
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(EndTurnAndDrawAction)
+        </td>
+      </tr><tr>
+        <td>
+          101
+        </td>
+        <td>
+          1429
+        </td>
+        <td>
+          3042
+          -
+          3070
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.MakeCombinationAction.apply
+        </td>
+        <td style="background: #F0ADAD">
+          MakeCombinationAction.apply(cards)
+        </td>
+      </tr><tr>
+        <td>
+          101
+        </td>
+        <td>
+          1077
+        </td>
+        <td>
+          3013
+          -
+          3071
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(MakeCombinationAction.apply(cards))
+        </td>
+      </tr><tr>
+        <td>
+          103
+        </td>
+        <td>
+          1528
+        </td>
+        <td>
+          3133
+          -
+          3203
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(PickCardCombinationAction.apply(combinationId))
+        </td>
+      </tr><tr>
+        <td>
+          103
+        </td>
+        <td>
+          2072
+        </td>
+        <td>
+          3162
+          -
+          3202
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.PickCardCombinationAction.apply
+        </td>
+        <td style="background: #F0ADAD">
+          PickCardCombinationAction.apply(combinationId)
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          1913
+        </td>
+        <td>
+          3250
+          -
+          3302
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(PickCardsAction.apply(cards))
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          915
+        </td>
+        <td>
+          3279
+          -
+          3301
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.PickCardsAction.apply
+        </td>
+        <td style="background: #F0ADAD">
+          PickCardsAction.apply(cards)
+        </td>
+      </tr><tr>
+        <td>
+          107
+        </td>
+        <td>
+          1560
+        </td>
+        <td>
+          3413
+          -
+          3462
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.UpdateCardCombinationAction.apply
+        </td>
+        <td style="background: #F0ADAD">
+          UpdateCardCombinationAction.apply(combinationId, cards)
+        </td>
+      </tr><tr>
+        <td>
+          107
+        </td>
+        <td>
+          1030
+        </td>
+        <td>
+          3384
+          -
+          3463
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameService.notifyUserAction
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.gameService.notifyUserAction(UpdateCardCombinationAction.apply(combinationId, cards))
+        </td>
+      </tr><tr>
+        <td>
+          109
+        </td>
+        <td>
+          1973
+        </td>
+        <td>
+          3492
+          -
+          3503
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function0.apply
+        </td>
+        <td style="background: #F0ADAD">
+          GameControllerImpl.this.playAgain.apply()
+        </td>
+      </tr><tr>
+        <td>
+          113
+        </td>
+        <td>
+          1797
+        </td>
+        <td>
+          3580
+          -
+          3866
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Board.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.collections.Board.apply(scala.collection.immutable.List.apply[it.parttimeteam.core.collections.CardCombination](it.parttimeteam.core.collections.CardCombination.apply(&quot;#1&quot;, scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;A&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;2&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)))), it.parttimeteam.core.collections.CardCombination.apply(&quot;#2&quot;, scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;3&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;4&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)))), it.parttimeteam.core.collections.CardCombination.apply(&quot;#3&quot;, scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;5&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;6&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;7&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))))))
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          852
+        </td>
+        <td>
+          3593
+          -
+          3860
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.immutable.List.apply[it.parttimeteam.core.collections.CardCombination](it.parttimeteam.core.collections.CardCombination.apply(&quot;#1&quot;, scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;A&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;2&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)))), it.parttimeteam.core.collections.CardCombination.apply(&quot;#2&quot;, scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;3&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;4&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)))), it.parttimeteam.core.collections.CardCombination.apply(&quot;#3&quot;, scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;5&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;6&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;7&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)))))
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1833
+        </td>
+        <td>
+          3659
+          -
+          3662
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;2&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          822
+        </td>
+        <td>
+          3638
+          -
+          3641
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;A&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1031
+        </td>
+        <td>
+          3669
+          -
+          3672
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1398
+        </td>
+        <td>
+          3623
+          -
+          3627
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;#1&quot;
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          2047
+        </td>
+        <td>
+          3643
+          -
+          3646
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♠&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1403
+        </td>
+        <td>
+          3629
+          -
+          3674
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;A&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;2&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          919
+        </td>
+        <td>
+          3633
+          -
+          3652
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;A&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1451
+        </td>
+        <td>
+          3648
+          -
+          3651
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1929
+        </td>
+        <td>
+          3654
+          -
+          3673
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;2&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          790
+        </td>
+        <td>
+          3607
+          -
+          3675
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CardCombination.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.collections.CardCombination.apply(&quot;#1&quot;, scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;A&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;2&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))))
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1564
+        </td>
+        <td>
+          3664
+          -
+          3667
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♠&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1934
+        </td>
+        <td>
+          3742
+          -
+          3745
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♠&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1389
+        </td>
+        <td>
+          3747
+          -
+          3750
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          2053
+        </td>
+        <td>
+          3707
+          -
+          3752
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;3&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;4&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1455
+        </td>
+        <td>
+          3716
+          -
+          3719
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;3&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1054
+        </td>
+        <td>
+          3737
+          -
+          3740
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;4&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1550
+        </td>
+        <td>
+          3711
+          -
+          3730
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;3&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1837
+        </td>
+        <td>
+          3726
+          -
+          3729
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          880
+        </td>
+        <td>
+          3721
+          -
+          3724
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♠&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          2049
+        </td>
+        <td>
+          3701
+          -
+          3705
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;#2&quot;
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          796
+        </td>
+        <td>
+          3732
+          -
+          3751
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;4&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1525
+        </td>
+        <td>
+          3685
+          -
+          3753
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CardCombination.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.collections.CardCombination.apply(&quot;#2&quot;, scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;3&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;4&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))))
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          2003
+        </td>
+        <td>
+          3789
+          -
+          3808
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;5&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          882
+        </td>
+        <td>
+          3779
+          -
+          3783
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;#3&quot;
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          2006
+        </td>
+        <td>
+          3785
+          -
+          3851
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;5&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;6&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;7&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1049
+        </td>
+        <td>
+          3831
+          -
+          3850
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;7&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1372
+        </td>
+        <td>
+          3763
+          -
+          3852
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CardCombination.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.collections.CardCombination.apply(&quot;#3&quot;, scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;5&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;6&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;7&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))))
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1886
+        </td>
+        <td>
+          3841
+          -
+          3844
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♠&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1530
+        </td>
+        <td>
+          3810
+          -
+          3829
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;6&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1288
+        </td>
+        <td>
+          3799
+          -
+          3802
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♠&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          955
+        </td>
+        <td>
+          3836
+          -
+          3839
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;7&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1395
+        </td>
+        <td>
+          3815
+          -
+          3818
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;6&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1879
+        </td>
+        <td>
+          3794
+          -
+          3797
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;5&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1343
+        </td>
+        <td>
+          3846
+          -
+          3849
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          1059
+        </td>
+        <td>
+          3804
+          -
+          3807
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          849
+        </td>
+        <td>
+          3820
+          -
+          3823
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♠&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          2099
+        </td>
+        <td>
+          3825
+          -
+          3828
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          121
+        </td>
+        <td>
+          1892
+        </td>
+        <td>
+          3889
+          -
+          3895
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.collections.Hand.apply(it.parttimeteam.core.collections.Hand.apply$default$1, it.parttimeteam.core.collections.Hand.apply$default$2)
+        </td>
+      </tr><tr>
+        <td>
+          121
+        </td>
+        <td>
+          1509
+        </td>
+        <td>
+          3889
+          -
+          3889
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.apply$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.collections.Hand.apply$default$1
+        </td>
+      </tr><tr>
+        <td>
+          121
+        </td>
+        <td>
+          904
+        </td>
+        <td>
+          3889
+          -
+          3889
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.apply$default$2
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.collections.Hand.apply$default$2
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          2215
+        </td>
+        <td>
+          3927
+          -
+          4125
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;A&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;2&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;3&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;4&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;5&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;6&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;7&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1978
+        </td>
+        <td>
+          3907
+          -
+          4126
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.addPlayerCards
+        </td>
+        <td style="background: #F0ADAD">
+          hand.addPlayerCards(scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;A&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;2&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;3&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;4&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;5&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;6&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;7&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;))))
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1375
+        </td>
+        <td>
+          3938
+          -
+          3957
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;A&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1279
+        </td>
+        <td>
+          3943
+          -
+          3946
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;A&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1977
+        </td>
+        <td>
+          3953
+          -
+          3956
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1011
+        </td>
+        <td>
+          3948
+          -
+          3951
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♥&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          857
+        </td>
+        <td>
+          3970
+          -
+          3973
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;2&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          1482
+        </td>
+        <td>
+          3980
+          -
+          3983
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          1768
+        </td>
+        <td>
+          3975
+          -
+          3978
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♥&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          124
+        </td>
+        <td>
+          897
+        </td>
+        <td>
+          3965
+          -
+          3984
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;2&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          983
+        </td>
+        <td>
+          4007
+          -
+          4010
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          2000
+        </td>
+        <td>
+          3992
+          -
+          4011
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;3&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          1862
+        </td>
+        <td>
+          3997
+          -
+          4000
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;3&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          1286
+        </td>
+        <td>
+          4002
+          -
+          4005
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♥&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          777
+        </td>
+        <td>
+          4029
+          -
+          4032
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♥&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          1459
+        </td>
+        <td>
+          4019
+          -
+          4038
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;4&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          1774
+        </td>
+        <td>
+          4034
+          -
+          4037
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          1379
+        </td>
+        <td>
+          4024
+          -
+          4027
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;4&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          953
+        </td>
+        <td>
+          4051
+          -
+          4054
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;5&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          1261
+        </td>
+        <td>
+          4061
+          -
+          4064
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          1865
+        </td>
+        <td>
+          4056
+          -
+          4059
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♥&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          2247
+        </td>
+        <td>
+          4046
+          -
+          4065
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;5&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1432
+        </td>
+        <td>
+          4083
+          -
+          4086
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♥&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          781
+        </td>
+        <td>
+          4088
+          -
+          4091
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1974
+        </td>
+        <td>
+          4078
+          -
+          4081
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;6&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          1741
+        </td>
+        <td>
+          4073
+          -
+          4092
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;6&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          129
+        </td>
+        <td>
+          1264
+        </td>
+        <td>
+          4100
+          -
+          4119
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;7&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          129
+        </td>
+        <td>
+          1508
+        </td>
+        <td>
+          4105
+          -
+          4108
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;7&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          129
+        </td>
+        <td>
+          1858
+        </td>
+        <td>
+          4115
+          -
+          4118
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          129
+        </td>
+        <td>
+          957
+        </td>
+        <td>
+          4110
+          -
+          4113
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♥&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          132
+        </td>
+        <td>
+          1362
+        </td>
+        <td>
+          4139
+          -
+          4222
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.addTableCards
+        </td>
+        <td style="background: #F0ADAD">
+          hand.addTableCards(scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;K&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;Q&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))))
+        </td>
+      </tr><tr>
+        <td>
+          132
+        </td>
+        <td>
+          1980
+        </td>
+        <td>
+          4158
+          -
+          4221
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.Seq.apply[it.parttimeteam.core.cards.Card](it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;K&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;)), it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;Q&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;)))
+        </td>
+      </tr><tr>
+        <td>
+          133
+        </td>
+        <td>
+          828
+        </td>
+        <td>
+          4179
+          -
+          4182
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♥&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          133
+        </td>
+        <td>
+          1511
+        </td>
+        <td>
+          4169
+          -
+          4188
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;K&quot;), cards.this.Suit.string2suit(&quot;♥&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          133
+        </td>
+        <td>
+          1433
+        </td>
+        <td>
+          4174
+          -
+          4177
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;K&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          133
+        </td>
+        <td>
+          1749
+        </td>
+        <td>
+          4184
+          -
+          4187
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          134
+        </td>
+        <td>
+          922
+        </td>
+        <td>
+          4201
+          -
+          4204
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Rank.string2rank(&quot;Q&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          134
+        </td>
+        <td>
+          1319
+        </td>
+        <td>
+          4211
+          -
+          4214
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Color.string2color(&quot;B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          134
+        </td>
+        <td>
+          1863
+        </td>
+        <td>
+          4206
+          -
+          4209
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #F0ADAD">
+          cards.this.Suit.string2suit(&quot;♠&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          134
+        </td>
+        <td>
+          2267
+        </td>
+        <td>
+          4196
+          -
+          4215
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.core.cards.Card.apply(cards.this.Rank.string2rank(&quot;Q&quot;), cards.this.Suit.string2suit(&quot;♠&quot;), cards.this.Color.string2color(&quot;B&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          924
+        </td>
+        <td>
+          4257
+          -
+          4357
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.List.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.collection.immutable.List.apply[it.parttimeteam.gamestate.Opponent](it.parttimeteam.gamestate.Opponent.apply(&quot;Matteo&quot;, 5), it.parttimeteam.gamestate.Opponent.apply(&quot;Daniele&quot;, 7), it.parttimeteam.gamestate.Opponent.apply(&quot;Lorenzo&quot;, 3))
+        </td>
+      </tr><tr>
+        <td>
+          138
+        </td>
+        <td>
+          832
+        </td>
+        <td>
+          4269
+          -
+          4290
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.gamestate.Opponent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.gamestate.Opponent.apply(&quot;Matteo&quot;, 5)
+        </td>
+      </tr><tr>
+        <td>
+          139
+        </td>
+        <td>
+          1800
+        </td>
+        <td>
+          4298
+          -
+          4320
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.gamestate.Opponent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.gamestate.Opponent.apply(&quot;Daniele&quot;, 7)
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          1219
+        </td>
+        <td>
+          4328
+          -
+          4350
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.gamestate.Opponent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.gamestate.Opponent.apply(&quot;Lorenzo&quot;, 3)
+        </td>
+      </tr><tr>
+        <td>
+          143
+        </td>
+        <td>
+          1841
+        </td>
+        <td>
+          4363
+          -
+          4400
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.gamestate.PlayerGameState.apply(board, hand, players)
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          1320
+        </td>
+        <td>
+          4435
+          -
+          4441
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

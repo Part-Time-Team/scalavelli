@@ -1,0 +1,392 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/model/game/RemoteGameActor.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.model.game
+</span>2 <span style=''>
+</span>3 <span style=''>import akka.actor.{Actor, ActorLogging, Props}
+</span>4 <span style=''>import it.parttimeteam.core.cards.Card
+</span>5 <span style=''>import it.parttimeteam.gamestate.PlayerGameState
+</span>6 <span style=''>import it.parttimeteam.messages.GameMessage.{CardDrawn, Error, GameStateUpdated, Lost, OpponentInTurn, PlayerTurn, TurnEnded, Won}
+</span>7 <span style=''>
+</span>8 <span style=''>object RemoteGameActor {
+</span>9 <span style=''>  def props(listener: MatchServerResponseListener) = </span><span style='background: #AEF1AE'>Props(new RemoteGameActor(listener))</span><span style=''>
+</span>10 <span style=''>}
+</span>11 <span style=''>
+</span>12 <span style=''>class RemoteGameActor(private val listener: MatchServerResponseListener) extends Actor with ActorLogging {
+</span>13 <span style=''>
+</span>14 <span style=''>  override def receive: Receive = {
+</span>15 <span style=''>
+</span>16 <span style=''>    case GameStateUpdated(gameState) =&gt; {
+</span>17 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(s&quot;Received game state $gameState&quot;)</span><span style=''>
+</span>18 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.gameStateUpdated(gameState)</span><span style=''>
+</span>19 <span style=''>    }
+</span>20 <span style=''>
+</span>21 <span style=''>    case PlayerTurn =&gt; {
+</span>22 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(&quot;Its my turn&quot;)</span><span style=''>
+</span>23 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.turnStarted()</span><span style=''>
+</span>24 <span style=''>    }
+</span>25 <span style=''>
+</span>26 <span style=''>    case OpponentInTurn(name) =&gt; </span><span style='background: #AEF1AE'>this.listener.opponentInTurn(name)</span><span style=''>
+</span>27 <span style=''>
+</span>28 <span style=''>    case CardDrawn(card) =&gt; </span><span style='background: #AEF1AE'>this.listener.turnEndedWithCartDrawn(card)</span><span style=''>
+</span>29 <span style=''>
+</span>30 <span style=''>    case TurnEnded =&gt; </span><span style='background: #AEF1AE'>this.listener.turnEnded()</span><span style=''>
+</span>31 <span style=''>
+</span>32 <span style=''>    case Won =&gt; </span><span style='background: #AEF1AE'>this.listener.gameWon()</span><span style=''>
+</span>33 <span style=''>
+</span>34 <span style=''>    case Lost(winnerName) =&gt; </span><span style='background: #AEF1AE'>this.listener.gameLost(winnerName)</span><span style=''>
+</span>35 <span style=''>
+</span>36 <span style=''>    case Error(_) </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>37 <span style=''>  }
+</span>38 <span style=''>}
+</span>39 <span style=''>
+</span>40 <span style=''>
+</span>41 <span style=''>trait MatchServerResponseListener {
+</span>42 <span style=''>
+</span>43 <span style=''>  def gameStateUpdated(gameState: PlayerGameState)
+</span>44 <span style=''>
+</span>45 <span style=''>  def turnStarted()
+</span>46 <span style=''>
+</span>47 <span style=''>  def turnEnded()
+</span>48 <span style=''>
+</span>49 <span style=''>  def opponentInTurn(opponentName: String)
+</span>50 <span style=''>
+</span>51 <span style=''>  def turnEndedWithCartDrawn(card: Card)
+</span>52 <span style=''>
+</span>53 <span style=''>  def gameWon()
+</span>54 <span style=''>
+</span>55 <span style=''>  def gameLost(winnerName: String)
+</span>56 <span style=''>
+</span>57 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          911
+        </td>
+        <td>
+          381
+          -
+          417
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.Props.apply
+        </td>
+        <td style="background: #AEF1AE">
+          akka.actor.Props.apply[it.parttimeteam.model.game.RemoteGameActor](new RemoteGameActor(listener))((ClassTag.apply[it.parttimeteam.model.game.RemoteGameActor](classOf[it.parttimeteam.model.game.RemoteGameActor]): scala.reflect.ClassTag[it.parttimeteam.model.game.RemoteGameActor]))
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          1457
+        </td>
+        <td>
+          387
+          -
+          416
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.RemoteGameActor.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new RemoteGameActor(listener)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1029
+        </td>
+        <td>
+          563
+          -
+          563
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.RemoteGameActor.$anonfun.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new $anonfun()
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1907
+        </td>
+        <td>
+          624
+          -
+          657
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;Received game state &quot;, &quot;&quot;).s(gameState)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1585
+        </td>
+        <td>
+          614
+          -
+          658
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.event.LoggingAdapter.debug
+        </td>
+        <td style="background: #AEF1AE">
+          RemoteGameActor.this.log.debug(scala.StringContext.apply(&quot;Received game state &quot;, &quot;&quot;).s(gameState))
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1055
+        </td>
+        <td>
+          665
+          -
+          706
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.MatchServerResponseListener.gameStateUpdated
+        </td>
+        <td style="background: #AEF1AE">
+          this.listener.gameStateUpdated(gameState)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1971
+        </td>
+        <td>
+          745
+          -
+          769
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.event.LoggingAdapter.debug
+        </td>
+        <td style="background: #AEF1AE">
+          RemoteGameActor.this.log.debug(&quot;Its my turn&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1390
+        </td>
+        <td>
+          776
+          -
+          803
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.MatchServerResponseListener.turnStarted
+        </td>
+        <td style="background: #AEF1AE">
+          this.listener.turnStarted()
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          867
+        </td>
+        <td>
+          844
+          -
+          878
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.MatchServerResponseListener.opponentInTurn
+        </td>
+        <td style="background: #AEF1AE">
+          this.listener.opponentInTurn(name)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          2073
+        </td>
+        <td>
+          908
+          -
+          950
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.MatchServerResponseListener.turnEndedWithCartDrawn
+        </td>
+        <td style="background: #AEF1AE">
+          this.listener.turnEndedWithCartDrawn(card)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1529
+        </td>
+        <td>
+          974
+          -
+          999
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.MatchServerResponseListener.turnEnded
+        </td>
+        <td style="background: #AEF1AE">
+          this.listener.turnEnded()
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          913
+        </td>
+        <td>
+          1017
+          -
+          1040
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.MatchServerResponseListener.gameWon
+        </td>
+        <td style="background: #AEF1AE">
+          this.listener.gameWon()
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          1880
+        </td>
+        <td>
+          1071
+          -
+          1105
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.MatchServerResponseListener.gameLost
+        </td>
+        <td style="background: #AEF1AE">
+          this.listener.gameLost(winnerName)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1306
+        </td>
+        <td>
+          1125
+          -
+          1127
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

@@ -1,0 +1,256 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/model/startup/StartUpActor.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.model.startup
+</span>2 <span style=''>
+</span>3 <span style=''>import akka.actor.{Actor, ActorLogging, Props}
+</span>4 <span style=''>import it.parttimeteam.messages.LobbyMessages.{Connected, MatchFound, PrivateLobbyCreated, UserAddedToLobby}
+</span>5 <span style=''>
+</span>6 <span style=''>object StartUpActor {
+</span>7 <span style=''>  def props(serverResponsesListener: StartupServerResponsesListener): Props = </span><span style='background: #F0ADAD'>Props(new StartUpActor(serverResponsesListener))</span><span style=''>
+</span>8 <span style=''>}
+</span>9 <span style=''>
+</span>10 <span style=''>/**
+</span>11 <span style=''> * Actor responsible for receiving server lobby messages
+</span>12 <span style=''> *
+</span>13 <span style=''> * @param serverResponsesListener function user to notify back about the received event
+</span>14 <span style=''> */
+</span>15 <span style=''>class StartUpActor(private val serverResponsesListener: StartupServerResponsesListener) extends Actor with ActorLogging {
+</span>16 <span style=''>
+</span>17 <span style=''>  override def receive: Receive = {
+</span>18 <span style=''>    case Connected(id) =&gt; </span><span style='background: #F0ADAD'>this.serverResponsesListener.connected(id, sender())</span><span style=''>
+</span>19 <span style=''>    case UserAddedToLobby() =&gt; </span><span style='background: #F0ADAD'>this.serverResponsesListener.addedToLobby()</span><span style=''>
+</span>20 <span style=''>    case PrivateLobbyCreated(lobbyCode) =&gt; </span><span style='background: #F0ADAD'>this.serverResponsesListener.privateLobbyCreated(lobbyCode)</span><span style=''>
+</span>21 <span style=''>    case MatchFound(gameRoom) =&gt; </span><span style='background: #F0ADAD'>this.serverResponsesListener.matchFound(gameRoom)</span><span style=''>
+</span>22 <span style=''>    case m: String =&gt; </span><span style='background: #F0ADAD'>log.debug(m)</span><span style=''>
+</span>23 <span style=''>  }
+</span>24 <span style=''>
+</span>25 <span style=''>
+</span>26 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          1399
+        </td>
+        <td>
+          296
+          -
+          344
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.Props.apply
+        </td>
+        <td style="background: #F0ADAD">
+          akka.actor.Props.apply[it.parttimeteam.model.startup.StartUpActor](new StartUpActor(serverResponsesListener))((ClassTag.apply[it.parttimeteam.model.startup.StartUpActor](classOf[it.parttimeteam.model.startup.StartUpActor]): scala.reflect.ClassTag[it.parttimeteam.model.startup.StartUpActor]))
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          1960
+        </td>
+        <td>
+          302
+          -
+          343
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartUpActor.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new StartUpActor(serverResponsesListener)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1008
+        </td>
+        <td>
+          661
+          -
+          661
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartUpActor.$anonfun.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anonfun()
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          2048
+        </td>
+        <td>
+          689
+          -
+          741
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServerResponsesListener.connected
+        </td>
+        <td style="background: #F0ADAD">
+          this.serverResponsesListener.connected(id, StartUpActor.this.sender())
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          820
+        </td>
+        <td>
+          732
+          -
+          740
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.Actor.sender
+        </td>
+        <td style="background: #F0ADAD">
+          StartUpActor.this.sender()
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1450
+        </td>
+        <td>
+          773
+          -
+          816
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServerResponsesListener.addedToLobby
+        </td>
+        <td style="background: #F0ADAD">
+          this.serverResponsesListener.addedToLobby()
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          902
+        </td>
+        <td>
+          860
+          -
+          919
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServerResponsesListener.privateLobbyCreated
+        </td>
+        <td style="background: #F0ADAD">
+          this.serverResponsesListener.privateLobbyCreated(lobbyCode)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1887
+        </td>
+        <td>
+          953
+          -
+          1002
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServerResponsesListener.matchFound
+        </td>
+        <td style="background: #F0ADAD">
+          this.serverResponsesListener.matchFound(gameRoom)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1312
+        </td>
+        <td>
+          1025
+          -
+          1037
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.event.LoggingAdapter.debug
+        </td>
+        <td style="background: #F0ADAD">
+          StartUpActor.this.log.debug(m)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

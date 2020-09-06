@@ -1,0 +1,364 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/core/prolog/converter/PrologUtils.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core.prolog.converter
+</span>2 <span style=''>
+</span>3 <span style=''>import alice.tuprolog.Term
+</span>4 <span style=''>import scala.util.matching.Regex
+</span>5 <span style=''>
+</span>6 <span style=''>/**
+</span>7 <span style=''> * object to clean the prolog term
+</span>8 <span style=''> */
+</span>9 <span style=''>object PrologUtils {
+</span>10 <span style=''>
+</span>11 <span style=''>  /**
+</span>12 <span style=''>   * String pattern
+</span>13 <span style=''>   */
+</span>14 <span style=''>  val pattern: Regex = </span><span style='background: #AEF1AE'>&quot;[0-9]+,[a-zA-Z]+&quot;.r</span><span style=''>
+</span>15 <span style=''>
+</span>16 <span style=''>  /**
+</span>17 <span style=''>   * Clean the prolog term by converting into a List of regex
+</span>18 <span style=''>   *
+</span>19 <span style=''>   * @param cards cards to clean and convert
+</span>20 <span style=''>   * @return regex list
+</span>21 <span style=''>   */
+</span>22 <span style=''>  def utils(cards: Seq[Term]): Seq[Regex.Match] = {
+</span>23 <span style=''>
+</span>24 <span style=''>    val cardsString: String = </span><span style='background: #AEF1AE'>replace(cards)</span><span style=''>
+</span>25 <span style=''>    (</span><span style='background: #AEF1AE'>pattern findAllMatchIn substring(cardsString, cardsString.length - 1)).toList</span><span style=''>
+</span>26 <span style=''>  }
+</span>27 <span style=''>
+</span>28 <span style=''>  /**
+</span>29 <span style=''>   * Invoke replaceSeqToString and replaceString
+</span>30 <span style=''>   */
+</span>31 <span style=''>  private def replace(term: Seq[Term]): String = </span><span style='background: #AEF1AE'>replaceString(replaceSeqToString(term))</span><span style=''>
+</span>32 <span style=''>
+</span>33 <span style=''>  /**
+</span>34 <span style=''>   * Replace specific characters in a sequence of terms
+</span>35 <span style=''>   *
+</span>36 <span style=''>   * @param term sequence of terms
+</span>37 <span style=''>   * @return converted string
+</span>38 <span style=''>   */
+</span>39 <span style=''>  private def replaceSeqToString(term: Seq[Term]): String = </span><span style='background: #AEF1AE'>term.toString.replace(&quot;','&quot;, &quot;&quot;)</span><span style=''>
+</span>40 <span style=''>
+</span>41 <span style=''>  /**
+</span>42 <span style=''>   * Replace specific characters in a terms
+</span>43 <span style=''>   *
+</span>44 <span style=''>   * @param term    term to clean
+</span>45 <span style=''>   * @param replace specific characters to replace
+</span>46 <span style=''>   * @return converted string
+</span>47 <span style=''>   */
+</span>48 <span style=''>  def replaceTermToString(term: Term, replace: String): String = </span><span style='background: #AEF1AE'>term.toString.replace(replace, &quot;&quot;)</span><span style=''>
+</span>49 <span style=''>
+</span>50 <span style=''>  /**
+</span>51 <span style=''>   * Replace specific characters in a string
+</span>52 <span style=''>   *
+</span>53 <span style=''>   * @param stringToReplace string to clean
+</span>54 <span style=''>   * @return converted string
+</span>55 <span style=''>   */
+</span>56 <span style=''>  private def replaceString(stringToReplace: String): String = {
+</span>57 <span style=''>    </span><span style='background: #AEF1AE'>stringToReplace.replace(&quot;List&quot;, &quot;&quot;).replace(&quot;[&quot;, &quot;&quot;)
+</span>58 <span style=''></span><span style='background: #AEF1AE'>      .replace(&quot;]&quot;, &quot;&quot;).replace(&quot; &quot;, &quot;&quot;).replace(&quot;'&quot;, &quot;&quot;)</span><span style=''>
+</span>59 <span style=''>  }
+</span>60 <span style=''>
+</span>61 <span style=''>  /**
+</span>62 <span style=''>   * Determines a substring
+</span>63 <span style=''>   *
+</span>64 <span style=''>   * @param cardsString starting string
+</span>65 <span style=''>   * @param endString   termination character
+</span>66 <span style=''>   * @return substring
+</span>67 <span style=''>   */
+</span>68 <span style=''>  private def substring(cardsString: String, endString: Int): String = {
+</span>69 <span style=''>    </span><span style='background: #AEF1AE'>cardsString.substring(1, endString)</span><span style=''>
+</span>70 <span style=''>  }
+</span>71 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          712
+        </td>
+        <td>
+          228
+          -
+          246
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;[0-9]+,[a-zA-Z]+&quot;
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          556
+        </td>
+        <td>
+          228
+          -
+          248
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.immutable.StringLike.r
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.augmentString(&quot;[0-9]+,[a-zA-Z]+&quot;).r
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          422
+        </td>
+        <td>
+          481
+          -
+          495
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.converter.PrologUtils.replace
+        </td>
+        <td style="background: #AEF1AE">
+          PrologUtils.this.replace(cards)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          732
+        </td>
+        <td>
+          547
+          -
+          569
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Int.-
+        </td>
+        <td style="background: #AEF1AE">
+          cardsString.length().-(1)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          578
+        </td>
+        <td>
+          524
+          -
+          570
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.converter.PrologUtils.substring
+        </td>
+        <td style="background: #AEF1AE">
+          PrologUtils.this.substring(cardsString, cardsString.length().-(1))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          434
+        </td>
+        <td>
+          501
+          -
+          578
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.TraversableOnce.toList
+        </td>
+        <td style="background: #AEF1AE">
+          PrologUtils.this.pattern.findAllMatchIn(PrologUtils.this.substring(cardsString, cardsString.length().-(1))).toList
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          546
+        </td>
+        <td>
+          694
+          -
+          733
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.converter.PrologUtils.replaceString
+        </td>
+        <td style="background: #AEF1AE">
+          PrologUtils.this.replaceString(PrologUtils.this.replaceSeqToString(term))
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          691
+        </td>
+        <td>
+          708
+          -
+          732
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.converter.PrologUtils.replaceSeqToString
+        </td>
+        <td style="background: #AEF1AE">
+          PrologUtils.this.replaceSeqToString(term)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          470
+        </td>
+        <td>
+          933
+          -
+          965
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.replace
+        </td>
+        <td style="background: #AEF1AE">
+          term.toString().replace(&quot;\',\'&quot;, &quot;&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          704
+        </td>
+        <td>
+          1208
+          -
+          1242
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.replace
+        </td>
+        <td style="background: #AEF1AE">
+          term.toString().replace(replace, &quot;&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          569
+        </td>
+        <td>
+          1449
+          -
+          1559
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.replace
+        </td>
+        <td style="background: #AEF1AE">
+          stringToReplace.replace(&quot;List&quot;, &quot;&quot;).replace(&quot;[&quot;, &quot;&quot;).replace(&quot;]&quot;, &quot;&quot;).replace(&quot; &quot;, &quot;&quot;).replace(&quot;\'&quot;, &quot;&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          410
+        </td>
+        <td>
+          1796
+          -
+          1831
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.substring
+        </td>
+        <td style="background: #AEF1AE">
+          cardsString.substring(1, endString)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

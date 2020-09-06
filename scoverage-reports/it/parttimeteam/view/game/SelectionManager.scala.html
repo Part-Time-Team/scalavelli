@@ -1,0 +1,627 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/game/SelectionManager.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.view.game.scenes.model.SelectableItem
+</span>4 <span style=''>
+</span>5 <span style=''>/**
+</span>6 <span style=''>  * Menages items selection and deselection.
+</span>7 <span style=''>  *
+</span>8 <span style=''>  * @tparam T a generic SelectableItem
+</span>9 <span style=''>  */
+</span>10 <span style=''>trait SelectionManager[T &lt;: SelectableItem] {
+</span>11 <span style=''>
+</span>12 <span style=''>  /**
+</span>13 <span style=''>    * Clears all items selected.
+</span>14 <span style=''>    */
+</span>15 <span style=''>  def clearSelection(): Unit
+</span>16 <span style=''>
+</span>17 <span style=''>  /**
+</span>18 <span style=''>    * Called when an item is selected.
+</span>19 <span style=''>    *
+</span>20 <span style=''>    * @param item the selected item
+</span>21 <span style=''>    */
+</span>22 <span style=''>  def onItemSelected(item: T): Unit
+</span>23 <span style=''>
+</span>24 <span style=''>  /**
+</span>25 <span style=''>    * Get all the selected items
+</span>26 <span style=''>    *
+</span>27 <span style=''>    * @return selected items
+</span>28 <span style=''>    */
+</span>29 <span style=''>  def getSelectedItems: Seq[T]
+</span>30 <span style=''>
+</span>31 <span style=''>  /**
+</span>32 <span style=''>    * Returns if there is any selected item.
+</span>33 <span style=''>    *
+</span>34 <span style=''>    * @return if there is any selected item
+</span>35 <span style=''>    */
+</span>36 <span style=''>  def isSelectionEmpty: Boolean
+</span>37 <span style=''>}
+</span>38 <span style=''>
+</span>39 <span style=''>object SelectionManager {
+</span>40 <span style=''>
+</span>41 <span style=''>  def apply[T &lt;: SelectableItem](): SelectionManager[T] = </span><span style='background: #AEF1AE'>new SelectionManagerImpl[T]()</span><span style=''>
+</span>42 <span style=''>
+</span>43 <span style=''>  class SelectionManagerImpl[T &lt;: SelectableItem](private var selectedItems: Seq[T] = List.empty) extends SelectionManager[T] {
+</span>44 <span style=''>    /** @inheritdoc*/
+</span>45 <span style=''>    override def onItemSelected(item: T): Unit = {
+</span>46 <span style=''>      if (</span><span style='background: #AEF1AE'>selectedItems.contains(item)</span><span style=''>) </span><span style='background: #AEF1AE'>{
+</span>47 <span style=''></span><span style='background: #AEF1AE'>        selectedItems = selectedItems.filter(i =&gt; i != item)
+</span>48 <span style=''></span><span style='background: #AEF1AE'>        item.setSelected(false)
+</span>49 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''> else </span><span style='background: #AEF1AE'>{
+</span>50 <span style=''></span><span style='background: #AEF1AE'>        selectedItems = selectedItems :+ item
+</span>51 <span style=''></span><span style='background: #AEF1AE'>        item.setSelected(true)
+</span>52 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
+</span>53 <span style=''>
+</span>54 <span style=''>      </span><span style='background: #AEF1AE'>println(s&quot;Selected cards: ${getSelectedItems.toString}&quot;)</span><span style=''>
+</span>55 <span style=''>    }
+</span>56 <span style=''>
+</span>57 <span style=''>    /** @inheritdoc*/
+</span>58 <span style=''>    override def getSelectedItems: Seq[T] = </span><span style='background: #AEF1AE'>selectedItems</span><span style=''>
+</span>59 <span style=''>
+</span>60 <span style=''>    /** @inheritdoc*/
+</span>61 <span style=''>    override def isSelectionEmpty: Boolean = </span><span style='background: #AEF1AE'>selectedItems.isEmpty</span><span style=''>
+</span>62 <span style=''>
+</span>63 <span style=''>    /** @inheritdoc*/
+</span>64 <span style=''>    override def clearSelection(): Unit = {
+</span>65 <span style=''>      </span><span style='background: #AEF1AE'>for (item: SelectableItem &lt;- selectedItems) {
+</span>66 <span style=''></span><span style='background: #AEF1AE'>        item.setSelected(false)</span><span style=''>
+</span>67 <span style=''>      }
+</span>68 <span style=''>
+</span>69 <span style=''>      </span><span style='background: #AEF1AE'>selectedItems = List.empty</span><span style=''>
+</span>70 <span style=''>    }
+</span>71 <span style=''>  }
+</span>72 <span style=''>
+</span>73 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1324
+        </td>
+        <td>
+          789
+          -
+          818
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl[T](SelectionManager.this.SelectionManagerImpl.&lt;init&gt;$default$1[T])
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1625
+        </td>
+        <td>
+          789
+          -
+          789
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.&lt;init&gt;$default$1
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManager.this.SelectionManagerImpl.&lt;init&gt;$default$1[T]
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          2272
+        </td>
+        <td>
+          1031
+          -
+          1059
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.SeqLike.contains
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems.contains[T](item)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1226
+        </td>
+        <td>
+          1061
+          -
+          1163
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          {
+  SelectionManagerImpl.this.selectedItems_=(SelectionManagerImpl.this.selectedItems.filter(((i: T) =&gt; i.!=(item))));
+  item.setSelected(false)
+}
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1106
+        </td>
+        <td>
+          1087
+          -
+          1123
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.TraversableLike.filter
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems.filter(((i: T) =&gt; i.!=(item)))
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1697
+        </td>
+        <td>
+          1113
+          -
+          1122
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.!=
+        </td>
+        <td style="background: #AEF1AE">
+          i.!=(item)
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          2100
+        </td>
+        <td>
+          1071
+          -
+          1123
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.selectedItems_=
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems_=(SelectionManagerImpl.this.selectedItems.filter(((i: T) =&gt; i.!=(item))))
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1748
+        </td>
+        <td>
+          1132
+          -
+          1155
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.model.SelectableItem.setSelected
+        </td>
+        <td style="background: #AEF1AE">
+          item.setSelected(false)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1702
+        </td>
+        <td>
+          1169
+          -
+          1255
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          {
+  SelectionManagerImpl.this.selectedItems_=(SelectionManagerImpl.this.selectedItems.:+[T, Seq[T]](item)(collection.this.Seq.canBuildFrom[T]));
+  item.setSelected(true)
+}
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1326
+        </td>
+        <td>
+          1179
+          -
+          1216
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.selectedItems_=
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems_=(SelectionManagerImpl.this.selectedItems.:+[T, Seq[T]](item)(collection.this.Seq.canBuildFrom[T]))
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1598
+        </td>
+        <td>
+          1195
+          -
+          1216
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.SeqLike.:+
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems.:+[T, Seq[T]](item)(collection.this.Seq.canBuildFrom[T])
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          2145
+        </td>
+        <td>
+          1209
+          -
+          1209
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[T]
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          2223
+        </td>
+        <td>
+          1225
+          -
+          1247
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.model.SelectableItem.setSelected
+        </td>
+        <td style="background: #AEF1AE">
+          item.setSelected(true)
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1180
+        </td>
+        <td>
+          1271
+          -
+          1318
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;Selected cards: &quot;, &quot;&quot;).s(SelectionManagerImpl.this.getSelectedItems.toString())
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1751
+        </td>
+        <td>
+          1291
+          -
+          1316
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.SeqLike.toString
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.getSelectedItems.toString()
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          2128
+        </td>
+        <td>
+          1263
+          -
+          1319
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.println
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.println(scala.StringContext.apply(&quot;Selected cards: &quot;, &quot;&quot;).s(SelectionManagerImpl.this.getSelectedItems.toString()))
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1113
+        </td>
+        <td>
+          1273
+          -
+          1290
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;Selected cards: &quot;
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          2082
+        </td>
+        <td>
+          1317
+          -
+          1318
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          1603
+        </td>
+        <td>
+          1393
+          -
+          1406
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.selectedItems
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          986
+        </td>
+        <td>
+          1475
+          -
+          1496
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.isEmpty
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems.isEmpty
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1719
+        </td>
+        <td>
+          1570
+          -
+          1647
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.FilterMonadic.foreach
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems.withFilter(((check$ifrefutable$1: T) =&gt; (check$ifrefutable$1: T @unchecked) match {
+  case (item @ (_: it.parttimeteam.view.game.scenes.model.SelectableItem)) =&gt; true
+  case _ =&gt; false
+})).foreach[Unit](((item: it.parttimeteam.view.game.scenes.model.SelectableItem) =&gt; item.setSelected(false)))
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          2228
+        </td>
+        <td>
+          1624
+          -
+          1647
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.model.SelectableItem.setSelected
+        </td>
+        <td style="background: #AEF1AE">
+          item.setSelected(false)
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          2087
+        </td>
+        <td>
+          1663
+          -
+          1689
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.selectedItems_=
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems_=(scala.collection.immutable.List.empty[Nothing])
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1084
+        </td>
+        <td>
+          1679
+          -
+          1689
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.immutable.List.empty
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.immutable.List.empty[Nothing]
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

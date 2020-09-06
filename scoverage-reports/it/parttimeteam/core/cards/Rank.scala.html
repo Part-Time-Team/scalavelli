@@ -1,0 +1,1180 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/core/cards/Rank.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core.cards
+</span>2 <span style=''>
+</span>3 <span style=''>/**
+</span>4 <span style=''> * One of the 13 rank of cards in the deck.
+</span>5 <span style=''> *
+</span>6 <span style=''> * @param value     Value.
+</span>7 <span style=''> * @param name      Name.
+</span>8 <span style=''> * @param shortName Symbol.
+</span>9 <span style=''> */
+</span>10 <span style=''>sealed class Rank(val value: Int,
+</span>11 <span style=''>                  val name: String,
+</span>12 <span style=''>                  val shortName: String)
+</span>13 <span style=''>    extends Comparable[Rank] with Serializable {
+</span>14 <span style=''>
+</span>15 <span style=''>  /**
+</span>16 <span style=''>   * Base compare between two ranks.
+</span>17 <span style=''>   *
+</span>18 <span style=''>   * @param t Rank to compare.
+</span>19 <span style=''>   * @return Compare result.
+</span>20 <span style=''>   */
+</span>21 <span style=''>  override def compareTo(t: Rank): Int = </span><span style='background: #AEF1AE'>value compareTo t.value</span><span style=''>
+</span>22 <span style=''>
+</span>23 <span style=''>  /**
+</span>24 <span style=''>   * Check if value of rank is the same of another rank.
+</span>25 <span style=''>   * @param obj Object to compare.
+</span>26 <span style=''>   * @return True if have the same value. false anywhere.
+</span>27 <span style=''>   */
+</span>28 <span style=''>  override def equals(obj: Any): Boolean = obj match {
+</span>29 <span style=''>    case obj: Rank =&gt; </span><span style='background: #AEF1AE'>this.value equals obj.value</span><span style=''>
+</span>30 <span style=''>    case _ =&gt; </span><span style='background: #F0ADAD'>super.equals(obj)</span><span style=''>
+</span>31 <span style=''>  }
+</span>32 <span style=''>}
+</span>33 <span style=''>
+</span>34 <span style=''>object Rank {
+</span>35 <span style=''>
+</span>36 <span style=''>  val ACE = </span><span style='background: #AEF1AE'>&quot;1&quot;</span><span style=''>
+</span>37 <span style=''>  val ACE_SYMBOL = </span><span style='background: #AEF1AE'>&quot;A&quot;</span><span style=''>
+</span>38 <span style=''>  val TWO = </span><span style='background: #AEF1AE'>&quot;2&quot;</span><span style=''>
+</span>39 <span style=''>  val THREE = </span><span style='background: #AEF1AE'>&quot;3&quot;</span><span style=''>
+</span>40 <span style=''>  val FOUR = </span><span style='background: #AEF1AE'>&quot;4&quot;</span><span style=''>
+</span>41 <span style=''>  val FIVE = </span><span style='background: #AEF1AE'>&quot;5&quot;</span><span style=''>
+</span>42 <span style=''>  val SIX = </span><span style='background: #AEF1AE'>&quot;6&quot;</span><span style=''>
+</span>43 <span style=''>  val SEVEN = </span><span style='background: #AEF1AE'>&quot;7&quot;</span><span style=''>
+</span>44 <span style=''>  val EIGHT = </span><span style='background: #AEF1AE'>&quot;8&quot;</span><span style=''>
+</span>45 <span style=''>  val NINE = </span><span style='background: #AEF1AE'>&quot;9&quot;</span><span style=''>
+</span>46 <span style=''>  val TEN = </span><span style='background: #AEF1AE'>&quot;0&quot;</span><span style=''>
+</span>47 <span style=''>  val JACK = </span><span style='background: #AEF1AE'>&quot;11&quot;</span><span style=''>
+</span>48 <span style=''>  val JACK_SYMBOL = </span><span style='background: #AEF1AE'>&quot;J&quot;</span><span style=''>
+</span>49 <span style=''>  val QUEEN = </span><span style='background: #AEF1AE'>&quot;12&quot;</span><span style=''>
+</span>50 <span style=''>  val QUEEN_SYMBOL = </span><span style='background: #AEF1AE'>&quot;Q&quot;</span><span style=''>
+</span>51 <span style=''>  val KING = </span><span style='background: #AEF1AE'>&quot;13&quot;</span><span style=''>
+</span>52 <span style=''>  val KING_SYMBOL = </span><span style='background: #AEF1AE'>&quot;K&quot;</span><span style=''>
+</span>53 <span style=''>  val OVERFLOW_ACE = </span><span style='background: #AEF1AE'>&quot;14&quot;</span><span style=''>
+</span>54 <span style=''>
+</span>55 <span style=''>  /**
+</span>56 <span style=''>   * The first rank.
+</span>57 <span style=''>   */
+</span>58 <span style=''>  case class Ace() extends Rank(1, &quot;Ace&quot;, &quot;A&quot;) {
+</span>59 <span style=''>    /**
+</span>60 <span style=''>     * Compare an Ace with another card.
+</span>61 <span style=''>     *
+</span>62 <span style=''>     * @param t Rank to compare.
+</span>63 <span style=''>     * @return Compare result.
+</span>64 <span style=''>     */
+</span>65 <span style=''>    override def compareTo(t: Rank): Int = t match {
+</span>66 <span style=''>      case t if </span><span style='background: #AEF1AE'>t.value equals 13</span><span style=''> =&gt; </span><span style='background: #AEF1AE'>1</span><span style=''>
+</span>67 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>super.compareTo(t)</span><span style=''>
+</span>68 <span style=''>    }
+</span>69 <span style=''>  }
+</span>70 <span style=''>
+</span>71 <span style=''>  /**
+</span>72 <span style=''>   * The optional OverflowAce with value 14
+</span>73 <span style=''>   */
+</span>74 <span style=''>  case class OverflowAce() extends Rank(14, &quot;Ace&quot;, &quot;A&quot;)
+</span>75 <span style=''>
+</span>76 <span style=''>  /**
+</span>77 <span style=''>   * The second rank.
+</span>78 <span style=''>   */
+</span>79 <span style=''>  case class Two() extends Rank(2, &quot;Two&quot;, &quot;2&quot;)
+</span>80 <span style=''>
+</span>81 <span style=''>  /**
+</span>82 <span style=''>   * The third rank.
+</span>83 <span style=''>   */
+</span>84 <span style=''>  case class Three() extends Rank(3, &quot;Three&quot;, &quot;3&quot;)
+</span>85 <span style=''>
+</span>86 <span style=''>  /**
+</span>87 <span style=''>   * The fourth rank.
+</span>88 <span style=''>   */
+</span>89 <span style=''>  case class Four() extends Rank(4, &quot;Four&quot;, &quot;4&quot;)
+</span>90 <span style=''>
+</span>91 <span style=''>  /**
+</span>92 <span style=''>   * The fifth rank.
+</span>93 <span style=''>   */
+</span>94 <span style=''>  case class Five() extends Rank(5, &quot;Five&quot;, &quot;5&quot;)
+</span>95 <span style=''>
+</span>96 <span style=''>  /**
+</span>97 <span style=''>   * The sixth rank.
+</span>98 <span style=''>   */
+</span>99 <span style=''>  case class Six() extends Rank(6, &quot;Six&quot;, &quot;6&quot;)
+</span>100 <span style=''>
+</span>101 <span style=''>  /**
+</span>102 <span style=''>   * The seventh rank.
+</span>103 <span style=''>   */
+</span>104 <span style=''>  case class Seven() extends Rank(7, &quot;Seven&quot;, &quot;7&quot;)
+</span>105 <span style=''>
+</span>106 <span style=''>  /**
+</span>107 <span style=''>   * The eigth rank.
+</span>108 <span style=''>   */
+</span>109 <span style=''>  case class Eight() extends Rank(8, &quot;Eight&quot;, &quot;8&quot;)
+</span>110 <span style=''>
+</span>111 <span style=''>  /**
+</span>112 <span style=''>   * The ninth rank.
+</span>113 <span style=''>   */
+</span>114 <span style=''>  case class Nine() extends Rank(9, &quot;Nine&quot;, &quot;9&quot;)
+</span>115 <span style=''>
+</span>116 <span style=''>  /**
+</span>117 <span style=''>   * The tenth rank.
+</span>118 <span style=''>   */
+</span>119 <span style=''>  case class Ten() extends Rank(10, &quot;Ten&quot;, &quot;0&quot;)
+</span>120 <span style=''>
+</span>121 <span style=''>  /**
+</span>122 <span style=''>   * The eleventh rank.
+</span>123 <span style=''>   */
+</span>124 <span style=''>  case class Jack() extends Rank(11, &quot;Jack&quot;, &quot;J&quot;)
+</span>125 <span style=''>
+</span>126 <span style=''>  /**
+</span>127 <span style=''>   * The twelveth rank.
+</span>128 <span style=''>   */
+</span>129 <span style=''>  case class Queen() extends Rank(12, &quot;Queen&quot;, &quot;Q&quot;)
+</span>130 <span style=''>
+</span>131 <span style=''>  /**
+</span>132 <span style=''>   * The thirteenth rank.
+</span>133 <span style=''>   */
+</span>134 <span style=''>  case class King() extends Rank(13, &quot;King&quot;, &quot;K&quot;) {
+</span>135 <span style=''>    /**
+</span>136 <span style=''>     * Compare King with another card.
+</span>137 <span style=''>     *
+</span>138 <span style=''>     * @param t Rank to compare.
+</span>139 <span style=''>     * @return Compare result.
+</span>140 <span style=''>     */
+</span>141 <span style=''>    override def compareTo(t: Rank): Int = t match {
+</span>142 <span style=''>      case t if </span><span style='background: #AEF1AE'>t.value equals 1</span><span style=''> =&gt; </span><span style='background: #AEF1AE'>-1</span><span style=''>
+</span>143 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>super.compareTo(t)</span><span style=''>
+</span>144 <span style=''>    }
+</span>145 <span style=''>  }
+</span>146 <span style=''>
+</span>147 <span style=''>  /**
+</span>148 <span style=''>   * Transform a string in the matching rank.
+</span>149 <span style=''>   *
+</span>150 <span style=''>   * @param s String to convert.
+</span>151 <span style=''>   * @return Rank converted.
+</span>152 <span style=''>   */
+</span>153 <span style=''>  implicit def string2rank(s: String): Rank = s match {
+</span>154 <span style=''>    case ACE | ACE_SYMBOL =&gt; </span><span style='background: #AEF1AE'>Ace()</span><span style=''>
+</span>155 <span style=''>    case TWO =&gt; </span><span style='background: #AEF1AE'>Two()</span><span style=''>
+</span>156 <span style=''>    case THREE =&gt; </span><span style='background: #AEF1AE'>Three()</span><span style=''>
+</span>157 <span style=''>    case FOUR =&gt; </span><span style='background: #AEF1AE'>Four()</span><span style=''>
+</span>158 <span style=''>    case FIVE =&gt; </span><span style='background: #AEF1AE'>Five()</span><span style=''>
+</span>159 <span style=''>    case SIX =&gt; </span><span style='background: #AEF1AE'>Six()</span><span style=''>
+</span>160 <span style=''>    case SEVEN =&gt; </span><span style='background: #AEF1AE'>Seven()</span><span style=''>
+</span>161 <span style=''>    case EIGHT =&gt; </span><span style='background: #AEF1AE'>Eight()</span><span style=''>
+</span>162 <span style=''>    case NINE =&gt; </span><span style='background: #AEF1AE'>Nine()</span><span style=''>
+</span>163 <span style=''>    case TEN =&gt; </span><span style='background: #AEF1AE'>Ten()</span><span style=''>
+</span>164 <span style=''>    case JACK   | JACK_SYMBOL =&gt; </span><span style='background: #AEF1AE'>Jack()</span><span style=''>
+</span>165 <span style=''>    case QUEEN  | QUEEN_SYMBOL =&gt; </span><span style='background: #AEF1AE'>Queen()</span><span style=''>
+</span>166 <span style=''>    case KING   | KING_SYMBOL=&gt; </span><span style='background: #AEF1AE'>King()</span><span style=''>
+</span>167 <span style=''>    case OVERFLOW_ACE =&gt; </span><span style='background: #AEF1AE'>OverflowAce()</span><span style=''>
+</span>168 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(f&quot;Unknown rank $s&quot;)</span><span style=''>
+</span>169 <span style=''>  }
+</span>170 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          675
+        </td>
+        <td>
+          504
+          -
+          511
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.value
+        </td>
+        <td style="background: #AEF1AE">
+          t.value
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          537
+        </td>
+        <td>
+          504
+          -
+          511
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scala.Predef.int2Integer
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.int2Integer(t.value)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          441
+        </td>
+        <td>
+          488
+          -
+          493
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.value
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.value
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          380
+        </td>
+        <td>
+          488
+          -
+          511
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Integer.compareTo
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.int2Integer(Rank.this.value).compareTo(scala.Predef.int2Integer(t.value))
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          551
+        </td>
+        <td>
+          752
+          -
+          779
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Any.equals
+        </td>
+        <td style="background: #AEF1AE">
+          this.value.equals(obj.value)
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          715
+        </td>
+        <td>
+          770
+          -
+          779
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.value
+        </td>
+        <td style="background: #AEF1AE">
+          obj.value
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          397
+        </td>
+        <td>
+          794
+          -
+          811
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.equals
+        </td>
+        <td style="background: #F0ADAD">
+          Rank.super.equals(obj)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          656
+        </td>
+        <td>
+          846
+          -
+          849
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;1&quot;
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          579
+        </td>
+        <td>
+          869
+          -
+          872
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;A&quot;
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          445
+        </td>
+        <td>
+          885
+          -
+          888
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;2&quot;
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          677
+        </td>
+        <td>
+          903
+          -
+          906
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;3&quot;
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          534
+        </td>
+        <td>
+          920
+          -
+          923
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;4&quot;
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          381
+        </td>
+        <td>
+          937
+          -
+          940
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;5&quot;
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          716
+        </td>
+        <td>
+          953
+          -
+          956
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;6&quot;
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          571
+        </td>
+        <td>
+          971
+          -
+          974
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;7&quot;
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          398
+        </td>
+        <td>
+          989
+          -
+          992
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;8&quot;
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          665
+        </td>
+        <td>
+          1006
+          -
+          1009
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;9&quot;
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          511
+        </td>
+        <td>
+          1022
+          -
+          1025
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;0&quot;
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          447
+        </td>
+        <td>
+          1039
+          -
+          1043
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;11&quot;
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          696
+        </td>
+        <td>
+          1064
+          -
+          1067
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;J&quot;
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          535
+        </td>
+        <td>
+          1082
+          -
+          1086
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;12&quot;
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          392
+        </td>
+        <td>
+          1108
+          -
+          1111
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;Q&quot;
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          728
+        </td>
+        <td>
+          1125
+          -
+          1129
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;13&quot;
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          573
+        </td>
+        <td>
+          1150
+          -
+          1153
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;K&quot;
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          419
+        </td>
+        <td>
+          1175
+          -
+          1179
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;14&quot;
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          517
+        </td>
+        <td>
+          1481
+          -
+          1482
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          1
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          666
+        </td>
+        <td>
+          1460
+          -
+          1477
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Any.equals
+        </td>
+        <td style="background: #AEF1AE">
+          t.value.equals(13)
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          444
+        </td>
+        <td>
+          1499
+          -
+          1517
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.compareTo
+        </td>
+        <td style="background: #AEF1AE">
+          Ace.super.compareTo(t)
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          528
+        </td>
+        <td>
+          2875
+          -
+          2877
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          -1
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          697
+        </td>
+        <td>
+          2855
+          -
+          2871
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Any.equals
+        </td>
+        <td style="background: #AEF1AE">
+          t.value.equals(1)
+        </td>
+      </tr><tr>
+        <td>
+          143
+        </td>
+        <td>
+          393
+        </td>
+        <td>
+          2894
+          -
+          2912
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.compareTo
+        </td>
+        <td style="background: #AEF1AE">
+          King.super.compareTo(t)
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          644
+        </td>
+        <td>
+          3134
+          -
+          3139
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Ace.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Ace.apply()
+        </td>
+      </tr><tr>
+        <td>
+          155
+        </td>
+        <td>
+          566
+        </td>
+        <td>
+          3156
+          -
+          3161
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Two.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Two.apply()
+        </td>
+      </tr><tr>
+        <td>
+          156
+        </td>
+        <td>
+          401
+        </td>
+        <td>
+          3180
+          -
+          3187
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Three.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Three.apply()
+        </td>
+      </tr><tr>
+        <td>
+          157
+        </td>
+        <td>
+          667
+        </td>
+        <td>
+          3205
+          -
+          3211
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Four.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Four.apply()
+        </td>
+      </tr><tr>
+        <td>
+          158
+        </td>
+        <td>
+          509
+        </td>
+        <td>
+          3229
+          -
+          3235
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Five.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Five.apply()
+        </td>
+      </tr><tr>
+        <td>
+          159
+        </td>
+        <td>
+          436
+        </td>
+        <td>
+          3252
+          -
+          3257
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Six.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Six.apply()
+        </td>
+      </tr><tr>
+        <td>
+          160
+        </td>
+        <td>
+          689
+        </td>
+        <td>
+          3276
+          -
+          3283
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Seven.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Seven.apply()
+        </td>
+      </tr><tr>
+        <td>
+          161
+        </td>
+        <td>
+          529
+        </td>
+        <td>
+          3302
+          -
+          3309
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Eight.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Eight.apply()
+        </td>
+      </tr><tr>
+        <td>
+          162
+        </td>
+        <td>
+          394
+        </td>
+        <td>
+          3327
+          -
+          3333
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Nine.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Nine.apply()
+        </td>
+      </tr><tr>
+        <td>
+          163
+        </td>
+        <td>
+          639
+        </td>
+        <td>
+          3350
+          -
+          3355
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Ten.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Ten.apply()
+        </td>
+      </tr><tr>
+        <td>
+          164
+        </td>
+        <td>
+          559
+        </td>
+        <td>
+          3389
+          -
+          3395
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Jack.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Jack.apply()
+        </td>
+      </tr><tr>
+        <td>
+          165
+        </td>
+        <td>
+          400
+        </td>
+        <td>
+          3430
+          -
+          3437
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.Queen.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.Queen.apply()
+        </td>
+      </tr><tr>
+        <td>
+          166
+        </td>
+        <td>
+          663
+        </td>
+        <td>
+          3470
+          -
+          3476
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.King.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.King.apply()
+        </td>
+      </tr><tr>
+        <td>
+          167
+        </td>
+        <td>
+          510
+        </td>
+        <td>
+          3502
+          -
+          3515
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.OverflowAce.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Rank.this.OverflowAce.apply()
+        </td>
+      </tr><tr>
+        <td>
+          168
+        </td>
+        <td>
+          427
+        </td>
+        <td>
+          3530
+          -
+          3576
+        </td>
+        <td>
+          Throw
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          throw new scala.`package`.RuntimeException(({
+  val arg$macro$1: Any = s;
+  new scala.collection.immutable.StringOps(&quot;Unknown rank %s&quot;).format(arg$macro$1)
+}: String))
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

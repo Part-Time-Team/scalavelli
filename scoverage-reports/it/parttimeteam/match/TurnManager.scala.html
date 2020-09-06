@@ -1,0 +1,273 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/match/TurnManager.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.`match`
+</span>2 <span style=''>
+</span>3 <span style=''>trait TurnManager[T] {
+</span>4 <span style=''>
+</span>5 <span style=''>  /**
+</span>6 <span style=''>   *
+</span>7 <span style=''>   * @return the current participant in turn
+</span>8 <span style=''>   */
+</span>9 <span style=''>  def getInTurn: T
+</span>10 <span style=''>
+</span>11 <span style=''>  /**
+</span>12 <span style=''>   *
+</span>13 <span style=''>   * Go to next turn
+</span>14 <span style=''>   *
+</span>15 <span style=''>   * @return the next participant
+</span>16 <span style=''>   */
+</span>17 <span style=''>  def nextTurn: T
+</span>18 <span style=''>
+</span>19 <span style=''>}
+</span>20 <span style=''>
+</span>21 <span style=''>object TurnManager {
+</span>22 <span style=''>
+</span>23 <span style=''>  def apply[T](participants: Seq[T]): TurnManager[T] = </span><span style='background: #AEF1AE'>new TurnManagerImpl(participants)</span><span style=''>
+</span>24 <span style=''>
+</span>25 <span style=''>  private class TurnManagerImpl[T](participants: Seq[T]) extends TurnManager[T] {
+</span>26 <span style=''>
+</span>27 <span style=''>    private var currentTurnIndex = </span><span style='background: #AEF1AE'>0</span><span style=''>
+</span>28 <span style=''>
+</span>29 <span style=''>    /**
+</span>30 <span style=''>     * @inheritdoc
+</span>31 <span style=''>     */
+</span>32 <span style=''>    override def getInTurn: T = </span><span style='background: #AEF1AE'>participants(currentTurnIndex)</span><span style=''>
+</span>33 <span style=''>
+</span>34 <span style=''>    /**
+</span>35 <span style=''>     * @inheritdoc
+</span>36 <span style=''>     */
+</span>37 <span style=''>    override def nextTurn: T = {
+</span>38 <span style=''>      </span><span style='background: #AEF1AE'>currentTurnIndex = (currentTurnIndex + 1) % participants.size</span><span style=''>
+</span>39 <span style=''>      </span><span style='background: #AEF1AE'>getInTurn</span><span style=''>
+</span>40 <span style=''>    }
+</span>41 <span style=''>  }
+</span>42 <span style=''>
+</span>43 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          45
+        </td>
+        <td>
+          315
+          -
+          348
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.TurnManager.TurnManagerImpl.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new it.parttimeteam.match.TurnManager.TurnManagerImpl[T](participants)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          294
+        </td>
+        <td>
+          468
+          -
+          469
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          0
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          138
+        </td>
+        <td>
+          551
+          -
+          567
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.match.TurnManager.TurnManagerImpl.currentTurnIndex
+        </td>
+        <td style="background: #AEF1AE">
+          TurnManagerImpl.this.currentTurnIndex
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          75
+        </td>
+        <td>
+          538
+          -
+          568
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.SeqLike.apply
+        </td>
+        <td style="background: #AEF1AE">
+          TurnManagerImpl.this.participants.apply(TurnManagerImpl.this.currentTurnIndex)
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          325
+        </td>
+        <td>
+          683
+          -
+          684
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          1
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          337
+        </td>
+        <td>
+          644
+          -
+          705
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.TurnManager.TurnManagerImpl.currentTurnIndex_=
+        </td>
+        <td style="background: #AEF1AE">
+          TurnManagerImpl.this.currentTurnIndex_=(TurnManagerImpl.this.currentTurnIndex.+(1).%(TurnManagerImpl.this.participants.size))
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          34
+        </td>
+        <td>
+          663
+          -
+          705
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Int.%
+        </td>
+        <td style="background: #AEF1AE">
+          TurnManagerImpl.this.currentTurnIndex.+(1).%(TurnManagerImpl.this.participants.size)
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          174
+        </td>
+        <td>
+          688
+          -
+          705
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.size
+        </td>
+        <td style="background: #AEF1AE">
+          TurnManagerImpl.this.participants.size
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          197
+        </td>
+        <td>
+          712
+          -
+          721
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.match.TurnManager.TurnManagerImpl.getInTurn
+        </td>
+        <td style="background: #AEF1AE">
+          TurnManagerImpl.this.getInTurn
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

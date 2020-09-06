@@ -1,0 +1,960 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/game/scenes/panes/HistoryNavigationPane.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game.scenes.panes
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.view.utils.MachiavelliButton
+</span>4 <span style=''>import scalafx.geometry.Pos
+</span>5 <span style=''>import scalafx.scene.layout.HBox
+</span>6 <span style=''>
+</span>7 <span style=''>trait HistoryNavigationPane extends HBox with ActionGamePane {
+</span>8 <span style=''>
+</span>9 <span style=''>  def setRedoEnabled(enabled: Boolean)
+</span>10 <span style=''>
+</span>11 <span style=''>  def setUndoEnabled(enabled: Boolean)
+</span>12 <span style=''>
+</span>13 <span style=''>  def setResetEnabled(enabled: Boolean)
+</span>14 <span style=''>}
+</span>15 <span style=''>
+</span>16 <span style=''>
+</span>17 <span style=''>object HistoryNavigationPane {
+</span>18 <span style=''>
+</span>19 <span style=''>  class HistoryNavigationPaneImpl(listener: HistoryNavigationListener) extends HistoryNavigationPane {
+</span>20 <span style=''>    val undoBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;&quot;, () =&gt; listener.onUndoClick(), &quot;images/undo.png&quot;, 15d, 30d)</span><span style=''>
+</span>21 <span style=''>    val redoBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;&quot;, () =&gt; listener.onRedoClick(), &quot;images/redo.png&quot;, 15d, 30d)</span><span style=''>
+</span>22 <span style=''>    val resetBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Reset&quot;, () =&gt; listener.onResetClick(), 60d)</span><span style=''>
+</span>23 <span style=''>
+</span>24 <span style=''>    </span><span style='background: #F0ADAD'>this.alignment = Pos.Center</span><span style=''>
+</span>25 <span style=''>    </span><span style='background: #F0ADAD'>this.spacing = 5d</span><span style=''>
+</span>26 <span style=''>    </span><span style='background: #F0ADAD'>this.children.addAll(undoBtn, redoBtn, resetBtn)</span><span style=''>
+</span>27 <span style=''>
+</span>28 <span style=''>    /** @inheritdoc */
+</span>29 <span style=''>    override def disableActions(): Unit = {
+</span>30 <span style=''>      </span><span style='background: #F0ADAD'>undoBtn.setDisable(true)</span><span style=''>
+</span>31 <span style=''>      </span><span style='background: #F0ADAD'>redoBtn.setDisable(true)</span><span style=''>
+</span>32 <span style=''>      </span><span style='background: #F0ADAD'>resetBtn.setDisable(true)</span><span style=''>
+</span>33 <span style=''>    }
+</span>34 <span style=''>
+</span>35 <span style=''>    /** @inheritdoc */
+</span>36 <span style=''>    override def enableActions(): Unit = {
+</span>37 <span style=''>      </span><span style='background: #F0ADAD'>undoBtn.setDisable(false)</span><span style=''>
+</span>38 <span style=''>      </span><span style='background: #F0ADAD'>redoBtn.setDisable(false)</span><span style=''>
+</span>39 <span style=''>      </span><span style='background: #F0ADAD'>resetBtn.setDisable(false)</span><span style=''>
+</span>40 <span style=''>    }
+</span>41 <span style=''>
+</span>42 <span style=''>    /** @inheritdoc */
+</span>43 <span style=''>    override def setRedoEnabled(enabled: Boolean): Unit = {
+</span>44 <span style=''>      </span><span style='background: #F0ADAD'>redoBtn.setDisable(!enabled)</span><span style=''>
+</span>45 <span style=''>    }
+</span>46 <span style=''>
+</span>47 <span style=''>    /** @inheritdoc */
+</span>48 <span style=''>    override def setUndoEnabled(enabled: Boolean): Unit = {
+</span>49 <span style=''>      </span><span style='background: #F0ADAD'>undoBtn.setDisable(!enabled)</span><span style=''>
+</span>50 <span style=''>    }
+</span>51 <span style=''>
+</span>52 <span style=''>    /** @inheritdoc */
+</span>53 <span style=''>    override def setResetEnabled(enabled: Boolean): Unit = {
+</span>54 <span style=''>      </span><span style='background: #F0ADAD'>resetBtn.setDisable(!enabled)</span><span style=''>
+</span>55 <span style=''>    }
+</span>56 <span style=''>  }
+</span>57 <span style=''>
+</span>58 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1725
+        </td>
+        <td>
+          579
+          -
+          582
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          30.0
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1554
+        </td>
+        <td>
+          531
+          -
+          553
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HistoryNavigationListener.onUndoClick
+        </td>
+        <td style="background: #F0ADAD">
+          HistoryNavigationPaneImpl.this.listener.onUndoClick()
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          2155
+        </td>
+        <td>
+          521
+          -
+          523
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          2007
+        </td>
+        <td>
+          574
+          -
+          577
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          15.0
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1074
+        </td>
+        <td>
+          503
+          -
+          583
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.MachiavelliButton.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;&quot;, (() =&gt; HistoryNavigationPaneImpl.this.listener.onUndoClick()), &quot;images/undo.png&quot;, 15.0, 30.0)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1017
+        </td>
+        <td>
+          555
+          -
+          572
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;images/undo.png&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          890
+        </td>
+        <td>
+          654
+          -
+          671
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;images/redo.png&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          2035
+        </td>
+        <td>
+          620
+          -
+          622
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1532
+        </td>
+        <td>
+          630
+          -
+          652
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HistoryNavigationListener.onRedoClick
+        </td>
+        <td style="background: #F0ADAD">
+          HistoryNavigationPaneImpl.this.listener.onRedoClick()
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          2202
+        </td>
+        <td>
+          673
+          -
+          676
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          15.0
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1555
+        </td>
+        <td>
+          678
+          -
+          681
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          30.0
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          993
+        </td>
+        <td>
+          602
+          -
+          682
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.MachiavelliButton.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;&quot;, (() =&gt; HistoryNavigationPaneImpl.this.listener.onRedoClick()), &quot;images/redo.png&quot;, 15.0, 30.0)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          2009
+        </td>
+        <td>
+          720
+          -
+          727
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Reset&quot;
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          2038
+        </td>
+        <td>
+          702
+          -
+          764
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.MachiavelliButton.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;Reset&quot;, (() =&gt; HistoryNavigationPaneImpl.this.listener.onResetClick()), 60.0)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1355
+        </td>
+        <td>
+          735
+          -
+          758
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HistoryNavigationListener.onResetClick
+        </td>
+        <td style="background: #F0ADAD">
+          HistoryNavigationPaneImpl.this.listener.onResetClick()
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1112
+        </td>
+        <td>
+          760
+          -
+          763
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          60.0
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          961
+        </td>
+        <td>
+          770
+          -
+          797
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.delegate.AlignmentDelegate.alignment_=
+        </td>
+        <td style="background: #F0ADAD">
+          this.alignment_=(scalafx.geometry.Pos.Center)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1538
+        </td>
+        <td>
+          787
+          -
+          797
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.geometry.Pos.Center
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.geometry.Pos.Center
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          2149
+        </td>
+        <td>
+          802
+          -
+          819
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.HBox.spacing_=
+        </td>
+        <td style="background: #F0ADAD">
+          this.spacing_=(5.0)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          2084
+        </td>
+        <td>
+          863
+          -
+          871
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Button.sfxButton2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.resetBtn)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1440
+        </td>
+        <td>
+          854
+          -
+          861
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Button.sfxButton2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.redoBtn)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1117
+        </td>
+        <td>
+          863
+          -
+          871
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl.resetBtn
+        </td>
+        <td style="background: #F0ADAD">
+          HistoryNavigationPaneImpl.this.resetBtn
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          2013
+        </td>
+        <td>
+          854
+          -
+          861
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl.redoBtn
+        </td>
+        <td style="background: #F0ADAD">
+          HistoryNavigationPaneImpl.this.redoBtn
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          999
+        </td>
+        <td>
+          845
+          -
+          852
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Button.sfxButton2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.undoBtn)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1600
+        </td>
+        <td>
+          845
+          -
+          852
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl.undoBtn
+        </td>
+        <td style="background: #F0ADAD">
+          HistoryNavigationPaneImpl.this.undoBtn
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1513
+        </td>
+        <td>
+          824
+          -
+          872
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.collections.ObservableList.addAll
+        </td>
+        <td style="background: #F0ADAD">
+          this.children.addAll(control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.undoBtn), control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.redoBtn), control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.resetBtn))
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          967
+        </td>
+        <td>
+          947
+          -
+          971
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.undoBtn).setDisable(true)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          2129
+        </td>
+        <td>
+          978
+          -
+          1002
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.redoBtn).setDisable(true)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1606
+        </td>
+        <td>
+          1009
+          -
+          1034
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.resetBtn).setDisable(true)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1015
+        </td>
+        <td>
+          1114
+          -
+          1139
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.undoBtn).setDisable(false)
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          1983
+        </td>
+        <td>
+          1146
+          -
+          1171
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.redoBtn).setDisable(false)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1381
+        </td>
+        <td>
+          1178
+          -
+          1204
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.resetBtn).setDisable(false)
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1086
+        </td>
+        <td>
+          1301
+          -
+          1308
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl.redoBtn
+        </td>
+        <td style="background: #F0ADAD">
+          HistoryNavigationPaneImpl.this.redoBtn
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1489
+        </td>
+        <td>
+          1301
+          -
+          1329
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.redoBtn).setDisable(enabled.unary_!)
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          2090
+        </td>
+        <td>
+          1320
+          -
+          1328
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Boolean.unary_!
+        </td>
+        <td style="background: #F0ADAD">
+          enabled.unary_!
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          932
+        </td>
+        <td>
+          1426
+          -
+          1433
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl.undoBtn
+        </td>
+        <td style="background: #F0ADAD">
+          HistoryNavigationPaneImpl.this.undoBtn
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1610
+        </td>
+        <td>
+          1426
+          -
+          1454
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.undoBtn).setDisable(enabled.unary_!)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1870
+        </td>
+        <td>
+          1445
+          -
+          1453
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Boolean.unary_!
+        </td>
+        <td style="background: #F0ADAD">
+          enabled.unary_!
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1955
+        </td>
+        <td>
+          1572
+          -
+          1580
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Boolean.unary_!
+        </td>
+        <td style="background: #F0ADAD">
+          enabled.unary_!
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          991
+        </td>
+        <td>
+          1552
+          -
+          1560
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl.resetBtn
+        </td>
+        <td style="background: #F0ADAD">
+          HistoryNavigationPaneImpl.this.resetBtn
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1436
+        </td>
+        <td>
+          1552
+          -
+          1581
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(HistoryNavigationPaneImpl.this.resetBtn).setDisable(enabled.unary_!)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

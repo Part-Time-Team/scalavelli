@@ -1,0 +1,293 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/lobby/PrivateLobbyServiceImpl.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.lobby
+</span>2 <span style=''>
+</span>3 <span style=''>class PrivateLobbyServiceImpl extends PrivateLobbyService with PrivateLobbyCodeGenerator {
+</span>4 <span style=''>
+</span>5 <span style=''>  private var lobbies = </span><span style='background: #AEF1AE'>Set[PrivateLobby]()</span><span style=''>
+</span>6 <span style=''>
+</span>7 <span style=''>  override def generateNewPrivateLobby(numberOfPlayers: Int): PrivateLobby = {
+</span>8 <span style=''>    val lobby = </span><span style='background: #AEF1AE'>PrivateLobby(generateId, numberOfPlayers)</span><span style=''>
+</span>9 <span style=''>    </span><span style='background: #AEF1AE'>lobbies = lobbies + lobby</span><span style=''>
+</span>10 <span style=''>    lobby
+</span>11 <span style=''>  }
+</span>12 <span style=''>
+</span>13 <span style=''>  override def retrieveExistingLobby(lobbyId: String): Option[PrivateLobby] =
+</span>14 <span style=''>    </span><span style='background: #AEF1AE'>lobbies.find(l =&gt; l.lobbyId == lobbyId)</span><span style=''>
+</span>15 <span style=''>
+</span>16 <span style=''>  override def removeLobby(lobbyId: String): Unit = {
+</span>17 <span style=''>    </span><span style='background: #AEF1AE'>lobbies = lobbies.filter(l =&gt; l.lobbyId != lobbyId)</span><span style=''>
+</span>18 <span style=''>    </span><span style='background: #AEF1AE'>removeId(lobbyId)</span><span style=''>
+</span>19 <span style=''>  }
+</span>20 <span style=''>
+</span>21 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          5
+        </td>
+        <td>
+          289
+        </td>
+        <td>
+          147
+          -
+          166
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.Set.apply[it.parttimeteam.lobby.PrivateLobby]()
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          2
+        </td>
+        <td>
+          263
+          -
+          304
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.PrivateLobby.apply
+        </td>
+        <td style="background: #AEF1AE">
+          PrivateLobby.apply(PrivateLobbyServiceImpl.this.generateId, numberOfPlayers)
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          157
+        </td>
+        <td>
+          276
+          -
+          286
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.lobby.PrivateLobbyCodeGenerator.generateId
+        </td>
+        <td style="background: #AEF1AE">
+          PrivateLobbyServiceImpl.this.generateId
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          176
+        </td>
+        <td>
+          309
+          -
+          334
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.PrivateLobbyServiceImpl.lobbies_=
+        </td>
+        <td style="background: #AEF1AE">
+          PrivateLobbyServiceImpl.this.lobbies_=(PrivateLobbyServiceImpl.this.lobbies.+(lobby))
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          240
+        </td>
+        <td>
+          319
+          -
+          334
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.SetLike.+
+        </td>
+        <td style="background: #AEF1AE">
+          PrivateLobbyServiceImpl.this.lobbies.+(lobby)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          267
+        </td>
+        <td>
+          432
+          -
+          471
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.IterableLike.find
+        </td>
+        <td style="background: #AEF1AE">
+          PrivateLobbyServiceImpl.this.lobbies.find(((l: it.parttimeteam.lobby.PrivateLobby) =&gt; l.lobbyId.==(lobbyId)))
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          42
+        </td>
+        <td>
+          450
+          -
+          470
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.==
+        </td>
+        <td style="background: #AEF1AE">
+          l.lobbyId.==(lobbyId)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          357
+        </td>
+        <td>
+          541
+          -
+          582
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.TraversableLike.filter
+        </td>
+        <td style="background: #AEF1AE">
+          PrivateLobbyServiceImpl.this.lobbies.filter(((l: it.parttimeteam.lobby.PrivateLobby) =&gt; l.lobbyId.!=(lobbyId)))
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          291
+        </td>
+        <td>
+          531
+          -
+          582
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.PrivateLobbyServiceImpl.lobbies_=
+        </td>
+        <td style="background: #AEF1AE">
+          PrivateLobbyServiceImpl.this.lobbies_=(PrivateLobbyServiceImpl.this.lobbies.filter(((l: it.parttimeteam.lobby.PrivateLobby) =&gt; l.lobbyId.!=(lobbyId))))
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          120
+        </td>
+        <td>
+          561
+          -
+          581
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.!=
+        </td>
+        <td style="background: #AEF1AE">
+          l.lobbyId.!=(lobbyId)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          158
+        </td>
+        <td>
+          587
+          -
+          604
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.PrivateLobbyCodeGenerator.removeId
+        </td>
+        <td style="background: #AEF1AE">
+          PrivateLobbyServiceImpl.this.removeId(lobbyId)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

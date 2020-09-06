@@ -1,0 +1,362 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/core/GameState.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.core.collections.{Board, Deck}
+</span>4 <span style=''>import it.parttimeteam.core.player.Player
+</span>5 <span style=''>import it.parttimeteam.core.player.Player.PlayerId
+</span>6 <span style=''>
+</span>7 <span style=''>/**
+</span>8 <span style=''> * Current game state.
+</span>9 <span style=''> *
+</span>10 <span style=''> * @param deck    deck game.
+</span>11 <span style=''> * @param board   board.
+</span>12 <span style=''> * @param players list of player.
+</span>13 <span style=''> */
+</span>14 <span style=''>case class GameState(deck: Deck, board: Board, players: Seq[Player]) {
+</span>15 <span style=''>
+</span>16 <span style=''>  def getPlayer(id: PlayerId): Option[Player] = </span><span style='background: #AEF1AE'>players.find(p =&gt; p.id equals id)</span><span style=''>
+</span>17 <span style=''>
+</span>18 <span style=''>  def updatePlayer(player: Player): GameState =
+</span>19 <span style=''>    </span><span style='background: #AEF1AE'>this.copy(players = players.map(p =&gt; if (p.id equals player.id) player else p))</span><span style=''>
+</span>20 <span style=''>
+</span>21 <span style=''>  def playerWon(id: PlayerId): Boolean = {
+</span>22 <span style=''>    </span><span style='background: #AEF1AE'>this.players.find(_.id == id).exists(_.hand.playerCards.isEmpty)</span><span style=''>
+</span>23 <span style=''>  }
+</span>24 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          428
+        </td>
+        <td>
+          438
+          -
+          452
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.equals
+        </td>
+        <td style="background: #AEF1AE">
+          p.id.equals(id)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          694
+        </td>
+        <td>
+          420
+          -
+          453
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.IterableLike.find
+        </td>
+        <td style="background: #AEF1AE">
+          GameState.this.players.find(((p: it.parttimeteam.core.player.Player) =&gt; p.id.equals(id)))
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          415
+        </td>
+        <td>
+          538
+          -
+          538
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.player.Player]
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          555
+        </td>
+        <td>
+          583
+          -
+          584
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.p
+        </td>
+        <td style="background: #AEF1AE">
+          p
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          591
+        </td>
+        <td>
+          512
+          -
+          512
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.copy$default$1
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy$default$1
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          432
+        </td>
+        <td>
+          512
+          -
+          512
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.copy$default$2
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy$default$2
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          462
+        </td>
+        <td>
+          548
+          -
+          569
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.equals
+        </td>
+        <td style="background: #AEF1AE">
+          p.id.equals(player.id)
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          734
+        </td>
+        <td>
+          527
+          -
+          585
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.map
+        </td>
+        <td style="background: #AEF1AE">
+          GameState.this.players.map[it.parttimeteam.core.player.Player, Seq[it.parttimeteam.core.player.Player]](((p: it.parttimeteam.core.player.Player) =&gt; if (p.id.equals(player.id))
+  player
+else
+  p))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.player.Player])
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          727
+        </td>
+        <td>
+          571
+          -
+          577
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.player
+        </td>
+        <td style="background: #AEF1AE">
+          player
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          679
+        </td>
+        <td>
+          507
+          -
+          586
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameState.copy
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy(x$2, x$3, x$1)
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          610
+        </td>
+        <td>
+          560
+          -
+          569
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.id
+        </td>
+        <td style="background: #AEF1AE">
+          player.id
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          465
+        </td>
+        <td>
+          672
+          -
+          698
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.isEmpty
+        </td>
+        <td style="background: #AEF1AE">
+          x$2.hand.playerCards.isEmpty
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          527
+        </td>
+        <td>
+          653
+          -
+          663
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.==
+        </td>
+        <td style="background: #AEF1AE">
+          x$1.id.==(id)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          703
+        </td>
+        <td>
+          635
+          -
+          699
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Option.exists
+        </td>
+        <td style="background: #AEF1AE">
+          this.players.find(((x$1: it.parttimeteam.core.player.Player) =&gt; x$1.id.==(id))).exists(((x$2: it.parttimeteam.core.player.Player) =&gt; x$2.hand.playerCards.isEmpty))
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

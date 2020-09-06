@@ -1,0 +1,531 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/model/game/GameStateStore.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.model.game
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.core.cards.Card
+</span>4 <span style=''>import it.parttimeteam.core.collections.{Board, Hand}
+</span>5 <span style=''>import it.parttimeteam.gamestate.PlayerGameState
+</span>6 <span style=''>
+</span>7 <span style=''>/**
+</span>8 <span style=''> * Maintains and updates the local game state
+</span>9 <span style=''> */
+</span>10 <span style=''>trait GameStateStore {
+</span>11 <span style=''>
+</span>12 <span style=''>  def currentState: PlayerGameState
+</span>13 <span style=''>
+</span>14 <span style=''>  /**
+</span>15 <span style=''>   * Add the card drown to the player hand
+</span>16 <span style=''>   *
+</span>17 <span style=''>   * @param card the card drawn
+</span>18 <span style=''>   * @return the updated state
+</span>19 <span style=''>   */
+</span>20 <span style=''>  def onCardDrawn(card: Card): PlayerGameState
+</span>21 <span style=''>
+</span>22 <span style=''>  /**
+</span>23 <span style=''>   * Replace the current state with the new one
+</span>24 <span style=''>   *
+</span>25 <span style=''>   * @param state the new state
+</span>26 <span style=''>   * @return the updated state
+</span>27 <span style=''>   */
+</span>28 <span style=''>  def onStateChanged(state: PlayerGameState): PlayerGameState
+</span>29 <span style=''>
+</span>30 <span style=''>  /** *
+</span>31 <span style=''>   * Updates local state after:
+</span>32 <span style=''>   * * a card combination picked
+</span>33 <span style=''>   * * a card combination made
+</span>34 <span style=''>   * * a card combination updated
+</span>35 <span style=''>   *
+</span>36 <span style=''>   * @param hand  the player hand
+</span>37 <span style=''>   * @param board the  game board
+</span>38 <span style=''>   * @return the updated state
+</span>39 <span style=''>   */
+</span>40 <span style=''>  def onLocalTurnStateChanged(hand: Hand, board: Board): PlayerGameState
+</span>41 <span style=''>
+</span>42 <span style=''>}
+</span>43 <span style=''>
+</span>44 <span style=''>object GameStateStore {
+</span>45 <span style=''>
+</span>46 <span style=''>  def apply(initialState: PlayerGameState): GameStateStore = </span><span style='background: #AEF1AE'>new GameStateStoreImpl(initialState)</span><span style=''>
+</span>47 <span style=''>
+</span>48 <span style=''>  /**
+</span>49 <span style=''>   *
+</span>50 <span style=''>   * @param currentState the initial state
+</span>51 <span style=''>   */
+</span>52 <span style=''>  private class GameStateStoreImpl(var currentState: PlayerGameState) extends GameStateStore {
+</span>53 <span style=''>
+</span>54 <span style=''>    override def onCardDrawn(card: Card): PlayerGameState = {
+</span>55 <span style=''>      </span><span style='background: #AEF1AE'>currentState = currentState.copy(hand = currentState.hand.copy(playerCards = card +: currentState.hand.playerCards))</span><span style=''>
+</span>56 <span style=''>      </span><span style='background: #AEF1AE'>currentState</span><span style=''>
+</span>57 <span style=''>    }
+</span>58 <span style=''>
+</span>59 <span style=''>    override def onStateChanged(state: PlayerGameState): PlayerGameState = {
+</span>60 <span style=''>      </span><span style='background: #AEF1AE'>currentState = state</span><span style=''>
+</span>61 <span style=''>      </span><span style='background: #AEF1AE'>currentState</span><span style=''>
+</span>62 <span style=''>    }
+</span>63 <span style=''>
+</span>64 <span style=''>    override def onLocalTurnStateChanged(hand: Hand, board: Board): PlayerGameState = {
+</span>65 <span style=''>      </span><span style='background: #AEF1AE'>currentState = currentState.copy(hand = hand, board = board)</span><span style=''>
+</span>66 <span style=''>      </span><span style='background: #AEF1AE'>currentState</span><span style=''>
+</span>67 <span style=''>    }
+</span>68 <span style=''>
+</span>69 <span style=''>  }
+</span>70 <span style=''>
+</span>71 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1123
+        </td>
+        <td>
+          1067
+          -
+          1103
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.GameStateStoreImpl.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new GameStateStore.this.GameStateStoreImpl(initialState)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          2039
+        </td>
+        <td>
+          1329
+          -
+          1445
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.GameStateStoreImpl.currentState_=
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState_=({
+  &lt;artifact&gt; val qual$1: it.parttimeteam.gamestate.PlayerGameState = GameStateStoreImpl.this.currentState;
+  &lt;artifact&gt; val x$3: it.parttimeteam.core.collections.Hand = {
+    &lt;artifact&gt; val qual$2: it.parttimeteam.core.collections.Hand = GameStateStoreImpl.this.currentState.hand;
+    &lt;artifact&gt; val x$1: Seq[it.parttimeteam.core.cards.Card] @scala.reflect.internal.annotations.uncheckedBounds = {
+      &lt;synthetic&gt; &lt;artifact&gt; val x$1: it.parttimeteam.core.cards.Card = card;
+      GameStateStoreImpl.this.currentState.hand.playerCards.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$1)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+    };
+    &lt;artifact&gt; val x$2: Seq[it.parttimeteam.core.cards.Card] @scala.reflect.internal.annotations.uncheckedBounds = qual$2.copy$default$2;
+    qual$2.copy(x$1, x$2)
+  };
+  &lt;artifact&gt; val x$4: it.parttimeteam.core.collections.Board = qual$1.copy$default$1;
+  &lt;artifact&gt; val x$5: Seq[it.parttimeteam.gamestate.Opponent] @scala.reflect.internal.annotations.uncheckedBounds = qual$1.copy$default$3;
+  qual$1.copy(x$4, x$3, x$5)
+})
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          2066
+        </td>
+        <td>
+          1344
+          -
+          1356
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.GameStateStoreImpl.currentState
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1957
+        </td>
+        <td>
+          1357
+          -
+          1357
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.copy$default$1
+        </td>
+        <td style="background: #AEF1AE">
+          qual$1.copy$default$1
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1024
+        </td>
+        <td>
+          1369
+          -
+          1444
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy
+        </td>
+        <td style="background: #AEF1AE">
+          qual$2.copy(x$1, x$2)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1667
+        </td>
+        <td>
+          1357
+          -
+          1357
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.copy$default$3
+        </td>
+        <td style="background: #AEF1AE">
+          qual$1.copy$default$3
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1490
+        </td>
+        <td>
+          1369
+          -
+          1386
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.hand
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState.hand
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1092
+        </td>
+        <td>
+          1344
+          -
+          1445
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.copy
+        </td>
+        <td style="background: #AEF1AE">
+          qual$1.copy(x$4, x$3, x$5)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1208
+        </td>
+        <td>
+          1411
+          -
+          1411
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          1612
+        </td>
+        <td>
+          1387
+          -
+          1387
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy$default$2
+        </td>
+        <td style="background: #AEF1AE">
+          qual$2.copy$default$2
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          2132
+        </td>
+        <td>
+          1411
+          -
+          1443
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.SeqLike.+:
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState.hand.playerCards.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$1)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          1492
+        </td>
+        <td>
+          1452
+          -
+          1464
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.GameStateStoreImpl.currentState
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          962
+        </td>
+        <td>
+          1555
+          -
+          1575
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.GameStateStoreImpl.currentState_=
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState_=(state)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          2134
+        </td>
+        <td>
+          1582
+          -
+          1594
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.GameStateStoreImpl.currentState
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1703
+        </td>
+        <td>
+          1696
+          -
+          1756
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.GameStateStoreImpl.currentState_=
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState_=({
+  &lt;artifact&gt; val qual$1: it.parttimeteam.gamestate.PlayerGameState = GameStateStoreImpl.this.currentState;
+  &lt;artifact&gt; val x$1: it.parttimeteam.core.collections.Hand = hand;
+  &lt;artifact&gt; val x$2: it.parttimeteam.core.collections.Board = board;
+  &lt;artifact&gt; val x$3: Seq[it.parttimeteam.gamestate.Opponent] @scala.reflect.internal.annotations.uncheckedBounds = qual$1.copy$default$3;
+  qual$1.copy(x$2, x$1, x$3)
+})
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          2014
+        </td>
+        <td>
+          1711
+          -
+          1756
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.copy
+        </td>
+        <td style="background: #AEF1AE">
+          qual$1.copy(x$2, x$1, x$3)
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1000
+        </td>
+        <td>
+          1724
+          -
+          1724
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.copy$default$3
+        </td>
+        <td style="background: #AEF1AE">
+          qual$1.copy$default$3
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1558
+        </td>
+        <td>
+          1711
+          -
+          1723
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.GameStateStoreImpl.currentState
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          1098
+        </td>
+        <td>
+          1763
+          -
+          1775
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.GameStateStoreImpl.currentState
+        </td>
+        <td style="background: #AEF1AE">
+          GameStateStoreImpl.this.currentState
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

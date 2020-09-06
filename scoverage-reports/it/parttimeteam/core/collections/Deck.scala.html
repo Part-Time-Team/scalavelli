@@ -1,0 +1,630 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/core/collections/Deck.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core.collections
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.core.cards.Card
+</span>4 <span style=''>import it.parttimeteam.core.prolog.PrologGame
+</span>5 <span style=''>
+</span>6 <span style=''>import scala.util.Random
+</span>7 <span style=''>
+</span>8 <span style=''>case class Deck(cards: Seq[Card]) {
+</span>9 <span style=''>  /**
+</span>10 <span style=''>   * Draw a card from the top of the deck and return it.
+</span>11 <span style=''>   *
+</span>12 <span style=''>   * @return Tuple (new Deck, Card drawn).
+</span>13 <span style=''>   */
+</span>14 <span style=''>  def draw(): (Deck, Card) = </span><span style='background: #AEF1AE'>(this.copy(cards = cards.tail), cards.head)</span><span style=''>
+</span>15 <span style=''>
+</span>16 <span style=''>  /**
+</span>17 <span style=''>   * Draw any number of cards from the top of the deck and return them.
+</span>18 <span style=''>   *
+</span>19 <span style=''>   * @param number Number of cards to draw.
+</span>20 <span style=''>   * @return Tuple(new Deck, Cards drawn).
+</span>21 <span style=''>   */
+</span>22 <span style=''>  def draw(number: Int): (Deck, Seq[Card]) = (</span><span style='background: #AEF1AE'>0 until number).foldLeft((this, Seq.empty[Card])) {
+</span>23 <span style=''></span><span style='background: #AEF1AE'>    (acc, _) =&gt; {
+</span>24 <span style=''></span><span style='background: #AEF1AE'>      val drawn = acc._1 draw()
+</span>25 <span style=''></span><span style='background: #AEF1AE'>      (drawn._1, drawn._2 +: acc._2)
+</span>26 <span style=''></span><span style='background: #AEF1AE'>    }
+</span>27 <span style=''></span><span style='background: #AEF1AE'>  }</span><span style=''>
+</span>28 <span style=''>
+</span>29 <span style=''>  /**
+</span>30 <span style=''>   * The remaining cards number.
+</span>31 <span style=''>   *
+</span>32 <span style=''>   * @return Number of cards remaining.
+</span>33 <span style=''>   */
+</span>34 <span style=''>  def remaining: Int = </span><span style='background: #AEF1AE'>cards.length</span><span style=''>
+</span>35 <span style=''>
+</span>36 <span style=''>  /**
+</span>37 <span style=''>   * Check if the deck is empty.
+</span>38 <span style=''>   *
+</span>39 <span style=''>   * @return True if is empty, false anywhere.
+</span>40 <span style=''>   */
+</span>41 <span style=''>  def isEmpty: Boolean = </span><span style='background: #AEF1AE'>cards.isEmpty</span><span style=''>
+</span>42 <span style=''>}
+</span>43 <span style=''>
+</span>44 <span style=''>object Deck {
+</span>45 <span style=''>  /**
+</span>46 <span style=''>   * Return a sorted list of cards.
+</span>47 <span style=''>   *
+</span>48 <span style=''>   * @return List of cards.
+</span>49 <span style=''>   */
+</span>50 <span style=''>  def sorted: Deck = {
+</span>51 <span style=''>    val deck = </span><span style='background: #AEF1AE'>PrologGame().loadDeck</span><span style=''>
+</span>52 <span style=''>    </span><span style='background: #AEF1AE'>Deck(deck)</span><span style=''>
+</span>53 <span style=''>  }
+</span>54 <span style=''>
+</span>55 <span style=''>  /**
+</span>56 <span style=''>   * Return a shuffled list of cards.
+</span>57 <span style=''>   *
+</span>58 <span style=''>   * @return List of cards.
+</span>59 <span style=''>   */
+</span>60 <span style=''>  def shuffled: Deck = </span><span style='background: #AEF1AE'>Deck(Random.shuffle(PrologGame().loadDeck))</span><span style=''>
+</span>61 <span style=''>
+</span>62 <span style=''>  /**
+</span>63 <span style=''>   * Return an empty list of cards.
+</span>64 <span style=''>   *
+</span>65 <span style=''>   * @return List of cards.
+</span>66 <span style=''>   */
+</span>67 <span style=''>  def empty: Deck = </span><span style='background: #AEF1AE'>Deck(Seq.empty)</span><span style=''>
+</span>68 <span style=''>
+</span>69 <span style=''>  /**
+</span>70 <span style=''>   * Convert a list of cards into a deck entity.
+</span>71 <span style=''>   *
+</span>72 <span style=''>   * @param cards List of cards.
+</span>73 <span style=''>   * @return Deck entity.
+</span>74 <span style=''>   */
+</span>75 <span style=''>  implicit def cards2deck(cards: Seq[Card]): Deck = </span><span style='background: #AEF1AE'>Deck(cards)</span><span style=''>
+</span>76 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          489
+        </td>
+        <td>
+          337
+          -
+          366
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Deck.copy
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy(Deck.this.cards.tail)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          641
+        </td>
+        <td>
+          355
+          -
+          365
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.TraversableLike.tail
+        </td>
+        <td style="background: #AEF1AE">
+          Deck.this.cards.tail
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          749
+        </td>
+        <td>
+          368
+          -
+          378
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.IterableLike.head
+        </td>
+        <td style="background: #AEF1AE">
+          Deck.this.cards.head
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          653
+        </td>
+        <td>
+          336
+          -
+          379
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Tuple2.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Tuple2.apply[it.parttimeteam.core.collections.Deck, it.parttimeteam.core.cards.Card](this.copy(Deck.this.cards.tail), Deck.this.cards.head)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          765
+        </td>
+        <td>
+          635
+          -
+          650
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.empty
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.Seq.empty[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          654
+        </td>
+        <td>
+          603
+          -
+          751
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.TraversableOnce.foldLeft
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.intWrapper(0).until(number).foldLeft[(it.parttimeteam.core.collections.Deck, Seq[it.parttimeteam.core.cards.Card])](scala.Tuple2.apply[it.parttimeteam.core.collections.Deck, Seq[it.parttimeteam.core.cards.Card]](this, scala.collection.Seq.empty[it.parttimeteam.core.cards.Card]))(((acc: (it.parttimeteam.core.collections.Deck, Seq[it.parttimeteam.core.cards.Card]), x$1: Int) =&gt; {
+  val drawn: (it.parttimeteam.core.collections.Deck, it.parttimeteam.core.cards.Card) = acc._1.draw();
+  scala.Tuple2.apply[it.parttimeteam.core.collections.Deck, Seq[it.parttimeteam.core.cards.Card]](drawn._1, {
+    &lt;synthetic&gt; &lt;artifact&gt; val x$2: it.parttimeteam.core.cards.Card = drawn._2;
+    acc._2.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$2)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+  })
+}))
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          513
+        </td>
+        <td>
+          603
+          -
+          604
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          0
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          616
+        </td>
+        <td>
+          628
+          -
+          651
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Tuple2.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Tuple2.apply[it.parttimeteam.core.collections.Deck, Seq[it.parttimeteam.core.cards.Card]](this, scala.collection.Seq.empty[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          533
+        </td>
+        <td>
+          691
+          -
+          704
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Deck.draw
+        </td>
+        <td style="background: #AEF1AE">
+          acc._1.draw()
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          642
+        </td>
+        <td>
+          731
+          -
+          731
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          743
+        </td>
+        <td>
+          711
+          -
+          741
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Tuple2.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Tuple2.apply[it.parttimeteam.core.collections.Deck, Seq[it.parttimeteam.core.cards.Card]](drawn._1, {
+  &lt;synthetic&gt; &lt;artifact&gt; val x$2: it.parttimeteam.core.cards.Card = drawn._2;
+  acc._2.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$2)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+})
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          378
+        </td>
+        <td>
+          712
+          -
+          720
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._1
+        </td>
+        <td style="background: #AEF1AE">
+          drawn._1
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          497
+        </td>
+        <td>
+          731
+          -
+          740
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.SeqLike.+:
+        </td>
+        <td style="background: #AEF1AE">
+          acc._2.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$2)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          505
+        </td>
+        <td>
+          866
+          -
+          878
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.length
+        </td>
+        <td style="background: #AEF1AE">
+          Deck.this.cards.length
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          771
+        </td>
+        <td>
+          1002
+          -
+          1015
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.isEmpty
+        </td>
+        <td style="background: #AEF1AE">
+          Deck.this.cards.isEmpty
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          608
+        </td>
+        <td>
+          1152
+          -
+          1173
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.PrologGame.loadDeck
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.core.prolog.PrologGame.apply().loadDeck
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          467
+        </td>
+        <td>
+          1178
+          -
+          1188
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Deck.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Deck.apply(deck)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          379
+        </td>
+        <td>
+          1320
+          -
+          1341
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.PrologGame.loadDeck
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.core.prolog.PrologGame.apply().loadDeck
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          498
+        </td>
+        <td>
+          1305
+          -
+          1342
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.util.Random.shuffle
+        </td>
+        <td style="background: #AEF1AE">
+          scala.util.Random.shuffle[it.parttimeteam.core.cards.Card, Seq](it.parttimeteam.core.prolog.PrologGame.apply().loadDeck)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          733
+        </td>
+        <td>
+          1300
+          -
+          1343
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Deck.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Deck.apply(scala.util.Random.shuffle[it.parttimeteam.core.cards.Card, Seq](it.parttimeteam.core.prolog.PrologGame.apply().loadDeck)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]))
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          637
+        </td>
+        <td>
+          1319
+          -
+          1319
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          507
+        </td>
+        <td>
+          1446
+          -
+          1461
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Deck.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Deck.apply(scala.collection.Seq.empty[Nothing])
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          673
+        </td>
+        <td>
+          1451
+          -
+          1460
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.empty
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.Seq.empty[Nothing]
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          773
+        </td>
+        <td>
+          1640
+          -
+          1651
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Deck.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Deck.apply(cards)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

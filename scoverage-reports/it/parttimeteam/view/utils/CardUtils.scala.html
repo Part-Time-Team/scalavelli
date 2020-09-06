@@ -1,0 +1,569 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/utils/CardUtils.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.utils
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.core.cards.Card
+</span>4 <span style=''>import it.parttimeteam.core.cards.Rank._
+</span>5 <span style=''>import it.parttimeteam.core.cards.Suit._
+</span>6 <span style=''>
+</span>7 <span style=''>object CardUtils {
+</span>8 <span style=''>
+</span>9 <span style=''>  /**
+</span>10 <span style=''>    * Return the card image path
+</span>11 <span style=''>    *
+</span>12 <span style=''>    * @param card the card which image should be loaded
+</span>13 <span style=''>    * @return the card image path
+</span>14 <span style=''>    */
+</span>15 <span style=''>  def getCardPath(card: Card): String = {
+</span>16 <span style=''>    val path: String = </span><span style='background: #F0ADAD'>&quot;/images/cards/&quot;</span><span style=''>
+</span>17 <span style=''>    val suitPath = </span><span style='background: #F0ADAD'>card.suit</span><span style=''> match {
+</span>18 <span style=''>      case Hearts() =&gt; </span><span style='background: #F0ADAD'>&quot;H&quot;</span><span style=''>
+</span>19 <span style=''>      case Diamonds() =&gt; </span><span style='background: #F0ADAD'>&quot;D&quot;</span><span style=''>
+</span>20 <span style=''>      case Clubs() =&gt; </span><span style='background: #F0ADAD'>&quot;C&quot;</span><span style=''>
+</span>21 <span style=''>      case Spades() =&gt; </span><span style='background: #F0ADAD'>&quot;S&quot;</span><span style=''>
+</span>22 <span style=''>      case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>23 <span style=''>    }
+</span>24 <span style=''>
+</span>25 <span style=''>    val rankPath = </span><span style='background: #F0ADAD'>card.rank</span><span style=''> match {
+</span>26 <span style=''>      case Ace() =&gt; </span><span style='background: #F0ADAD'>&quot;1&quot;</span><span style=''>
+</span>27 <span style=''>      case Two() =&gt; </span><span style='background: #F0ADAD'>&quot;2&quot;</span><span style=''>
+</span>28 <span style=''>      case Three() =&gt; </span><span style='background: #F0ADAD'>&quot;3&quot;</span><span style=''>
+</span>29 <span style=''>      case Four() =&gt; </span><span style='background: #F0ADAD'>&quot;4&quot;</span><span style=''>
+</span>30 <span style=''>      case Five() =&gt; </span><span style='background: #F0ADAD'>&quot;5&quot;</span><span style=''>
+</span>31 <span style=''>      case Six() =&gt; </span><span style='background: #F0ADAD'>&quot;6&quot;</span><span style=''>
+</span>32 <span style=''>      case Seven() =&gt; </span><span style='background: #F0ADAD'>&quot;7&quot;</span><span style=''>
+</span>33 <span style=''>      case Eight() =&gt; </span><span style='background: #F0ADAD'>&quot;8&quot;</span><span style=''>
+</span>34 <span style=''>      case Nine() =&gt; </span><span style='background: #F0ADAD'>&quot;9&quot;</span><span style=''>
+</span>35 <span style=''>      case Ten() =&gt; </span><span style='background: #F0ADAD'>&quot;10&quot;</span><span style=''>
+</span>36 <span style=''>      case Jack() =&gt; </span><span style='background: #F0ADAD'>&quot;11&quot;</span><span style=''>
+</span>37 <span style=''>      case Queen() =&gt; </span><span style='background: #F0ADAD'>&quot;12&quot;</span><span style=''>
+</span>38 <span style=''>      case King() =&gt; </span><span style='background: #F0ADAD'>&quot;13&quot;</span><span style=''>
+</span>39 <span style=''>      case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>40 <span style=''>    }
+</span>41 <span style=''>
+</span>42 <span style=''>    </span><span style='background: #F0ADAD'>path + suitPath + rankPath + &quot;.png&quot;</span><span style=''>
+</span>43 <span style=''>  }
+</span>44 <span style=''>
+</span>45 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1228
+        </td>
+        <td>
+          385
+          -
+          401
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;/images/cards/&quot;
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          942
+        </td>
+        <td>
+          421
+          -
+          430
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.suit
+        </td>
+        <td style="background: #F0ADAD">
+          card.suit
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1906
+        </td>
+        <td>
+          462
+          -
+          465
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;H&quot;
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1329
+        </td>
+        <td>
+          491
+          -
+          494
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;D&quot;
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          2238
+        </td>
+        <td>
+          517
+          -
+          520
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;C&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1704
+        </td>
+        <td>
+          544
+          -
+          547
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;S&quot;
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1424
+        </td>
+        <td>
+          561
+          -
+          563
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          812
+        </td>
+        <td>
+          590
+          -
+          599
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.rank
+        </td>
+        <td style="background: #F0ADAD">
+          card.rank
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1807
+        </td>
+        <td>
+          628
+          -
+          631
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;1&quot;
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          1232
+        </td>
+        <td>
+          652
+          -
+          655
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;2&quot;
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          2183
+        </td>
+        <td>
+          678
+          -
+          681
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;3&quot;
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1849
+        </td>
+        <td>
+          703
+          -
+          706
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;4&quot;
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1331
+        </td>
+        <td>
+          728
+          -
+          731
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;5&quot;
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          2231
+        </td>
+        <td>
+          752
+          -
+          755
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;6&quot;
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1706
+        </td>
+        <td>
+          778
+          -
+          781
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;7&quot;
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          1393
+        </td>
+        <td>
+          804
+          -
+          807
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;8&quot;
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          816
+        </td>
+        <td>
+          829
+          -
+          832
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;9&quot;
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1809
+        </td>
+        <td>
+          853
+          -
+          857
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;10&quot;
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1188
+        </td>
+        <td>
+          879
+          -
+          883
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;11&quot;
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          2188
+        </td>
+        <td>
+          906
+          -
+          910
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;12&quot;
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          1855
+        </td>
+        <td>
+          932
+          -
+          936
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;13&quot;
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1308
+        </td>
+        <td>
+          950
+          -
+          952
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          2233
+        </td>
+        <td>
+          964
+          -
+          999
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #F0ADAD">
+          path.+(suitPath).+(rankPath).+(&quot;.png&quot;)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>
