@@ -11,7 +11,7 @@ trait GameManager {
   /**
    * Create a new game state from players ids.
    *
-   * @param players List of players ids.
+   * @param players Sequence of players ids.
    * @return New Game State.
    */
   def create(players: Seq[(PlayerId, PlayerName)]): GameState
@@ -20,7 +20,7 @@ trait GameManager {
    * Draw a card from the top of the deck.
    *
    * @param deck Deck to draw.
-   * @return Deck tail and card picked.
+   * @return Deck tail and card drawn.
    */
   def draw(deck: Deck): (Deck, Card)
 
@@ -34,31 +34,30 @@ trait GameManager {
   def validateTurn(board: Board, hand: Hand): Boolean
 
   /**
-   * Validate a card combination.
+   * Validate a card sequence.
    *
-   * @param cards Combination to validate.
+   * @param cards Card Sequence to validate.
    * @return True if is valid, false anywhere.
    */
   def validateCombination(cards: Seq[Card]): Boolean
 
   /**
-   * Pick cards from a combination on the table.
+   * Pick cards from combinations on the board.
    *
    * @param hand  Hand where put cards picked.
    * @param board Board where pick cards.
    * @param cards Cards to pick.
-   * @return Hand and Board updated.
+   * @return An Either with a possible error or the Hand and Board updated.
    */
   def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
 
   /**
    * Play cards from hand to board.
    *
-   * @param hand  Hand where to pick cards.
+   * @param hand  Hand where pick cards.
    * @param board Board where put cards.
-   * @param cards cards to pick.
-   * @return Hand and Board updated. If hand doesn't contain any combination card, return exactly the same hand and board.
-   * @todo Take only a card seq to add to board.
+   * @param cards Cards to play.
+   * @return Hand and Board updated. If there was an error, return it.
    */
   def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
 
@@ -67,9 +66,9 @@ trait GameManager {
    *
    * @param hand  Hand where to pick cards.
    * @param board Board with the combination to update.
-   * @param id    Id of the combnation to update.
-   * @param cards Cards to pur in the combination.
-   * @return Updated board.
+   * @param id    Id of the combination to update.
+   * @param cards Cards to put in the combination.
+   * @return Updated Board and Hand.
    */
   def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board)
 }
@@ -103,7 +102,6 @@ class GameManagerImpl extends GameManager {
   override def validateTurn(board: Board, hand: Hand): Boolean =
     board.combinations.forall(c => validateCombination(c.cards)) && hand.tableCards.isEmpty
 
-  // TODO: This method is useful?
   /**
    * @inheritdoc
    */
@@ -124,7 +122,7 @@ class GameManagerImpl extends GameManager {
   override def playCombination(hand: Hand,
                                board: Board,
                                cards: Seq[Card]): Either[String, (Hand, Board)] = {
-    
+
     val orderedCards = cards sortByRank()
     if (this.validateCombination(orderedCards)) {
       hand.removeCards(orderedCards).map(updateHand => (updateHand, board.putCombination(orderedCards)))

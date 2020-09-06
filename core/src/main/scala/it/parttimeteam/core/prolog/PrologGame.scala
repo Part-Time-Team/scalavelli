@@ -99,7 +99,7 @@ class PrologGame() {
 /**
  * Object to initialize the class PrologGame
  */
-object PrologGame{
+object PrologGame {
   def apply(): PrologGame = new PrologGame()
 
   /**
