@@ -15,6 +15,13 @@ import scalafx.scene.layout.{BorderPane, VBox}
   */
 trait GameInfoBar extends BorderPane with ActionGamePane {
   /**
+    * Updates the next button text
+    *
+    * @param text the new text
+    */
+  def setNextText(text: String): Unit
+
+  /**
     * Enables/disables the reset button
     *
     * @param enabled if the button should be enabled or not
@@ -157,6 +164,11 @@ object GameInfoBar {
 
     /** @inheritdoc*/
     override def setUndoEnabled(enabled: Boolean): Unit = historyNavigationPane.setUndoEnabled(enabled)
+
+    /** @inheritdoc */
+    override def setNextText(text: String): Unit = {
+      nextBtn.setText(text)
+    }
   }
 
 }
