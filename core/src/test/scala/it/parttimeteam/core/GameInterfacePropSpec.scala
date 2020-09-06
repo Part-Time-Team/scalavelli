@@ -6,8 +6,8 @@ import org.scalatest.matchers.should
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
 import org.scalatest.propspec.AnyPropSpec
 
-class GameManagerPropSpec extends AnyPropSpec with TableDrivenPropertyChecks with should.Matchers {
-  val gameManager: GameManager = new GameManagerImpl()
+class GameInterfacePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with should.Matchers {
+  val gameInterface: GameInterface = new GameInterfaceImpl()
 
   val validCombs: TableFor1[CardCombination] = Table("cardCombination",
     CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS)),
@@ -16,7 +16,7 @@ class GameManagerPropSpec extends AnyPropSpec with TableDrivenPropertyChecks wit
 
   property("Test valid combinations") {
     forAll(validCombs) { comb =>
-      gameManager validateCombination comb.cards should be(true)
+      gameInterface validateCombination comb.cards should be(true)
     }
   }
 
@@ -25,7 +25,7 @@ class GameManagerPropSpec extends AnyPropSpec with TableDrivenPropertyChecks wit
 
   property("Test invalid combinations") {
     forAll(invalidCombs) { comb =>
-      gameManager validateCombination comb.cards should be(false)
+      gameInterface validateCombination comb.cards should be(false)
     }
   }
 }

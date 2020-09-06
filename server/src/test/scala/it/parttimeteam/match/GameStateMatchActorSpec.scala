@@ -3,13 +3,12 @@ package it.parttimeteam.`match`
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
-import it.parttimeteam.`match`.GameMatchManagerActor
 import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
+import it.parttimeteam.core.collections.{Board, Deck, Hand}
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
-import it.parttimeteam.core.{GameManager, GameState}
+import it.parttimeteam.core.{GameInterface, GameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 import it.parttimeteam.{DrawCard, common, core}
@@ -30,7 +29,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
   "a game actor" should {
 
     "accept players and notify game started with initial state" in {
-      val gameActor = TestActorRef[GameMatchManagerActor](GameMatchManagerActor.props(NUMBER_OF_PLAYERS, new FakeGameManager()))
+      val gameActor = TestActorRef[GameMatchManagerActor](GameMatchManagerActor.props(NUMBER_OF_PLAYERS, new FakeGameInterface()))
       val player1 = TestProbe()
       val player2 = TestProbe()
 
@@ -47,29 +46,29 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       player1.send(gameActor, PlayerActionMade("id1", DrawCard))
       player1.expectMsgType[GameStateUpdated]
       player2.expectMsgType[GameStateUpdated]
-      player1.expectMsg(CardDrawn(FakeGameManager.cardToDraw))
+      player1.expectMsg(CardDrawn(FakeGameInterface.cardToDraw))
       player2.expectMsg(PlayerTurn)
     }
 
   }
 
-  object FakeGameManager {
+  object FakeGameInterface {
     val cardToDraw = Card.string2card("2♣R")
   }
 
-  class FakeGameManager extends GameManager {
+  class FakeGameInterface extends GameInterface {
     /**
-     * Create a new game state from players ids.
-     *
-     * @param players List of players ids.
-     * @return New Game State.
-     */
+      * Create a new game state from players ids.
+      *
+      * @param players List of players ids.
+      * @return New Game State.
+      */
     override def create(players: Seq[(PlayerId, PlayerName)]): GameState = core.GameState(
       Deck(List()),
       Board.empty,
       players.map(pair => Player(pair._2, pair._1, Hand(List(), List()))))
 
-    override def draw(deck: Deck): (Deck, Card) = (deck, FakeGameManager.cardToDraw)
+    override def draw(deck: Deck): (Deck, Card) = (deck, FakeGameInterface.cardToDraw)
 
     override def validateTurn(board: Board, hand: Hand): Boolean = ???
 
@@ -80,13 +79,13 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
     override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
 
     /**
-     * Update a combination in the board by his id with some cards.
-     *
-     * @param board Board with the combination to update.
-     * @param id    Id of the combnation to update.
-     * @param cards Cards to pur in the combination.
-     * @return Updated board.
-     */
+      * Update a combination in the board by his id with some cards.
+      *
+      * @param board Board with the combination to update.
+      * @param id    Id of the combnation to update.
+      * @param cards Cards to pur in the combination.
+      * @return Updated board.
+      */
     override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = ???
   }
 

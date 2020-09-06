@@ -6,7 +6,7 @@ import it.parttimeteam.core.collections._
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player._
 
-trait GameManager {
+trait GameInterface {
 
   /**
    * Create a new game state from players ids.
@@ -74,7 +74,7 @@ trait GameManager {
   def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board)
 }
 
-class GameManagerImpl extends GameManager {
+class GameInterfaceImpl extends GameInterface {
   /**
    * @inheritdoc
    */

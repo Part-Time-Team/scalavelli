@@ -2,7 +2,7 @@ package it.parttimeteam.model.game
 
 import it.parttimeteam.controller.game._
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.{GameManager, GameManagerImpl}
+import it.parttimeteam.core.{GameInterface, GameInterfaceImpl}
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{LeaveGame, PlayerActionMade, Ready}
 import it.parttimeteam.model.startup.GameMatchInformations
@@ -17,7 +17,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   private var turnHistory: History[PlayerGameState] = History[PlayerGameState]()
   private var storeOpt: Option[GameStateStore] = None
 
-  private val gameManager: GameManager = new GameManagerImpl()
+  private val gameInterface: GameInterface = new GameInterfaceImpl()
 
   implicit val executionContext: ExecutionContextExecutor = ActorSystemManager.actorSystem.dispatcher
 
@@ -88,7 +88,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
       case MakeCombinationAction(cards) => {
         withState { state =>
-          this.gameManager.playCombination(state.hand, state.board, cards) match {
+          this.gameInterface.playCombination(state.hand, state.board, cards) match {
             case Right((updatedHand, updatedBoard)) =>
               val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
               this.turnHistory = this.turnHistory.setPresent(updatedState)
@@ -101,7 +101,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       }
 
       case PickCardsAction(cards) => {
-        gameManager.pickBoardCards(currentState.hand, currentState.board, cards) match {
+        gameInterface.pickBoardCards(currentState.hand, currentState.board, cards) match {
           case Right((hand, board)) => {
             val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
             this.turnHistory = this.turnHistory.setPresent(updatedState)
