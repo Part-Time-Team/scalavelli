@@ -46,7 +46,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       player1.send(gameActor, PlayerActionMade("id1", DrawCard))
       player1.expectMsgType[GameStateUpdated]
       player2.expectMsgType[GameStateUpdated]
-      player1.expectMsg(CardDrawn(FakeGameInterface.cardToDraw))
+      player1.expectMsg(TurnEnded)
       player2.expectMsg(PlayerTurn)
     }
 
@@ -58,11 +58,11 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
 
   class FakeGameInterface extends GameInterface {
     /**
-      * Create a new game state from players ids.
-      *
-      * @param players List of players ids.
-      * @return New Game State.
-      */
+     * Create a new game state from players ids.
+     *
+     * @param players List of players ids.
+     * @return New Game State.
+     */
     override def create(players: Seq[(PlayerId, PlayerName)]): GameState = core.GameState(
       Deck(List()),
       Board.empty,
@@ -79,13 +79,13 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
     override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
 
     /**
-      * Update a combination in the board by his id with some cards.
-      *
-      * @param board Board with the combination to update.
-      * @param id    Id of the combnation to update.
-      * @param cards Cards to pur in the combination.
-      * @return Updated board.
-      */
+     * Update a combination in the board by his id with some cards.
+     *
+     * @param board Board with the combination to update.
+     * @param id    Id of the combnation to update.
+     * @param cards Cards to pur in the combination.
+     * @return Updated board.
+     */
     override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = ???
   }
 
