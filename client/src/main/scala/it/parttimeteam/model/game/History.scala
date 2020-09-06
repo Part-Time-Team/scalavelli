@@ -4,6 +4,8 @@ package it.parttimeteam.model.game
   * Trait representing the history of a value T
   */
 trait History[T] {
+  def printAll(): Unit
+
   /**
     * Return if the history has a next value
     *
@@ -136,6 +138,10 @@ object History {
         case Some(_) => true
         case None => false
       }
+    }
+
+    override def printAll(): Unit = {
+      println(s"History: ${values.toString()}. Current is: $index")
     }
   }
 }

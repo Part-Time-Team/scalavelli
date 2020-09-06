@@ -1,16 +1,16 @@
 package it.parttimeteam.view.game.scenes
 
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.gamestate.PlayerGameState
+import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view.game.listeners.GameSceneListener
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 import it.parttimeteam.view.game.scenes.model.{GameCard, GameCardCombination}
 import it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl
-import it.parttimeteam.view.game.scenes.panes.HandBar.HandBarImpl
 import it.parttimeteam.view.game.scenes.panes.BoardPane.BoardPaneImpl
-import it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl
 import it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl
-import it.parttimeteam.view.game.scenes.panes.{ActionBar, HandBar, BoardPane, GameInfoBar}
+import it.parttimeteam.view.game.scenes.panes.HandBar.HandBarImpl
+import it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl
+import it.parttimeteam.view.game.scenes.panes.{ActionBar, BoardPane, GameInfoBar, HandBar}
 import it.parttimeteam.view.game.{MachiavelliGameStage, SelectionManager}
 import scalafx.application.Platform
 import scalafx.scene.layout.{BorderPane, VBox}
@@ -85,6 +85,13 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
       val selectedCards = handSelectionManager.getSelectedItems
       parentStage.updateCardCombination(combination.getCombination.id, selectedCards.map(c => c.getCard))
     }
+
+    /**
+      * The player leaves the game.
+      */
+    override def leaveGame(): Unit = {
+      parentStage.leaveGame()
+    }
   }
 
   val rightBar: GameInfoBar = new GameInfoBarImpl(sceneListener)
@@ -130,16 +137,18 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
   root = borderPane
 
   /** @inheritdoc */
-  override def setState(state: PlayerGameState): Unit = {
+  override def setState(clientGameState: ClientGameState): Unit = {
     this.handSelectionManager.clearSelection()
     this.boardSelectionManager.clearSelection()
     this.combinationSelectionManager.clearSelection()
     Platform.runLater({
-      centerPane.setBoard(state.board)
-
-      bottomBar.setHand(state.hand)
-
-      rightBar.setOtherPlayers(state.otherPlayers)
+      centerPane.setBoard(clientGameState.playerGameState.board)
+      bottomBar.setHand(clientGameState.playerGameState.hand)
+      rightBar.setOtherPlayers(clientGameState.playerGameState.otherPlayers)
+      rightBar.setUndoEnabled(clientGameState.canUndo)
+      rightBar.setRedoEnabled(clientGameState.canRedo)
+      rightBar.setResetEnabled(clientGameState.canReset)
+      rightBar.setNextEnabled(inTurn)
     })
   }
 
@@ -177,7 +186,7 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
     updateActionBarButtons()
     rightBar.setNextEnabled(inTurn)
   }
-  
+
   /** @inheritdoc */
   private def updateActionBarButtons(): Unit = {
     actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty && inTurn)
@@ -205,12 +214,5 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
     centerPane.enableActions()
     actionBar.enableActions()
     bottomBar.enableActions()
-  }
-
-  /** @inheritdoc */
-  override def setHistoryState(canUndo: Boolean, canRedo: Boolean): Unit = {
-    rightBar.setUndoEnabled(canUndo && inTurn)
-    rightBar.setRedoEnabled(canRedo && inTurn)
-    rightBar.setResetEnabled(inTurn)
   }
 }

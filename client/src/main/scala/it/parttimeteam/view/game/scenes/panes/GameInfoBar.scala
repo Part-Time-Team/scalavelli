@@ -108,10 +108,12 @@ object GameInfoBar {
     timerPane.hide()
 
     val nextBtn = MachiavelliButton("Pass", () => listener.endTurn())
+    val leaveBtn = MachiavelliButton("Leave Game", () => listener.leaveGame())
 
     nextBtn.prefWidth <== rightBottom.width
+    leaveBtn.prefWidth <== rightBottom.width
 
-    btnContainer.children.addAll(nextBtn, historyNavigationPane)
+    btnContainer.children.addAll(nextBtn, leaveBtn, historyNavigationPane)
 
     rightTop.children.addAll(stateContainer, otherPlayersPane)
     rightBottom.children.add(btnContainer)
