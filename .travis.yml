@@ -39,14 +39,18 @@ jobs:
     - stage: Run sbt with OpenJdk11
       os: osx
     - stage: Generate coverage and scaladoc
-      # before_install:
-      #   - bash sudo apt-get install python-pygments
-      # install:
-      #   - bash travis-scripts/texlive_install.sh
+      before_install:
+        - sudo apt-get install python-pygments
+      install:
+        - source ./texlive/texlive_install.sh
+      cache:
+        directories:
+          - /tmp/texlive
+          - $HOME/.texlive
       script:
         - sbt coverage test coverageReport coverageAggregate doc
-      before_deploy:
         - bash travis-scripts/deploy_to_pages.sh
+        - travis_wait 3 pdflatex --shell-escape -output-directory public $TRAVIS_BUILD_DIR/source/doc/rel.tex
       deploy:
         provider: pages
         strategy: git
@@ -75,7 +79,7 @@ jobs:
 
 stages:
   - name: Run sbt with OpenJdk11
-    if: type IN (pull_request, push)
+    if: type IN (pull_request, push) AND NOT branch = master
   - name: Generate coverage and scaladoc
     if: type = push AND branch IN (master, dev)
   - name: Deploy to Github Releases
