@@ -2,9 +2,6 @@ package it.parttimeteam.core.cards
 
 import it.parttimeteam.core.cards.Rank._
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.should
-import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
-import org.scalatest.propspec.AnyPropSpec
 
 class RankSuite extends AnyFunSuite {
   test("Check all ranks properties") {
@@ -59,6 +56,10 @@ class RankSuite extends AnyFunSuite {
     assert(King().name equals "King")
     assert(King().shortName equals "K")
     assert(King().value equals 13)
+
+    assert(OverflowAce().name equals "Ace")
+    assert(OverflowAce().shortName equals "A")
+    assert(OverflowAce().value equals 14)
   }
 
   test("Compare King and Ace ranks") {
@@ -73,89 +74,32 @@ class RankSuite extends AnyFunSuite {
     assert(Ace() compareTo Two() equals -1)
   }
 
-  test("Check all ranks") {
-    assert(Rank.all equals List(Ace(), Two(), Three(), Four(), Five(), Six(), Seven(), Eight(), Nine(), Ten(), Jack(), Queen(), King()))
+  test("Check all string2rank properties"){
+    assert(Rank.string2rank(ACE_SYMBOL) equals Ace())
+    assert(Rank.string2rank(ACE) equals Ace())
+    assert(Rank.string2rank(OVERFLOW_ACE) equals OverflowAce())
+
+    assert(Rank.string2rank(TWO) equals Two())
+    assert(Rank.string2rank(THREE) equals Three())
+    assert(Rank.string2rank(FOUR) equals Four())
+    assert(Rank.string2rank(FIVE) equals Five())
+    assert(Rank.string2rank(SIX) equals Six())
+    assert(Rank.string2rank(SEVEN) equals Seven())
+    assert(Rank.string2rank(EIGHT) equals Eight())
+    assert(Rank.string2rank(NINE) equals Nine())
+    assert(Rank.string2rank(TEN) equals Ten())
+
+    assert(Rank.string2rank(JACK) equals Jack())
+    assert(Rank.string2rank(JACK_SYMBOL) equals Jack())
+
+    assert(Rank.string2rank(QUEEN) equals Queen())
+    assert(Rank.string2rank(QUEEN_SYMBOL) equals Queen())
+
+    assert(Rank.string2rank(KING) equals King())
+    assert(Rank.string2rank(KING_SYMBOL) equals King())
   }
 
-  test("Check Equals with other objs") {
-    assert(!(Rank.Ace() equals "A2"))
-  }
-}
-
-class RankPropSpec
-  extends AnyPropSpec
-    with TableDrivenPropertyChecks
-    with should.Matchers {
-  val examples: TableFor1[Rank] = Table(
-    "rank",
-    Ace(),
-    Two(),
-    Three(),
-    Four(),
-    Five(),
-    Six(),
-    Seven(),
-    Eight(),
-    Nine(),
-    Ten(),
-    Jack(),
-    Queen(),
-    King()
-  )
-
-  val failures: TableFor1[String] = Table(
-    "rank",
-    "s",
-    "♣",
-    "♠",
-    "♦",
-    "♥"
-  )
-
-  property("string2rank must return shortName at name input") {
-    forAll(examples) { rank =>
-      Rank string2rank rank.shortName should be(rank)
-      Rank string2rank rank.shortName equals rank should be(true)
-    }
-  }
-
-  property("Invoking string2rank with other strings must return RuntimeException") {
-    forAll(failures) { fail =>
-      a[RuntimeException] should be thrownBy {
-        Rank string2rank fail
-      }
-    }
-  }
-
-  property("Check comparation between suits") {
-    forAll(examples) { rank =>
-      rank compareTo Six() should be(rank.value compareTo Six().value)
-    }
-  }
-
-  property("value2rank must return Rank at value input") {
-    forAll(examples) { rank =>
-      Rank value2rank rank.value should be(rank)
-    }
-  }
-
-  property("equals must return boolean values") {
-    forAll(examples) { rank =>
-      rank equals rank should be(true)
-    }
-  }
-
-  val int2fails: TableFor1[Int] = Table(
-    "rank",
-    -1,
-    14,
-  )
-
-  property("Invoking value2rank with other values must return RuntimeException") {
-    forAll(int2fails) { fail =>
-      a[RuntimeException] should be thrownBy {
-        Rank value2rank fail
-      }
-    }
+  test("Check Equals with other obs") {
+    assert(!(Rank.Ace().name equals "A2"))
   }
 }

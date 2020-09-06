@@ -9,7 +9,7 @@ case class PrivateGameSubmitViewEvent(username: String, privateCode: String) ext
 
 case class CreatePrivateGameSubmitViewEvent(username: String, playersNumber: Int) extends StartUpViewEvent
 
-case class LeaveLobbyViewEvent(userId: String) extends StartUpViewEvent
+case object LeaveLobbyViewEvent extends StartUpViewEvent
 
 
 

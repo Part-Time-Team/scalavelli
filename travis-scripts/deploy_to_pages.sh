@@ -5,16 +5,8 @@ if [ ! -d "public" ]; then
   mkdir public
 fi
 
-if [ ! -d "public/scoverage-reports"]; then
+if [ ! -d "public/scoverage-reports" ]; then
   mkdir public/scoverage-reports
-
-  if [ ! -d "public/scoverage-reports/client" ]; then
-    mkdir public/scoverage-reports/client
-  fi
-
-  if [ ! -d "public/scoverage-reports/server" ]; then
-    mkdir public/scoverage-reports/server
-  fi
 fi
 
 if [ ! -d "public/api" ]; then
@@ -41,16 +33,20 @@ echo "************************************************"
 echo "**           Copy scoverage reports           **"
 echo "************************************************"
 
-ls -lhRG
+ls -lhG
 
-cp -fr source/* public/
+cp -fr source/index.html public/index.html # Copy site main page.
+#cd source/doc/
+#pdflatex rel.tex
+#cd ../../
+#cp -fr source/doc/rel.pdf public/api/rel.pdf
 
 # Copy scoverage report html files.
 cp -r target/scala-*/scoverage-report/* public/scoverage-reports/
 
 # Copy scaladoc html files.
-cp -r target/scala-*/api/* public/api/
-cp -r client/target/scala-*/api/* public/api/client
-cp -r server/target/scala-*/api/* public/api/server
-cp -r commons/target/scala-*/api/* public/api/commons
-cp -r core/target/scala-*/api/* public/api/core
+cp -r target/api/* public/api/
+cp -r client/target/api/* public/api/client
+cp -r server/target/api/* public/api/server
+cp -r commons/target/api/* public/api/commons
+cp -r core/target/api/* public/api/core

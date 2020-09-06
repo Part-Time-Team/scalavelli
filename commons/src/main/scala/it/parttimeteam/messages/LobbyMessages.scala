@@ -55,7 +55,12 @@ object LobbyMessages {
    */
   case class UserAddedToLobby()
 
-  case class LobbyJoinError(reason: String)
+  /**
+   * Notify an error during the lobby phase
+   *
+   * @param error
+   */
+  case class LobbyError(error: ErrorMessage)
 
   /**
    * Message sent by the server after private lobby creation

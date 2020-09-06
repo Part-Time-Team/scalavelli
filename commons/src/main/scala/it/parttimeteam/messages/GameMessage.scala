@@ -2,17 +2,10 @@ package it.parttimeteam.messages
 
 import akka.actor.ActorRef
 import it.parttimeteam.PlayerAction
-import it.parttimeteam.entities.GamePlayer
+import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 
 object GameMessage {
-
-  /**
-   * Sent to the gameactor to specify the players to add to the match
-   *
-   * @param players players to add to the match
-   */
-  case class GamePlayers(players: Seq[GamePlayer])
 
   /**
    * Client response to the game start message
@@ -35,6 +28,12 @@ object GameMessage {
    */
   case object PlayerTurn
 
+  /**
+   * Tells the player who is playing
+   *
+   * @param name name of the current player
+   */
+  case class OpponentInTurn(name: String)
 
   /**
    * Action made by the client
@@ -50,5 +49,40 @@ object GameMessage {
    * @param playerId player identifier
    */
   case class LeaveGame(playerId: String)
+
+  /**
+   * an error sent by the server to the client
+   *
+   * @param errorType
+   */
+  case class Error(errorType: ErrorMessage)
+
+  /**
+   * Send the drawn card to the current player
+   *
+   * @param card drawn card
+   */
+  case class CardDrawn(card: Card) // TODO MATTEOC remove
+
+  /**
+   * Tells the current player his turn is finished
+   */
+  case object TurnEnded
+
+
+  /**
+   * Tells the client the game ended with his victory
+   */
+  case object Won
+
+  /**
+   * Tells the client the game ended with a lost
+   *
+   * @param winnerPlayerName the name of the winner player
+   */
+  case class Lost(winnerPlayerName: String)
+
+
+  case object GameEndedForPlayerLeft
 
 }

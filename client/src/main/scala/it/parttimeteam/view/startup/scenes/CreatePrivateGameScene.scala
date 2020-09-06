@@ -6,11 +6,11 @@ import it.parttimeteam.view.startup.CreatePrivateGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartUpSceneListener
 import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
 import javafx.scene.text.Font
-import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
-import scalafx.scene.layout.{BorderPane, VBox}
+import scalafx.scene.layout.VBox
+import scalafx.stage.Stage
 
 /**
   * Allow to participate to create a private game by inserting the number of players.
@@ -27,7 +27,7 @@ trait CreatePrivateGameScene {
   *
   * @param listener to interact with parent stage
   */
-class CreatePrivateGameStartUpSceneImpl(val listener: StartUpSceneListener) extends BaseStartUpScene() with CreatePrivateGameScene {
+class CreatePrivateGameStartUpSceneImpl(override val parentStage: Stage, val listener: StartUpSceneListener) extends BaseStartUpFormScene(parentStage) with CreatePrivateGameScene {
   val topBar: StartUpSceneTopBar = new StartUpSceneTopBar(listener)
   val bottomBar: StartUpSceneBottomBar = new StartUpSceneBottomBar(() => submit())
 
@@ -51,11 +51,9 @@ class CreatePrivateGameStartUpSceneImpl(val listener: StartUpSceneListener) exte
 
   center.alignment = Center
 
-  val borderPane: BorderPane = new BorderPane()
-  borderPane.setPadding(Insets(ViewConfig.screenPadding))
-  borderPane.center = center
-  borderPane.top = topBar
-  borderPane.bottom = bottomBar
+  mainContent.center = center
+  mainContent.top = topBar
+  mainContent.bottom = bottomBar
 
   val codeContainer: VBox = new VBox()
   val codeLabel: Label = MachiavelliLabel("Here is your code")
@@ -64,14 +62,12 @@ class CreatePrivateGameStartUpSceneImpl(val listener: StartUpSceneListener) exte
   codeContainer.getChildren.addAll(codeLabel, codeValue)
   codeContainer.setVisible(false)
 
-
   bottomBar.hideLoading()
   bottomBar.hideMessage()
 
   center.getChildren.addAll(usernameLabel, usernameField, selectPlayersLabel, comboBox, codeContainer)
 
   val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
-
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 
@@ -84,7 +80,7 @@ class CreatePrivateGameStartUpSceneImpl(val listener: StartUpSceneListener) exte
     if (!username.isEmpty && nPlayers >= GamePreferences.MIN_PLAYERS_NUM) {
       listener.onSubmit(CreatePrivateGameSubmitViewEvent(username, nPlayers))
       bottomBar.showLoading()
-      bottomBar.disableButtons()
+      disableButtons()
     } else {
       alert.showAndWait()
     }
@@ -93,9 +89,20 @@ class CreatePrivateGameStartUpSceneImpl(val listener: StartUpSceneListener) exte
   override def showCode(code: String): Unit = {
     codeContainer.setVisible(true)
     codeValue.setText(code)
-    bottomBar.hideLoading()
-    System.out.println("Scene - showCode")
   }
 
-  root = borderPane
+  override def disableButtons(): Unit = {
+    usernameField.setEditable(false)
+    comboBox.setDisable(true)
+    bottomBar.disableButtons()
+  }
+
+  override def resetScreen(): Unit = {
+    usernameField.text = ""
+    usernameField.setEditable(true)
+    codeValue.text = ""
+    codeContainer.setVisible(false)
+    comboBox.setDisable(false)
+    bottomBar.reset()
+  }
 }

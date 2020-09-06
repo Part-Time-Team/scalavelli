@@ -1,56 +1,55 @@
 package it.parttimeteam.core.collections
 
-import it.parttimeteam.core.cards
-import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
+import it.parttimeteam.core.TestCards._
 import org.scalatest.funsuite.AnyFunSuite
 
 class HandSpec extends AnyFunSuite {
 
-  test("Check add cards to the list playerCard"){
-    val card1: Card = cards.Card(Rank.Ace(), Suit.Clubs(), Color.Red())
-    val card2: Card = cards.Card(Rank.Four(), Suit.Spades(), Color.Red())
-    val card3: Card = cards.Card(Rank.King(), Suit.Diamonds(), Color.Blue())
-
-    val hand: Hand = Hand(List(card1))
-    assert(hand.addPlayerCards(card2 :: (card3 :: Nil)) equals Hand(List(card1, card2, card3)))
+  test("Check add cards to the list playerCard") {
+    val hand: Hand = Hand(List(ACE_CLUBS))
+    assert(hand.addPlayerCards(FOUR_SPADES :: (KING_DIAMONDS :: Nil)) equals Hand(List(ACE_CLUBS, FOUR_SPADES, KING_DIAMONDS)))
   }
 
-  test("Check add cards to the list tableCard"){
-    val card1: Card = cards.Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
-    val card2: Card = cards.Card(Rank.Four(), Suit.Spades(), Color.Red())
-    val card3: Card = cards.Card(Rank.King(), Suit.Diamonds(), Color.Red())
-    val card4: Card = cards.Card(Rank.Queen(), Suit.Diamonds(), Color.Blue())
-
-    val hand: Hand = Hand(List(card4), List(card1))
-    assert(hand.addTableCards(card2 :: (card3 :: Nil)) equals
-      Hand(card4 :: Nil, card1 :: (card2 :: (card3 :: Nil))))
+  test("Check add cards to the list tableCard") {
+    val hand: Hand = Hand(List(QUEEN_DIAMONDS), List(ACE_CLUBS))
+    assert(hand.addBoardCards(FOUR_SPADES :: (KING_DIAMONDS :: Nil)) equals
+      Hand(QUEEN_DIAMONDS :: Nil, ACE_CLUBS :: (FOUR_SPADES :: (KING_DIAMONDS :: Nil))))
   }
 
-  test("Get player's hand"){
-    val card1: Card = cards.Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
-    val card2: Card = cards.Card(Rank.Four(), Suit.Spades(), Color.Blue())
-
-    val hand: Hand = Hand(List(card1, card2), List())
-    assert(hand.getHand equals Hand(List(card1, card2), List()))
+  test("Contains cards that are present") {
+    val hand = Hand(List(ACE_CLUBS, FOUR_SPADES, KING_DIAMONDS))
+    assert(hand containsCards ACE_CLUBS)
+    assert(hand containsCards(ACE_CLUBS, FOUR_SPADES))
+    assert(hand containsCards(ACE_CLUBS, FOUR_SPADES, KING_DIAMONDS))
   }
 
-  test("Sort cards by value"){
-    val card1: Card = cards.Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
-    val card2: Card = cards.Card(Rank.Four(), Suit.Spades(), Color.Red())
-    val card3: Card = cards.Card(Rank.King(), Suit.Diamonds(), Color.Blue())
-    val card4: Card = cards.Card(Rank.Queen(), Suit.Diamonds(), Color.Blue())
-
-    val hand: Hand = Hand(List(), List())
-    assert(hand.sortByValue(card3, card4, card1, card2) equals List(card1, card2, card4, card3))
+  test("Contains cards that are not present") {
+    val hand = Hand(List(ACE_CLUBS, FOUR_SPADES))
+    assert(!(hand containsCards KING_DIAMONDS))
+    assert(!(hand containsCards QUEEN_DIAMONDS))
+    assert(!(hand containsCards(KING_DIAMONDS, QUEEN_DIAMONDS)))
   }
 
-  test("Sort cards by suit"){
-    val card1: Card = cards.Card(Rank.Two(), Suit.Clubs(), Color.Red())
-    val card2: Card = cards.Card(Rank.Four(), Suit.Spades(), Color.Red())
-    val card3: Card = cards.Card(Rank.King(), Suit.Hearts(), Color.Blue())
-    val card4: Card = cards.Card(Rank.Queen(), Suit.Diamonds(), Color.Red())
+  test("Remove cards from player cards that are present") {
+    val seq = Seq(ACE_CLUBS, FOUR_SPADES)
+    val hand = Hand(List(ACE_CLUBS, FOUR_SPADES, KING_DIAMONDS, QUEEN_DIAMONDS))
+    val removed = hand.removeCards(seq)
+    assert(removed.isRight)
+    assertResult(KING_DIAMONDS +: (QUEEN_DIAMONDS +: Nil))(removed.right.get.playerCards)
+  }
 
-    val hand: Hand = Hand(List(), List())
-    assert(hand.sortBySuit(card1, card2, card3, card4) equals List(card3, card4, card1, card2))
+  test("Remove cards from board cards that are present") {
+    val seq = Seq(ACE_CLUBS, FOUR_SPADES)
+    val hand = Hand(List.empty, List(ACE_CLUBS, FOUR_SPADES, KING_DIAMONDS, QUEEN_DIAMONDS))
+    val removed = hand.removeCards(seq)
+    assert(removed.isRight)
+    assertResult(Seq(KING_DIAMONDS, QUEEN_DIAMONDS))(removed.right.get.boardCards)
+  }
+
+  test("Remove cards from hand that are not present") {
+    val seq = Seq(ACE_CLUBS, FOUR_SPADES)
+    val hand = Hand(List(KING_DIAMONDS, QUEEN_DIAMONDS))
+    val removed = hand.removeCards(seq)
+    assert(removed.isLeft)
   }
 }

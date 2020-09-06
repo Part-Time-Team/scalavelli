@@ -1,11 +1,9 @@
 name := "scalavelli"
 
-version := "0.1"
+version in ThisBuild := "0.1.1"
 
 scalaVersion in ThisBuild := "2.12.8"
 organization in ThisBuild := "it.parttimeteam"
-
-coverageEnabled := false
 
 // Determine OS version of JavaFX binaries
 lazy val osName = System.getProperty("os.name") match {
@@ -69,7 +67,10 @@ lazy val compilerOptions = Seq(
   "utf8"
 )
 
-lazy val commonSettings = Seq(
+lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
+  scalaVersion := "2.12.8",
+  version := "0.1",
+  crossPaths := false,
   scalacOptions ++= compilerOptions,
   resolvers ++= Seq(
     Resolver.sonatypeRepo("snapshots")
@@ -87,47 +88,47 @@ lazy val settings = commonSettings
  */
 
 // MODEL PROJECT.
-lazy val core = (project in file("core")).settings(
-  name := "core",
-  settings,
-  libraryDependencies ++= (testDependencies :+ tuProlog)
-)
+lazy val core = Project(
+  id = "core",
+  base = file("core"))
+  .settings(commonSettings)
+  .settings(
+    name := "core",
+    libraryDependencies ++= (testDependencies :+ tuProlog)
+  )
 
-lazy val commons = (project in file("commons")).settings(
-  name := "commons",
-  settings,
-  libraryDependencies ++= (
-    testDependencies :+ akkaTyped
-    )
-).dependsOn(
+lazy val commons = Project(
+  id = "common",
+  base = file("commons"))
+  .settings(commonSettings)
+  .settings(
+    name := "commons",
+    libraryDependencies ++= (testDependencies :+ akkaTyped)
+  ).dependsOn(
   core
 )
 
-lazy val server = (project in file("server")).settings(
-  name := "server",
-  settings,
+lazy val server = Project(
+  id = "server",
+  base = file("server"))
+  .enablePlugins(PackPlugin)
+  .settings(commonSettings)
+  .settings(name := "server",
+    libraryDependencies ++= (akkaDependencies ++ testDependencies))
+  .dependsOn(core, commons)
+
+lazy val client = Project(
+  id = "client",
+  base = file("client"))
+.enablePlugins(PackPlugin)
+.settings(commonSettings)
+.settings(name := "client",
   libraryDependencies ++= (
     akkaDependencies ++
-      testDependencies
-    ),
-  exportJars := true
-).dependsOn(
-  core,
-  commons
-)
-
-lazy val client = (project in file("client")).settings(
-  name := "client",
-  settings,
-  libraryDependencies ++= (akkaDependencies ++
     testDependencies ++
     scalaFXDep.union(Seq(scalafx))
-    ),
-  exportJars := true
-).dependsOn(
-  core,
-  commons
-)
+    )
+).dependsOn(core, commons)
 
 /*
  * END PROJECT DEFINITIONS.

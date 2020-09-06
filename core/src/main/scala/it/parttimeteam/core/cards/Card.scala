@@ -2,12 +2,14 @@ package it.parttimeteam.core.cards
 
 import it.parttimeteam.core.cards
 import it.parttimeteam.core.cards.Rank.{Ace, King}
+import it.parttimeteam.core.prolog.PrologGame
 
 /**
  * Card of deck.
  *
- * @param rank Value of the card.
- * @param suit Suit.
+ * @param rank  Value.
+ * @param suit  Suit.
+ * @param color Color.
  */
 case class Card(rank: Rank, suit: Suit, color: Color)
   extends Comparable[Card] {
@@ -33,7 +35,8 @@ case class Card(rank: Rank, suit: Suit, color: Color)
    */
   def isNext(card: Card): Boolean = (rank, card.rank) match {
     case (Ace(), King()) => true
-    case _ => if (!(suit equals card.suit)) false else card.rank.value + 1 equals rank.value
+    case _ if !(suit equals card.suit) => false
+    case _ => card.rank.value + 1 == rank.value
   }
 
   override def toString: String = shortName
@@ -42,7 +45,7 @@ case class Card(rank: Rank, suit: Suit, color: Color)
     if (suit == t.suit)
       this.rank compareTo t.rank
     else
-      suit compareTo t.suit
+      this.suit compareTo t.suit
 }
 
 object Card {
@@ -52,4 +55,38 @@ object Card {
     case pattern(rank, suit, color) => cards.Card(rank, suit, color)
     case _ => throw new RuntimeException(s"Invalid card string $s")
   }
+
+  /**
+   * Provide to a Card Sequence new functions to sort them by Rank and Suit.
+   *
+   * @param cards Poor Card Sequence.
+   */
+  implicit class MyRichCardSeq(cards: Seq[Card]) {
+    /**
+     * Class PrologGame.
+     */
+    val prologGame = new PrologGame
+
+    /**
+     * Sort first by rank, then by suit.
+     *
+     * @return Ordered Sequence.
+     */
+    def sortByRank(): Seq[Card] = this.prologGame.sortByRank(cards)
+
+    /**
+     * Sort first by suit, then by rank.
+     *
+     * @return Ordered Sequence.
+     */
+    def sortBySuit(): Seq[Card] = this.prologGame.sortBySuit(cards)
+
+    def isValid: Boolean =
+      if (cards.forall(c => c.rank equals cards.head.rank))
+        this.prologGame.validateQuarter(cards)
+      else
+        this.prologGame.validateChain(cards)
+
+  }
+
 }

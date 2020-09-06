@@ -3,16 +3,15 @@ package it.parttimeteam.`match`
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
-import it.partitimeteam.`match`.GameMatchActor
-import it.parttimeteam.core.GameManager
+import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{CardCombination, Deck, Hand}
+import it.parttimeteam.core.collections.{Board, Deck, Hand}
 import it.parttimeteam.core.player.Player
-import it.parttimeteam.core.player.Player.PlayerId
-import it.parttimeteam.entities.GamePlayer
-import it.parttimeteam.messages.GameMessage.{GamePlayers, GameStateUpdated, Ready}
+import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
+import it.parttimeteam.core.{GameInterface, GameState}
+import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
-import it.parttimeteam.{Board, GameState}
+import it.parttimeteam.{DrawCard, common, core}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -30,11 +29,11 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
   "a game actor" should {
 
     "accept players and notify game started with initial state" in {
-      val gameActor = TestActorRef[GameMatchActor](GameMatchActor.props(NUMBER_OF_PLAYERS, new FakeGameManager()))
+      val gameActor = TestActorRef[GameMatchManagerActor](GameMatchManagerActor.props(NUMBER_OF_PLAYERS, new FakeGameInterface()))
       val player1 = TestProbe()
       val player2 = TestProbe()
 
-      gameActor ! GamePlayers(Seq(GamePlayer("id1", "player1", player1.ref), GamePlayer("id2", "player2", player2.ref)))
+      gameActor ! GamePlayers(Seq(common.GamePlayer("id1", "player1", player1.ref), common.GamePlayer("id2", "player2", player2.ref)))
       player1.expectMsgType[MatchFound]
       player1.send(gameActor, Ready("id1", player1.ref))
       player2.expectMsgType[MatchFound]
@@ -43,67 +42,51 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       player1.expectMsgType[GameStateUpdated]
       player2.expectMsgType[GameStateUpdated]
 
+      player1.expectMsg(PlayerTurn)
+      player1.send(gameActor, PlayerActionMade("id1", DrawCard))
+      player1.expectMsgType[GameStateUpdated]
+      player2.expectMsgType[GameStateUpdated]
+      player1.expectMsg(TurnEnded)
+      player2.expectMsg(PlayerTurn)
     }
 
   }
 
+  object FakeGameInterface {
+    val cardToDraw = Card.string2card("2♣R")
+  }
 
-  class FakeGameManager extends GameManager {
+  class FakeGameInterface extends GameInterface {
     /**
      * Create a new game state from players ids.
      *
      * @param players List of players ids.
      * @return New Game State.
      */
-    override def create(players: Seq[PlayerId]): GameState = GameState(
+    override def create(players: Seq[(PlayerId, PlayerName)]): GameState = core.GameState(
       Deck(List()),
       Board.empty,
-      players.map(id => Player(id, id, Hand(List(), List()))))
+      players.map(pair => Player(pair._2, pair._1, Hand(List(), List()))))
 
-    /**
-     * Draw a card from the top of the deck.
-     *
-     * @param deck Deck to draw.
-     * @return Deck tail and card picked.
-     */
-    override def draw(deck: Deck): (Deck, Card) = ???
+    override def draw(deck: Deck): (Deck, Card) = (deck, FakeGameInterface.cardToDraw)
 
-    /**
-     * Validate an entire board and hand.
-     *
-     * @param board Board to validate.
-     * @param hand  Hand to validate.
-     * @return True if is validated, false anywhere.
-     */
     override def validateTurn(board: Board, hand: Hand): Boolean = ???
 
-    /**
-     * Validate a card combination.
-     *
-     * @param combination Combination to validate.
-     * @return True if is validated, false anywhere.
-     */
-    override def validateCombination(combination: CardCombination): Boolean = ???
+    override def validateCombination(cards: Seq[Card]): Boolean = ???
+
+    override def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
+
+    override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
 
     /**
-     * Pick cards from a combination on the table.
+     * Update a combination in the board by his id with some cards.
      *
-     * @param hand  Hand where put cards picked.
-     * @param board Board where pick cards.
-     * @param cards Cards to pick.
-     * @return Hand and Board updated.
+     * @param board Board with the combination to update.
+     * @param id    Id of the combnation to update.
+     * @param cards Cards to pur in the combination.
+     * @return Updated board.
      */
-    override def pickBoardCards(hand: Hand, board: Board, cards: Card*): Either[String, (Hand, Board)] = ???
-
-    /**
-     * Play cards from hand to board.
-     *
-     * @param hand        Hand where to pick cards.
-     * @param board       Board where put cards.
-     * @param combination Combination to pick.
-     * @return Hand and Board updated.
-     */
-    override def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board) = ???
+    override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = ???
   }
 
 }

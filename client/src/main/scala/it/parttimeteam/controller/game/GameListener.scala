@@ -1,8 +1,8 @@
 package it.parttimeteam.controller.game
 
-import it.parttimeteam.view.game.GameViewEvent
+import it.parttimeteam.view.game.ViewGameEvent
 
 trait GameListener {
 
-  def onViewEvent(viewEvent: GameViewEvent): Unit
+  def onViewEvent(viewEvent: ViewGameEvent): Unit
 }

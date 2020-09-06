@@ -33,6 +33,25 @@ sealed class Rank(val value: Int,
 
 object Rank {
 
+  val ACE = "1"
+  val ACE_SYMBOL = "A"
+  val TWO = "2"
+  val THREE = "3"
+  val FOUR = "4"
+  val FIVE = "5"
+  val SIX = "6"
+  val SEVEN = "7"
+  val EIGHT = "8"
+  val NINE = "9"
+  val TEN = "0"
+  val JACK = "11"
+  val JACK_SYMBOL = "J"
+  val QUEEN = "12"
+  val QUEEN_SYMBOL = "Q"
+  val KING = "13"
+  val KING_SYMBOL = "K"
+  val OVERFLOW_ACE = "14"
+
   /**
    * The first rank.
    */
@@ -48,6 +67,11 @@ object Rank {
       case _ => super.compareTo(t)
     }
   }
+
+  /**
+   * The optional OverflowAce with value 14
+   */
+  case class OverflowAce() extends Rank(14, "Ace", "A")
 
   /**
    * The second rank.
@@ -121,49 +145,26 @@ object Rank {
   }
 
   /**
-   * Get all ranks of the deck.
-   *
-   * @return A list with all suits.
-   */
-  def all: List[Rank] = List(Ace(), Two(), Three(), Four(), Five(), Six(), Seven(), Eight(), Nine(), Ten(), Jack(), Queen(), King())
-
-  /**
    * Transform a string in the matching rank.
    *
    * @param s String to convert.
    * @return Rank converted.
    */
   implicit def string2rank(s: String): Rank = s match {
-    case "A" => Ace()
-    case "2" => Two()
-    case "3" => Three()
-    case "4" => Four()
-    case "5" => Five()
-    case "6" => Six()
-    case "7" => Seven()
-    case "8" => Eight()
-    case "9" => Nine()
-    case "0" => Ten()
-    case "J" => Jack()
-    case "Q" => Queen()
-    case "K" => King()
+    case ACE | ACE_SYMBOL => Ace()
+    case TWO => Two()
+    case THREE => Three()
+    case FOUR => Four()
+    case FIVE => Five()
+    case SIX => Six()
+    case SEVEN => Seven()
+    case EIGHT => Eight()
+    case NINE => Nine()
+    case "10"   | TEN => Ten()
+    case JACK   | JACK_SYMBOL => Jack()
+    case QUEEN  | QUEEN_SYMBOL => Queen()
+    case KING   | KING_SYMBOL=> King()
+    case OVERFLOW_ACE => OverflowAce()
     case _ => throw new RuntimeException(f"Unknown rank $s")
-  }
-
-  implicit def value2rank(v: Int): Rank = v match {
-    case 1 => Ace()
-    case 2 => Two()
-    case 3 => Three()
-    case 4 => Four()
-    case 5 => Five()
-    case 6 => Six()
-    case 7 => Seven()
-    case 8 => Eight()
-    case 9 => Nine()
-    case 10 => Ten()
-    case 11 => Jack()
-    case 12 => Queen()
-    case 13 => King()
-    case _ => throw new RuntimeException(f"Unknown rank $v")
   }
 }

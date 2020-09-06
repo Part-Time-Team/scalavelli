@@ -1,22 +1,22 @@
 package it.parttimeteam.controller.game
 
-import it.parttimeteam.Board
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{CardCombination, Hand}
+import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.model.game._
 import it.parttimeteam.model.startup.GameMatchInformations
 import it.parttimeteam.view.game._
 import scalafx.application.{JFXApp, Platform}
 
-class GameControllerImpl extends GameController {
+class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
-  private var gameStage: MachiavelliGamePrimaryStage = _
+  private var gameStage: MachiavelliGameStage = _
   private var gameService: GameService = _
+  private var currentState: ClientGameState = _
 
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
-      gameStage = MachiavelliGamePrimaryStage(this)
+      gameStage = MachiavelliGameStage(this)
       gameStage.initMatch()
       app.stage = gameStage
     })
@@ -25,46 +25,91 @@ class GameControllerImpl extends GameController {
     this.gameService.playerReady()
   }
 
-  def notifyEvent(gameEvent: GameEvent): Unit = gameEvent match {
+  def notifyEvent(serverGameEvent: ServerGameEvent): Unit = serverGameEvent match {
 
-    case StateUpdatedEvent(state: PlayerGameState) => {
+    case StateUpdatedEvent(state: ClientGameState) => {
+      currentState = state
       Platform.runLater({
         gameStage.matchReady()
         gameStage.updateState(state)
       })
     }
 
-    case TurnChangedEvent(state, actualPlayerName) => {
-      gameStage.updateState(state)
+    case OpponentInTurnEvent(actualPlayerName) => {
       gameStage.setMessage(s"It's $actualPlayerName turn")
     }
 
-    case YourTurnEvent(state) => {
-      gameStage.updateState(state)
-      gameStage.notifyInfo("It's your turn")
-      gameStage.setMessage("Your turn")
+    case InTurnEvent => {
+      gameStage.setInTurn()
       gameStage.showTimer()
+    }
+
+    case InfoEvent(message: String) => {
+      gameStage.notifyInfo(message)
+    }
+
+    case ErrorEvent(reason: String) => {
+      gameStage.notifyError(reason)
+    }
+
+    case GameWonEvent => {
+      gameStage.notifyGameEnd(GameWon)
+    }
+
+    case GameLostEvent(winnerName: String) => {
+      gameStage.notifyGameEnd(GameLost(winnerName))
+    }
+
+    case GameEndedWithErrorEvent(reason: String) => {
+      gameStage.notifyGameEnd(GameEndWithError(reason))
+    }
+
+    case TurnEndedEvent => {
+      gameStage.setTurnEnded()
+      gameStage.hideTimer()
     }
 
     case _ =>
   }
 
-  override def onViewEvent(viewEvent: GameViewEvent): Unit = viewEvent match {
-    // TODO: To be implementedc
-    case MakeCombinationViewEvent(cards) =>
-    case PreviousStateViewEvent() =>
-    case NextStateViewEvent() =>
-    case PickCardCombinationViewEvent(cardCombinationIndex) =>
-    case EndTurnViewEvent() =>
-    case _ =>
+  override def onViewEvent(viewEvent: ViewGameEvent): Unit = viewEvent match {
+    case LeaveGameEvent => gameService.notifyUserAction(LeaveGameAction)
+
+    case UndoEvent => gameService.notifyUserAction(UndoAction)
+
+    case RedoEvent => gameService.notifyUserAction(RedoAction)
+
+    case ResetEvent => gameService.notifyUserAction(ResetAction)
+
+    case SortHandBySuitEvent => gameService.notifyUserAction(SortHandBySuitAction)
+
+    case SortHandByRankEvent => gameService.notifyUserAction(SortHandByRankAction)
+
+    case EndTurnEvent => {
+      if (currentState.canDrawCard) {
+        gameService.notifyUserAction(EndTurnAndDrawAction)
+      } else {
+        gameService.notifyUserAction(EndTurnAction)
+      }
+    }
+
+    case MakeCombinationEvent(cards: Seq[Card]) => gameService.notifyUserAction(MakeCombinationAction(cards))
+
+    case PickCardCombinationEvent(combinationId: String) => gameService.notifyUserAction(PickCardCombinationAction(combinationId))
+
+    case PickCardsEvent(cards: Seq[Card]) => gameService.notifyUserAction(PickCardsAction(cards))
+
+    case UpdateCardCombinationEvent(combinationId: String, cards: Seq[Card]) => gameService.notifyUserAction(UpdateCardCombinationAction(combinationId, cards))
+
+    case PlayAgainEvent => playAgain()
   }
 
   private def getMockState: PlayerGameState = {
     val board: Board = Board(
       List(
-        CardCombination(List(Card("A", "♠", "B"), Card("2", "♠", "B"))),
-        CardCombination(List(Card("3", "♠", "B"), Card("4", "♠", "B"))),
-        CardCombination(List(Card("5", "♠", "B"), Card("6", "♠", "B"), Card("7", "♠", "B")))
+        CardCombination("#1", Seq(Card("A", "♠", "B"), Card("2", "♠", "B"))),
+        CardCombination("#2", Seq(Card("3", "♠", "B"), Card("4", "♠", "B"))),
+        CardCombination("#3", Seq(Card("5", "♠", "B"), Card("6", "♠", "B"), Card("7", "♠", "B")))
       )
     )
 
@@ -79,7 +124,7 @@ class GameControllerImpl extends GameController {
       Card("7", "♥", "B")
     ))
 
-    hand = hand.addTableCards(Seq(
+    hand = hand.addBoardCards(Seq(
       Card("K", "♥", "B"),
       Card("Q", "♠", "B")
     ))
@@ -93,4 +138,7 @@ class GameControllerImpl extends GameController {
     PlayerGameState(board, hand, players)
   }
 
+  override def end(): Unit = {
+
+  }
 }

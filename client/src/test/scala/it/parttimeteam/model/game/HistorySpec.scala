@@ -47,6 +47,46 @@ class HistorySpec extends AnyWordSpecLike {
       assertResult(None)(intHistory.previous()._2.setPresent(8).next()._1)
     }
 
+    "reset itself, return no value after this operation" in {
+      val history = History().setPresent(1).setPresent(2).setPresent(3).setPresent(4)
+      assertResult(None)(history.clear().getPresent)
+    }
+
+    "clear the history maintaining only the first value" in {
+      val firstValue = 1
+      val history = History().setPresent(firstValue).setPresent(2).setPresent(3).setPresent(4)
+      assertResult(Some(firstValue))(history.reset()._1)
+    }
+
+    "cannot get previous when history created" in {
+      val intHistory = History[Int]()
+      assert(!intHistory.canPrevious)
+    }
+
+    "cannot get previous when history has only 1 value" in {
+      val intHistory = History[Int]().setPresent(5)
+      assert(!intHistory.canPrevious)
+    }
+
+    "can get previous when history has more than 1 value" in {
+      val intHistory = History[Int]().setPresent(5).setPresent(4)
+      assert(intHistory.canPrevious)
+    }
+
+    "can get next when history has been undo" in {
+      val intHistory = History[Int]().setPresent(5).setPresent(4).previous()._2
+      assert(intHistory.canNext)
+    }
+
+    "cannot get next when history created" in {
+      val intHistory = History[Int]()
+      assert(!intHistory.canNext)
+    }
+
+    "cannot get next when history has only 1 value" in {
+      val intHistory = History[Int]()
+      assert(!intHistory.canNext)
+    }
   }
 
 }

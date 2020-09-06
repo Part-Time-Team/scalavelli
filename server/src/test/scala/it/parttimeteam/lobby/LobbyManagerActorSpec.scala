@@ -3,8 +3,9 @@ package it.parttimeteam.lobby
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
-import it.partitimeteam.lobby.LobbyManagerActor
+import it.parttimeteam.lobby.LobbyManagerActor
 import it.parttimeteam.messages.LobbyMessages._
+import it.parttimeteam.messages.PrivateLobbyIdNotValidError
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -85,7 +86,7 @@ class LobbyManagerActorSpec extends TestKit(ActorSystem("test", ConfigFactory.lo
     client.expectMsgPF() {
       case Connected(id) => {
         lobbyActor ! JoinPrivateLobby(id, "user", "jfhsjkdfhsjkadl")
-        client.expectMsgType[LobbyJoinError]
+        client.expectMsg(LobbyError(PrivateLobbyIdNotValidError))
       }
     }
 

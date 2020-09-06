@@ -1,6 +1,5 @@
 package it.parttimeteam.lobby
 
-import it.partitimeteam.lobby.PrivateLobbyServiceImpl
 import org.scalatest.wordspec.AnyWordSpecLike
 
 /**

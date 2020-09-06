@@ -1,6 +1,6 @@
 package it.parttimeteam.`match`
 
-import it.partitimeteam.`match`.TurnManager
+import it.parttimeteam.`match`.TurnManager
 import org.scalatest.flatspec.AnyFlatSpecLike
 
 class TurnManagerSpec extends AnyFlatSpecLike {
@@ -13,18 +13,18 @@ class TurnManagerSpec extends AnyFlatSpecLike {
 
   it should "initialize and return an existing id" in {
     val turnManager = TurnManager(ids)
-    assert(ids.contains(turnManager.playerInTurnId))
+    assert(ids.contains(turnManager.getInTurn))
   }
 
   it should "return the initial player after x turn changes" in {
     val turnManager = TurnManager(ids)
-    val firstPlayer = turnManager.playerInTurnId
+    val firstPlayer = turnManager.getInTurn
 
     for (i <- ids.indices) {
       turnManager.nextTurn
     }
 
-    assertResult(firstPlayer)(turnManager.playerInTurnId)
+    assertResult(firstPlayer)(turnManager.getInTurn)
   }
 
 }

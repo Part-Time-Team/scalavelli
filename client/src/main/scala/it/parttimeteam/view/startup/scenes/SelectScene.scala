@@ -4,10 +4,9 @@ import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.listeners.SelectSceneListener
 import it.parttimeteam.view.utils.MachiavelliButton
 import scalafx.geometry.Pos.Center
-import scalafx.scene.Scene
 import scalafx.scene.control.Button
 import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.layout.{BorderPane, VBox}
+import scalafx.scene.layout.VBox
 import scalafx.stage.Stage
 
 /**
@@ -16,12 +15,7 @@ import scalafx.stage.Stage
   * @param parentStage the stage which contains the scene
   * @param listener    the listener which allow to select the modality
   */
-class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) extends Scene() {
-  val background: ImageView = new ImageView(new Image("/images/background.png")) {
-    fitWidth <== parentStage.width
-    fitHeight <== parentStage.height
-  }
-
+class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) extends BaseStartUpScene(parentStage) {
   val title: ImageView = new ImageView(new Image("/images/game_title.png")) {
     fitWidth <== parentStage.width / 3
     preserveRatio = true
@@ -40,13 +34,10 @@ class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) ext
   btnPrivateGame.prefWidth <== center.width
   btnCreatePrivateGame.prefWidth <== center.width
 
-  val borderPane: BorderPane = new BorderPane()
-  borderPane.prefWidth <== parentStage.width
-  borderPane.prefHeight <== parentStage.height
-  borderPane.center = center
+  mainContent.center = center
 
   center.getChildren.addAll(title, btnPublicGame, btnPrivateGame, btnCreatePrivateGame)
 
-  content = Seq(background, borderPane)
+  content = Seq(background, mainContent)
 
 }

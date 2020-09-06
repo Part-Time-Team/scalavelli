@@ -8,7 +8,7 @@ import scalafx.application.JFXApp
 
 class StartUpControllerImpl extends StartUpController {
 
-  private val startUpStage = MachiavelliStartUpPrimaryStage(this)
+  private val startUpStage = MachiavelliStartUpStage(this)
   private val startUpService: StartupService = new StartupServiceImpl(notifyEvent)
   private var startGameFunction: GameMatchInformations => Unit = _
 
@@ -31,8 +31,7 @@ class StartUpControllerImpl extends StartUpController {
       System.out.println(s"CreatePrivateGameSubmitViewEvent $username - $playersNumber")
       this.startUpService.createPrivateLobby(username, playersNumber)
     }
-    case LeaveLobbyViewEvent(userId) => {
-      System.out.println(s"LeaveLobbyViewEvent $userId")
+    case LeaveLobbyViewEvent => {
       this.startUpService.leaveLobby()
     }
     case _ =>
