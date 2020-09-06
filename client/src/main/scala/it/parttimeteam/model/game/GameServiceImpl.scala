@@ -11,13 +11,18 @@ import it.parttimeteam.{ActorSystemManager, DrawCard, PlayedMove}
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 
+/**
+ *
+ * @param gameInformation information user to participate to a game match
+ * @param notifyEvent     function used to notify the external component about game updates
+ * @param gameInterface   the game core api
+ */
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
-                      private val notifyEvent: ServerGameEvent => Unit) extends GameService {
+                      private val notifyEvent: ServerGameEvent => Unit,
+                      private val gameInterface: GameInterface) extends GameService {
 
   private var turnHistory: History[PlayerGameState] = History[PlayerGameState]()
   private var storeOpt: Option[GameStateStore] = None
-
-  private val gameInterface: GameInterface = new GameInterfaceImpl()
 
   implicit val executionContext: ExecutionContextExecutor = ActorSystemManager.actorSystem.dispatcher
 
@@ -30,6 +35,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       storeOpt match {
         case Some(store) => notifyEvent(StateUpdatedEvent(generateClientGameState(store.onStateChanged(gameState), turnHistory)))
         case None =>
+          // initial state, initialize the game store
           storeOpt = Some(GameStateStore(gameState))
           notifyEvent(StateUpdatedEvent(generateClientGameState(gameState, turnHistory)))
       }
