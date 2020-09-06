@@ -25,50 +25,56 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core.collections
 </span>2 <span style=''>
 </span>3 <span style=''>import it.parttimeteam.core.cards.Card
-</span>4 <span style=''>import it.parttimeteam.core.prolog.PrologGame
-</span>5 <span style=''>
-</span>6 <span style=''>/**
-</span>7 <span style=''> * Represent a combination of cards. Can be a Quarter or a Chair.
-</span>8 <span style=''> * A Combination cannot be empty.
-</span>9 <span style=''> *
-</span>10 <span style=''> * @param id    Id of the Combination.
-</span>11 <span style=''> * @param cards Combinations of cards.
-</span>12 <span style=''> */
-</span>13 <span style=''>case class CardCombination(id: String, cards: Seq[Card]) {
-</span>14 <span style=''>  /**
-</span>15 <span style=''>   * Check if the combination is valid.
-</span>16 <span style=''>   *
-</span>17 <span style=''>   * @return true if the combination is valid otherwise false.
-</span>18 <span style=''>   */
-</span>19 <span style=''>  def isValid: Boolean = </span><span style='background: #AEF1AE'>cards.isValid</span><span style=''>
-</span>20 <span style=''>
-</span>21 <span style=''>  /**
-</span>22 <span style=''>   * Return if the combination is empty or not.
-</span>23 <span style=''>   *
-</span>24 <span style=''>   * @return True if combination has no cards, false anywhere.
-</span>25 <span style=''>   */
-</span>26 <span style=''>  def isEmpty: Boolean = </span><span style='background: #AEF1AE'>cards.isEmpty</span><span style=''>
-</span>27 <span style=''>
-</span>28 <span style=''>  /**
-</span>29 <span style=''>   * Pick some cards from the combination.
-</span>30 <span style=''>   *
-</span>31 <span style=''>   * @param cards Cards to pick up.
-</span>32 <span style=''>   * @return CardCombination without cards.
-</span>33 <span style=''>   */
-</span>34 <span style=''>  def pickCards(cards: Seq[Card]): CardCombination = </span><span style='background: #AEF1AE'>copy(cards = this.cards.filterNot(c =&gt; cards contains c))</span><span style=''>
-</span>35 <span style=''>
-</span>36 <span style=''>  /**
-</span>37 <span style=''>   * Put some cards into the combination.
-</span>38 <span style=''>   *
-</span>39 <span style=''>   * @param cards Cards to put in.
-</span>40 <span style=''>   * @return CardCombination with cards.
-</span>41 <span style=''>   */
-</span>42 <span style=''>  def putCards(cards: Seq[Card]): CardCombination = </span><span style='background: #AEF1AE'>copy(cards = this.cards ++ cards sortBy (_.rank))</span><span style=''>
-</span>43 <span style=''>}
-</span>44 <span style=''>
-</span>45 <span style=''>object CardCombination {
-</span>46 <span style=''>  def apply(id: String, cards: Seq[Card]): CardCombination = </span><span style='background: #AEF1AE'>new CardCombination(id, cards.sortByRank())</span><span style=''>
-</span>47 <span style=''>}
+</span>4 <span style=''>
+</span>5 <span style=''>/**
+</span>6 <span style=''> * Represent a combination of cards. Can be a Quarter or a Chair.
+</span>7 <span style=''> * A Combination cannot be empty.
+</span>8 <span style=''> *
+</span>9 <span style=''> * @param id    Id of the Combination.
+</span>10 <span style=''> * @param cards Combinations of cards.
+</span>11 <span style=''> */
+</span>12 <span style=''>case class CardCombination(id: String, cards: Seq[Card]) {
+</span>13 <span style=''>  /**
+</span>14 <span style=''>   * Check if the combination is valid.
+</span>15 <span style=''>   *
+</span>16 <span style=''>   * @return true if the combination is valid otherwise false.
+</span>17 <span style=''>   */
+</span>18 <span style=''>  def isValid: Boolean = </span><span style='background: #AEF1AE'>cards.isValid</span><span style=''>
+</span>19 <span style=''>
+</span>20 <span style=''>  /**
+</span>21 <span style=''>   * Return if the combination is empty or not.
+</span>22 <span style=''>   *
+</span>23 <span style=''>   * @return True if combination has no cards, false anywhere.
+</span>24 <span style=''>   */
+</span>25 <span style=''>  def isEmpty: Boolean = </span><span style='background: #AEF1AE'>cards.isEmpty</span><span style=''>
+</span>26 <span style=''>
+</span>27 <span style=''>  /**
+</span>28 <span style=''>   * Pick some cards from the combination.
+</span>29 <span style=''>   *
+</span>30 <span style=''>   * @param cards Cards to pick up.
+</span>31 <span style=''>   * @return CardCombination without cards.
+</span>32 <span style=''>   */
+</span>33 <span style=''>  def pickCards(cards: Seq[Card]): CardCombination = </span><span style='background: #AEF1AE'>copy(cards = this.cards.filterNot(c =&gt; cards contains c))</span><span style=''>
+</span>34 <span style=''>
+</span>35 <span style=''>  /**
+</span>36 <span style=''>   * Put some cards into the combination.
+</span>37 <span style=''>   *
+</span>38 <span style=''>   * @param cards Cards to put in.
+</span>39 <span style=''>   * @return CardCombination with cards.
+</span>40 <span style=''>   */
+</span>41 <span style=''>  def putCards(cards: Seq[Card]): CardCombination = </span><span style='background: #AEF1AE'>copy(cards = this.cards ++ cards sortBy (_.rank))</span><span style=''>
+</span>42 <span style=''>}
+</span>43 <span style=''>
+</span>44 <span style=''>object CardCombination {
+</span>45 <span style=''>  /**
+</span>46 <span style=''>   * Create a new Card Combination, sorting his cards by Rank.
+</span>47 <span style=''>   *
+</span>48 <span style=''>   * @param id    Id of the combination.
+</span>49 <span style=''>   * @param cards Sequence of cards.
+</span>50 <span style=''>   * @return New Card Combination.
+</span>51 <span style=''>   */
+</span>52 <span style=''>  def apply(id: String, cards: Seq[Card]): CardCombination = </span><span style='background: #AEF1AE'>new CardCombination(id, cards.sortByRank())</span><span style=''>
+</span>53 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -82,15 +88,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          19
+          18
         </td>
         <td>
-          668
+          666
         </td>
         <td>
-          521
+          475
           -
-          534
+          488
         </td>
         <td>
           Select
@@ -103,15 +109,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          18
         </td>
         <td>
           402
         </td>
         <td>
-          521
+          475
           -
-          526
+          480
         </td>
         <td>
           Select
@@ -124,15 +130,15 @@
         </td>
       </tr><tr>
         <td>
-          26
+          25
         </td>
         <td>
-          519
+          518
         </td>
         <td>
-          689
+          643
           -
-          702
+          656
         </td>
         <td>
           Select
@@ -145,15 +151,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          33
         </td>
         <td>
           382
         </td>
         <td>
-          897
+          851
           -
-          954
+          908
         </td>
         <td>
           Apply
@@ -166,57 +172,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          33
         </td>
         <td>
-          770
+          618
         </td>
         <td>
-          936
+          864
           -
-          952
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.SeqLike.contains
-        </td>
-        <td style="background: #AEF1AE">
-          cards.contains[it.parttimeteam.core.cards.Card](c)
-        </td>
-      </tr><tr>
-        <td>
-          34
-        </td>
-        <td>
-          531
-        </td>
-        <td>
-          897
-          -
-          897
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.collections.CardCombination.copy$default$1
-        </td>
-        <td style="background: #AEF1AE">
-          CardCombination.this.copy$default$1
-        </td>
-      </tr><tr>
-        <td>
-          34
-        </td>
-        <td>
-          620
-        </td>
-        <td>
-          910
-          -
-          953
+          907
         </td>
         <td>
           Apply
@@ -229,99 +193,36 @@
         </td>
       </tr><tr>
         <td>
-          42
+          33
         </td>
         <td>
-          499
+          767
         </td>
         <td>
-          1184
+          890
           -
-          1190
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Card.rank
-        </td>
-        <td style="background: #AEF1AE">
-          x$1.rank
-        </td>
-      </tr><tr>
-        <td>
-          42
-        </td>
-        <td>
-          669
-        </td>
-        <td>
-          1176
-          -
-          1176
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.math.LowPriorityOrderingImplicits.ordered
-        </td>
-        <td style="background: #AEF1AE">
-          math.this.Ordering.ordered[it.parttimeteam.core.cards.Rank](scala.Predef.$conforms[it.parttimeteam.core.cards.Rank])
-        </td>
-      </tr><tr>
-        <td>
-          42
-        </td>
-        <td>
-          615
-        </td>
-        <td>
-          1143
-          -
-          1192
+          906
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.core.collections.CardCombination.copy
+          scala.collection.SeqLike.contains
         </td>
         <td style="background: #AEF1AE">
-          CardCombination.this.copy(x$2, x$1)
+          cards.contains[it.parttimeteam.core.cards.Card](c)
         </td>
       </tr><tr>
         <td>
-          42
+          33
         </td>
         <td>
-          512
+          530
         </td>
         <td>
-          1156
+          851
           -
-          1191
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.SeqLike.sortBy
-        </td>
-        <td style="background: #AEF1AE">
-          this.cards.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](cards)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]).sortBy[it.parttimeteam.core.cards.Rank](((x$1: it.parttimeteam.core.cards.Card) =&gt; x$1.rank))(math.this.Ordering.ordered[it.parttimeteam.core.cards.Rank](scala.Predef.$conforms[it.parttimeteam.core.cards.Rank]))
-        </td>
-      </tr><tr>
-        <td>
-          42
-        </td>
-        <td>
-          772
-        </td>
-        <td>
-          1143
-          -
-          1143
+          851
         </td>
         <td>
           Select
@@ -334,15 +235,36 @@
         </td>
       </tr><tr>
         <td>
-          42
+          41
         </td>
         <td>
-          649
+          498
         </td>
         <td>
-          1167
+          1138
           -
-          1167
+          1144
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.rank
+        </td>
+        <td style="background: #AEF1AE">
+          x$1.rank
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          647
+        </td>
+        <td>
+          1121
+          -
+          1121
         </td>
         <td>
           TypeApply
@@ -355,15 +277,36 @@
         </td>
       </tr><tr>
         <td>
-          42
+          41
         </td>
         <td>
-          748
+          769
         </td>
         <td>
-          1176
+          1097
           -
-          1176
+          1097
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CardCombination.copy$default$1
+        </td>
+        <td style="background: #AEF1AE">
+          CardCombination.this.copy$default$1
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          745
+        </td>
+        <td>
+          1130
+          -
+          1130
         </td>
         <td>
           TypeApply
@@ -376,15 +319,78 @@
         </td>
       </tr><tr>
         <td>
-          46
+          41
         </td>
         <td>
-          532
+          667
         </td>
         <td>
-          1306
+          1130
           -
-          1324
+          1130
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.math.LowPriorityOrderingImplicits.ordered
+        </td>
+        <td style="background: #AEF1AE">
+          math.this.Ordering.ordered[it.parttimeteam.core.cards.Rank](scala.Predef.$conforms[it.parttimeteam.core.cards.Rank])
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          613
+        </td>
+        <td>
+          1097
+          -
+          1146
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CardCombination.copy
+        </td>
+        <td style="background: #AEF1AE">
+          CardCombination.this.copy(x$2, x$1)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          511
+        </td>
+        <td>
+          1110
+          -
+          1145
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.SeqLike.sortBy
+        </td>
+        <td style="background: #AEF1AE">
+          this.cards.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](cards)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]).sortBy[it.parttimeteam.core.cards.Rank](((x$1: it.parttimeteam.core.cards.Card) =&gt; x$1.rank))(math.this.Ordering.ordered[it.parttimeteam.core.cards.Rank](scala.Predef.$conforms[it.parttimeteam.core.cards.Rank]))
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          531
+        </td>
+        <td>
+          1453
+          -
+          1471
         </td>
         <td>
           Apply
@@ -397,15 +403,15 @@
         </td>
       </tr><tr>
         <td>
-          46
+          52
         </td>
         <td>
           384
         </td>
         <td>
-          1282
+          1429
           -
-          1325
+          1472
         </td>
         <td>
           Apply
