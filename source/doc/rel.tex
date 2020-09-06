@@ -3,7 +3,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 
-% TODO: Resolve unsupported character.
 \title{Scalavelli project}
 \date{25 agosto 2020}
 \author{Daniele Tentoni "Part Time Team"}
@@ -58,15 +57,52 @@
     \newpage
 
 
-    \section{Requisiti}
+    \section{Requisiti}\label{sec:requisiti}
 
-    \subsection{Business}
+    \subsection{Business}\label{subsec:business}
 
-    \subsection{Utente}
+    Il progetto Scalavelli vuole ricreare l’esperienza del celebre gioco di carte Machiavelli in modalità multiplayer,
+    tra giocatori differenti locati sulla stessa macchina o nella stessa LAN. Ogni giocatore deve potersi identificare
+    con un proprio username e partecipare ad una partita da uno o più giocatori, eventualmente scegliendo di giocare
+    specificatamente con i propri amici inserendo il codice identificativo di una partita privata.
+
+    \subsection{Utente}\label{subsec:utente}
+    \begin{itemize}
+        \item Il giocatore deve poter vedere sullo schermo le combinazioni che ci sono attualmente sul tavolo da gioco,
+        le carte che ha in mano, il nome degli altri giocatori e il numero di carte nelle loro mani.
+        \item Il giocatore deve poter scegliere il proprio username quando avvia il gioco.
+        \item Tramite il proprio username, ci si deve poter registrare presso il server.
+        \item Quando viene raggiunto il numero massimo di giocatori per una lobby, allora il server deve subito far
+        partire una partita tra i giocatori così riuniti.
+        \item Quando un giocatore non risponde più al server per qualche motivo, sia una disconnessione volontaria o un
+        problema dell’infrastruttura di rete, la partita finisce immediatamente, venendo visto come un abbandono.
+
+    \end{itemize}
 
     \subsection{Funzionali}
+    \begin{itemize}
+        \item Il gioco
+        \begin{itemize}
+            \item Preparazione del gioco:
+            All'inizio della partita devono essere mescolati tra loro due mazzi da 52 carte ognuno (vengono tenuti
+            i due Jolly di ogni mazzo). Successivamente vengono distribuite 13 carte ad ogni giocatore.
+            \item Svolgimento di un turno:
+            Il giocatore di turno può compiere le seguenti azioni:
+            \begin{itemize}
+                \item Giocare una combinazione:
+                \item Aggiungere carte ad una combinazione ià esistente
+                \item Prendere carte dal tavolo
+                \item Passare il turno
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
 
     \subsection{Non Funzionali}
+    \begin{itemize}
+        \item Scalabilità: Il server deve essere in grado di poter supportare un numero indefinito di utenti. Quando
+        non sono dentro una partita, i giocatori devono stare in attesa in una lobby per l'arrivo dei giocatori
+        necessari per far partire una nuova partita.
+    \end{itemize}
 
     \subsection{Implementativi}
 
