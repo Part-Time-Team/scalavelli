@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game
 </span>2 <span style=''>
 </span>3 <span style=''>import it.parttimeteam.controller.game.GameListener
-</span>4 <span style=''>import it.parttimeteam.gamestate.PlayerGameState
+</span>4 <span style=''>import it.parttimeteam.model.game.ClientGameState
 </span>5 <span style=''>import it.parttimeteam.view._
 </span>6 <span style=''>import it.parttimeteam.view.game.listeners.GameStageListener
 </span>7 <span style=''>
@@ -103,9 +103,9 @@
 </span>79 <span style=''>  /**
 </span>80 <span style=''>    * Updates the displayed game state with the actual one.
 </span>81 <span style=''>    *
-</span>82 <span style=''>    * @param playerGameState the actual game state
+</span>82 <span style=''>    * @param gameState the actual game state
 </span>83 <span style=''>    */
-</span>84 <span style=''>  def updateState(playerGameState: PlayerGameState): Unit
+</span>84 <span style=''>  def updateState(gameState: ClientGameState): Unit
 </span>85 <span style=''>
 </span>86 <span style=''>  /**
 </span>87 <span style=''>    * Notify the player an error.
@@ -113,23 +113,15 @@
 </span>89 <span style=''>    * @param error the error occurred
 </span>90 <span style=''>    */
 </span>91 <span style=''>  def notifyError(error: String): Unit
-</span>92 <span style=''>
-</span>93 <span style=''>  /**
-</span>94 <span style=''>    * Set history possible actions
-</span>95 <span style=''>    *
-</span>96 <span style=''>    * @param canUndo if the undo action is available
-</span>97 <span style=''>    * @param canRedo if the redo action is available
-</span>98 <span style=''>    */
-</span>99 <span style=''>  def updateHistoryState(canUndo: Boolean, canRedo: Boolean): Unit
+</span>92 <span style=''>}
+</span>93 <span style=''>
+</span>94 <span style=''>/**
+</span>95 <span style=''>  * Companion object for MachiavelliGameStage
+</span>96 <span style=''>  */
+</span>97 <span style=''>object MachiavelliGameStage {
+</span>98 <span style=''>
+</span>99 <span style=''>  def apply(listener: GameListener): MachiavelliGameStage = </span><span style='background: #F0ADAD'>new MachiavelliGameStageImpl(listener)</span><span style=''>
 </span>100 <span style=''>}
-</span>101 <span style=''>
-</span>102 <span style=''>/**
-</span>103 <span style=''>  * Companion object for MachiavelliGameStage
-</span>104 <span style=''>  */
-</span>105 <span style=''>object MachiavelliGameStage {
-</span>106 <span style=''>
-</span>107 <span style=''>  def apply(listener: GameListener): MachiavelliGameStage = </span><span style='background: #F0ADAD'>new MachiavelliGameStageImpl(listener)</span><span style=''>
-</span>108 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -143,15 +135,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          107
+          99
         </td>
         <td>
-          1214
+          1821
         </td>
         <td>
-          2181
+          1942
           -
-          2219
+          1980
         </td>
         <td>
           Apply

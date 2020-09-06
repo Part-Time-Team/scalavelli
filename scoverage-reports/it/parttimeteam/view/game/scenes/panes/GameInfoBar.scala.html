@@ -39,149 +39,163 @@
 </span>15 <span style=''>  */
 </span>16 <span style=''>trait GameInfoBar extends BorderPane with ActionGamePane {
 </span>17 <span style=''>  /**
-</span>18 <span style=''>    * Enables/disables the reset button
+</span>18 <span style=''>    * Updates the next button text
 </span>19 <span style=''>    *
-</span>20 <span style=''>    * @param enabled if the button should be enabled or not
+</span>20 <span style=''>    * @param text the new text
 </span>21 <span style=''>    */
-</span>22 <span style=''>  def setResetEnabled(enabled: Boolean): Unit
+</span>22 <span style=''>  def setNextText(text: String): Unit
 </span>23 <span style=''>
 </span>24 <span style=''>  /**
-</span>25 <span style=''>    * Enables/disables the redo button
+</span>25 <span style=''>    * Enables/disables the reset button
 </span>26 <span style=''>    *
 </span>27 <span style=''>    * @param enabled if the button should be enabled or not
 </span>28 <span style=''>    */
-</span>29 <span style=''>  def setRedoEnabled(enabled: Boolean): Unit
+</span>29 <span style=''>  def setResetEnabled(enabled: Boolean): Unit
 </span>30 <span style=''>
 </span>31 <span style=''>  /**
-</span>32 <span style=''>    * Enables/disables the undo button
+</span>32 <span style=''>    * Enables/disables the redo button
 </span>33 <span style=''>    *
 </span>34 <span style=''>    * @param enabled if the button should be enabled or not
 </span>35 <span style=''>    */
-</span>36 <span style=''>  def setUndoEnabled(enabled: Boolean): Unit
+</span>36 <span style=''>  def setRedoEnabled(enabled: Boolean): Unit
 </span>37 <span style=''>
 </span>38 <span style=''>  /**
-</span>39 <span style=''>    * Sets other player information, like name and number of available cards in hand.
+</span>39 <span style=''>    * Enables/disables the undo button
 </span>40 <span style=''>    *
-</span>41 <span style=''>    * @param opponents the sequence of other players information
+</span>41 <span style=''>    * @param enabled if the button should be enabled or not
 </span>42 <span style=''>    */
-</span>43 <span style=''>  def setOtherPlayers(opponents: Seq[Opponent]): Unit
+</span>43 <span style=''>  def setUndoEnabled(enabled: Boolean): Unit
 </span>44 <span style=''>
 </span>45 <span style=''>  /**
-</span>46 <span style=''>    * Display a message inside the RightBar.
+</span>46 <span style=''>    * Sets other player information, like name and number of available cards in hand.
 </span>47 <span style=''>    *
-</span>48 <span style=''>    * @param message the message to be displayed
+</span>48 <span style=''>    * @param opponents the sequence of other players information
 </span>49 <span style=''>    */
-</span>50 <span style=''>  def setMessage(message: String): Unit
+</span>50 <span style=''>  def setOtherPlayers(opponents: Seq[Opponent]): Unit
 </span>51 <span style=''>
 </span>52 <span style=''>  /**
-</span>53 <span style=''>    * Make the timer countdown visible.
-</span>54 <span style=''>    */
-</span>55 <span style=''>  def showTimer(): Unit
-</span>56 <span style=''>
-</span>57 <span style=''>  /**
-</span>58 <span style=''>    * Hide the timer countdown.
-</span>59 <span style=''>    */
-</span>60 <span style=''>  def hideTimer(): Unit
-</span>61 <span style=''>
-</span>62 <span style=''>  /**
-</span>63 <span style=''>    * Enables/disables the next button
-</span>64 <span style=''>    *
-</span>65 <span style=''>    * @param enabled if the button should be enabled or not
+</span>53 <span style=''>    * Display a message inside the RightBar.
+</span>54 <span style=''>    *
+</span>55 <span style=''>    * @param message the message to be displayed
+</span>56 <span style=''>    */
+</span>57 <span style=''>  def setMessage(message: String): Unit
+</span>58 <span style=''>
+</span>59 <span style=''>  /**
+</span>60 <span style=''>    * Make the timer countdown visible.
+</span>61 <span style=''>    */
+</span>62 <span style=''>  def showTimer(): Unit
+</span>63 <span style=''>
+</span>64 <span style=''>  /**
+</span>65 <span style=''>    * Hide the timer countdown.
 </span>66 <span style=''>    */
-</span>67 <span style=''>  def setNextEnabled(enabled: Boolean): Unit
-</span>68 <span style=''>}
-</span>69 <span style=''>
-</span>70 <span style=''>trait HistoryNavigationListener {
-</span>71 <span style=''>  def onUndoClick(): Unit
-</span>72 <span style=''>
-</span>73 <span style=''>  def onRedoClick(): Unit
-</span>74 <span style=''>
-</span>75 <span style=''>  def onResetClick(): Unit
-</span>76 <span style=''>}
-</span>77 <span style=''>
-</span>78 <span style=''>object GameInfoBar {
+</span>67 <span style=''>  def hideTimer(): Unit
+</span>68 <span style=''>
+</span>69 <span style=''>  /**
+</span>70 <span style=''>    * Enables/disables the next button
+</span>71 <span style=''>    *
+</span>72 <span style=''>    * @param enabled if the button should be enabled or not
+</span>73 <span style=''>    */
+</span>74 <span style=''>  def setNextEnabled(enabled: Boolean): Unit
+</span>75 <span style=''>}
+</span>76 <span style=''>
+</span>77 <span style=''>trait HistoryNavigationListener {
+</span>78 <span style=''>  def onUndoClick(): Unit
 </span>79 <span style=''>
-</span>80 <span style=''>  class GameInfoBarImpl(val listener: GameSceneListener) extends GameInfoBar {
-</span>81 <span style=''>    </span><span style='background: #F0ADAD'>padding = Insets(10d)</span><span style=''>
-</span>82 <span style=''>
-</span>83 <span style=''>    val otherPlayersPane: OtherPlayersPane = </span><span style='background: #F0ADAD'>new OtherPlayersPaneImpl()</span><span style=''>
-</span>84 <span style=''>    val timerPane: TimerPane = </span><span style='background: #F0ADAD'>new TimerPaneImpl()</span><span style=''>
-</span>85 <span style=''>
-</span>86 <span style=''>    val historyNavigationPane: HistoryNavigationPane = </span><span style='background: #F0ADAD'>new HistoryNavigationPaneImpl(new HistoryNavigationListener {
-</span>87 <span style=''></span><span style='background: #F0ADAD'>      override def onUndoClick(): Unit = listener.previousState()
-</span>88 <span style=''></span><span style='background: #F0ADAD'>
-</span>89 <span style=''></span><span style='background: #F0ADAD'>      override def onRedoClick(): Unit = listener.nextState()
-</span>90 <span style=''></span><span style='background: #F0ADAD'>
-</span>91 <span style=''></span><span style='background: #F0ADAD'>      override def onResetClick(): Unit = listener.resetState()
-</span>92 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>93 <span style=''>
-</span>94 <span style=''>    val btnContainer = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
-</span>95 <span style=''>    </span><span style='background: #F0ADAD'>btnContainer.spacing = 5d</span><span style=''>
-</span>96 <span style=''>
-</span>97 <span style=''>    </span><span style='background: #F0ADAD'>historyNavigationPane.prefWidth &lt;== btnContainer.width</span><span style=''>
-</span>98 <span style=''>
-</span>99 <span style=''>    val rightTop = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
-</span>100 <span style=''>    val rightBottom = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
-</span>101 <span style=''>
-</span>102 <span style=''>    val stateContainer = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
+</span>80 <span style=''>  def onRedoClick(): Unit
+</span>81 <span style=''>
+</span>82 <span style=''>  def onResetClick(): Unit
+</span>83 <span style=''>}
+</span>84 <span style=''>
+</span>85 <span style=''>object GameInfoBar {
+</span>86 <span style=''>
+</span>87 <span style=''>  class GameInfoBarImpl(val listener: GameSceneListener) extends GameInfoBar {
+</span>88 <span style=''>    </span><span style='background: #F0ADAD'>padding = Insets(10d)</span><span style=''>
+</span>89 <span style=''>
+</span>90 <span style=''>    val otherPlayersPane: OtherPlayersPane = </span><span style='background: #F0ADAD'>new OtherPlayersPaneImpl()</span><span style=''>
+</span>91 <span style=''>    val timerPane: TimerPane = </span><span style='background: #F0ADAD'>new TimerPaneImpl()</span><span style=''>
+</span>92 <span style=''>
+</span>93 <span style=''>    val historyNavigationPane: HistoryNavigationPane = </span><span style='background: #F0ADAD'>new HistoryNavigationPaneImpl(new HistoryNavigationListener {
+</span>94 <span style=''></span><span style='background: #F0ADAD'>      override def onUndoClick(): Unit = listener.previousState()
+</span>95 <span style=''></span><span style='background: #F0ADAD'>
+</span>96 <span style=''></span><span style='background: #F0ADAD'>      override def onRedoClick(): Unit = listener.nextState()
+</span>97 <span style=''></span><span style='background: #F0ADAD'>
+</span>98 <span style=''></span><span style='background: #F0ADAD'>      override def onResetClick(): Unit = listener.resetState()
+</span>99 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>100 <span style=''>
+</span>101 <span style=''>    val btnContainer = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
+</span>102 <span style=''>    </span><span style='background: #F0ADAD'>btnContainer.spacing = 5d</span><span style=''>
 </span>103 <span style=''>
-</span>104 <span style=''>    val messageLabel = </span><span style='background: #F0ADAD'>MachiavelliLabel()</span><span style=''>
+</span>104 <span style=''>    </span><span style='background: #F0ADAD'>historyNavigationPane.prefWidth &lt;== btnContainer.width</span><span style=''>
 </span>105 <span style=''>
-</span>106 <span style=''>    </span><span style='background: #F0ADAD'>stateContainer.children.addAll(messageLabel, timerPane)</span><span style=''>
-</span>107 <span style=''>
-</span>108 <span style=''>    </span><span style='background: #F0ADAD'>timerPane.hide()</span><span style=''>
-</span>109 <span style=''>
-</span>110 <span style=''>    val nextBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Pass&quot;, () =&gt; listener.endTurn())</span><span style=''>
-</span>111 <span style=''>
-</span>112 <span style=''>    </span><span style='background: #F0ADAD'>nextBtn.prefWidth &lt;== rightBottom.width</span><span style=''>
-</span>113 <span style=''>
-</span>114 <span style=''>    </span><span style='background: #F0ADAD'>btnContainer.children.addAll(nextBtn, historyNavigationPane)</span><span style=''>
-</span>115 <span style=''>
-</span>116 <span style=''>    </span><span style='background: #F0ADAD'>rightTop.children.addAll(stateContainer, otherPlayersPane)</span><span style=''>
-</span>117 <span style=''>    </span><span style='background: #F0ADAD'>rightBottom.children.add(btnContainer)</span><span style=''>
-</span>118 <span style=''>
-</span>119 <span style=''>    </span><span style='background: #F0ADAD'>top = rightTop</span><span style=''>
-</span>120 <span style=''>    </span><span style='background: #F0ADAD'>bottom = rightBottom</span><span style=''>
-</span>121 <span style=''>
-</span>122 <span style=''>    /** @inheritdoc*/
-</span>123 <span style=''>    override def setMessage(message: String): Unit = </span><span style='background: #F0ADAD'>messageLabel.text = message</span><span style=''>
+</span>106 <span style=''>    val rightTop = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
+</span>107 <span style=''>    val rightBottom = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
+</span>108 <span style=''>
+</span>109 <span style=''>    val stateContainer = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
+</span>110 <span style=''>
+</span>111 <span style=''>    val messageLabel = </span><span style='background: #F0ADAD'>MachiavelliLabel()</span><span style=''>
+</span>112 <span style=''>
+</span>113 <span style=''>    </span><span style='background: #F0ADAD'>stateContainer.children.addAll(messageLabel, timerPane)</span><span style=''>
+</span>114 <span style=''>
+</span>115 <span style=''>    </span><span style='background: #F0ADAD'>timerPane.hide()</span><span style=''>
+</span>116 <span style=''>
+</span>117 <span style=''>    val nextBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Pass&quot;, () =&gt; listener.endTurn())</span><span style=''>
+</span>118 <span style=''>    val leaveBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Leave Game&quot;, () =&gt; listener.leaveGame())</span><span style=''>
+</span>119 <span style=''>
+</span>120 <span style=''>    </span><span style='background: #F0ADAD'>nextBtn.prefWidth &lt;== rightBottom.width</span><span style=''>
+</span>121 <span style=''>    </span><span style='background: #F0ADAD'>leaveBtn.prefWidth &lt;== rightBottom.width</span><span style=''>
+</span>122 <span style=''>
+</span>123 <span style=''>    </span><span style='background: #F0ADAD'>btnContainer.children.addAll(nextBtn, leaveBtn, historyNavigationPane)</span><span style=''>
 </span>124 <span style=''>
-</span>125 <span style=''>
-</span>126 <span style=''>    /** @inheritdoc*/
-</span>127 <span style=''>    override def showTimer(): Unit = </span><span style='background: #F0ADAD'>timerPane.hide()</span><span style=''>
-</span>128 <span style=''>
-</span>129 <span style=''>    /** @inheritdoc*/
-</span>130 <span style=''>    override def hideTimer(): Unit = </span><span style='background: #F0ADAD'>timerPane.show()</span><span style=''>
-</span>131 <span style=''>
-</span>132 <span style=''>    /** @inheritdoc*/
-</span>133 <span style=''>    override def disableActions(): Unit = {
-</span>134 <span style=''>      </span><span style='background: #F0ADAD'>historyNavigationPane.disableActions()</span><span style=''>
-</span>135 <span style=''>      </span><span style='background: #F0ADAD'>nextBtn.setDisable(true)</span><span style=''>
-</span>136 <span style=''>    }
+</span>125 <span style=''>    </span><span style='background: #F0ADAD'>rightTop.children.addAll(stateContainer, otherPlayersPane)</span><span style=''>
+</span>126 <span style=''>    </span><span style='background: #F0ADAD'>rightBottom.children.add(btnContainer)</span><span style=''>
+</span>127 <span style=''>
+</span>128 <span style=''>    </span><span style='background: #F0ADAD'>top = rightTop</span><span style=''>
+</span>129 <span style=''>    </span><span style='background: #F0ADAD'>bottom = rightBottom</span><span style=''>
+</span>130 <span style=''>
+</span>131 <span style=''>    /** @inheritdoc*/
+</span>132 <span style=''>    override def setMessage(message: String): Unit = </span><span style='background: #F0ADAD'>messageLabel.text = message</span><span style=''>
+</span>133 <span style=''>
+</span>134 <span style=''>
+</span>135 <span style=''>    /** @inheritdoc*/
+</span>136 <span style=''>    override def showTimer(): Unit = </span><span style='background: #F0ADAD'>timerPane.hide()</span><span style=''>
 </span>137 <span style=''>
 </span>138 <span style=''>    /** @inheritdoc*/
-</span>139 <span style=''>    override def enableActions(): Unit = {
-</span>140 <span style=''>      </span><span style='background: #F0ADAD'>nextBtn.setDisable(false)</span><span style=''>
-</span>141 <span style=''>      </span><span style='background: #F0ADAD'>historyNavigationPane.enableActions()</span><span style=''>
-</span>142 <span style=''>    }
-</span>143 <span style=''>
-</span>144 <span style=''>    /** @inheritdoc*/
-</span>145 <span style=''>    override def setNextEnabled(enabled: Boolean): Unit = </span><span style='background: #F0ADAD'>nextBtn.setDisable(!enabled)</span><span style=''>
+</span>139 <span style=''>    override def hideTimer(): Unit = </span><span style='background: #F0ADAD'>timerPane.show()</span><span style=''>
+</span>140 <span style=''>
+</span>141 <span style=''>    /** @inheritdoc*/
+</span>142 <span style=''>    override def disableActions(): Unit = {
+</span>143 <span style=''>      </span><span style='background: #F0ADAD'>historyNavigationPane.disableActions()</span><span style=''>
+</span>144 <span style=''>      </span><span style='background: #F0ADAD'>nextBtn.setDisable(true)</span><span style=''>
+</span>145 <span style=''>    }
 </span>146 <span style=''>
 </span>147 <span style=''>    /** @inheritdoc*/
-</span>148 <span style=''>    override def setOtherPlayers(opponents: Seq[Opponent]): Unit = </span><span style='background: #F0ADAD'>otherPlayersPane.setOtherPlayers(opponents)</span><span style=''>
-</span>149 <span style=''>
-</span>150 <span style=''>    /** @inheritdoc*/
-</span>151 <span style=''>    override def setResetEnabled(enabled: Boolean): Unit = </span><span style='background: #F0ADAD'>historyNavigationPane.setResetEnabled(enabled)</span><span style=''>
+</span>148 <span style=''>    override def enableActions(): Unit = {
+</span>149 <span style=''>      </span><span style='background: #F0ADAD'>nextBtn.setDisable(false)</span><span style=''>
+</span>150 <span style=''>      </span><span style='background: #F0ADAD'>historyNavigationPane.enableActions()</span><span style=''>
+</span>151 <span style=''>    }
 </span>152 <span style=''>
 </span>153 <span style=''>    /** @inheritdoc*/
-</span>154 <span style=''>    override def setRedoEnabled(enabled: Boolean): Unit = </span><span style='background: #F0ADAD'>historyNavigationPane.setRedoEnabled(enabled)</span><span style=''>
+</span>154 <span style=''>    override def setNextEnabled(enabled: Boolean): Unit = </span><span style='background: #F0ADAD'>nextBtn.setDisable(!enabled)</span><span style=''>
 </span>155 <span style=''>
 </span>156 <span style=''>    /** @inheritdoc*/
-</span>157 <span style=''>    override def setUndoEnabled(enabled: Boolean): Unit = </span><span style='background: #F0ADAD'>historyNavigationPane.setUndoEnabled(enabled)</span><span style=''>
-</span>158 <span style=''>  }
-</span>159 <span style=''>
-</span>160 <span style=''>}
+</span>157 <span style=''>    override def setOtherPlayers(opponents: Seq[Opponent]): Unit = </span><span style='background: #F0ADAD'>otherPlayersPane.setOtherPlayers(opponents)</span><span style=''>
+</span>158 <span style=''>
+</span>159 <span style=''>    /** @inheritdoc*/
+</span>160 <span style=''>    override def setResetEnabled(enabled: Boolean): Unit = </span><span style='background: #F0ADAD'>historyNavigationPane.setResetEnabled(enabled)</span><span style=''>
+</span>161 <span style=''>
+</span>162 <span style=''>    /** @inheritdoc*/
+</span>163 <span style=''>    override def setRedoEnabled(enabled: Boolean): Unit = </span><span style='background: #F0ADAD'>historyNavigationPane.setRedoEnabled(enabled)</span><span style=''>
+</span>164 <span style=''>
+</span>165 <span style=''>    /** @inheritdoc*/
+</span>166 <span style=''>    override def setUndoEnabled(enabled: Boolean): Unit = </span><span style='background: #F0ADAD'>historyNavigationPane.setUndoEnabled(enabled)</span><span style=''>
+</span>167 <span style=''>
+</span>168 <span style=''>    /** @inheritdoc */
+</span>169 <span style=''>    override def setNextText(text: String): Unit = {
+</span>170 <span style=''>      </span><span style='background: #F0ADAD'>nextBtn.setText(text)</span><span style=''>
+</span>171 <span style=''>    }
+</span>172 <span style=''>  }
+</span>173 <span style=''>
+</span>174 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -195,36 +209,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          81
+          88
         </td>
         <td>
-          2138
+          2116
         </td>
         <td>
-          2172
+          2286
           -
-          2183
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.geometry.Insets.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scalafx.geometry.Insets.apply(10.0)
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          1620
-        </td>
-        <td>
-          2162
-          -
-          2183
+          2307
         </td>
         <td>
           Apply
@@ -237,15 +230,36 @@
         </td>
       </tr><tr>
         <td>
-          83
+          88
         </td>
         <td>
-          1260
+          1157
         </td>
         <td>
-          2230
+          2296
           -
-          2256
+          2307
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.geometry.Insets.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.geometry.Insets.apply(10.0)
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          1841
+        </td>
+        <td>
+          2354
+          -
+          2380
         </td>
         <td>
           Apply
@@ -258,15 +272,15 @@
         </td>
       </tr><tr>
         <td>
-          84
+          91
         </td>
         <td>
-          2246
+          1226
         </td>
         <td>
-          2288
+          2412
           -
-          2307
+          2431
         </td>
         <td>
           Apply
@@ -279,15 +293,15 @@
         </td>
       </tr><tr>
         <td>
-          86
+          93
         </td>
         <td>
-          1234
+          1711
         </td>
         <td>
-          2364
+          2488
           -
-          2626
+          2750
         </td>
         <td>
           Apply
@@ -311,15 +325,15 @@
         </td>
       </tr><tr>
         <td>
-          86
+          93
         </td>
         <td>
-          1742
+          2297
         </td>
         <td>
-          2394
+          2518
           -
-          2397
+          2521
         </td>
         <td>
           Apply
@@ -332,15 +346,15 @@
         </td>
       </tr><tr>
         <td>
-          87
+          94
         </td>
         <td>
-          1709
+          2221
         </td>
         <td>
-          2467
+          2591
           -
-          2491
+          2615
         </td>
         <td>
           Apply
@@ -353,15 +367,15 @@
         </td>
       </tr><tr>
         <td>
-          89
+          96
         </td>
         <td>
-          1104
+          1598
         </td>
         <td>
-          2534
+          2658
           -
-          2554
+          2678
         </td>
         <td>
           Apply
@@ -374,15 +388,15 @@
         </td>
       </tr><tr>
         <td>
-          91
+          98
         </td>
         <td>
-          2049
+          1042
         </td>
         <td>
-          2598
+          2722
           -
-          2619
+          2743
         </td>
         <td>
           Apply
@@ -395,120 +409,15 @@
         </td>
       </tr><tr>
         <td>
-          94
+          101
         </td>
         <td>
-          2115
+          1105
         </td>
         <td>
-          2651
+          2775
           -
-          2661
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.layout.VBox.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new scalafx.scene.layout.VBox()
-        </td>
-      </tr><tr>
-        <td>
-          95
-        </td>
-        <td>
-          1593
-        </td>
-        <td>
-          2666
-          -
-          2691
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.layout.VBox.spacing_=
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.btnContainer.spacing_=(5.0)
-        </td>
-      </tr><tr>
-        <td>
-          97
-        </td>
-        <td>
-          2218
-        </td>
-        <td>
-          2697
-          -
-          2751
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.beans.property.Property.&lt;==
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.historyNavigationPane.prefWidth.&lt;==(GameInfoBarImpl.this.btnContainer.width)
-        </td>
-      </tr><tr>
-        <td>
-          97
-        </td>
-        <td>
-          1263
-        </td>
-        <td>
-          2733
-          -
-          2751
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scalafx.scene.layout.Region.width
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.btnContainer.width
-        </td>
-      </tr><tr>
-        <td>
-          99
-        </td>
-        <td>
-          1713
-        </td>
-        <td>
-          2772
-          -
-          2782
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.layout.VBox.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new scalafx.scene.layout.VBox()
-        </td>
-      </tr><tr>
-        <td>
-          100
-        </td>
-        <td>
-          1068
-        </td>
-        <td>
-          2805
-          -
-          2815
+          2785
         </td>
         <td>
           Apply
@@ -524,12 +433,75 @@
           102
         </td>
         <td>
-          2028
+          2095
         </td>
         <td>
-          2842
+          2790
           -
-          2852
+          2815
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.VBox.spacing_=
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.btnContainer.spacing_=(5.0)
+        </td>
+      </tr><tr>
+        <td>
+          104
+        </td>
+        <td>
+          1228
+        </td>
+        <td>
+          2821
+          -
+          2875
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.historyNavigationPane.prefWidth.&lt;==(GameInfoBarImpl.this.btnContainer.width)
+        </td>
+      </tr><tr>
+        <td>
+          104
+        </td>
+        <td>
+          1757
+        </td>
+        <td>
+          2857
+          -
+          2875
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.Region.width
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.btnContainer.width
+        </td>
+      </tr><tr>
+        <td>
+          106
+        </td>
+        <td>
+          2199
+        </td>
+        <td>
+          2896
+          -
+          2906
         </td>
         <td>
           Apply
@@ -542,15 +514,57 @@
         </td>
       </tr><tr>
         <td>
-          104
+          107
         </td>
         <td>
-          1749
+          1601
         </td>
         <td>
-          2877
+          2929
           -
-          2895
+          2939
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.VBox.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.VBox()
+        </td>
+      </tr><tr>
+        <td>
+          109
+        </td>
+        <td>
+          1046
+        </td>
+        <td>
+          2966
+          -
+          2976
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.VBox.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.VBox()
+        </td>
+      </tr><tr>
+        <td>
+          111
+        </td>
+        <td>
+          2243
+        </td>
+        <td>
+          3001
+          -
+          3019
         </td>
         <td>
           Apply
@@ -563,15 +577,15 @@
         </td>
       </tr><tr>
         <td>
-          106
+          113
         </td>
         <td>
-          1342
+          1492
         </td>
         <td>
-          2946
+          3070
           -
-          2955
+          3079
         </td>
         <td>
           ApplyImplicitView
@@ -584,15 +598,15 @@
         </td>
       </tr><tr>
         <td>
-          106
+          113
         </td>
         <td>
-          2191
+          1082
         </td>
         <td>
-          2932
+          3056
           -
-          2944
+          3068
         </td>
         <td>
           ApplyImplicitView
@@ -605,36 +619,15 @@
         </td>
       </tr><tr>
         <td>
-          106
+          113
         </td>
         <td>
-          2265
+          2100
         </td>
         <td>
-          2901
+          3070
           -
-          2956
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.collections.ObservableList.addAll
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.stateContainer.children.addAll(control.this.Label.sfxLabel2jfx(GameInfoBarImpl.this.messageLabel), layout.this.VBox.sfxVBox2jfx(GameInfoBarImpl.this.timerPane))
-        </td>
-      </tr><tr>
-        <td>
-          106
-        </td>
-        <td>
-          1616
-        </td>
-        <td>
-          2946
-          -
-          2955
+          3079
         </td>
         <td>
           Select
@@ -647,15 +640,15 @@
         </td>
       </tr><tr>
         <td>
-          106
+          113
         </td>
         <td>
-          1238
+          1714
         </td>
         <td>
-          2932
+          3056
           -
-          2944
+          3068
         </td>
         <td>
           Select
@@ -668,15 +661,36 @@
         </td>
       </tr><tr>
         <td>
-          108
+          113
         </td>
         <td>
-          1718
+          1184
         </td>
         <td>
-          2962
+          3025
           -
-          2978
+          3080
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.collections.ObservableList.addAll
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.stateContainer.children.addAll(control.this.Label.sfxLabel2jfx(GameInfoBarImpl.this.messageLabel), layout.this.VBox.sfxVBox2jfx(GameInfoBarImpl.this.timerPane))
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          2148
+        </td>
+        <td>
+          3086
+          -
+          3102
         </td>
         <td>
           Apply
@@ -689,36 +703,15 @@
         </td>
       </tr><tr>
         <td>
-          110
+          117
         </td>
         <td>
-          1153
+          982
         </td>
         <td>
-          3016
+          3154
           -
-          3022
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Pass&quot;
-        </td>
-      </tr><tr>
-        <td>
-          110
-        </td>
-        <td>
-          2095
-        </td>
-        <td>
-          3030
-          -
-          3048
+          3172
         </td>
         <td>
           Apply
@@ -731,15 +724,36 @@
         </td>
       </tr><tr>
         <td>
-          110
+          117
         </td>
         <td>
-          1819
+          1576
         </td>
         <td>
-          2998
+          3140
           -
-          3049
+          3146
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Pass&quot;
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          2249
+        </td>
+        <td>
+          3122
+          -
+          3173
         </td>
         <td>
           Apply
@@ -752,15 +766,78 @@
         </td>
       </tr><tr>
         <td>
-          112
+          118
         </td>
         <td>
-          2194
+          2102
         </td>
         <td>
-          3055
+          3193
           -
-          3094
+          3252
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.MachiavelliButton.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;Leave Game&quot;, (() =&gt; GameInfoBarImpl.this.listener.leaveGame()))
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          1665
+        </td>
+        <td>
+          3211
+          -
+          3223
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Leave Game&quot;
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          1083
+        </td>
+        <td>
+          3231
+          -
+          3251
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameSceneListener.leaveGame
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.listener.leaveGame()
+        </td>
+      </tr><tr>
+        <td>
+          120
+        </td>
+        <td>
+          1187
+        </td>
+        <td>
+          3258
+          -
+          3297
         </td>
         <td>
           Apply
@@ -773,15 +850,15 @@
         </td>
       </tr><tr>
         <td>
-          112
+          120
         </td>
         <td>
-          1219
+          1469
         </td>
         <td>
-          3077
+          3280
           -
-          3094
+          3297
         </td>
         <td>
           Select
@@ -794,15 +871,120 @@
         </td>
       </tr><tr>
         <td>
-          114
+          121
         </td>
         <td>
-          1692
+          1581
         </td>
         <td>
-          3138
+          3302
           -
-          3159
+          3342
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.leaveBtn.prefWidth.&lt;==(GameInfoBarImpl.this.rightBottom.width)
+        </td>
+      </tr><tr>
+        <td>
+          121
+        </td>
+        <td>
+          2189
+        </td>
+        <td>
+          3325
+          -
+          3342
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.Region.width
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.rightBottom.width
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1255
+        </td>
+        <td>
+          3348
+          -
+          3418
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.collections.ObservableList.addAll
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.btnContainer.children.addAll(control.this.Button.sfxButton2jfx(GameInfoBarImpl.this.nextBtn), control.this.Button.sfxButton2jfx(GameInfoBarImpl.this.leaveBtn), layout.this.HBox.sfxHBox2jfx(GameInfoBarImpl.this.historyNavigationPane))
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1138
+        </td>
+        <td>
+          3386
+          -
+          3394
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Button.sfxButton2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(GameInfoBarImpl.this.leaveBtn)
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1706
+        </td>
+        <td>
+          3386
+          -
+          3394
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.leaveBtn
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.leaveBtn
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1472
+        </td>
+        <td>
+          3396
+          -
+          3417
         </td>
         <td>
           ApplyImplicitView
@@ -815,36 +997,15 @@
         </td>
       </tr><tr>
         <td>
-          114
+          123
         </td>
         <td>
-          1102
+          2315
         </td>
         <td>
-          3100
+          3377
           -
-          3160
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.collections.ObservableList.addAll
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.btnContainer.children.addAll(control.this.Button.sfxButton2jfx(GameInfoBarImpl.this.nextBtn), layout.this.HBox.sfxHBox2jfx(GameInfoBarImpl.this.historyNavigationPane))
-        </td>
-      </tr><tr>
-        <td>
-          114
-        </td>
-        <td>
-          1042
-        </td>
-        <td>
-          3129
-          -
-          3136
+          3384
         </td>
         <td>
           ApplyImplicitView
@@ -857,15 +1018,36 @@
         </td>
       </tr><tr>
         <td>
-          114
+          123
         </td>
         <td>
-          2267
+          987
         </td>
         <td>
-          3138
+          3377
           -
-          3159
+          3384
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.nextBtn
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.nextBtn
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          2082
+        </td>
+        <td>
+          3396
+          -
+          3417
         </td>
         <td>
           Select
@@ -878,120 +1060,15 @@
         </td>
       </tr><tr>
         <td>
-          114
+          125
         </td>
         <td>
-          1588
+          1647
         </td>
         <td>
-          3129
+          3449
           -
-          3136
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.nextBtn
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.nextBtn
-        </td>
-      </tr><tr>
-        <td>
-          116
-        </td>
-        <td>
-          1590
-        </td>
-        <td>
-          3166
-          -
-          3224
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.collections.ObservableList.addAll
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.rightTop.children.addAll(layout.this.VBox.sfxVBox2jfx(GameInfoBarImpl.this.stateContainer), layout.this.TilePane.sfxTilePane2jfx(GameInfoBarImpl.this.otherPlayersPane))
-        </td>
-      </tr><tr>
-        <td>
-          116
-        </td>
-        <td>
-          2170
-        </td>
-        <td>
-          3207
-          -
-          3223
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.layout.TilePane.sfxTilePane2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          layout.this.TilePane.sfxTilePane2jfx(GameInfoBarImpl.this.otherPlayersPane)
-        </td>
-      </tr><tr>
-        <td>
-          116
-        </td>
-        <td>
-          1221
-        </td>
-        <td>
-          3207
-          -
-          3223
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.otherPlayersPane
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.otherPlayersPane
-        </td>
-      </tr><tr>
-        <td>
-          116
-        </td>
-        <td>
-          2073
-        </td>
-        <td>
-          3191
-          -
-          3205
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.stateContainer
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.stateContainer
-        </td>
-      </tr><tr>
-        <td>
-          116
-        </td>
-        <td>
-          1740
-        </td>
-        <td>
-          3191
-          -
-          3205
+          3463
         </td>
         <td>
           ApplyImplicitView
@@ -1004,57 +1081,99 @@
         </td>
       </tr><tr>
         <td>
-          117
+          125
         </td>
         <td>
-          1695
+          1686
         </td>
         <td>
-          3229
+          3424
           -
-          3267
+          3482
         </td>
         <td>
           Apply
         </td>
         <td>
-          java.util.List.add
+          javafx.collections.ObservableList.addAll
         </td>
         <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.rightBottom.children.add(layout.this.VBox.sfxVBox2jfx(GameInfoBarImpl.this.btnContainer))
+          GameInfoBarImpl.this.rightTop.children.addAll(layout.this.VBox.sfxVBox2jfx(GameInfoBarImpl.this.stateContainer), layout.this.TilePane.sfxTilePane2jfx(GameInfoBarImpl.this.otherPlayersPane))
         </td>
       </tr><tr>
         <td>
-          117
+          125
         </td>
         <td>
-          2217
+          1060
         </td>
         <td>
-          3254
+          3465
           -
-          3266
+          3481
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.otherPlayersPane
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.otherPlayersPane
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          1959
+        </td>
+        <td>
+          3465
+          -
+          3481
         </td>
         <td>
           ApplyImplicitView
         </td>
         <td>
-          scalafx.scene.layout.VBox.sfxVBox2jfx
+          scalafx.scene.layout.TilePane.sfxTilePane2jfx
         </td>
         <td style="background: #F0ADAD">
-          layout.this.VBox.sfxVBox2jfx(GameInfoBarImpl.this.btnContainer)
+          layout.this.TilePane.sfxTilePane2jfx(GameInfoBarImpl.this.otherPlayersPane)
         </td>
       </tr><tr>
         <td>
-          117
+          125
         </td>
         <td>
-          1044
+          2195
         </td>
         <td>
-          3254
+          3449
           -
-          3266
+          3463
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.stateContainer
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.stateContainer
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          1142
+        </td>
+        <td>
+          3512
+          -
+          3524
         </td>
         <td>
           Select
@@ -1067,36 +1186,57 @@
         </td>
       </tr><tr>
         <td>
-          119
+          126
         </td>
         <td>
-          1079
+          2097
         </td>
         <td>
-          3279
+          3512
           -
-          3287
+          3524
         </td>
         <td>
-          Select
+          ApplyImplicitView
         </td>
         <td>
-          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.rightTop
+          scalafx.scene.layout.VBox.sfxVBox2jfx
         </td>
         <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.rightTop
+          layout.this.VBox.sfxVBox2jfx(GameInfoBarImpl.this.btnContainer)
         </td>
       </tr><tr>
         <td>
-          119
+          126
         </td>
         <td>
-          2077
+          1543
         </td>
         <td>
-          3273
+          3487
           -
-          3287
+          3525
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.add
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.rightBottom.children.add(layout.this.VBox.sfxVBox2jfx(GameInfoBarImpl.this.btnContainer))
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          2202
+        </td>
+        <td>
+          3531
+          -
+          3545
         </td>
         <td>
           Apply
@@ -1109,36 +1249,36 @@
         </td>
       </tr><tr>
         <td>
-          120
+          128
         </td>
         <td>
-          1481
+          1215
         </td>
         <td>
-          3301
+          3537
           -
-          3312
+          3545
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.rightBottom
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.rightTop
         </td>
         <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.rightBottom
+          GameInfoBarImpl.this.rightTop
         </td>
       </tr><tr>
         <td>
-          120
+          129
         </td>
         <td>
-          1175
+          1033
         </td>
         <td>
-          3292
+          3550
           -
-          3312
+          3570
         </td>
         <td>
           Apply
@@ -1151,15 +1291,36 @@
         </td>
       </tr><tr>
         <td>
-          123
+          129
         </td>
         <td>
-          2123
+          1637
         </td>
         <td>
-          3389
+          3559
           -
-          3416
+          3570
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.rightBottom
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.rightBottom
+        </td>
+      </tr><tr>
+        <td>
+          132
+        </td>
+        <td>
+          2029
+        </td>
+        <td>
+          3647
+          -
+          3674
         </td>
         <td>
           Apply
@@ -1172,15 +1333,15 @@
         </td>
       </tr><tr>
         <td>
-          127
+          136
         </td>
         <td>
-          1564
+          1691
         </td>
         <td>
-          3478
+          3736
           -
-          3494
+          3752
         </td>
         <td>
           Apply
@@ -1193,15 +1354,15 @@
         </td>
       </tr><tr>
         <td>
-          130
+          139
         </td>
         <td>
-          982
+          1145
         </td>
         <td>
-          3555
+          3813
           -
-          3571
+          3829
         </td>
         <td>
           Apply
@@ -1214,15 +1375,15 @@
         </td>
       </tr><tr>
         <td>
-          134
+          143
         </td>
         <td>
-          2222
+          2075
         </td>
         <td>
-          3645
+          3903
           -
-          3683
+          3941
         </td>
         <td>
           Apply
@@ -1235,15 +1396,15 @@
         </td>
       </tr><tr>
         <td>
-          135
+          144
         </td>
         <td>
-          1648
+          1507
         </td>
         <td>
-          3690
+          3948
           -
-          3714
+          3972
         </td>
         <td>
           Apply
@@ -1256,15 +1417,15 @@
         </td>
       </tr><tr>
         <td>
-          140
+          149
         </td>
         <td>
-          1080
+          1207
         </td>
         <td>
-          3793
+          4051
           -
-          3818
+          4076
         </td>
         <td>
           Apply
@@ -1277,15 +1438,15 @@
         </td>
       </tr><tr>
         <td>
-          141
+          150
         </td>
         <td>
-          2082
+          2174
         </td>
         <td>
-          3825
+          4083
           -
-          3862
+          4120
         </td>
         <td>
           Apply
@@ -1298,57 +1459,15 @@
         </td>
       </tr><tr>
         <td>
-          145
+          154
         </td>
         <td>
-          1180
+          1954
         </td>
         <td>
-          3969
+          4208
           -
-          3977
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Boolean.unary_!
-        </td>
-        <td style="background: #F0ADAD">
-          enabled.unary_!
-        </td>
-      </tr><tr>
-        <td>
-          145
-        </td>
-        <td>
-          1458
-        </td>
-        <td>
-          3950
-          -
-          3957
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.nextBtn
-        </td>
-        <td style="background: #F0ADAD">
-          GameInfoBarImpl.this.nextBtn
-        </td>
-      </tr><tr>
-        <td>
-          145
-        </td>
-        <td>
-          2163
-        </td>
-        <td>
-          3950
-          -
-          3978
+          4236
         </td>
         <td>
           Apply
@@ -1361,15 +1480,57 @@
         </td>
       </tr><tr>
         <td>
-          148
+          154
         </td>
         <td>
-          1567
+          1577
         </td>
         <td>
-          4069
+          4208
           -
-          4112
+          4215
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl.nextBtn
+        </td>
+        <td style="background: #F0ADAD">
+          GameInfoBarImpl.this.nextBtn
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          1012
+        </td>
+        <td>
+          4227
+          -
+          4235
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Boolean.unary_!
+        </td>
+        <td style="background: #F0ADAD">
+          enabled.unary_!
+        </td>
+      </tr><tr>
+        <td>
+          157
+        </td>
+        <td>
+          1694
+        </td>
+        <td>
+          4327
+          -
+          4370
         </td>
         <td>
           Apply
@@ -1382,15 +1543,15 @@
         </td>
       </tr><tr>
         <td>
-          151
+          160
         </td>
         <td>
-          985
+          1121
         </td>
         <td>
-          4195
+          4453
           -
-          4241
+          4499
         </td>
         <td>
           Apply
@@ -1403,15 +1564,15 @@
         </td>
       </tr><tr>
         <td>
-          154
+          163
         </td>
         <td>
-          2282
+          2080
         </td>
         <td>
-          4323
+          4581
           -
-          4368
+          4626
         </td>
         <td>
           Apply
@@ -1424,15 +1585,15 @@
         </td>
       </tr><tr>
         <td>
-          157
+          166
         </td>
         <td>
-          1690
+          1495
         </td>
         <td>
-          4450
+          4708
           -
-          4495
+          4753
         </td>
         <td>
           Apply
@@ -1442,6 +1603,27 @@
         </td>
         <td style="background: #F0ADAD">
           GameInfoBarImpl.this.historyNavigationPane.setUndoEnabled(enabled)
+        </td>
+      </tr><tr>
+        <td>
+          170
+        </td>
+        <td>
+          885
+        </td>
+        <td>
+          4837
+          -
+          4858
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Labeled.setText
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(GameInfoBarImpl.this.nextBtn).setText(text)
         </td>
       </tr>
     </table>

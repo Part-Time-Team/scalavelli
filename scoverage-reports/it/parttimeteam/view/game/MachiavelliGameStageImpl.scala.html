@@ -26,7 +26,7 @@
 </span>2 <span style=''>
 </span>3 <span style=''>import it.parttimeteam.controller.game.GameListener
 </span>4 <span style=''>import it.parttimeteam.core.cards.Card
-</span>5 <span style=''>import it.parttimeteam.gamestate.PlayerGameState
+</span>5 <span style=''>import it.parttimeteam.model.game.ClientGameState
 </span>6 <span style=''>import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
 </span>7 <span style=''>import it.parttimeteam.view.utils.MachiavelliAlert
 </span>8 <span style=''>import scalafx.application.Platform
@@ -45,172 +45,168 @@
 </span>21 <span style=''>
 </span>22 <span style=''>  </span><span style='background: #F0ADAD'>scene = gameScene</span><span style=''>
 </span>23 <span style=''>
-</span>24 <span style=''>  </span><span style='background: #F0ADAD'>onCloseRequest = e =&gt; {
-</span>25 <span style=''></span><span style='background: #F0ADAD'>    val alert: Alert = MachiavelliAlert(&quot;Leave the game&quot;, &quot;Are you sure you want to leave the game? The action cannot be undone.&quot;, AlertType.Confirmation)
-</span>26 <span style=''></span><span style='background: #F0ADAD'>
-</span>27 <span style=''></span><span style='background: #F0ADAD'>    alert.showAndWait match {
-</span>28 <span style=''></span><span style='background: #F0ADAD'>      case Some(b) =&gt;
-</span>29 <span style=''></span><span style='background: #F0ADAD'>        if (b == ButtonType.OK) {
-</span>30 <span style=''></span><span style='background: #F0ADAD'>          gameListener.onViewEvent(LeaveGameEvent)
-</span>31 <span style=''></span><span style='background: #F0ADAD'>          System.exit(0)
-</span>32 <span style=''></span><span style='background: #F0ADAD'>        }
-</span>33 <span style=''></span><span style='background: #F0ADAD'>
-</span>34 <span style=''></span><span style='background: #F0ADAD'>      case None =&gt;
-</span>35 <span style=''></span><span style='background: #F0ADAD'>    }
-</span>36 <span style=''></span><span style='background: #F0ADAD'>    e.consume()
-</span>37 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>38 <span style=''>
-</span>39 <span style=''>  /** @inheritdoc */
-</span>40 <span style=''>  override def showTimer(): Unit = {
-</span>41 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>42 <span style=''></span><span style='background: #F0ADAD'>      gameScene.showTimer()
-</span>43 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>44 <span style=''>  }
-</span>45 <span style=''>
-</span>46 <span style=''>  /** @inheritdoc */
-</span>47 <span style=''>  override def setMessage(message: String): Unit = {
-</span>48 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>49 <span style=''></span><span style='background: #F0ADAD'>      gameScene.setMessage(message)
-</span>50 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>51 <span style=''>  }
-</span>52 <span style=''>
-</span>53 <span style=''>  /** @inheritdoc */
-</span>54 <span style=''>  override def updateState(state: PlayerGameState): Unit = {
-</span>55 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>56 <span style=''></span><span style='background: #F0ADAD'>      gameScene.setState(state)
-</span>57 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>58 <span style=''>  }
-</span>59 <span style=''>
-</span>60 <span style=''>  /** @inheritdoc */
-</span>61 <span style=''>  override def updateHistoryState(canUndo: Boolean, canRedo: Boolean): Unit = {
-</span>62 <span style=''>    </span><span style='background: #F0ADAD'>gameScene.setHistoryState(canUndo, canRedo)</span><span style=''>
-</span>63 <span style=''>  }
-</span>64 <span style=''>
-</span>65 <span style=''>  /** @inheritdoc */
-</span>66 <span style=''>  override def initMatch(): Unit = {
-</span>67 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>68 <span style=''></span><span style='background: #F0ADAD'>      gameScene.disableActions()
-</span>69 <span style=''></span><span style='background: #F0ADAD'>      gameScene.showInitMatch()
-</span>70 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>71 <span style=''>  }
-</span>72 <span style=''>
-</span>73 <span style=''>  /** @inheritdoc */
-</span>74 <span style=''>  override def matchReady(): Unit = {
-</span>75 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>76 <span style=''></span><span style='background: #F0ADAD'>      gameScene.hideInitMatch()
-</span>77 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>78 <span style=''>  }
-</span>79 <span style=''>
-</span>80 <span style=''>  /** @inheritdoc */
-</span>81 <span style=''>  override def notifyGameEnd(gameEndType: GameEndType): Unit = {
-</span>82 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>83 <span style=''></span><span style='background: #F0ADAD'>      val message = gameEndType match {
-</span>84 <span style=''></span><span style='background: #F0ADAD'>        case GameWon =&gt; &quot;Congratulations! You won the game! Do you want to play again?&quot;
-</span>85 <span style=''></span><span style='background: #F0ADAD'>
-</span>86 <span style=''></span><span style='background: #F0ADAD'>        case GameLost(winnerUsername: String) =&gt; s&quot;This game has a winner. And the winner is.. $winnerUsername! Do you want to play again?&quot;
-</span>87 <span style=''></span><span style='background: #F0ADAD'>
-</span>88 <span style=''></span><span style='background: #F0ADAD'>        case GameEndWithError(reason: String) =&gt; s&quot;The game ended. $reason. Do you want to play again?&quot;
-</span>89 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>90 <span style=''></span><span style='background: #F0ADAD'>
-</span>91 <span style=''></span><span style='background: #F0ADAD'>      val alert = MachiavelliAlert(&quot;Game ended&quot;, message, AlertType.Information)
-</span>92 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait match {
-</span>93 <span style=''></span><span style='background: #F0ADAD'>        case Some(b) =&gt;
-</span>94 <span style=''></span><span style='background: #F0ADAD'>          if (b == ButtonType.OK) {
-</span>95 <span style=''></span><span style='background: #F0ADAD'>            gameListener.onViewEvent(PlayAgainEvent)
-</span>96 <span style=''></span><span style='background: #F0ADAD'>          } else {
-</span>97 <span style=''></span><span style='background: #F0ADAD'>            System.exit(0)
-</span>98 <span style=''></span><span style='background: #F0ADAD'>          }
-</span>99 <span style=''></span><span style='background: #F0ADAD'>
-</span>100 <span style=''></span><span style='background: #F0ADAD'>        case None =&gt;
-</span>101 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>102 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>103 <span style=''>  }
-</span>104 <span style=''>
-</span>105 <span style=''>  /** @inheritdoc */
-</span>106 <span style=''>  override def enableActions(): Unit = {
-</span>107 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>108 <span style=''></span><span style='background: #F0ADAD'>      gameScene.enableActions()
-</span>109 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>110 <span style=''>  }
-</span>111 <span style=''>
-</span>112 <span style=''>  /** @inheritdoc */
-</span>113 <span style=''>  override def disableActions(): Unit = {
-</span>114 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>115 <span style=''></span><span style='background: #F0ADAD'>      gameScene.disableActions()
-</span>116 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>117 <span style=''>  }
-</span>118 <span style=''>
-</span>119 <span style=''>  /** @inheritdoc */
-</span>120 <span style=''>  override def hideTimer(): Unit = {
-</span>121 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>122 <span style=''></span><span style='background: #F0ADAD'>      gameScene.hideTimer()
+</span>24 <span style=''>  </span><span style='background: #F0ADAD'>onCloseRequest = _ =&gt; System.exit(0)</span><span style=''>
+</span>25 <span style=''>
+</span>26 <span style=''>  /** @inheritdoc */
+</span>27 <span style=''>  override def showTimer(): Unit = {
+</span>28 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>29 <span style=''></span><span style='background: #F0ADAD'>      gameScene.showTimer()
+</span>30 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>31 <span style=''>  }
+</span>32 <span style=''>
+</span>33 <span style=''>  /** @inheritdoc */
+</span>34 <span style=''>  override def setMessage(message: String): Unit = {
+</span>35 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>36 <span style=''></span><span style='background: #F0ADAD'>      gameScene.setMessage(message)
+</span>37 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>38 <span style=''>  }
+</span>39 <span style=''>
+</span>40 <span style=''>  /** @inheritdoc */
+</span>41 <span style=''>  override def updateState(viewGameState: ClientGameState): Unit = {
+</span>42 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>43 <span style=''></span><span style='background: #F0ADAD'>      gameScene.setState(viewGameState)
+</span>44 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>45 <span style=''>  }
+</span>46 <span style=''>
+</span>47 <span style=''>  /** @inheritdoc */
+</span>48 <span style=''>  override def initMatch(): Unit = {
+</span>49 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>50 <span style=''></span><span style='background: #F0ADAD'>      gameScene.disableActions()
+</span>51 <span style=''></span><span style='background: #F0ADAD'>      gameScene.showInitMatch()
+</span>52 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>53 <span style=''>  }
+</span>54 <span style=''>
+</span>55 <span style=''>  /** @inheritdoc */
+</span>56 <span style=''>  override def matchReady(): Unit = {
+</span>57 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>58 <span style=''></span><span style='background: #F0ADAD'>      gameScene.hideInitMatch()
+</span>59 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>60 <span style=''>  }
+</span>61 <span style=''>
+</span>62 <span style=''>  /** @inheritdoc */
+</span>63 <span style=''>  override def notifyGameEnd(gameEndType: GameEndType): Unit = {
+</span>64 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>65 <span style=''></span><span style='background: #F0ADAD'>      val message: String = gameEndType match {
+</span>66 <span style=''></span><span style='background: #F0ADAD'>        case GameWon =&gt; &quot;Congratulations! You won the game! Do you want to play again?&quot;
+</span>67 <span style=''></span><span style='background: #F0ADAD'>
+</span>68 <span style=''></span><span style='background: #F0ADAD'>        case GameLost(winnerUsername: String) =&gt; s&quot;This game has a winner. And the winner is.. $winnerUsername! Do you want to play again?&quot;
+</span>69 <span style=''></span><span style='background: #F0ADAD'>
+</span>70 <span style=''></span><span style='background: #F0ADAD'>        case GameEndWithError(reason: String) =&gt; s&quot;The game ended. $reason. Do you want to play again?&quot;
+</span>71 <span style=''></span><span style='background: #F0ADAD'>
+</span>72 <span style=''></span><span style='background: #F0ADAD'>        case _ =&gt; &quot;&quot;
+</span>73 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>74 <span style=''></span><span style='background: #F0ADAD'>
+</span>75 <span style=''></span><span style='background: #F0ADAD'>      val alert = MachiavelliAlert(&quot;Game ended&quot;, message, AlertType.Information)
+</span>76 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait match {
+</span>77 <span style=''></span><span style='background: #F0ADAD'>        case Some(b) =&gt;
+</span>78 <span style=''></span><span style='background: #F0ADAD'>          if (b == ButtonType.OK) {
+</span>79 <span style=''></span><span style='background: #F0ADAD'>            gameListener.onViewEvent(PlayAgainEvent)
+</span>80 <span style=''></span><span style='background: #F0ADAD'>          } else {
+</span>81 <span style=''></span><span style='background: #F0ADAD'>            System.exit(0)
+</span>82 <span style=''></span><span style='background: #F0ADAD'>          }
+</span>83 <span style=''></span><span style='background: #F0ADAD'>
+</span>84 <span style=''></span><span style='background: #F0ADAD'>        case None =&gt;
+</span>85 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>86 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>87 <span style=''>  }
+</span>88 <span style=''>
+</span>89 <span style=''>  /** @inheritdoc */
+</span>90 <span style=''>  override def enableActions(): Unit = {
+</span>91 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>92 <span style=''></span><span style='background: #F0ADAD'>      gameScene.enableActions()
+</span>93 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>94 <span style=''>  }
+</span>95 <span style=''>
+</span>96 <span style=''>  /** @inheritdoc */
+</span>97 <span style=''>  override def disableActions(): Unit = {
+</span>98 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>99 <span style=''></span><span style='background: #F0ADAD'>      gameScene.disableActions()
+</span>100 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>101 <span style=''>  }
+</span>102 <span style=''>
+</span>103 <span style=''>  /** @inheritdoc */
+</span>104 <span style=''>  override def hideTimer(): Unit = {
+</span>105 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>106 <span style=''></span><span style='background: #F0ADAD'>      gameScene.hideTimer()
+</span>107 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>108 <span style=''>  }
+</span>109 <span style=''>
+</span>110 <span style=''>  /** @inheritdoc */
+</span>111 <span style=''>  override def notifyError(result: String): Unit = {
+</span>112 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>113 <span style=''></span><span style='background: #F0ADAD'>      val alert: Alert = MachiavelliAlert(&quot;Error&quot;, result, AlertType.Error)
+</span>114 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait()
+</span>115 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>116 <span style=''>  }
+</span>117 <span style=''>
+</span>118 <span style=''>  /** @inheritdoc */
+</span>119 <span style=''>  override def notifyInfo(message: String): Unit = {
+</span>120 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>121 <span style=''></span><span style='background: #F0ADAD'>      val alert: Alert = MachiavelliAlert(&quot;&quot;, message, AlertType.Information)
+</span>122 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait()
 </span>123 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
 </span>124 <span style=''>  }
 </span>125 <span style=''>
 </span>126 <span style=''>  /** @inheritdoc */
-</span>127 <span style=''>  override def notifyError(result: String): Unit = {
-</span>128 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>129 <span style=''></span><span style='background: #F0ADAD'>      val alert: Alert = MachiavelliAlert(&quot;Error&quot;, result, AlertType.Error)
-</span>130 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait()
-</span>131 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>132 <span style=''>  }
-</span>133 <span style=''>
-</span>134 <span style=''>  /** @inheritdoc */
-</span>135 <span style=''>  override def notifyInfo(message: String): Unit = {
-</span>136 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
-</span>137 <span style=''></span><span style='background: #F0ADAD'>      val alert: Alert = MachiavelliAlert(&quot;&quot;, message, AlertType.Information)
-</span>138 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait()
-</span>139 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>140 <span style=''>  }
-</span>141 <span style=''>
-</span>142 <span style=''>  /** @inheritdoc */
-</span>143 <span style=''>  override def setInTurn(): Unit = {
-</span>144 <span style=''>    </span><span style='background: #F0ADAD'>gameScene.setInTurn(true)</span><span style=''>
-</span>145 <span style=''>    </span><span style='background: #F0ADAD'>notifyInfo(&quot;It's your turn&quot;)</span><span style=''>
-</span>146 <span style=''>    </span><span style='background: #F0ADAD'>setMessage(&quot;Your turn&quot;)</span><span style=''>
-</span>147 <span style=''>  }
+</span>127 <span style=''>  override def setInTurn(): Unit = {
+</span>128 <span style=''>    </span><span style='background: #F0ADAD'>gameScene.setInTurn(true)</span><span style=''>
+</span>129 <span style=''>    </span><span style='background: #F0ADAD'>notifyInfo(&quot;It's your turn&quot;)</span><span style=''>
+</span>130 <span style=''>    </span><span style='background: #F0ADAD'>setMessage(&quot;Your turn&quot;)</span><span style=''>
+</span>131 <span style=''>  }
+</span>132 <span style=''>
+</span>133 <span style=''>  /** @inheritdoc */
+</span>134 <span style=''>  override def setTurnEnded(): Unit = {
+</span>135 <span style=''>    </span><span style='background: #F0ADAD'>gameScene.setInTurn(false)</span><span style=''>
+</span>136 <span style=''>    </span><span style='background: #F0ADAD'>setMessage(&quot;&quot;)</span><span style=''>
+</span>137 <span style=''>  }
+</span>138 <span style=''>
+</span>139 <span style=''>  // view actions
+</span>140 <span style=''>  /** @inheritdoc*/
+</span>141 <span style=''>  override def pickCombination(combinationId: String): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(PickCardCombinationEvent(combinationId))</span><span style=''>
+</span>142 <span style=''>
+</span>143 <span style=''>  /** @inheritdoc*/
+</span>144 <span style=''>  override def endTurn(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(EndTurnEvent)</span><span style=''>
+</span>145 <span style=''>
+</span>146 <span style=''>  /** @inheritdoc*/
+</span>147 <span style=''>  override def nextState(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(RedoEvent)</span><span style=''>
 </span>148 <span style=''>
-</span>149 <span style=''>  /** @inheritdoc */
-</span>150 <span style=''>  override def setTurnEnded(): Unit = {
-</span>151 <span style=''>    </span><span style='background: #F0ADAD'>gameScene.setInTurn(false)</span><span style=''>
-</span>152 <span style=''>    </span><span style='background: #F0ADAD'>setMessage(&quot;&quot;)</span><span style=''>
-</span>153 <span style=''>  }
+</span>149 <span style=''>  /** @inheritdoc*/
+</span>150 <span style=''>  override def previousState(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(UndoEvent)</span><span style=''>
+</span>151 <span style=''>
+</span>152 <span style=''>  /** @inheritdoc*/
+</span>153 <span style=''>  override def makeCombination(cards: Seq[Card]): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(MakeCombinationEvent(cards))</span><span style=''>
 </span>154 <span style=''>
-</span>155 <span style=''>  // view actions
-</span>156 <span style=''>  /** @inheritdoc*/
-</span>157 <span style=''>  override def pickCombination(combinationId: String): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(PickCardCombinationEvent(combinationId))</span><span style=''>
-</span>158 <span style=''>
-</span>159 <span style=''>  /** @inheritdoc*/
-</span>160 <span style=''>  override def endTurn(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(EndTurnEvent)</span><span style=''>
-</span>161 <span style=''>
-</span>162 <span style=''>  /** @inheritdoc*/
-</span>163 <span style=''>  override def nextState(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(RedoEvent)</span><span style=''>
-</span>164 <span style=''>
-</span>165 <span style=''>  /** @inheritdoc*/
-</span>166 <span style=''>  override def previousState(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(UndoEvent)</span><span style=''>
-</span>167 <span style=''>
-</span>168 <span style=''>  /** @inheritdoc*/
-</span>169 <span style=''>  override def makeCombination(cards: Seq[Card]): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(MakeCombinationEvent(cards))</span><span style=''>
+</span>155 <span style=''>  /** @inheritdoc*/
+</span>156 <span style=''>  override def pickCards(cards: Seq[Card]): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(PickCardsEvent(cards))</span><span style=''>
+</span>157 <span style=''>
+</span>158 <span style=''>  /** @inheritdoc*/
+</span>159 <span style=''>  override def sortHandBySuit(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(SortHandBySuitEvent)</span><span style=''>
+</span>160 <span style=''>
+</span>161 <span style=''>  /** @inheritdoc*/
+</span>162 <span style=''>  override def sortHandByRank(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(SortHandByRankEvent)</span><span style=''>
+</span>163 <span style=''>
+</span>164 <span style=''>  /** @inheritdoc*/
+</span>165 <span style=''>  override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(UpdateCardCombinationEvent(combinationId, cards))</span><span style=''>
+</span>166 <span style=''>
+</span>167 <span style=''>  /** @inheritdoc*/
+</span>168 <span style=''>  override def leaveGame(): Unit = {
+</span>169 <span style=''>    val alert: Alert = </span><span style='background: #F0ADAD'>MachiavelliAlert(&quot;Leave the game&quot;, &quot;Are you sure you want to leave the game? The action cannot be undone.&quot;, AlertType.Confirmation)</span><span style=''>
 </span>170 <span style=''>
-</span>171 <span style=''>  /** @inheritdoc*/
-</span>172 <span style=''>  override def pickCards(cards: Seq[Card]): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(PickCardsEvent(cards))</span><span style=''>
-</span>173 <span style=''>
-</span>174 <span style=''>  /** @inheritdoc*/
-</span>175 <span style=''>  override def sortHandBySuit(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(SortHandBySuitEvent)</span><span style=''>
-</span>176 <span style=''>
-</span>177 <span style=''>  /** @inheritdoc*/
-</span>178 <span style=''>  override def sortHandByRank(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(SortHandByRankEvent)</span><span style=''>
-</span>179 <span style=''>
-</span>180 <span style=''>  /** @inheritdoc*/
-</span>181 <span style=''>  override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(UpdateCardCombinationEvent(combinationId, cards))</span><span style=''>
-</span>182 <span style=''>
-</span>183 <span style=''>  /** @inheritdoc*/
-</span>184 <span style=''>  override def leaveGame(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(LeaveGameEvent)</span><span style=''>
-</span>185 <span style=''>
-</span>186 <span style=''>  /** @inheritdoc*/
-</span>187 <span style=''>  override def resetHistory(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(ResetEvent)</span><span style=''>
-</span>188 <span style=''>
-</span>189 <span style=''>}
+</span>171 <span style=''>    </span><span style='background: #F0ADAD'>alert.showAndWait</span><span style=''> match {
+</span>172 <span style=''>      case Some(b) =&gt;
+</span>173 <span style=''>        if (</span><span style='background: #F0ADAD'>b == ButtonType.OK</span><span style=''>) </span><span style='background: #F0ADAD'>{
+</span>174 <span style=''></span><span style='background: #F0ADAD'>          gameListener.onViewEvent(LeaveGameEvent)
+</span>175 <span style=''></span><span style='background: #F0ADAD'>          System.exit(0)
+</span>176 <span style=''></span><span style='background: #F0ADAD'>        }</span><span style=''>
+</span>177 <span style=''>
+</span>178 <span style=''>      case None </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>179 <span style=''>    }
+</span>180 <span style=''>  }
+</span>181 <span style=''>
+</span>182 <span style=''>  /** @inheritdoc*/
+</span>183 <span style=''>  override def resetHistory(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(ResetEvent)</span><span style=''>
+</span>184 <span style=''>
+</span>185 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -227,12 +223,12 @@
           20
         </td>
         <td>
-          920
+          1170
         </td>
         <td>
-          680
+          681
           -
-          685
+          686
         </td>
         <td>
           Select
@@ -248,12 +244,12 @@
           20
         </td>
         <td>
-          1857
+          883
         </td>
         <td>
-          662
+          663
           -
-          686
+          687
         </td>
         <td>
           Apply
@@ -269,12 +265,12 @@
           22
         </td>
         <td>
-          1315
+          1861
         </td>
         <td>
-          698
+          699
           -
-          707
+          708
         </td>
         <td>
           Select
@@ -290,12 +286,12 @@
           22
         </td>
         <td>
-          2221
+          1301
         </td>
         <td>
-          690
+          691
           -
-          707
+          708
         </td>
         <td>
           Apply
@@ -311,280 +307,12 @@
           24
         </td>
         <td>
-          882
+          2236
         </td>
         <td>
-          711
+          734
           -
-          1108
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.stage.Window.onCloseRequest_=
-        </td>
-        <td style="background: #F0ADAD">
-          MachiavelliGameStageImpl.this.onCloseRequest_=(((e: javafx.stage.WindowEvent) =&gt; {
-  val alert: scalafx.scene.control.Alert = it.parttimeteam.view.utils.MachiavelliAlert.apply(&quot;Leave the game&quot;, &quot;Are you sure you want to leave the game? The action cannot be undone.&quot;, scalafx.scene.control.Alert.AlertType.Confirmation);
-  alert.showAndWait() match {
-    case (value: scalafx.scene.control.ButtonType)Some[scalafx.scene.control.ButtonType]((b @ _)) =&gt; if (b.==(scalafx.scene.control.ButtonType.OK))
-      {
-        MachiavelliGameStageImpl.this.gameListener.onViewEvent(LeaveGameEvent);
-        java.lang.System.exit(0)
-      }
-    else
-      ()
-    case scala.None =&gt; ()
-  };
-  e.consume()
-}))
-        </td>
-      </tr><tr>
-        <td>
-          25
-        </td>
-        <td>
-          831
-        </td>
-        <td>
-          866
-          -
-          888
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scalafx.scene.control.Alert.AlertType.Confirmation
-        </td>
-        <td style="background: #F0ADAD">
-          scalafx.scene.control.Alert.AlertType.Confirmation
-        </td>
-      </tr><tr>
-        <td>
-          25
-        </td>
-        <td>
-          1404
-        </td>
-        <td>
-          793
-          -
-          864
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Are you sure you want to leave the game? The action cannot be undone.&quot;
-        </td>
-      </tr><tr>
-        <td>
-          25
-        </td>
-        <td>
-          1685
-        </td>
-        <td>
-          775
-          -
-          791
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Leave the game&quot;
-        </td>
-      </tr><tr>
-        <td>
-          25
-        </td>
-        <td>
-          1798
-        </td>
-        <td>
-          758
-          -
-          889
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.utils.MachiavelliAlert.apply
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliAlert.apply(&quot;Leave the game&quot;, &quot;Are you sure you want to leave the game? The action cannot be undone.&quot;, scalafx.scene.control.Alert.AlertType.Confirmation)
-        </td>
-      </tr><tr>
-        <td>
-          27
-        </td>
-        <td>
-          1217
-        </td>
-        <td>
-          895
-          -
-          912
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.control.Alert.showAndWait
-        </td>
-        <td style="background: #F0ADAD">
-          alert.showAndWait()
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          1362
-        </td>
-        <td>
-          951
-          -
-          951
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          1837
-        </td>
-        <td>
-          955
-          -
-          973
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.==
-        </td>
-        <td style="background: #F0ADAD">
-          b.==(scalafx.scene.control.ButtonType.OK)
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          1657
-        </td>
-        <td>
-          975
-          -
-          1062
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          {
-  MachiavelliGameStageImpl.this.gameListener.onViewEvent(LeaveGameEvent);
-  java.lang.System.exit(0)
-}
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          799
-        </td>
-        <td>
-          951
-          -
-          951
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          903
-        </td>
-        <td>
-          960
-          -
-          973
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scalafx.scene.control.ButtonType.OK
-        </td>
-        <td style="background: #F0ADAD">
-          scalafx.scene.control.ButtonType.OK
-        </td>
-      </tr><tr>
-        <td>
-          30
-        </td>
-        <td>
-          1318
-        </td>
-        <td>
-          987
-          -
-          1027
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.controller.game.GameListener.onViewEvent
-        </td>
-        <td style="background: #F0ADAD">
-          MachiavelliGameStageImpl.this.gameListener.onViewEvent(LeaveGameEvent)
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          2207
-        </td>
-        <td>
-          1038
-          -
-          1052
+          748
         </td>
         <td>
           Apply
@@ -597,57 +325,36 @@
         </td>
       </tr><tr>
         <td>
-          34
+          24
         </td>
         <td>
-          1800
+          1657
         </td>
         <td>
-          1080
+          712
           -
-          1082
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          36
-        </td>
-        <td>
-          1168
-        </td>
-        <td>
-          1093
-          -
-          1104
+          748
         </td>
         <td>
           Apply
         </td>
         <td>
-          javafx.event.Event.consume
+          scalafx.stage.Window.onCloseRequest_=
         </td>
         <td style="background: #F0ADAD">
-          e.consume()
+          MachiavelliGameStageImpl.this.onCloseRequest_=(((x$1: javafx.stage.WindowEvent) =&gt; java.lang.System.exit(0)))
         </td>
       </tr><tr>
         <td>
-          41
+          28
         </td>
         <td>
-          1291
+          801
         </td>
         <td>
-          1172
+          812
           -
-          1226
+          866
         </td>
         <td>
           Apply
@@ -660,15 +367,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          29
         </td>
         <td>
-          1841
+          1408
         </td>
         <td>
-          1198
+          838
           -
-          1219
+          859
         </td>
         <td>
           Apply
@@ -681,15 +388,15 @@
         </td>
       </tr><tr>
         <td>
-          48
+          35
         </td>
         <td>
-          1641
+          1178
         </td>
         <td>
-          1310
+          950
           -
-          1372
+          1012
         </td>
         <td>
           Apply
@@ -702,15 +409,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          36
         </td>
         <td>
-          2210
+          1834
         </td>
         <td>
-          1336
+          976
           -
-          1365
+          1005
         </td>
         <td>
           Apply
@@ -723,15 +430,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          42
         </td>
         <td>
-          801
+          1907
         </td>
         <td>
-          1464
+          1112
           -
-          1522
+          1178
         </td>
         <td>
           Apply
@@ -740,19 +447,19 @@
           scalafx.application.Platform.runLater
         </td>
         <td style="background: #F0ADAD">
-          scalafx.application.Platform.runLater[Unit](MachiavelliGameStageImpl.this.gameScene.setState(state))
+          scalafx.application.Platform.runLater[Unit](MachiavelliGameStageImpl.this.gameScene.setState(viewGameState))
         </td>
       </tr><tr>
         <td>
-          56
+          43
         </td>
         <td>
-          1399
+          2213
         </td>
         <td>
-          1490
+          1138
           -
-          1515
+          1171
         </td>
         <td>
           Apply
@@ -761,40 +468,19 @@
           it.parttimeteam.view.game.scenes.GameScene.setState
         </td>
         <td style="background: #F0ADAD">
-          MachiavelliGameStageImpl.this.gameScene.setState(state)
+          MachiavelliGameStageImpl.this.gameScene.setState(viewGameState)
         </td>
       </tr><tr>
         <td>
-          62
+          49
         </td>
         <td>
-          1814
+          1661
         </td>
         <td>
-          1633
+          1246
           -
-          1676
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.GameScene.setHistoryState
-        </td>
-        <td style="background: #F0ADAD">
-          MachiavelliGameStageImpl.this.gameScene.setHistoryState(canUndo, canRedo)
-        </td>
-      </tr><tr>
-        <td>
-          67
-        </td>
-        <td>
-          1890
-        </td>
-        <td>
-          1744
-          -
-          1835
+          1337
         </td>
         <td>
           Apply
@@ -810,15 +496,15 @@
         </td>
       </tr><tr>
         <td>
-          68
+          50
         </td>
         <td>
-          1173
+          1306
         </td>
         <td>
-          1770
+          1272
           -
-          1796
+          1298
         </td>
         <td>
           Apply
@@ -831,15 +517,15 @@
         </td>
       </tr><tr>
         <td>
-          69
+          51
         </td>
         <td>
-          2187
+          2306
         </td>
         <td>
-          1803
+          1305
           -
-          1828
+          1330
         </td>
         <td>
           Apply
@@ -852,15 +538,15 @@
         </td>
       </tr><tr>
         <td>
-          75
+          57
         </td>
         <td>
-          2276
+          854
         </td>
         <td>
-          1904
+          1406
           -
-          1962
+          1464
         </td>
         <td>
           Apply
@@ -873,15 +559,15 @@
         </td>
       </tr><tr>
         <td>
-          76
+          58
         </td>
         <td>
-          1295
+          1412
         </td>
         <td>
-          1930
+          1432
           -
-          1955
+          1457
         </td>
         <td>
           Apply
@@ -894,15 +580,15 @@
         </td>
       </tr><tr>
         <td>
-          82
+          64
         </td>
         <td>
-          2166
+          1683
         </td>
         <td>
-          2058
+          1560
           -
-          2781
+          2313
         </td>
         <td>
           Apply
@@ -916,6 +602,7 @@
     case GameWon =&gt; &quot;Congratulations! You won the game! Do you want to play again?&quot;
     case (winnerUsername: String)it.parttimeteam.view.game.GameLost((winnerUsername @ (_: String))) =&gt; scala.StringContext.apply(&quot;This game has a winner. And the winner is.. &quot;, &quot;! Do you want to play again?&quot;).s(winnerUsername)
     case (reason: String)it.parttimeteam.view.game.GameEndWithError((reason @ (_: String))) =&gt; scala.StringContext.apply(&quot;The game ended. &quot;, &quot;. Do you want to play again?&quot;).s(reason)
+    case _ =&gt; &quot;&quot;
   };
   val alert: scalafx.scene.control.Alert = it.parttimeteam.view.utils.MachiavelliAlert.apply(&quot;Game ended&quot;, message, scalafx.scene.control.Alert.AlertType.Information);
   alert.showAndWait() match {
@@ -929,15 +616,15 @@
         </td>
       </tr><tr>
         <td>
-          84
+          66
         </td>
         <td>
-          1646
+          1837
         </td>
         <td>
-          2142
+          1652
           -
-          2205
+          1715
         </td>
         <td>
           Literal
@@ -950,15 +637,15 @@
         </td>
       </tr><tr>
         <td>
-          86
+          68
         </td>
         <td>
-          1401
+          1183
         </td>
         <td>
-          2256
+          1766
           -
-          2346
+          1856
         </td>
         <td>
           Apply
@@ -971,15 +658,15 @@
         </td>
       </tr><tr>
         <td>
-          88
+          70
         </td>
         <td>
-          853
+          2186
         </td>
         <td>
-          2397
+          1907
           -
-          2451
+          1961
         </td>
         <td>
           Apply
@@ -992,15 +679,15 @@
         </td>
       </tr><tr>
         <td>
-          91
+          72
         </td>
         <td>
-          1817
+          1912
         </td>
         <td>
-          2496
+          1981
           -
-          2508
+          1983
         </td>
         <td>
           Literal
@@ -1009,19 +696,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;Game ended&quot;
+          &quot;&quot;
         </td>
       </tr><tr>
         <td>
-          91
+          75
         </td>
         <td>
-          2161
+          1704
         </td>
         <td>
-          2479
+          2011
           -
-          2541
+          2073
         </td>
         <td>
           Apply
@@ -1034,15 +721,36 @@
         </td>
       </tr><tr>
         <td>
-          91
+          75
         </td>
         <td>
-          1176
+          1288
         </td>
         <td>
-          2519
+          2028
           -
-          2540
+          2040
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Game ended&quot;
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          2310
+        </td>
+        <td>
+          2051
+          -
+          2072
         </td>
         <td>
           Select
@@ -1055,15 +763,15 @@
         </td>
       </tr><tr>
         <td>
-          92
+          76
         </td>
         <td>
-          1892
+          1134
         </td>
         <td>
-          2548
+          2080
           -
-          2565
+          2097
         </td>
         <td>
           Apply
@@ -1076,36 +784,15 @@
         </td>
       </tr><tr>
         <td>
-          94
+          78
         </td>
         <td>
-          2281
+          857
         </td>
         <td>
-          2612
+          2149
           -
-          2630
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.==
-        </td>
-        <td style="background: #F0ADAD">
-          b.==(scalafx.scene.control.ButtonType.OK)
-        </td>
-      </tr><tr>
-        <td>
-          94
-        </td>
-        <td>
-          1280
-        </td>
-        <td>
-          2617
-          -
-          2630
+          2162
         </td>
         <td>
           Select
@@ -1118,36 +805,36 @@
         </td>
       </tr><tr>
         <td>
-          95
+          78
         </td>
         <td>
-          1688
+          1789
         </td>
         <td>
-          2646
+          2144
           -
-          2686
+          2162
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.controller.game.GameListener.onViewEvent
+          java.lang.Object.==
         </td>
         <td style="background: #F0ADAD">
-          MachiavelliGameStageImpl.this.gameListener.onViewEvent(PlayAgainEvent)
+          b.==(scalafx.scene.control.ButtonType.OK)
         </td>
       </tr><tr>
         <td>
-          95
+          79
         </td>
         <td>
-          1130
+          2191
         </td>
         <td>
-          2646
+          2178
           -
-          2686
+          2218
         </td>
         <td>
           Block
@@ -1160,15 +847,36 @@
         </td>
       </tr><tr>
         <td>
-          97
+          79
         </td>
         <td>
-          856
+          1250
         </td>
         <td>
-          2718
+          2178
           -
-          2732
+          2218
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          MachiavelliGameStageImpl.this.gameListener.onViewEvent(PlayAgainEvent)
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          1883
+        </td>
+        <td>
+          2250
+          -
+          2264
         </td>
         <td>
           Apply
@@ -1181,15 +889,15 @@
         </td>
       </tr><tr>
         <td>
-          97
+          81
         </td>
         <td>
-          1774
+          1298
         </td>
         <td>
-          2718
+          2250
           -
-          2732
+          2264
         </td>
         <td>
           Block
@@ -1202,15 +910,15 @@
         </td>
       </tr><tr>
         <td>
-          100
+          84
         </td>
         <td>
-          1242
+          2289
         </td>
         <td>
-          2764
+          2296
           -
-          2766
+          2298
         </td>
         <td>
           Literal
@@ -1223,15 +931,15 @@
         </td>
       </tr><tr>
         <td>
-          107
+          91
         </td>
         <td>
-          1289
+          775
         </td>
         <td>
-          2853
+          2385
           -
-          2911
+          2443
         </td>
         <td>
           Apply
@@ -1244,15 +952,15 @@
         </td>
       </tr><tr>
         <td>
-          108
+          92
         </td>
         <td>
-          1863
+          1139
         </td>
         <td>
-          2879
+          2411
           -
-          2904
+          2436
         </td>
         <td>
           Apply
@@ -1265,15 +973,15 @@
         </td>
       </tr><tr>
         <td>
-          114
+          98
         </td>
         <td>
-          1668
+          1175
         </td>
         <td>
-          2984
+          2516
           -
-          3043
+          2575
         </td>
         <td>
           Apply
@@ -1286,15 +994,15 @@
         </td>
       </tr><tr>
         <td>
-          115
+          99
         </td>
         <td>
-          2260
+          1796
         </td>
         <td>
-          3010
+          2542
           -
-          3036
+          2568
         </td>
         <td>
           Apply
@@ -1307,15 +1015,15 @@
         </td>
       </tr><tr>
         <td>
-          121
+          105
         </td>
         <td>
-          779
+          1886
         </td>
         <td>
-          3111
+          2643
           -
-          3165
+          2697
         </td>
         <td>
           Apply
@@ -1328,15 +1036,15 @@
         </td>
       </tr><tr>
         <td>
-          122
+          106
         </td>
         <td>
-          1135
+          2164
         </td>
         <td>
-          3137
+          2669
           -
-          3158
+          2690
         </td>
         <td>
           Apply
@@ -1349,15 +1057,15 @@
         </td>
       </tr><tr>
         <td>
-          128
+          112
         </td>
         <td>
-          1294
+          779
         </td>
         <td>
-          3249
+          2781
           -
-          3377
+          2909
         </td>
         <td>
           Apply
@@ -1373,15 +1081,15 @@
         </td>
       </tr><tr>
         <td>
-          129
+          113
         </td>
         <td>
-          1778
+          1303
         </td>
         <td>
-          3311
+          2843
           -
-          3318
+          2850
         </td>
         <td>
           Literal
@@ -1394,15 +1102,15 @@
         </td>
       </tr><tr>
         <td>
-          129
+          113
         </td>
         <td>
-          1170
+          2274
         </td>
         <td>
-          3328
+          2860
           -
-          3343
+          2875
         </td>
         <td>
           Select
@@ -1415,15 +1123,15 @@
         </td>
       </tr><tr>
         <td>
-          129
+          113
         </td>
         <td>
-          2139
+          1658
         </td>
         <td>
-          3294
+          2826
           -
-          3344
+          2876
         </td>
         <td>
           Apply
@@ -1436,15 +1144,15 @@
         </td>
       </tr><tr>
         <td>
-          130
+          114
         </td>
         <td>
-          1865
+          1109
         </td>
         <td>
-          3351
+          2883
           -
-          3370
+          2902
         </td>
         <td>
           Apply
@@ -1457,15 +1165,15 @@
         </td>
       </tr><tr>
         <td>
-          136
+          120
         </td>
         <td>
-          1780
+          1273
         </td>
         <td>
-          3461
+          2993
           -
-          3591
+          3123
         </td>
         <td>
           Apply
@@ -1481,57 +1189,15 @@
         </td>
       </tr><tr>
         <td>
-          137
+          121
         </td>
         <td>
-          1106
+          1241
         </td>
         <td>
-          3506
+          3068
           -
-          3558
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.utils.MachiavelliAlert.apply
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliAlert.apply(&quot;&quot;, message, scalafx.scene.control.Alert.AlertType.Information)
-        </td>
-      </tr><tr>
-        <td>
-          137
-        </td>
-        <td>
-          2248
-        </td>
-        <td>
-          3523
-          -
-          3525
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          137
-        </td>
-        <td>
-          1643
-        </td>
-        <td>
-          3536
-          -
-          3557
+          3089
         </td>
         <td>
           Select
@@ -1544,15 +1210,57 @@
         </td>
       </tr><tr>
         <td>
-          138
+          121
         </td>
         <td>
-          780
+          2141
         </td>
         <td>
-          3565
+          3038
           -
-          3584
+          3090
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.MachiavelliAlert.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.MachiavelliAlert.apply(&quot;&quot;, message, scalafx.scene.control.Alert.AlertType.Information)
+        </td>
+      </tr><tr>
+        <td>
+          121
+        </td>
+        <td>
+          1800
+        </td>
+        <td>
+          3055
+          -
+          3057
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1559
+        </td>
+        <td>
+          3097
+          -
+          3116
         </td>
         <td>
           Apply
@@ -1565,15 +1273,15 @@
         </td>
       </tr><tr>
         <td>
-          144
+          128
         </td>
         <td>
-          1237
+          2276
         </td>
         <td>
-          3659
+          3191
           -
-          3684
+          3216
         </td>
         <td>
           Apply
@@ -1586,15 +1294,15 @@
         </td>
       </tr><tr>
         <td>
-          145
+          129
         </td>
         <td>
-          2116
+          1730
         </td>
         <td>
-          3689
+          3221
           -
-          3717
+          3249
         </td>
         <td>
           Apply
@@ -1607,15 +1315,15 @@
         </td>
       </tr><tr>
         <td>
-          146
+          130
         </td>
         <td>
-          1548
+          1071
         </td>
         <td>
-          3722
+          3254
           -
-          3745
+          3277
         </td>
         <td>
           Apply
@@ -1628,15 +1336,15 @@
         </td>
       </tr><tr>
         <td>
-          151
+          135
         </td>
         <td>
-          1266
+          781
         </td>
         <td>
-          3816
+          3348
           -
-          3842
+          3374
         </td>
         <td>
           Apply
@@ -1649,15 +1357,15 @@
         </td>
       </tr><tr>
         <td>
-          152
+          136
         </td>
         <td>
-          2249
+          1768
         </td>
         <td>
-          3847
+          3379
           -
-          3861
+          3393
         </td>
         <td>
           Apply
@@ -1670,15 +1378,15 @@
         </td>
       </tr><tr>
         <td>
-          157
+          141
         </td>
         <td>
-          1069
+          2219
         </td>
         <td>
-          3967
+          3499
           -
-          4032
+          3564
         </td>
         <td>
           Apply
@@ -1691,15 +1399,15 @@
         </td>
       </tr><tr>
         <td>
-          157
+          141
         </td>
         <td>
-          1714
+          1247
         </td>
         <td>
-          3992
+          3524
           -
-          4031
+          3563
         </td>
         <td>
           Apply
@@ -1712,15 +1420,15 @@
         </td>
       </tr><tr>
         <td>
-          160
+          144
         </td>
         <td>
-          782
+          1628
         </td>
         <td>
-          4087
+          3619
           -
-          4125
+          3657
         </td>
         <td>
           Apply
@@ -1733,15 +1441,15 @@
         </td>
       </tr><tr>
         <td>
-          163
+          147
         </td>
         <td>
-          1751
+          1276
         </td>
         <td>
-          4182
+          3714
           -
-          4217
+          3749
         </td>
         <td>
           Apply
@@ -1754,15 +1462,15 @@
         </td>
       </tr><tr>
         <td>
-          166
+          150
         </td>
         <td>
-          1243
+          2295
         </td>
         <td>
-          4278
+          3810
           -
-          4313
+          3845
         </td>
         <td>
           Apply
@@ -1775,36 +1483,15 @@
         </td>
       </tr><tr>
         <td>
-          169
+          153
         </td>
         <td>
-          1618
+          1734
         </td>
         <td>
-          4392
+          3949
           -
-          4445
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.controller.game.GameListener.onViewEvent
-        </td>
-        <td style="background: #F0ADAD">
-          MachiavelliGameStageImpl.this.gameListener.onViewEvent(MakeCombinationEvent.apply(cards))
-        </td>
-      </tr><tr>
-        <td>
-          169
-        </td>
-        <td>
-          2192
-        </td>
-        <td>
-          4417
-          -
-          4444
+          3976
         </td>
         <td>
           Apply
@@ -1817,15 +1504,36 @@
         </td>
       </tr><tr>
         <td>
-          172
+          153
         </td>
         <td>
-          2266
+          1100
         </td>
         <td>
-          4518
+          3924
           -
-          4565
+          3977
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          MachiavelliGameStageImpl.this.gameListener.onViewEvent(MakeCombinationEvent.apply(cards))
+        </td>
+      </tr><tr>
+        <td>
+          156
+        </td>
+        <td>
+          1770
+        </td>
+        <td>
+          4050
+          -
+          4097
         </td>
         <td>
           Apply
@@ -1838,15 +1546,15 @@
         </td>
       </tr><tr>
         <td>
-          172
+          156
         </td>
         <td>
-          1269
+          832
         </td>
         <td>
-          4543
+          4075
           -
-          4564
+          4096
         </td>
         <td>
           Apply
@@ -1859,15 +1567,15 @@
         </td>
       </tr><tr>
         <td>
-          175
+          159
         </td>
         <td>
-          1721
+          1227
         </td>
         <td>
-          4627
+          4159
           -
-          4672
+          4204
         </td>
         <td>
           Apply
@@ -1880,15 +1588,15 @@
         </td>
       </tr><tr>
         <td>
-          178
+          162
         </td>
         <td>
-          1098
+          2223
         </td>
         <td>
-          4734
+          4266
           -
-          4779
+          4311
         </td>
         <td>
           Apply
@@ -1901,36 +1609,15 @@
         </td>
       </tr><tr>
         <td>
-          181
+          165
         </td>
         <td>
-          1754
+          1631
         </td>
         <td>
-          4887
+          4444
           -
-          4961
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.controller.game.GameListener.onViewEvent
-        </td>
-        <td style="background: #F0ADAD">
-          MachiavelliGameStageImpl.this.gameListener.onViewEvent(UpdateCardCombinationEvent.apply(combinationId, cards))
-        </td>
-      </tr><tr>
-        <td>
-          181
-        </td>
-        <td>
-          832
-        </td>
-        <td>
-          4912
-          -
-          4960
+          4492
         </td>
         <td>
           Apply
@@ -1943,15 +1630,249 @@
         </td>
       </tr><tr>
         <td>
-          184
+          165
         </td>
         <td>
-          1220
+          1331
         </td>
         <td>
-          5018
+          4419
           -
-          5058
+          4493
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          MachiavelliGameStageImpl.this.gameListener.onViewEvent(UpdateCardCombinationEvent.apply(combinationId, cards))
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          2296
+        </td>
+        <td>
+          4592
+          -
+          4608
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Leave the game&quot;
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1709
+        </td>
+        <td>
+          4610
+          -
+          4681
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Are you sure you want to leave the game? The action cannot be undone.&quot;
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          2118
+        </td>
+        <td>
+          4575
+          -
+          4706
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.MachiavelliAlert.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.MachiavelliAlert.apply(&quot;Leave the game&quot;, &quot;Are you sure you want to leave the game? The action cannot be undone.&quot;, scalafx.scene.control.Alert.AlertType.Confirmation)
+        </td>
+      </tr><tr>
+        <td>
+          169
+        </td>
+        <td>
+          1104
+        </td>
+        <td>
+          4683
+          -
+          4705
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.Alert.AlertType.Confirmation
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.Alert.AlertType.Confirmation
+        </td>
+      </tr><tr>
+        <td>
+          171
+        </td>
+        <td>
+          1758
+        </td>
+        <td>
+          4712
+          -
+          4729
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.showAndWait
+        </td>
+        <td style="background: #F0ADAD">
+          alert.showAndWait()
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          1715
+        </td>
+        <td>
+          4768
+          -
+          4768
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          2244
+        </td>
+        <td>
+          4792
+          -
+          4879
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          {
+  MachiavelliGameStageImpl.this.gameListener.onViewEvent(LeaveGameEvent);
+  java.lang.System.exit(0)
+}
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          2166
+        </td>
+        <td>
+          4772
+          -
+          4790
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.==
+        </td>
+        <td style="background: #F0ADAD">
+          b.==(scalafx.scene.control.ButtonType.OK)
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          1229
+        </td>
+        <td>
+          4777
+          -
+          4790
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.ButtonType.OK
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.ButtonType.OK
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          1112
+        </td>
+        <td>
+          4768
+          -
+          4768
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          174
+        </td>
+        <td>
+          1603
+        </td>
+        <td>
+          4804
+          -
+          4844
         </td>
         <td>
           Apply
@@ -1964,15 +1885,57 @@
         </td>
       </tr><tr>
         <td>
-          187
+          175
         </td>
         <td>
-          2196
+          1334
         </td>
         <td>
-          5118
+          4855
           -
-          5154
+          4869
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.System.exit
+        </td>
+        <td style="background: #F0ADAD">
+          java.lang.System.exit(0)
+        </td>
+      </tr><tr>
+        <td>
+          178
+        </td>
+        <td>
+          2101
+        </td>
+        <td>
+          4897
+          -
+          4899
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          183
+        </td>
+        <td>
+          1764
+        </td>
+        <td>
+          4969
+          -
+          5005
         </td>
         <td>
           Apply
