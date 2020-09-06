@@ -159,30 +159,15 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }
 
   private def undoTurnAction(): Unit = {
-    val (optState, updatedHistory) = turnHistory.previous()
-    this.turnHistory = updatedHistory
-    if (optState.isDefined) {
-      this.storeOpt.get.onStateChanged(optState.get)
-      this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
-    }
+    this.updateStateThroughHistory(turnHistory.previous)
   }
 
   private def redoTurnAction(): Unit = {
-    val (optState, updatedHistory) = turnHistory.next()
-    this.turnHistory = updatedHistory
-    if (optState.isDefined) {
-      this.storeOpt.get.onStateChanged(optState.get)
-      this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
-    }
+    this.updateStateThroughHistory(turnHistory.next)
   }
 
   private def resetTurnState(): Unit = {
-    val (optState, updatedHistory) = turnHistory.reset()
-    this.turnHistory = updatedHistory
-    if (optState.isDefined) {
-      this.storeOpt.get.onStateChanged(optState.get)
-      this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
-    }
+    this.updateStateThroughHistory(turnHistory.reset)
   }
 
   private def pickCardCombination(combinationId: String): Unit = {
@@ -207,15 +192,28 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     this.turnHistory = this.turnHistory.setPresent(newState)
   }
 
-
   private def withState(f: PlayerGameState => Unit): Unit = this.storeOpt match {
     case Some(state) => f(state.currentState)
     case _ =>
   }
 
   private def generateClientGameState(state: PlayerGameState, turnHistory: History[PlayerGameState]): ClientGameState = {
-    turnHistory.printAll()
     ClientGameState(state, turnHistory.canPrevious, turnHistory.canNext, turnHistory.canPrevious, !turnHistory.canPrevious)
+  }
+
+
+  /**
+   * Execute the history method, updates the history and the resulting state
+   *
+   * @param historyUpdate
+   */
+  private def updateStateThroughHistory(historyUpdate: () => (Option[PlayerGameState], History[PlayerGameState])): Unit = {
+    val (optState, updatedHistory) = historyUpdate()
+    this.turnHistory = updatedHistory
+    if (optState.isDefined) {
+      this.storeOpt.get.onStateChanged(optState.get)
+      this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
+    }
   }
 
 
