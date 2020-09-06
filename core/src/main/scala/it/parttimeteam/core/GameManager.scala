@@ -1,10 +1,9 @@
 package it.parttimeteam.core
 
-import it.parttimeteam.core
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections._
+import it.parttimeteam.core.collections.{Board, Deck, Hand}
 import it.parttimeteam.core.player.Player
-import it.parttimeteam.core.player.Player._
+import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
 
 trait GameManager {
 
@@ -78,7 +77,6 @@ class GameManagerImpl extends GameManager {
    * @inheritdoc
    */
   override def create(ids: Seq[(PlayerId, PlayerName)]): GameState = {
-
     var deck: Deck = Deck.shuffled
     val playerList = ids.map(i => {
       val playerCards = deck.draw(13)
@@ -86,9 +84,7 @@ class GameManagerImpl extends GameManager {
       Player(i._2, i._1, Hand(playerCards._2.toList))
     })
 
-    core.GameState(deck,
-      Board.empty,
-      playerList)
+    GameState(deck, Board.empty, playerList)
   }
 
   /**
@@ -100,7 +96,7 @@ class GameManagerImpl extends GameManager {
    * @inheritdoc
    */
   override def validateTurn(board: Board, hand: Hand): Boolean =
-    board.combinations.forall(c => validateCombination(c.cards)) && hand.tableCards.isEmpty
+    board.combinations.forall(c => validateCombination(c.cards)) && hand.boardCards.isEmpty
 
   /**
    * @inheritdoc
@@ -113,7 +109,7 @@ class GameManagerImpl extends GameManager {
   override def pickBoardCards(hand: Hand,
                               board: Board,
                               cards: Seq[Card]): Either[String, (Hand, Board)] = {
-    board.pickCards(cards).map(updatedBoard => (hand.addTableCards(cards), updatedBoard))
+    board.pickCards(cards).map(updatedBoard => (hand.addBoardCards(cards), updatedBoard))
   }
 
   /**
@@ -122,7 +118,6 @@ class GameManagerImpl extends GameManager {
   override def playCombination(hand: Hand,
                                board: Board,
                                cards: Seq[Card]): Either[String, (Hand, Board)] = {
-
     val orderedCards = cards sortByRank()
     if (this.validateCombination(orderedCards)) {
       hand.removeCards(orderedCards).map(updateHand => (updateHand, board.putCombination(orderedCards)))
