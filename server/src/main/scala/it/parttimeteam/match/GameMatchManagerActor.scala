@@ -132,16 +132,14 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
     // if game not ended
     if (!stateResult.updatedState.playerWon(playerInTurn.id)) {
 
-      stateResult.additionalInformation match {
-        case Some(CardDrawnInfo(card)) => playerInTurn.actorRef ! CardDrawn(card)
-        case _ => playerInTurn.actorRef ! TurnEnded
-      }
+      playerInTurn.actorRef ! TurnEnded
 
       // update the turn
       this.turnManager.nextTurn
 
       // notify the next player it's his turn
       this.turnManager.getInTurn.actorRef ! PlayerTurn
+      this.broadcastMessageToNonCurrentPlayers(this.turnManager.getInTurn.id)(OpponentInTurn(this.turnManager.getInTurn.username))
 
       //switch the actor behaviour
       context.become(inTurn(stateResult.updatedState, this.turnManager.getInTurn))
