@@ -78,102 +78,130 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }
 
   override def notifyUserAction(action: UserGameAction): Unit = {
-    val currentState = this.storeOpt.get.currentState
 
     action match {
 
-      case EndTurnAndDrawAction =>
-        remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)
-      case EndTurnAction => {
-        remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
-      }
+      case EndTurnAndDrawAction => this.endTurnDrawingACard()
 
-      case MakeCombinationAction(cards) => {
-        withState { state =>
-          this.gameInterface.playCombination(state.hand, state.board, cards) match {
-            case Right((updatedHand, updatedBoard)) =>
-              val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-              this.turnHistory = this.turnHistory.setPresent(updatedState)
-              this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+      case EndTurnAction => this.endTurnWithMoves()
 
-            case Left(error) => this.notifyEvent(ErrorEvent(error))
-          }
+      case MakeCombinationAction(cards) => this.makeCombination(cards)
 
-        }
-      }
+      case PickCardsAction(cards) => this.pickCardsFromBoard(cards)
 
-      case PickCardsAction(cards) => {
-        gameInterface.pickBoardCards(currentState.hand, currentState.board, cards) match {
-          case Right((hand, board)) => {
-            val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
-            this.turnHistory = this.turnHistory.setPresent(updatedState)
-            this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
-          }
-          case Left(error) => this.notifyEvent(ErrorEvent(error))
-        }
+      case UpdateCardCombinationAction(combinationId, cards) => this.updateCardCombination(combinationId, cards)
 
-      }
+      case UndoAction => this.undoTurnAction()
 
-      case UpdateCardCombinationAction(combinationId, cards) => {
-        withState { state =>
-          val (updatedHand, updatedBoard) = this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards)
-          val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-          this.turnHistory = this.turnHistory.setPresent(updatedState)
-          this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
-        }
-      }
+      case RedoAction => this.redoTurnAction()
 
-      case UndoAction => {
-        val (optState, updatedHistory) = turnHistory.previous()
-        this.turnHistory = updatedHistory
-        if (optState.isDefined) {
-          this.storeOpt.get.onStateChanged(optState.get)
-          this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
-        }
-      }
+      case ResetAction => this.resetTurnState()
 
-      case RedoAction => {
-        val (optState, updatedHistory) = turnHistory.next()
-        this.turnHistory = updatedHistory
-        if (optState.isDefined) {
-          this.storeOpt.get.onStateChanged(optState.get)
-          this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
-        }
-      }
-
-      case ResetAction => {
-        val (optState, updatedHistory) = turnHistory.reset()
-        this.turnHistory = updatedHistory
-        if (optState.isDefined) {
-          this.storeOpt.get.onStateChanged(optState.get)
-          this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
-        }
-      }
-
-      case LeaveGameAction => this.remoteMatchGameRef ! LeaveGame(this.playerId)
+      case LeaveGameAction => this.leaveGame()
 
       case SortHandByRankAction =>
 
       case SortHandBySuitAction =>
 
-      case PickCardCombinationAction(combinationId: String) => {
-        withState { state =>
-          this.gameInterface.pickBoardCards(state.hand, state.board, state.board.combinations.find(_.id == combinationId).get.cards) match {
-            case Right((updatedHand, updatedBoard)) => {
-              val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-              this.turnHistory = this.turnHistory.setPresent(updatedState)
-              this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
-            }
-            case Left(error) => this.notifyEvent(ErrorEvent(error))
-          }
-        }
-      }
+      case PickCardCombinationAction(combinationId: String) => this.pickCardCombination(combinationId)
+
       case _ =>
 
     }
   }
 
   // endregion
+
+  private def leaveGame(): Unit = {
+    this.remoteMatchGameRef ! LeaveGame(this.playerId)
+  }
+
+  private def endTurnDrawingACard(): Unit = {
+    remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)
+  }
+
+  private def endTurnWithMoves(): Unit = {
+    withState { currentState =>
+      remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
+    }
+  }
+
+  private def makeCombination(cards: Seq[Card]): Unit = {
+    withState { state =>
+      this.gameInterface.playCombination(state.hand, state.board, cards) match {
+        case Right((updatedHand, updatedBoard)) =>
+          val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+          this.turnHistory = this.turnHistory.setPresent(updatedState)
+          this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+
+        case Left(error) => this.notifyEvent(ErrorEvent(error))
+      }
+
+    }
+  }
+
+  private def pickCardsFromBoard(cards: Seq[Card]): Unit = {
+    withState { currentState =>
+      gameInterface.pickBoardCards(currentState.hand, currentState.board, cards) match {
+        case Right((hand, board)) => {
+          val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
+          this.turnHistory = this.turnHistory.setPresent(updatedState)
+          this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+        }
+        case Left(error) => this.notifyEvent(ErrorEvent(error))
+      }
+    }
+  }
+
+  private def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = {
+    withState { state =>
+      val (updatedHand, updatedBoard) = this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards)
+      val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+      this.turnHistory = this.turnHistory.setPresent(updatedState)
+      this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+    }
+  }
+
+  private def undoTurnAction(): Unit = {
+    val (optState, updatedHistory) = turnHistory.previous()
+    this.turnHistory = updatedHistory
+    if (optState.isDefined) {
+      this.storeOpt.get.onStateChanged(optState.get)
+      this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
+    }
+  }
+
+  private def redoTurnAction(): Unit = {
+    val (optState, updatedHistory) = turnHistory.next()
+    this.turnHistory = updatedHistory
+    if (optState.isDefined) {
+      this.storeOpt.get.onStateChanged(optState.get)
+      this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
+    }
+  }
+
+  private def resetTurnState(): Unit = {
+    val (optState, updatedHistory) = turnHistory.reset()
+    this.turnHistory = updatedHistory
+    if (optState.isDefined) {
+      this.storeOpt.get.onStateChanged(optState.get)
+      this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
+    }
+  }
+
+  private def pickCardCombination(combinationId: String): Unit = {
+    withState { state =>
+      this.gameInterface.pickBoardCards(state.hand, state.board, state.board.combinations.find(_.id == combinationId).get.cards) match {
+        case Right((updatedHand, updatedBoard)) => {
+          val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+          this.turnHistory = this.turnHistory.setPresent(updatedState)
+          this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+        }
+        case Left(error) => this.notifyEvent(ErrorEvent(error))
+      }
+    }
+  }
+
 
   private def withState(f: PlayerGameState => Unit): Unit = this.storeOpt match {
     case Some(state) => f(state.currentState)
