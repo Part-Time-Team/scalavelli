@@ -37,8 +37,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def turnStarted(): Unit = {
       withState { state =>
-        turnHistory = turnHistory.setPresent(state)
-        notifyEvent(StateUpdatedEvent(generateClientGameState(state, turnHistory)))
+        updateHistoryAndNotify(state)
       }
       notifyEvent(InTurnEvent)
     }
@@ -131,8 +130,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       this.gameInterface.playCombination(state.hand, state.board, cards) match {
         case Right((updatedHand, updatedBoard)) =>
           val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-          this.turnHistory = this.turnHistory.setPresent(updatedState)
-          this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+          this.updateHistoryAndNotify(updatedState)
 
         case Left(error) => this.notifyEvent(ErrorEvent(error))
       }
@@ -145,8 +143,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       gameInterface.pickBoardCards(currentState.hand, currentState.board, cards) match {
         case Right((hand, board)) => {
           val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
-          this.turnHistory = this.turnHistory.setPresent(updatedState)
-          this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+          this.updateHistoryAndNotify(updatedState)
         }
         case Left(error) => this.notifyEvent(ErrorEvent(error))
       }
@@ -157,8 +154,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     withState { state =>
       val (updatedHand, updatedBoard) = this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards)
       val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-      this.turnHistory = this.turnHistory.setPresent(updatedState)
-      this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+      this.updateHistoryAndNotify(updatedState)
     }
   }
 
@@ -194,12 +190,21 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       this.gameInterface.pickBoardCards(state.hand, state.board, state.board.combinations.find(_.id == combinationId).get.cards) match {
         case Right((updatedHand, updatedBoard)) => {
           val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-          this.turnHistory = this.turnHistory.setPresent(updatedState)
-          this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+          this.updateHistoryAndNotify(updatedState)
         }
         case Left(error) => this.notifyEvent(ErrorEvent(error))
       }
     }
+  }
+
+
+  private def updateHistoryAndNotify(updatedState: PlayerGameState): Unit = {
+    this.updateHistory(updatedState)
+    this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+  }
+
+  private def updateHistory(newState: PlayerGameState): Unit = {
+    this.turnHistory = this.turnHistory.setPresent(newState)
   }
 
 
@@ -212,5 +217,6 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     turnHistory.printAll()
     ClientGameState(state, turnHistory.canPrevious, turnHistory.canNext, turnHistory.canPrevious, !turnHistory.canPrevious)
   }
+
 
 }
