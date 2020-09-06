@@ -2,7 +2,6 @@ package it.parttimeteam.core
 
 import it.parttimeteam.core
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.core.collections._
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player._
@@ -37,10 +36,10 @@ trait GameManager {
   /**
    * Validate a card combination.
    *
-   * @param combination Combination to validate.
+   * @param cards Combination to validate.
    * @return True if is valid, false anywhere.
    */
-  def validateCombination(combination: CardCombination): Boolean
+  def validateCombination(cards: Seq[Card]): Boolean
 
   /**
    * Pick cards from a combination on the table.
@@ -50,17 +49,18 @@ trait GameManager {
    * @param cards Cards to pick.
    * @return Hand and Board updated.
    */
-  def pickBoardCards(hand: Hand, board: Board, cards: Card*): Either[String, (Hand, Board)]
+  def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
 
   /**
    * Play cards from hand to board.
    *
-   * @param hand        Hand where to pick cards.
-   * @param board       Board where put cards.
-   * @param combination Combination to pick.
+   * @param hand  Hand where to pick cards.
+   * @param board Board where put cards.
+   * @param cards cards to pick.
    * @return Hand and Board updated. If hand doesn't contain any combination card, return exactly the same hand and board.
+   * @todo Take only a card seq to add to board.
    */
-  def playCombination(hand: Hand, board: Board, combination: CardCombination): (Hand, Board)
+  def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
 
   /**
    * Update a combination in the board by his id with some cards.
@@ -101,20 +101,20 @@ class GameManagerImpl extends GameManager {
    * @inheritdoc
    */
   override def validateTurn(board: Board, hand: Hand): Boolean =
-    board.combinations.forall(c => validateCombination(c)) && hand.tableCards.isEmpty
+    board.combinations.forall(c => validateCombination(c.cards)) && hand.tableCards.isEmpty
 
   // TODO: This method is useful?
   /**
    * @inheritdoc
    */
-  override def validateCombination(combination: CardCombination): Boolean = combination.isValid
+  override def validateCombination(cards: Seq[Card]): Boolean = cards.isValid
 
   /**
    * @inheritdoc
    */
   override def pickBoardCards(hand: Hand,
                               board: Board,
-                              cards: Card*): Either[String, (Hand, Board)] = {
+                              cards: Seq[Card]): Either[String, (Hand, Board)] = {
     board.pickCards(cards).map(updatedBoard => (hand.addTableCards(cards), updatedBoard))
   }
 
@@ -123,11 +123,13 @@ class GameManagerImpl extends GameManager {
    */
   override def playCombination(hand: Hand,
                                board: Board,
-                               combination: CardCombination): (Hand, Board) = {
-    val removed = hand.removeCards(combination.cards)
-    removed match {
-      case Right(value) => (value._1, board.putCombination(combination))
-      case _ => (hand, board)
+                               cards: Seq[Card]): Either[String, (Hand, Board)] = {
+    
+    val orderedCards = cards sortByRank()
+    if (this.validateCombination(orderedCards)) {
+      hand.removeCards(orderedCards).map(updateHand => (updateHand, board.putCombination(orderedCards)))
+    } else {
+      Left("Combination not valid")
     }
   }
 
@@ -137,7 +139,7 @@ class GameManagerImpl extends GameManager {
   override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = {
     val put = hand.removeCards(cards)
     put match {
-      case Right(value) => (value._1, board.putCards(id, cards))
+      case Right(value) => (value, board.putCards(id, cards))
       case _ => (hand, board)
     }
   }

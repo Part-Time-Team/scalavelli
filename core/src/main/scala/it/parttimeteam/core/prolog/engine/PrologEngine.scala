@@ -51,6 +51,6 @@ trait PrologEngine {
    * @param predicate to get solution
    * @return true if the predicate has solution otherwise false
    */
-  def isSuccess(predicate : String) : Boolean
+  def isSuccess(predicate: String): Boolean
 
 }

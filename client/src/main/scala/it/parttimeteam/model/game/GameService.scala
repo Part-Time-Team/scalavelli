@@ -1,15 +1,17 @@
 package it.parttimeteam.model.game
 
-import it.parttimeteam.view.game.GameViewEvent
+import it.parttimeteam.controller.game.UserGameAction
 
 /**
- * Exposes all the game functionalities
- */
+  * Exposes all the game functionalities
+  */
 trait GameService {
 
   def playerReady(): Unit
 
-  // TODO rename gameview event into UserGameAction or similar, remove view reference in name
-  def notifyUserAction(action: GameViewEvent): Unit
+  def notifyUserAction(action: UserGameAction): Unit
 
+  def getHistoryState: (Boolean, Boolean)
+
+  def playerMadeAnAction(): Boolean
 }

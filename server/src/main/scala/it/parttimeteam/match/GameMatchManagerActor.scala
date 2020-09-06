@@ -1,18 +1,19 @@
 package it.parttimeteam.`match`
 
-import akka.actor.{Actor, ActorLogging, Props, Stash}
-import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, GamePlayers, StateResult}
+import akka.actor.{Actor, ActorLogging, PoisonPill, Props, Stash, Terminated}
+import it.parttimeteam.`match`.GameMatchManagerActor.{CardDrawnInfo, GamePlayers, StateResult}
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.player.Player.PlayerId
 import it.parttimeteam.core.{GameManager, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 import it.parttimeteam.messages.PlayerActionNotValidError
-import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 
-object GameMatchActor {
-  def props(numberOfPlayers: Int, gameManager: GameManager): Props = Props(new GameMatchActor(numberOfPlayers, gameManager: GameManager))
+
+object GameMatchManagerActor {
+  def props(numberOfPlayers: Int, gameApi: GameManager): Props = Props(new GameMatchManagerActor(numberOfPlayers, gameApi: GameManager))
 
 
   case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
@@ -34,25 +35,27 @@ object GameMatchActor {
  * Responsible for a game match
  *
  * @param numberOfPlayers number of players
- * @param gameManager
+ * @param gameApi
  */
-class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager) extends Actor with ActorLogging with Stash {
+class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManager)
+  extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
 
   private var players: Seq[GamePlayer] = _
-  private var turnManager: TurnManager = _
+  private var turnManager: TurnManager[GamePlayer] = _
+
+  // TODO spostare in costruzione a posto di gameApi
+  private val gameMatchManager = new GameMatchManager(gameApi)
 
   private def idle: Receive = {
     case GamePlayers(players) => {
       this.players = players
-      this.turnManager = TurnManager(players.map(_.id))
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
-      context.become(initializing(Seq.empty))
-      unstashAll()
+      //      this.players.foreach(p => context.watch(p.actorRef))
+      context.become(initializing(Seq.empty) orElse termination())
     }
-    case _ => stash()
   }
 
   /**
@@ -62,21 +65,33 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
    */
   private def initializing(playersReady: Seq[GamePlayer]): Receive = {
     case Ready(id, ref) => {
-      this.players.find(_.id == id) match {
-        case Some(p) => {
-          log.debug(s"player ${p.username} ready")
-          players = players.map(p => if (p.id == id) p.copy(actorRef = ref) else p)
-          val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
+      this.withPlayer(id) { p =>
+        log.debug(s"player ${p.username} ready")
 
-          if (updatedReadyPlayers.length == numberOfPlayers) {
-            log.debug("All players ready")
-            this.initializeGame()
-          } else {
-            context.become(initializing(updatedReadyPlayers))
-          }
+        players = players.map(p => if (p.id == id) p.copy(actorRef = ref) else p)
+        val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
+
+        if (updatedReadyPlayers.length == numberOfPlayers) {
+          log.debug("All players ready")
+          this.initializeGame()
+        } else {
+          context.become(initializing(updatedReadyPlayers) orElse termination())
         }
-        case None => log.debug(s"Player id $id not found")
       }
+    }
+  }
+
+  private def termination(): Receive = {
+    case Terminated(ref) => this.players.find(_.actorRef == ref) match {
+      case Some(player) =>
+        log.debug(s"Player ${player.username} left the game")
+        this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
+        self ! PoisonPill
+    }
+    case LeaveGame(playerId) => withPlayer(playerId) { player =>
+      log.debug(s"Player ${player.username} left the game")
+      this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
+      self ! PoisonPill
     }
   }
 
@@ -85,17 +100,18 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
    *
    */
   private def initializeGame(): Unit = {
+    this.turnManager = TurnManager[GamePlayer](players)
     log.debug("initializing game..")
-    val gameState = gameManager.create(players.map(p => (p.id, p.username)))
+    val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
-    this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
-    context.become(inTurn(gameState, getPlayerForCurrentTurn))
+    this.turnManager.getInTurn.actorRef ! PlayerTurn
+    context.become(inTurn(gameState, this.turnManager.getInTurn) orElse termination())
   }
 
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
 
-      this.determineNextState(gameState, playerInTurn, action) match {
+      this.gameMatchManager.determineNextState(gameState, playerInTurn, action) match {
         case Right(stateResult) =>
           this.handleStateResult(stateResult, playerInTurn)
 
@@ -125,10 +141,10 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
       this.turnManager.nextTurn
 
       // notify the next player it's his turn
-      this.getPlayerForCurrentTurn.actorRef ! PlayerTurn
+      this.turnManager.getInTurn.actorRef ! PlayerTurn
 
       //switch the actor behaviour
-      context.become(inTurn(stateResult.updatedState, getPlayerForCurrentTurn))
+      context.become(inTurn(stateResult.updatedState, this.turnManager.getInTurn))
 
     } else {
       log.debug(s"Game ended, player ${playerInTurn.username} won")
@@ -159,7 +175,6 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
    * @param gameState the global game state
    */
   private def broadcastGameStateToPlayers(gameState: GameState) {
-    println(this.players.toString())
 
     println(gameState.toString)
     this.players.foreach(player => {
@@ -173,64 +188,12 @@ class GameMatchActor(numberOfPlayers: Int, private val gameManager: GameManager)
     //this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))
   }
 
-  /**
-   * returns the current player
-   *
-   * @return the current player
-   */
-  private def getPlayerForCurrentTurn: GamePlayer =
-    this.players.find(_.id == turnManager.playerInTurnId).get
 
-
-  /**
-   * Determines the next game state based on the player action
-   *
-   * @param currentState current state of the game
-   * @param playerInTurn player making the action
-   * @param playerAction action made my the player
-   * @return a state result or a string representing an error
-   */
-  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
-    playerAction match {
-      case DrawCard => {
-        val (updateDeck, cardDrawn) = gameManager.draw(currentState.deck)
-
-        // updated player with the new card on his hand
-        val updatedState = currentState
-          .getPlayer(playerInTurn.id)
-          .map(p => currentState.updatePlayer(p.copy(
-            hand = p.hand.copy(playerCards = cardDrawn +: p.hand.playerCards))))
-          .get.copy(deck = updateDeck)
-
-        Right(StateResult(
-          updatedState = updatedState,
-          additionalInformation = Some(CardDrawnInfo(cardDrawn))
-        ))
-      }
-
-      case PlayedMove(updatedHand, updatedBoard) => {
-        if (gameManager.validateTurn(updatedBoard, updatedHand)) {
-          val updatedState = currentState
-            .getPlayer(playerInTurn.id)
-            .map(p => currentState.updatePlayer(p.copy(
-              hand = updatedHand)))
-            .get.copy(board = updatedBoard)
-
-          Right(StateResult(
-            updatedState = updatedState,
-            additionalInformation = None
-          ))
-
-        } else {
-          Left("Non valid plays")
-        }
-      }
-
-
-      case _ => Left("Non supported action")
+  private def withPlayer(playerId: PlayerId)(f: GamePlayer => Unit): Unit = {
+    this.players.find(_.id == playerId) match {
+      case Some(p) => f(p)
+      case None => log.debug(s"Player id $playerId not found")
     }
   }
-
-  // TODO receive function for disconnection and error events
 
 }

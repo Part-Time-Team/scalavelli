@@ -12,7 +12,7 @@ import scala.util.{Failure, Success}
 
 class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) extends StartupService {
 
-  private lazy val startupActorRef = ActorSystemManager.actorSystem.actorOf(StartUpActor.props(serverResponseListener))
+  private lazy val startupActorRef = ActorSystemManager.actorSystem.actorOf(StartUpActor.props(serverResponseListener), "client-lobby")
   private var serverLobbyRef: ActorRef = _
   private var clientGeneratedId: String = _
 

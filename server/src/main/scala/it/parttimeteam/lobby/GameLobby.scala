@@ -4,6 +4,7 @@ import akka.japi.Pair
 import it.parttimeteam.common.Player
 
 /**
+ * A single lobby maintaining the list of the user with the same game preferences
  *
  * @param numberOfPlayers min number of players required to start a match
  */

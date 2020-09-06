@@ -3,10 +3,9 @@ package it.parttimeteam
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.parttimeteam.lobby.LobbyManagerActor
-import it.parttimeteam.Constants
 
-object ScalavelliServer {
-  def main(args: Array[String]): Unit = {
+object ScalavelliServer extends App {
+  // def main(args: Array[String]): Unit = {
 
     val config = ConfigFactory.parseString(
       s"""
@@ -17,7 +16,7 @@ object ScalavelliServer {
     val system = ActorSystem(Constants.Remote.SERVER_ACTOR_SYSTEM_NAME, config)
     system.actorOf(LobbyManagerActor.props(), Constants.Remote.SERVER_LOBBY_ACTOR_NAME)
 
-  }
+  // }
 }
 
 

@@ -76,11 +76,5 @@ class PrologGameEngine() extends PrologEngine {
  * Object Prolog Struct to execute the goals
  */
 object PrologStruct {
-  // TODO eliminare gli Struct? poco utilizzati?
-
-  def apply(rule: String, variable: Var): Struct = new Struct(rule, variable)
-
   def apply(rule: String, variable: Term*): Struct = new Struct(rule, variable toArray)
-
-  def apply(rule: String, parameters: Array[Term]): Struct = new Struct(rule, parameters)
 }

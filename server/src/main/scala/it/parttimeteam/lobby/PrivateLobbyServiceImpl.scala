@@ -1,8 +1,6 @@
 package it.parttimeteam.lobby
 
-import it.parttimeteam.common.IdGenerator
-
-class PrivateLobbyServiceImpl extends PrivateLobbyService with IdGenerator {
+class PrivateLobbyServiceImpl extends PrivateLobbyService with PrivateLobbyCodeGenerator {
 
   private var lobbies = Set[PrivateLobby]()
 
@@ -15,7 +13,11 @@ class PrivateLobbyServiceImpl extends PrivateLobbyService with IdGenerator {
   override def retrieveExistingLobby(lobbyId: String): Option[PrivateLobby] =
     lobbies.find(l => l.lobbyId == lobbyId)
 
-  override def removeLobby(lobbyId: String): Unit =
+  override def removeLobby(lobbyId: String): Unit = {
     lobbies = lobbies.filter(l => l.lobbyId != lobbyId)
+    removeId(lobbyId)
+  }
 
 }
+
+
