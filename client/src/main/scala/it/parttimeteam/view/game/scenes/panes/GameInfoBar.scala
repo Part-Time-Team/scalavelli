@@ -15,6 +15,13 @@ import scalafx.scene.layout.{BorderPane, VBox}
   */
 trait GameInfoBar extends BorderPane with ActionGamePane {
   /**
+    * Updates the next button text
+    *
+    * @param text the new text
+    */
+  def setNextText(text: String): Unit
+
+  /**
     * Enables/disables the reset button
     *
     * @param enabled if the button should be enabled or not
@@ -108,10 +115,12 @@ object GameInfoBar {
     timerPane.hide()
 
     val nextBtn = MachiavelliButton("Pass", () => listener.endTurn())
+    val leaveBtn = MachiavelliButton("Leave Game", () => listener.leaveGame())
 
     nextBtn.prefWidth <== rightBottom.width
+    leaveBtn.prefWidth <== rightBottom.width
 
-    btnContainer.children.addAll(nextBtn, historyNavigationPane)
+    btnContainer.children.addAll(nextBtn, leaveBtn, historyNavigationPane)
 
     rightTop.children.addAll(stateContainer, otherPlayersPane)
     rightBottom.children.add(btnContainer)
@@ -155,6 +164,11 @@ object GameInfoBar {
 
     /** @inheritdoc*/
     override def setUndoEnabled(enabled: Boolean): Unit = historyNavigationPane.setUndoEnabled(enabled)
+
+    /** @inheritdoc */
+    override def setNextText(text: String): Unit = {
+      nextBtn.setText(text)
+    }
   }
 
 }

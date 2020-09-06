@@ -5,9 +5,9 @@ import it.parttimeteam.`match`.GameMatchManagerActor.{CardDrawnInfo, StateResult
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.collections.{Board, Hand}
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
-import it.parttimeteam.core.{GameManager, GameState}
+import it.parttimeteam.core.{GameInterface, GameState}
 
-class GameMatchManager(private val gameApi: GameManager) {
+class GameMatchManager(private val gameApi: GameInterface) {
 
 
   def retrieveInitialState(players: Seq[(PlayerId, PlayerName)]): GameState =

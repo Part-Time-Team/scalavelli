@@ -8,19 +8,19 @@ import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.must.Matchers.be
 import org.scalatest.matchers.should.Matchers.an
 
-class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
+class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
   describe("A game manager") {
-    // Use the same instance of GameManager for all tests.
-    val gameManager: GameManager = new GameManagerImpl()
+    // Use the same instance of GameInterface for all tests.
+    val gameInterface: GameInterface = new GameInterfaceImpl()
     val playerInfos = Seq(("1", "Daniele"), ("2", "Lorenzo"), ("3", "Luca"), ("4", "Matteo"))
 
     describe("Can create a game") {
       it("Empty if no players are added") {
-        assert(gameManager.create(Seq.empty).players equals Seq.empty)
+        assert(gameInterface.create(Seq.empty).players equals Seq.empty)
       }
 
       describe("When there are player to add") {
-        val state = gameManager.create(playerInfos)
+        val state = gameInterface.create(playerInfos)
 
         it("Game state players are created") {
           assert(state.players.nonEmpty)
@@ -35,13 +35,13 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
 
       it("Draw cards from a non empty deck") {
         val drawnDeck = Deck.cards2deck(deck.cards.tail)
-        assert(gameManager.draw(deck) equals(drawnDeck, deck.cards.head))
+        assert(gameInterface.draw(deck) equals(drawnDeck, deck.cards.head))
       }
 
       it("Throw an exception when drawing from an empty deck") {
         val emptyDeck = Deck.empty
         an[UnsupportedOperationException] should be thrownBy
-          (gameManager draw emptyDeck)
+          (gameInterface draw emptyDeck)
       }
     }
 
@@ -52,7 +52,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
         val board = Board(Seq(comb1, comb2))
         val hand = Hand(List(FIVE_CLUBS))
-        assert(gameManager validateTurn(board, hand))
+        assert(gameInterface validateTurn(board, hand))
       }
 
       describe("False with complex op") {
@@ -61,25 +61,26 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
           val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
           val board = Board(Seq(comb1, comb2))
           val hand = Hand(List(FIVE_CLUBS))
-          assert(!(gameManager validateTurn(board, hand)))
+          assert(!(gameInterface validateTurn(board, hand)))
         }
 
         it("With invalid hand") {
           val comb1 = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS))
           val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
           val board = Board(Seq(comb1, comb2))
+
           val hand = Hand(boardCards = List(FIVE_CLUBS))
-          assert(!(gameManager validateTurn(board, hand)))
+          assert(!(gameInterface validateTurn(board, hand)))
         }
       }
     }
 
     describe("Play a combination") {
-      val state = gameManager.create(playerInfos)
+      val state = gameInterface.create(playerInfos)
 
       it("Play a valid comb") {
         val cards = Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS)
-        val result = gameManager.playCombination(Hand((FIVE_CLUBS +: cards).toList), state.board, cards)
+        val result = gameInterface.playCombination(Hand((FIVE_CLUBS +: cards).toList), state.board, cards)
         assert(result.isRight)
         val played = result.right.get
         // Check that seq cards are not in player hand.
@@ -93,7 +94,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       it("Play cards that are not present in the hand returns error") {
         val cards = Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS)
         val handSeq = List(THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS)
-        val result = gameManager.playCombination(Hand(handSeq), state.board, cards)
+        val result = gameInterface.playCombination(Hand(handSeq), state.board, cards)
         assert(result.isLeft)
       }
     }
@@ -102,11 +103,11 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
       it("Pick from table some cards") {
         val seq = Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS)
         val comb = CardCombination("#2", seq)
-        var state = gameManager.create(playerInfos)
+        var state = gameInterface.create(playerInfos)
         val daniele = (state getPlayer "1").get
 
         // First play a combination.
-        val result = gameManager.playCombination(
+        val result = gameInterface.playCombination(
           Hand(seq.toList), state.board, comb.cards)
         assert(result.isRight)
         val played = result.right.get
@@ -115,7 +116,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         state = state updatePlayer daniele
 
         // Second try to pick a combination from the board.
-        val picked = gameManager.pickBoardCards(
+        val picked = gameInterface.pickBoardCards(
           Hand(),
           state.board,
           List(TWO_CLUBS))
@@ -138,7 +139,7 @@ class GameManagerSuite extends AnyFunSpec with MockFactory with Matchers {
         val board = Board(Seq(comb)).pickCards(Seq(THREE_CLUBS, FOUR_CLUBS))
         assert(board.isRight)
 
-        val res = gameManager.putCardsInCombination(hand, board.right.get, "#1", Seq(THREE_CLUBS, FOUR_CLUBS))
+        val res = gameInterface.putCardsInCombination(hand, board.right.get, "#1", Seq(THREE_CLUBS, FOUR_CLUBS))
         assertResult(Board(Seq(comb)))(res._2)
       }
     }

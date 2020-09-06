@@ -160,7 +160,7 @@ object Rank {
     case SEVEN => Seven()
     case EIGHT => Eight()
     case NINE => Nine()
-    case TEN => Ten()
+    case "10"   | TEN => Ten()
     case JACK   | JACK_SYMBOL => Jack()
     case QUEEN  | QUEEN_SYMBOL => Queen()
     case KING   | KING_SYMBOL=> King()

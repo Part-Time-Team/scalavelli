@@ -12,6 +12,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
   private var gameStage: MachiavelliGameStage = _
   private var gameService: GameService = _
+  private var currentState: ClientGameState = _
 
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
@@ -26,15 +27,11 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
   def notifyEvent(serverGameEvent: ServerGameEvent): Unit = serverGameEvent match {
 
-    case StateUpdatedEvent(state: PlayerGameState) => {
-      println("Board: " + state.board)
-      println("Hand: " + state.hand)
-
-      val historyState = gameService.getHistoryState
+    case StateUpdatedEvent(state: ClientGameState) => {
+      currentState = state
       Platform.runLater({
         gameStage.matchReady()
         gameStage.updateState(state)
-        gameStage.updateHistoryState(historyState._1, historyState._2)
       })
     }
 
@@ -43,9 +40,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     }
 
     case InTurnEvent => {
-      val historyState = gameService.getHistoryState
       gameStage.setInTurn()
-      gameStage.updateHistoryState(historyState._1, historyState._2)
       gameStage.showTimer()
     }
 
@@ -91,10 +86,10 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     case SortHandByRankEvent => gameService.notifyUserAction(SortHandByRankAction)
 
     case EndTurnEvent => {
-      if (gameService.playerMadeAnAction()) {
-        gameService.notifyUserAction(EndTurnAction)
-      } else {
+      if (currentState.canDrawCard) {
         gameService.notifyUserAction(EndTurnAndDrawAction)
+      } else {
+        gameService.notifyUserAction(EndTurnAction)
       }
     }
 

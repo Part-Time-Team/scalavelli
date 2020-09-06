@@ -45,6 +45,11 @@ trait GameSceneListener {
   def endTurn(): Unit
 
   /**
+    * The player leaves the game.
+    */
+  def leaveGame(): Unit
+
+  /**
     * The player goes forward in turn history.
     */
   def nextState(): Unit

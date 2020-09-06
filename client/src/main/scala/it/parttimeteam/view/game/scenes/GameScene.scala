@@ -1,6 +1,6 @@
 package it.parttimeteam.view.game.scenes
 
-import it.parttimeteam.gamestate.PlayerGameState
+import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view.game.scenes.model.{GameCard, GameCardCombination}
 import scalafx.scene.Scene
 
@@ -41,19 +41,11 @@ trait GameScene extends Scene {
   def hideInitMatch(): Unit
 
   /**
-    * Sets the actual PlayerGameState inside view.
+    * Sets the actual ViewGameState inside view.
     *
-    * @param state the actual PlayerGameState
+    * @param clientGameState the actual ViewGameState
     */
-  def setState(state: PlayerGameState): Unit
-
-  /**
-    * Set history possible actions
-    *
-    * @param canUndo if the undo action is available
-    * @param canRedo if the redo action is available
-    */
-  def setHistoryState(canUndo: Boolean, canRedo: Boolean): Unit
+  def setState(clientGameState: ClientGameState): Unit
 
   /**
     * Display a message in the RightBar.
@@ -64,9 +56,10 @@ trait GameScene extends Scene {
 
   /**
     * Set if is the player turn
+    *
     * @param inTurn if is the player turn
     */
-  def setInTurn(inTurn: Boolean) : Unit
+  def setInTurn(inTurn: Boolean): Unit
 }
 
 object GameScene {

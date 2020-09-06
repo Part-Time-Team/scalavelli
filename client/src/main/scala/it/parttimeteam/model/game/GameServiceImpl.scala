@@ -2,7 +2,7 @@ package it.parttimeteam.model.game
 
 import it.parttimeteam.controller.game._
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.{GameManager, GameManagerImpl}
+import it.parttimeteam.core.{GameInterface, GameInterfaceImpl}
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{LeaveGame, PlayerActionMade, Ready}
 import it.parttimeteam.model.startup.GameMatchInformations
@@ -17,7 +17,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   private var turnHistory: History[PlayerGameState] = History[PlayerGameState]()
   private var storeOpt: Option[GameStateStore] = None
 
-  private val gameManager: GameManager = new GameManagerImpl()
+  private val gameInterface: GameInterface = new GameInterfaceImpl()
 
   implicit val executionContext: ExecutionContextExecutor = ActorSystemManager.actorSystem.dispatcher
 
@@ -25,19 +25,23 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   private val playerId = gameInformation.playerId
 
   private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(new MatchServerResponseListener {
-
     override def gameStateUpdated(gameState: PlayerGameState): Unit = {
 
       storeOpt match {
-        case Some(store) => notifyEvent(StateUpdatedEvent(store.onStateChanged(gameState)))
+        case Some(store) => notifyEvent(StateUpdatedEvent(generateClientGameState(store.onStateChanged(gameState), turnHistory)))
         case None =>
           storeOpt = Some(GameStateStore(gameState))
-          notifyEvent(StateUpdatedEvent(gameState))
+          notifyEvent(StateUpdatedEvent(generateClientGameState(gameState, turnHistory)))
       }
-
     }
 
-    override def turnStarted(): Unit = notifyEvent(InTurnEvent)
+    override def turnStarted(): Unit = {
+      withState { state =>
+        turnHistory = turnHistory.setPresent(state)
+        notifyEvent(StateUpdatedEvent(generateClientGameState(state, turnHistory)))
+      }
+      notifyEvent(InTurnEvent)
+    }
 
     override def turnEnded(): Unit = {
       turnHistory = turnHistory.clear()
@@ -50,7 +54,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
       turnHistory = turnHistory.clear()
 
-      notifyEvent(StateUpdatedEvent(storeOpt.get.onCardDrawn(card)))
+      notifyEvent(StateUpdatedEvent(generateClientGameState(storeOpt.get.onCardDrawn(card), turnHistory)))
       notifyEvent(TurnEndedEvent)
 
     }
@@ -71,14 +75,6 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
-  override def playerMadeAnAction(): Boolean = {
-    !turnHistory.isEmpty
-  }
-
-  override def getHistoryState(): (Boolean, Boolean) = {
-    (turnHistory.canPrevious, turnHistory.canNext)
-  }
-
   override def notifyUserAction(action: UserGameAction): Unit = {
     val currentState = this.storeOpt.get.currentState
 
@@ -92,11 +88,11 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
       case MakeCombinationAction(cards) => {
         withState { state =>
-          this.gameManager.playCombination(state.hand, state.board, cards) match {
+          this.gameInterface.playCombination(state.hand, state.board, cards) match {
             case Right((updatedHand, updatedBoard)) =>
               val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
               this.turnHistory = this.turnHistory.setPresent(updatedState)
-              this.notifyEvent(StateUpdatedEvent(updatedState))
+              this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
 
             case Left(error) => this.notifyEvent(ErrorEvent(error))
           }
@@ -105,11 +101,11 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       }
 
       case PickCardsAction(cards) => {
-        gameManager.pickBoardCards(currentState.hand, currentState.board, cards) match {
+        gameInterface.pickBoardCards(currentState.hand, currentState.board, cards) match {
           case Right((hand, board)) => {
             val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
             this.turnHistory = this.turnHistory.setPresent(updatedState)
-            this.notifyEvent(StateUpdatedEvent(updatedState))
+            this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
           }
           case Left(error) => this.notifyEvent(ErrorEvent(error))
         }
@@ -125,7 +121,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
         this.turnHistory = updatedHistory
         if (optState.isDefined) {
           this.storeOpt.get.onStateChanged(optState.get)
-          this.notifyEvent(StateUpdatedEvent(optState.get))
+          this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
         }
       }
 
@@ -134,7 +130,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
         this.turnHistory = updatedHistory
         if (optState.isDefined) {
           this.storeOpt.get.onStateChanged(optState.get)
-          this.notifyEvent(StateUpdatedEvent(optState.get))
+          this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
         }
       }
 
@@ -143,7 +139,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
         this.turnHistory = updatedHistory
         if (optState.isDefined) {
           this.storeOpt.get.onStateChanged(optState.get)
-          this.notifyEvent(StateUpdatedEvent(optState.get))
+          this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
         }
       }
 
@@ -163,4 +159,10 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     case Some(state) => f(state.currentState)
     case _ =>
   }
+
+  private def generateClientGameState(state: PlayerGameState, turnHistory: History[PlayerGameState]): ClientGameState = {
+    turnHistory.printAll()
+    ClientGameState(state, turnHistory.canPrevious, turnHistory.canNext, turnHistory.canPrevious, !turnHistory.canPrevious)
+  }
+
 }

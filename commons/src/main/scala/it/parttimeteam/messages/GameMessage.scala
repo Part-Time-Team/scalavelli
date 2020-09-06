@@ -62,7 +62,7 @@ object GameMessage {
    *
    * @param card drawn card
    */
-  case class CardDrawn(card: Card)
+  case class CardDrawn(card: Card) // TODO MATTEOC remove
 
   /**
    * Tells the current player his turn is finished
