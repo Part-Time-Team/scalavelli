@@ -24,7 +24,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   private val remoteMatchGameRef = gameInformation.gameRef
   private val playerId = gameInformation.playerId
 
-  private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(new MatchServerResponseListener {
+  private val matchServerResponseListener = new MatchServerResponseListener {
     override def gameStateUpdated(gameState: PlayerGameState): Unit = {
 
       storeOpt match {
@@ -63,7 +63,9 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def gameLost(winnerName: String): Unit = notifyEvent(GameLostEvent(winnerName))
 
-  }), "client-game")
+  }
+
+  private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener), "client-game")
 
 
   // region GameService
