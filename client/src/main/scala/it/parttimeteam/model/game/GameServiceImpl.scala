@@ -112,8 +112,13 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
       }
 
-      case UpdateCardCombinationAction(combinationId, card) => {
-
+      case UpdateCardCombinationAction(combinationId, cards) => {
+        withState { state =>
+          val (updatedHand, updatedBoard) = this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards)
+          val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+          this.turnHistory = this.turnHistory.setPresent(updatedState)
+          this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+        }
       }
 
       case UndoAction => {
@@ -146,8 +151,21 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       case LeaveGameAction => this.remoteMatchGameRef ! LeaveGame(this.playerId)
 
       case SortHandByRankAction =>
+
       case SortHandBySuitAction =>
-      case PickCardCombinationAction(combinationId: String) =>
+
+      case PickCardCombinationAction(combinationId: String) => {
+        withState { state =>
+          this.gameInterface.pickBoardCards(state.hand, state.board, state.board.combinations.find(_.id == combinationId).get.cards) match {
+            case Right((updatedHand, updatedBoard)) => {
+              val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+              this.turnHistory = this.turnHistory.setPresent(updatedState)
+              this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
+            }
+            case Left(error) => this.notifyEvent(ErrorEvent(error))
+          }
+        }
+      }
       case _ =>
 
     }
