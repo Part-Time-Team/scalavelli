@@ -12,13 +12,8 @@ class HandSpec extends AnyFunSuite {
 
   test("Check add cards to the list tableCard") {
     val hand: Hand = Hand(List(QUEEN_DIAMONDS), List(ACE_CLUBS))
-    assert(hand.addTableCards(FOUR_SPADES :: (KING_DIAMONDS :: Nil)) equals
+    assert(hand.addBoardCards(FOUR_SPADES :: (KING_DIAMONDS :: Nil)) equals
       Hand(QUEEN_DIAMONDS :: Nil, ACE_CLUBS :: (FOUR_SPADES :: (KING_DIAMONDS :: Nil))))
-  }
-
-  test("Get player's hand") {
-    val hand: Hand = Hand(List(ACE_CLUBS, FOUR_SPADES), List())
-    assert(hand.getHand equals Hand(List(ACE_CLUBS, FOUR_SPADES), List()))
   }
 
   test("Contains cards that are present") {
@@ -48,7 +43,7 @@ class HandSpec extends AnyFunSuite {
     val hand = Hand(List.empty, List(ACE_CLUBS, FOUR_SPADES, KING_DIAMONDS, QUEEN_DIAMONDS))
     val removed = hand.removeCards(seq)
     assert(removed.isRight)
-    assertResult(Seq(KING_DIAMONDS, QUEEN_DIAMONDS))(removed.right.get.tableCards)
+    assertResult(Seq(KING_DIAMONDS, QUEEN_DIAMONDS))(removed.right.get.boardCards)
   }
 
   test("Remove cards from hand that are not present") {
