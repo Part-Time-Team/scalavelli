@@ -50,4 +50,17 @@ case class Hand(playerCards: Seq[Card] = Seq.empty, boardCards: Seq[Card] = Seq.
       this.copy(playerCards = updatePlayerCards, boardCards = updateBoardCards),
       "Hand doesn't contain given cards")
   }
+
+  def sortByRank(): Hand =
+    this.copy(
+      playerCards = playerCards.sortByRank(),
+      boardCards = boardCards.sortByRank()
+    )
+
+  def sortBySuit(): Hand =
+    this.copy(
+      playerCards = playerCards.sortBySuit(),
+      boardCards = boardCards.sortBySuit()
+    )
+
 }
