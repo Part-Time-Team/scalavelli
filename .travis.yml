@@ -35,15 +35,19 @@ notifications:
 jobs:
   include:
     - stage: Latex stage
+      before_install:
+        - sudo apt-get install python-pygments
       install:
-        - source ./travis-scripts/texlive_install.sh
+        - source ./texlive/texlive_install.sh
       cache:
         directories:
           - /tmp/texlive
           - $HOME/.texlive
+      before_script:
+        - cd $TRAVIS_BUILD_DIR/source/doc/
       script:
         - mkdir _build
-        - travis_wait 3 pdflatex -output-directory _build ./source/doc/rel.tex
+        - travis_wait 3 pdflatex --shell-escape ./rel.tex
     - stage: Run sbt with OpenJdk11
       os: linux
     - stage: Run sbt with OpenJdk11
