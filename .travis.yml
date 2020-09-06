@@ -43,13 +43,12 @@ jobs:
         directories:
           - /tmp/texlive
           - $HOME/.texlive
-      before_script:
-        - cd $TRAVIS_BUILD_DIR/source/doc/
       script:
         - mkdir _build
-        - travis_wait 3 pdflatex --shell-escape ./rel.tex
+        - travis_wait 3 pdflatex --shell-escape -output-directory _build $TRAVIS_BUILD_DIR/source/doc//rel.tex
       after_script:
         - ls -lhG
+        - ls -lhG _build
         - ls -lhG source/doc/
     - stage: Run sbt with OpenJdk11
       os: linux
