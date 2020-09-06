@@ -6,17 +6,19 @@ import it.parttimeteam.view.game.listeners.GameSceneListener
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 import it.parttimeteam.view.game.scenes.model.{GameCard, GameCardCombination}
 import it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl
-import it.parttimeteam.view.game.scenes.panes.BottomBar.BottomBarImpl
-import it.parttimeteam.view.game.scenes.panes.CenterPane.CenterPaneImpl
+import it.parttimeteam.view.game.scenes.panes.HandBar.HandBarImpl
+import it.parttimeteam.view.game.scenes.panes.BoardPane.BoardPaneImpl
 import it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl
-import it.parttimeteam.view.game.scenes.panes.RightBar.RightBarImpl
-import it.parttimeteam.view.game.scenes.panes.{ActionBar, BottomBar, CenterPane, RightBar}
+import it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl
+import it.parttimeteam.view.game.scenes.panes.{ActionBar, HandBar, BoardPane, GameInfoBar}
 import it.parttimeteam.view.game.{MachiavelliGameStage, SelectionManager}
 import scalafx.application.Platform
 import scalafx.scene.layout.{BorderPane, VBox}
 
-/** @inheritdoc*/
+/** @inheritdoc */
 class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
+  var inTurn = false
+
   val handSelectionManager: SelectionManager[GameCard] = SelectionManager()
   val boardSelectionManager: SelectionManager[GameCard] = SelectionManager()
   val combinationSelectionManager: SelectionManager[GameCardCombination] = SelectionManager()
@@ -24,60 +26,60 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
 
   val sceneListener: GameSceneListener = new GameSceneListener {
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def pickCombination(combinationId: String): Unit = {
       parentStage.pickCombination(combinationId)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def makeCombination(): Unit = {
       val cards: Seq[Card] = handSelectionManager.getSelectedItems.map(p => p.getCard)
       parentStage.makeCombination(cards)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def pickCards(): Unit = {
       val cards: Seq[Card] = boardSelectionManager.getSelectedItems.map(p => p.getCard)
       parentStage.pickCards(cards)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def sortHandBySuit(): Unit = {
       parentStage.sortHandBySuit()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def sortHandByRank(): Unit = {
       parentStage.sortHandByRank()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def endTurn(): Unit = {
       parentStage.endTurn()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def nextState(): Unit = {
       parentStage.nextState()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def previousState(): Unit = {
       parentStage.previousState()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def resetState(): Unit = {
       parentStage.resetHistory()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def clearHandSelection(): Unit = {
       handSelectionManager.clearSelection()
       updateActionBarButtons()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def updateCombination(): Unit = {
       val combination = combinationSelectionManager.getSelectedItems.head
       val selectedCards = handSelectionManager.getSelectedItems
@@ -85,33 +87,33 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
     }
   }
 
-  val rightBar: RightBar = new RightBarImpl(sceneListener)
+  val rightBar: GameInfoBar = new GameInfoBarImpl(sceneListener)
 
   val bottom = new VBox()
   val actionBar: ActionBar = new ActionBarImpl(sceneListener)
 
-  val bottomBar: BottomBar = new BottomBarImpl((card: GameCard) => {
+  val bottomBar: HandBar = new HandBarImpl((card: GameCard) => {
     handSelectionManager.onItemSelected(card)
     updateActionBarButtons()
   })
 
   bottom.children.addAll(actionBar, bottomBar)
 
-  val centerPane: CenterPane = new CenterPaneImpl(new BoardListener {
+  val centerPane: BoardPane = new BoardPaneImpl(new BoardListener {
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def onCombinationClicked(cardCombination: GameCardCombination): Unit = {
       combinationSelectionManager.onItemSelected(cardCombination)
       updateActionBarButtons()
     }
 
-    /** @inheritdoc*/
-    override def onBoardCardClicked(card: GameCard): Unit = {
+    /** @inheritdoc */
+    override def onCardClicked(card: GameCard): Unit = {
       boardSelectionManager.onItemSelected(card)
       updateActionBarButtons()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def onPickCombinationClick(cardCombination: GameCardCombination): Unit = {
       parentStage.pickCombination(cardCombination.getCombination.id)
     }
@@ -127,8 +129,11 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
 
   root = borderPane
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def setState(state: PlayerGameState): Unit = {
+    this.handSelectionManager.clearSelection()
+    this.boardSelectionManager.clearSelection()
+    this.combinationSelectionManager.clearSelection()
     Platform.runLater({
       centerPane.setBoard(state.board)
 
@@ -138,48 +143,55 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def showInitMatch(): Unit = {
     Platform.runLater({
       initMatchDialog.showDialog()
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def hideInitMatch(): Unit = {
     Platform.runLater({
       initMatchDialog.hideDialog()
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def setMessage(message: String): Unit = {
     Platform.runLater({
       rightBar.setMessage(message)
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def showTimer(): Unit = {
     Platform.runLater({
       rightBar.showTimer()
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
+  override def setInTurn(inTurn: Boolean): Unit = {
+    this.inTurn = inTurn
+    updateActionBarButtons()
+    rightBar.setNextEnabled(inTurn)
+  }
+  
+  /** @inheritdoc */
   private def updateActionBarButtons(): Unit = {
-    actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty)
+    actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty && inTurn)
     actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty)
-    actionBar.enableUpdateCardCombination(combinationSelectionManager.getSelectedItems.size == 1 && handSelectionManager.getSelectedItems.size == 1)
-    actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty)
+    actionBar.enableUpdateCardCombination(combinationSelectionManager.getSelectedItems.size == 1 && handSelectionManager.getSelectedItems.size == 1 && inTurn)
+    actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty && inTurn)
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def hideTimer(): Unit = {
     rightBar.hideTimer()
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def disableActions(): Unit = {
     rightBar.disableActions()
     centerPane.disableActions()
@@ -187,7 +199,7 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
     bottomBar.disableActions()
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def enableActions(): Unit = {
     rightBar.enableActions()
     centerPane.enableActions()
@@ -195,9 +207,10 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
     bottomBar.enableActions()
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def setHistoryState(canUndo: Boolean, canRedo: Boolean): Unit = {
-    rightBar.setUndoEnabled(canUndo)
-    rightBar.setRedoEnabled(canRedo)
+    rightBar.setUndoEnabled(canUndo && inTurn)
+    rightBar.setRedoEnabled(canRedo && inTurn)
+    rightBar.setResetEnabled(inTurn)
   }
 }

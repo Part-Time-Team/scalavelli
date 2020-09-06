@@ -9,6 +9,21 @@ import it.parttimeteam.view.game.listeners.GameStageListener
   * Main stage for the game view, interacts with GameScene
   */
 trait MachiavelliGameStage extends BaseStage with GameStageListener {
+
+  /**
+    * Set the current user turn
+    *
+    * @return
+    */
+  def setInTurn(): Unit
+
+  /**
+    * Set the current user turn ended
+    *
+    * @return
+    */
+  def setTurnEnded(): Unit
+
   /**
     * Make the timer countdown visible.
     */

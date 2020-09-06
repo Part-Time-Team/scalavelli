@@ -1,12 +1,12 @@
 package it.parttimeteam.model.game
 
-import it.parttimeteam.ActorSystemManager
 import it.parttimeteam.controller.game._
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.{GameManager, GameManagerImpl}
 import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.messages.GameMessage.{EndTurnAndDraw, EndTurnWithPlays, LeaveGame, Ready}
+import it.parttimeteam.messages.GameMessage.{LeaveGame, PlayerActionMade, Ready}
 import it.parttimeteam.model.startup.GameMatchInformations
+import it.parttimeteam.{ActorSystemManager, DrawCard, PlayedMove}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -39,7 +39,10 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def turnStarted(): Unit = notifyEvent(InTurnEvent)
 
-    override def turnEnded(): Unit = notifyEvent(TurnEndedEvent)
+    override def turnEnded(): Unit = {
+      turnHistory = turnHistory.clear()
+      notifyEvent(TurnEndedEvent)
+    }
 
     override def opponentInTurn(opponentName: String): Unit = notifyEvent(OpponentInTurnEvent(opponentName))
 
@@ -82,13 +85,23 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     action match {
 
       case EndTurnAndDrawAction =>
-        remoteMatchGameRef ! EndTurnAndDraw(this.playerId)
+        remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)
       case EndTurnAction => {
-        remoteMatchGameRef ! EndTurnWithPlays(this.playerId, currentState.board, currentState.hand)
+        remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
       }
 
       case MakeCombinationAction(cards) => {
-        // validate and play
+        withState { state =>
+          this.gameManager.playCombination(state.hand, state.board, cards) match {
+            case Right((updatedHand, updatedBoard)) =>
+              val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+              this.turnHistory = this.turnHistory.setPresent(updatedState)
+              this.notifyEvent(StateUpdatedEvent(updatedState))
+
+            case Left(error) => this.notifyEvent(ErrorEvent(error))
+          }
+
+        }
       }
 
       case PickCardsAction(cards) => {
@@ -98,6 +111,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
             this.turnHistory = this.turnHistory.setPresent(updatedState)
             this.notifyEvent(StateUpdatedEvent(updatedState))
           }
+          case Left(error) => this.notifyEvent(ErrorEvent(error))
         }
 
       }
@@ -137,9 +151,16 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
       case SortHandByRankAction =>
       case SortHandBySuitAction =>
+      case PickCardCombinationAction(combinationId: String) =>
+      case _ =>
 
     }
   }
 
   // endregion
+
+  private def withState(f: PlayerGameState => Unit): Unit = this.storeOpt match {
+    case Some(state) => f(state.currentState)
+    case _ =>
+  }
 }

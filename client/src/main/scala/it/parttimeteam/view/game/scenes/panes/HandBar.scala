@@ -13,7 +13,7 @@ import scalafx.scene.layout.HBox
 /**
   * Pane which contains all the cards in player hand.
   */
-trait BottomBar extends ScrollPane with BaseGamePane {
+trait HandBar extends ScrollPane with ActionGamePane {
 
   /**
     * Sets the hand inside a ScrollPane.
@@ -23,9 +23,9 @@ trait BottomBar extends ScrollPane with BaseGamePane {
   def setHand(hand: Hand): Unit
 }
 
-object BottomBar {
+object HandBar {
 
-  class BottomBarImpl(handListener: HandListener) extends BottomBar {
+  class HandBarImpl(handListener: HandListener) extends HandBar {
 
     val handCardsContainer = new HBox()
     handCardsContainer.spacing = 5d
@@ -35,6 +35,8 @@ object BottomBar {
 
     /** @inheritdoc */
     override def setHand(hand: Hand): Unit = {
+      handCardsContainer.children.clear()
+
       for (card <- hand.playerCards) {
         addHandCard(card, isBoardCard = false)
       }
@@ -47,27 +49,25 @@ object BottomBar {
     /** @inheritdoc */
     override def disableActions(): Unit = {
       handCardsContainer.children.forEach(playerCard => {
-        playerCard.setOnMouseClicked(e => e.consume())
+        playerCard.asInstanceOf[GameCard].disableActions()
       })
     }
 
     /** @inheritdoc */
     override def enableActions(): Unit = {
       handCardsContainer.children.forEach(playerCard => {
-        playerCard.setOnMouseClicked(_ => handListener.onHandCardClicked(playerCard.asInstanceOf[GameCard]))
+        playerCard.asInstanceOf[GameCard].enableActions()
       })
     }
 
     private def addHandCard(card: Card, isBoardCard: Boolean): Unit = {
-      val playerCard: GameCard = GameCard(card)
+      val playerCard: GameCard = GameCard(card, handListener)
       if (isBoardCard) {
         playerCard.setAsBoardCard()
       }
 
-      handCardsContainer.children.add(playerCard)
+      handCardsContainer.children.add(playerCard.asInstanceOf[GameCard])
       handCardsContainer.alignment = BottomCenter
-
-      playerCard.setOnMouseClicked(_ => handListener.onHandCardClicked(playerCard))
     }
   }
 }

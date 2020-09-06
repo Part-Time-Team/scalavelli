@@ -65,6 +65,7 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   /** @inheritdoc */
   override def initMatch(): Unit = {
     Platform.runLater({
+      gameScene.disableActions()
       gameScene.showInitMatch()
     })
   }
@@ -138,6 +139,18 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
     })
   }
 
+  /** @inheritdoc */
+  override def setInTurn(): Unit = {
+    gameScene.setInTurn(true)
+    notifyInfo("It's your turn")
+    setMessage("Your turn")
+  }
+
+  /** @inheritdoc */
+  override def setTurnEnded(): Unit = {
+    gameScene.setInTurn(false)
+    setMessage("")
+  }
 
   // view actions
   /** @inheritdoc*/
@@ -172,4 +185,5 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
 
   /** @inheritdoc*/
   override def resetHistory(): Unit = gameListener.onViewEvent(ResetEvent)
+
 }

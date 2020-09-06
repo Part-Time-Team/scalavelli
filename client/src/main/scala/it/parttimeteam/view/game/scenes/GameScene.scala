@@ -61,6 +61,12 @@ trait GameScene extends Scene {
     * @param message the message to be displayed
     */
   def setMessage(message: String): Unit
+
+  /**
+    * Set if is the player turn
+    * @param inTurn if is the player turn
+    */
+  def setInTurn(inTurn: Boolean) : Unit
 }
 
 object GameScene {
@@ -68,7 +74,7 @@ object GameScene {
   /**
     * Actions which should be invoked inside the game board.
     */
-  trait BoardListener {
+  trait BoardListener extends CardListener {
     /**
       * The player pick a combination from the game board.
       *
@@ -82,26 +88,23 @@ object GameScene {
       * @param cardCombination the GameCardCombination clicked by player
       */
     def onCombinationClicked(cardCombination: GameCardCombination): Unit
-
-    /**
-      * The player click a card inside the game board.
-      *
-      * @param card the GameCard clicked by player
-      */
-    def onBoardCardClicked(card: GameCard)
   }
 
   /**
     * Actions which should be invoked inside the player hand.
     */
-  trait HandListener {
+  trait HandListener extends CardListener {
 
+  }
+
+  trait CardListener {
     /**
-      * The player click a card inside his hand.
+      * The player click a card.
       *
       * @param card the GameCard clicked by player
       */
-    def onHandCardClicked(card: GameCard)
+    def onCardClicked(card: GameCard)
   }
+
 }
 

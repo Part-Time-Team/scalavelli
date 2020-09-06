@@ -3,7 +3,6 @@ package it.parttimeteam.messages
 import akka.actor.ActorRef
 import it.parttimeteam.PlayerAction
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.collections.{Board, Hand}
 import it.parttimeteam.gamestate.PlayerGameState
 
 object GameMessage {
@@ -57,22 +56,6 @@ object GameMessage {
    * @param errorType
    */
   case class Error(errorType: ErrorMessage)
-
-  /**
-   * End the current turn with one or more plays
-   *
-   * @param playerId current player id
-   * @param board    the updated board
-   * @param hand     the updated hand
-   */
-  case class EndTurnWithPlays(playerId: String, board: Board, hand: Hand)
-
-  /**
-   * Ask for a card to draw to end the current turn
-   *
-   * @param playerId current player id
-   */
-  case class EndTurnAndDraw(playerId: String)
 
   /**
    * Send the drawn card to the current player
