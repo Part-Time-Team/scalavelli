@@ -124,7 +124,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       Card("7", "♥", "B")
     ))
 
-    hand = hand.addTableCards(Seq(
+    hand = hand.addBoardCards(Seq(
       Card("K", "♥", "B"),
       Card("Q", "♠", "B")
     ))

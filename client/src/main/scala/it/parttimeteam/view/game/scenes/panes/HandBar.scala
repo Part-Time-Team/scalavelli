@@ -41,7 +41,7 @@ object HandBar {
         addHandCard(card, isBoardCard = false)
       }
 
-      for (card <- hand.tableCards) {
+      for (card <- hand.boardCards) {
         addHandCard(card, isBoardCard = true)
       }
     }

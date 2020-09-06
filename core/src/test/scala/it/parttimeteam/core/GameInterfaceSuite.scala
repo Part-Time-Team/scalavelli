@@ -68,7 +68,8 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
           val comb1 = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS))
           val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
           val board = Board(Seq(comb1, comb2))
-          val hand = Hand(tableCards = List(FIVE_CLUBS))
+
+          val hand = Hand(boardCards = List(FIVE_CLUBS))
           assert(!(gameInterface validateTurn(board, hand)))
         }
       }
@@ -84,7 +85,7 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
         val played = result.right.get
         // Check that seq cards are not in player hand.
         assert(played._1.playerCards.nonEmpty)
-        assert(played._1.tableCards.isEmpty)
+        assert(played._1.boardCards.isEmpty)
         assertResult(Seq(FIVE_CLUBS))(played._1.playerCards)
         // Check that board contain the new combination.
         assert(played._2.combinations.exists(_.cards == cards))
@@ -123,7 +124,7 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
 
         // This is make secure by previous assertion.
         val (hand: Hand, board: Board) = picked.right.get
-        assert(hand.tableCards contains TWO_CLUBS)
+        assert(hand.boardCards contains TWO_CLUBS)
         assert(!(hand.playerCards contains TWO_CLUBS))
         assert(board.combinations forall (c => !(c.cards contains TWO_CLUBS)))
       }

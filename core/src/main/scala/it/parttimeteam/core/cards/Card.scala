@@ -7,8 +7,9 @@ import it.parttimeteam.core.prolog.PrologGame
 /**
  * Card of deck.
  *
- * @param rank Value of the card.
- * @param suit Suit.
+ * @param rank  Value.
+ * @param suit  Suit.
+ * @param color Color.
  */
 case class Card(rank: Rank, suit: Suit, color: Color)
   extends Comparable[Card] {
@@ -47,7 +48,6 @@ case class Card(rank: Rank, suit: Suit, color: Color)
       this.suit compareTo t.suit
 }
 
-
 object Card {
   private val pattern = "^([AJKQ2-9])\\s*([♣♠♦♥])\\s*([RB])$".r
 
@@ -62,10 +62,8 @@ object Card {
    * @param cards Poor Card Sequence.
    */
   implicit class MyRichCardSeq(cards: Seq[Card]) {
-    // TODO: Use implicits to change order strategy.
-
     /**
-     * Class PrologGame
+     * Class PrologGame.
      */
     val prologGame = new PrologGame
 
@@ -87,7 +85,6 @@ object Card {
       if (cards.forall(c => c.rank equals cards.head.rank))
         this.prologGame.validateQuarter(cards)
       else
-
         this.prologGame.validateChain(cards)
 
   }
