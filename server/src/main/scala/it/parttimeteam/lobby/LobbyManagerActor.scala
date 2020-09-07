@@ -1,6 +1,6 @@
 package it.parttimeteam.lobby
 
-import akka.actor.{Actor, ActorRef, Props, Terminated}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import it.parttimeteam.`match`.GameMatchManagerActor
 import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
 import it.parttimeteam.common.{GamePlayer, IdGenerator}
@@ -14,7 +14,7 @@ object LobbyManagerActor {
 
 }
 
-class LobbyManagerActor extends Actor with IdGenerator {
+class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
 
   type UserName = String
   type UserId = String
@@ -65,13 +65,8 @@ class LobbyManagerActor extends Actor with IdGenerator {
     case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
 
     case Terminated(actorRef) => {
-      this.connectedPlayers.find(p => p._2 == actorRef) match {
-        case Some((userId, _)) => {
-          context.unwatch(actorRef)
-          this.lobbyManger.removePlayer(userId)
-          this.connectedPlayers = this.connectedPlayers - userId
-        }
-      }
+      log.debug(s"terminated $actorRef, connected players: $connectedPlayers")
+      removeClient(actorRef)
     }
 
   }
@@ -103,6 +98,19 @@ class LobbyManagerActor extends Actor with IdGenerator {
     this.getClientRef(clientId) match {
       case Some(ref) => action(ref)
       case _ =>
+    }
+  }
+
+  private def removeClient(actorRef: ActorRef): Unit = {
+    this.connectedPlayers.find(_._2 == actorRef) match {
+      case Some((userId, _)) => {
+        log.debug(s"removing client $actorRef from lobby and connected players list")
+        context.unwatch(actorRef)
+        this.lobbyManger.removePlayer(userId)
+        this.connectedPlayers = this.connectedPlayers - userId
+        log.debug(s"removed client $actorRef from lobby and connected players list")
+      }
+      case None => log.warning(s"client $actorRef not found")
     }
   }
 
