@@ -75,10 +75,8 @@ class RankSuite extends AnyFunSuite {
   }
 
   test("Check all string2rank properties"){
-    assert(Rank.string2rank(ACE_SYMBOL) equals Ace())
     assert(Rank.string2rank(ACE) equals Ace())
     assert(Rank.string2rank(OVERFLOW_ACE) equals OverflowAce())
-
     assert(Rank.string2rank(TWO) equals Two())
     assert(Rank.string2rank(THREE) equals Three())
     assert(Rank.string2rank(FOUR) equals Four())
@@ -88,15 +86,9 @@ class RankSuite extends AnyFunSuite {
     assert(Rank.string2rank(EIGHT) equals Eight())
     assert(Rank.string2rank(NINE) equals Nine())
     assert(Rank.string2rank(TEN) equals Ten())
-
     assert(Rank.string2rank(JACK) equals Jack())
-    assert(Rank.string2rank(JACK_SYMBOL) equals Jack())
-
     assert(Rank.string2rank(QUEEN) equals Queen())
-    assert(Rank.string2rank(QUEEN_SYMBOL) equals Queen())
-
     assert(Rank.string2rank(KING) equals King())
-    assert(Rank.string2rank(KING_SYMBOL) equals King())
   }
 
   test("Check Equals with other obs") {
