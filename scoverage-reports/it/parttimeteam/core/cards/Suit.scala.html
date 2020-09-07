@@ -37,50 +37,45 @@
 </span>13 <span style=''>
 </span>14 <span style=''>object Suit {
 </span>15 <span style=''>
-</span>16 <span style=''>  val HEARTS = </span><span style='background: #AEF1AE'>&quot;Hearts&quot;</span><span style=''>
-</span>17 <span style=''>  val DIAMONDS = </span><span style='background: #AEF1AE'>&quot;Diamonds&quot;</span><span style=''>
-</span>18 <span style=''>  val SPADES = </span><span style='background: #AEF1AE'>&quot;Spades&quot;</span><span style=''>
-</span>19 <span style=''>  val CLUBS = </span><span style='background: #AEF1AE'>&quot;Clubs&quot;</span><span style=''>
+</span>16 <span style=''>  val HEARTS = </span><span style='background: #AEF1AE'>&quot;H&quot;</span><span style=''>
+</span>17 <span style=''>  val DIAMONDS = </span><span style='background: #AEF1AE'>&quot;D&quot;</span><span style=''>
+</span>18 <span style=''>  val SPADES = </span><span style='background: #AEF1AE'>&quot;S&quot;</span><span style=''>
+</span>19 <span style=''>  val CLUBS = </span><span style='background: #AEF1AE'>&quot;C&quot;</span><span style=''>
 </span>20 <span style=''>
-</span>21 <span style=''>  val HEART_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♥&quot;</span><span style=''>
-</span>22 <span style=''>  val DIAMONDS_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♦&quot;</span><span style=''>
-</span>23 <span style=''>  val SPADES_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♠&quot;</span><span style=''>
-</span>24 <span style=''>  val CLUBS_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♣&quot;</span><span style=''>
+</span>21 <span style=''>  /**
+</span>22 <span style=''>   * The heart suit.
+</span>23 <span style=''>   */
+</span>24 <span style=''>  case class Hearts() extends Suit(&quot;Hearts&quot;, &quot;H&quot;, 0)
 </span>25 <span style=''>
 </span>26 <span style=''>  /**
-</span>27 <span style=''>   * The heart suit.
+</span>27 <span style=''>   * The diamond suit.
 </span>28 <span style=''>   */
-</span>29 <span style=''>  case class Hearts() extends Suit(&quot;Hearts&quot;, &quot;♥&quot;, 0)
+</span>29 <span style=''>  case class Diamonds() extends Suit(&quot;Diamonds&quot;, &quot;D&quot;, 1)
 </span>30 <span style=''>
 </span>31 <span style=''>  /**
-</span>32 <span style=''>   * The diamond suit.
+</span>32 <span style=''>   * The Club suit.
 </span>33 <span style=''>   */
-</span>34 <span style=''>  case class Diamonds() extends Suit(&quot;Diamonds&quot;, &quot;♦&quot;, 1)
+</span>34 <span style=''>  case class Clubs() extends Suit(&quot;Clubs&quot;, &quot;C&quot;, 2)
 </span>35 <span style=''>
 </span>36 <span style=''>  /**
-</span>37 <span style=''>   * The Club suit.
+</span>37 <span style=''>   * The spade suit.
 </span>38 <span style=''>   */
-</span>39 <span style=''>  case class Clubs() extends Suit(&quot;Clubs&quot;, &quot;♣&quot;, 2)
+</span>39 <span style=''>  case class Spades() extends Suit(&quot;Spades&quot;, &quot;S&quot;, 3)
 </span>40 <span style=''>
 </span>41 <span style=''>  /**
-</span>42 <span style=''>   * The spade suit.
-</span>43 <span style=''>   */
-</span>44 <span style=''>  case class Spades() extends Suit(&quot;Spades&quot;, &quot;♠&quot;, 3)
-</span>45 <span style=''>
-</span>46 <span style=''>  /**
-</span>47 <span style=''>   * Transform a string in the matching suit.
-</span>48 <span style=''>   *
-</span>49 <span style=''>   * @param s String to convert.
-</span>50 <span style=''>   * @return Suit converted.
-</span>51 <span style=''>   */
-</span>52 <span style=''>  implicit def string2suit(s: String): Suit = s match {
-</span>53 <span style=''>    case this.HEART_SYMBOL     | this.HEARTS =&gt; </span><span style='background: #AEF1AE'>Hearts()</span><span style=''>
-</span>54 <span style=''>    case this.DIAMONDS_SYMBOL  | this.DIAMONDS =&gt; </span><span style='background: #AEF1AE'>Diamonds()</span><span style=''>
-</span>55 <span style=''>    case this.CLUBS_SYMBOL     | this.CLUBS =&gt; </span><span style='background: #AEF1AE'>Clubs()</span><span style=''>
-</span>56 <span style=''>    case this.SPADES_SYMBOL    | this.SPADES =&gt; </span><span style='background: #AEF1AE'>Spades()</span><span style=''>
-</span>57 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(f&quot;Unknown suit $s&quot;)</span><span style=''>
-</span>58 <span style=''>  }
-</span>59 <span style=''>}
+</span>42 <span style=''>   * Transform a string in the matching suit.
+</span>43 <span style=''>   *
+</span>44 <span style=''>   * @param s String to convert.
+</span>45 <span style=''>   * @return Suit converted.
+</span>46 <span style=''>   */
+</span>47 <span style=''>  implicit def string2suit(s: String): Suit = s match {
+</span>48 <span style=''>    case this.HEARTS =&gt; </span><span style='background: #AEF1AE'>Hearts()</span><span style=''>
+</span>49 <span style=''>    case this.DIAMONDS =&gt; </span><span style='background: #AEF1AE'>Diamonds()</span><span style=''>
+</span>50 <span style=''>    case this.CLUBS =&gt; </span><span style='background: #AEF1AE'>Clubs()</span><span style=''>
+</span>51 <span style=''>    case this.SPADES =&gt; </span><span style='background: #AEF1AE'>Spades()</span><span style=''>
+</span>52 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(f&quot;Unknown suit $s&quot;)</span><span style=''>
+</span>53 <span style=''>  }
+</span>54 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -97,28 +92,7 @@
           11
         </td>
         <td>
-          528
-        </td>
-        <td>
-          314
-          -
-          321
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Suit.order
-        </td>
-        <td style="background: #AEF1AE">
-          t.order
-        </td>
-      </tr><tr>
-        <td>
-          11
-        </td>
-        <td>
-          375
+          523
         </td>
         <td>
           314
@@ -139,12 +113,12 @@
           11
         </td>
         <td>
-          691
+          681
         </td>
         <td>
-          298
+          314
           -
-          303
+          321
         </td>
         <td>
           Select
@@ -153,14 +127,14 @@
           it.parttimeteam.core.cards.Suit.order
         </td>
         <td style="background: #AEF1AE">
-          Suit.this.order
+          t.order
         </td>
       </tr><tr>
         <td>
           11
         </td>
         <td>
-          637
+          439
         </td>
         <td>
           298
@@ -178,15 +152,36 @@
         </td>
       </tr><tr>
         <td>
+          11
+        </td>
+        <td>
+          410
+        </td>
+        <td>
+          298
+          -
+          303
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.order
+        </td>
+        <td style="background: #AEF1AE">
+          Suit.this.order
+        </td>
+      </tr><tr>
+        <td>
           16
         </td>
         <td>
-          549
+          716
         </td>
         <td>
           355
           -
-          363
+          358
         </td>
         <td>
           Literal
@@ -195,19 +190,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;Hearts&quot;
+          &quot;H&quot;
         </td>
       </tr><tr>
         <td>
           17
         </td>
         <td>
-          416
+          543
         </td>
         <td>
-          381
+          376
           -
-          391
+          379
         </td>
         <td>
           Literal
@@ -216,19 +211,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;Diamonds&quot;
+          &quot;D&quot;
         </td>
       </tr><tr>
         <td>
           18
         </td>
         <td>
-          661
+          384
         </td>
         <td>
-          407
+          395
           -
-          415
+          398
         </td>
         <td>
           Literal
@@ -237,19 +232,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;Spades&quot;
+          &quot;S&quot;
         </td>
       </tr><tr>
         <td>
           19
         </td>
         <td>
-          501
+          658
         </td>
         <td>
-          430
+          413
           -
-          437
+          416
         </td>
         <td>
           Literal
@@ -258,103 +253,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;Clubs&quot;
+          &quot;C&quot;
         </td>
       </tr><tr>
         <td>
-          21
+          48
         </td>
         <td>
-          760
+          568
         </td>
         <td>
-          460
+          974
           -
-          463
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;♥&quot;
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          682
-        </td>
-        <td>
-          488
-          -
-          491
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;♦&quot;
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          542
-        </td>
-        <td>
-          514
-          -
-          517
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;♠&quot;
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          376
-        </td>
-        <td>
-          539
-          -
-          542
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;♣&quot;
-        </td>
-      </tr><tr>
-        <td>
-          53
-        </td>
-        <td>
-          630
-        </td>
-        <td>
-          1124
-          -
-          1132
+          982
         </td>
         <td>
           Apply
@@ -367,15 +278,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          49
         </td>
         <td>
-          562
+          429
         </td>
         <td>
-          1183
+          1009
           -
-          1193
+          1019
         </td>
         <td>
           Apply
@@ -388,15 +299,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          50
         </td>
         <td>
-          418
+          682
         </td>
         <td>
-          1241
+          1043
           -
-          1248
+          1050
         </td>
         <td>
           Apply
@@ -409,15 +320,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          51
         </td>
         <td>
-          658
+          516
         </td>
         <td>
-          1297
+          1075
           -
-          1305
+          1083
         </td>
         <td>
           Apply
@@ -430,15 +341,15 @@
         </td>
       </tr><tr>
         <td>
-          57
+          52
         </td>
         <td>
-          502
+          787
         </td>
         <td>
-          1320
+          1098
           -
-          1366
+          1144
         </td>
         <td>
           Throw
