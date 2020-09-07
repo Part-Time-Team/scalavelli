@@ -54,7 +54,7 @@ object Rank {
   /**
    * The first rank.
    */
-  case class Ace() extends Rank(1, "Ace", "A") {
+  case class Ace() extends Rank(1, "Ace", "1") {
     /**
      * Compare an Ace with another card.
      *
@@ -70,7 +70,7 @@ object Rank {
   /**
    * The optional OverflowAce with value 14
    */
-  case class OverflowAce() extends Rank(14, "Ace", "A")
+  case class OverflowAce() extends Rank(14, "Ace", "14")
 
   /**
    * The second rank.
@@ -115,22 +115,22 @@ object Rank {
   /**
    * The tenth rank.
    */
-  case class Ten() extends Rank(10, "Ten", "0")
+  case class Ten() extends Rank(10, "Ten", "10")
 
   /**
    * The eleventh rank.
    */
-  case class Jack() extends Rank(11, "Jack", "J")
+  case class Jack() extends Rank(11, "Jack", "11")
 
   /**
    * The twelveth rank.
    */
-  case class Queen() extends Rank(12, "Queen", "Q")
+  case class Queen() extends Rank(12, "Queen", "12")
 
   /**
    * The thirteenth rank.
    */
-  case class King() extends Rank(13, "King", "K") {
+  case class King() extends Rank(13, "King", "13") {
     /**
      * Compare King with another card.
      *
@@ -150,20 +150,20 @@ object Rank {
    * @return Rank converted.
    */
   implicit def string2rank(s: String): Rank = s match {
-    case ACE    => Ace()
-    case TWO    => Two()
-    case THREE  => Three()
-    case FOUR   => Four()
-    case FIVE   => Five()
-    case SIX    => Six()
-    case SEVEN  => Seven()
-    case EIGHT  => Eight()
-    case NINE   => Nine()
-    case TEN    => Ten()
-    case JACK   => Jack()
-    case QUEEN  => Queen()
-    case KING   => King()
-    case OVERFLOW_ACE => OverflowAce()
+    case this.ACE    => Ace()
+    case this.TWO    => Two()
+    case this.THREE  => Three()
+    case this.FOUR   => Four()
+    case this.FIVE   => Five()
+    case this.SIX    => Six()
+    case this.SEVEN  => Seven()
+    case this.EIGHT  => Eight()
+    case this.NINE   => Nine()
+    case this.TEN    => Ten()
+    case this.JACK   => Jack()
+    case this.QUEEN  => Queen()
+    case this.KING   => King()
+    case this.OVERFLOW_ACE => OverflowAce()
     case _ => throw new RuntimeException(f"Unknown rank $s")
   }
 }

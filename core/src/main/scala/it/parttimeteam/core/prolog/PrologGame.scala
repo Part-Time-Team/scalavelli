@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.core.cards.Card
+import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 import it.parttimeteam.core.prolog.converter.PrologGameConverter
 import it.parttimeteam.core.prolog.engine.{PrologGameEngine, PrologStruct}
 
@@ -9,7 +9,21 @@ import scala.annotation.tailrec
 
 class PrologGame() {
 
-  import PrologGame._
+  /**
+   * Variable for the goals of the prolog
+   */
+  private val X: Var = new Var("X")
+  private val Y: Var = new Var("Y")
+  private val Z: Var = new Var("Z")
+
+  /**
+   * Predicate for the goals of the prolog
+   */
+  private val card: String = "card"
+  private val validationQuarter: String = "validationQuarter"
+  private val validationChain: String = "validationChain"
+  private val orderByValue: String = "quicksortValue"
+  private val orderBySuit: String = "quicksortSuit"
 
   private val conversion: PrologGameConverter = new PrologGameConverter
   private val engine: PrologGameEngine = new PrologGameEngine
@@ -99,22 +113,26 @@ class PrologGame() {
 /**
  * Object to initialize the class PrologGame
  */
-object PrologGame {
+object PrologGame extends App{
   def apply(): PrologGame = new PrologGame()
 
-  /**
-   * Variable for the goals of the prolog
-   */
-  private val X: Var = new Var("X")
-  private val Y: Var = new Var("Y")
-  private val Z: Var = new Var("Z")
+  val ACE_CLUBS: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
+  val ACE_HEARTS: Card = Card(Rank.Ace(), Suit.Hearts(), Color.Red())
 
   /**
-   * Predicate for the goals of the prolog
+   * Two cards
    */
-  private val card: String = "card"
-  private val validationQuarter: String = "validationQuarter"
-  private val validationChain: String = "validationChain"
-  private val orderByValue: String = "quicksortValue"
-  private val orderBySuit: String = "quicksortSuit"
+  val TWO_CLUBS: Card = Card(Rank.Two(), Suit.Clubs(), Color.Blue())
+
+  /**
+   * Three cards
+   */
+  val THREE_CLUBS: Card = Card(Rank.Three(), Suit.Clubs(), Color.Blue())
+  val THREE_HEARTS: Card = Card(Rank.Three(), Suit.Hearts(), Color.Blue())
+
+  val JACK_HEARTS: Card = Card(Rank.Jack(), Suit.Hearts(), Color.Blue())
+  val QUEEN_HEARTS: Card = Card(Rank.Queen(), Suit.Hearts(), Color.Blue())
+  val KING_HEARTS: Card = Card(Rank.King(), Suit.Hearts(), Color.Blue())
+
+  PrologGame().loadDeck
 }

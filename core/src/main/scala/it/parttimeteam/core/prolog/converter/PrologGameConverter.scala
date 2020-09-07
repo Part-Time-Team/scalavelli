@@ -21,7 +21,7 @@ class PrologGameConverter extends PrologConverter {
    * @inheritdoc
    */
   override def cardsConvertToString(cards: Seq[Card])(variable: Option[Var]): String = {
-    val tupleCard = for (card <- cards) yield (card.rank.value, "\"" + card.suit.name + "\"")
+    val tupleCard = for (card <- cards) yield (card.rank.value, "\"" + card.suit.shortName + "\"")
     this.prologList(tupleCard)(variable)
   }
 
@@ -64,12 +64,13 @@ class PrologGameConverter extends PrologConverter {
   /**
    * @inheritdoc
    */
-  override def prologList(tupleCard: Seq[(Int, String)])(variable: Option[Var]): String =
+  override def prologList(tupleCard: Seq[(Int, String)])(variable: Option[Var]): String = {
 
     if (variable.isDefined) {
       startList + tupleCard.mkString(",") + "]," + variable.get.getName + ")."
     } else {
       startList + tupleCard.mkString(",") + endList
     }
+  }
 }
 

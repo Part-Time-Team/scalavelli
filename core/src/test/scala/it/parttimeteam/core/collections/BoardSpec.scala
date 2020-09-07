@@ -5,11 +5,11 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class BoardSpec extends AnyFunSuite {
   var board: Board = Board.empty
-  val TWO_CLUBS: Card = "2♣R"
-  val THREE_CLUBS: Card = "3♣B"
-  val FOUR_CLUBS: Card = "4♣B"
-  val FOUR_DIAMONDS: Card = "4♦B"
-  val FOUR_SPADES: Card = "4♠B"
+  val TWO_CLUBS: Card = "2CR"
+  val THREE_CLUBS: Card = "3CB"
+  val FOUR_CLUBS: Card = "4CB"
+  val FOUR_DIAMONDS: Card = "4DB"
+  val FOUR_SPADES: Card = "4SB"
   val comb1: CardCombination = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS))
   var comb2: CardCombination = CardCombination("#2", Seq(FOUR_DIAMONDS, FOUR_SPADES))
 

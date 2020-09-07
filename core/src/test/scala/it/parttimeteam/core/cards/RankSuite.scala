@@ -6,7 +6,7 @@ import org.scalatest.funsuite.AnyFunSuite
 class RankSuite extends AnyFunSuite {
   test("Check all ranks properties") {
     assert(Ace().name equals "Ace")
-    assert(Ace().shortName equals "A")
+    assert(Ace().shortName equals "1")
     assert(Ace().value equals 1)
 
     assert(Two().name equals "Two")
@@ -42,23 +42,23 @@ class RankSuite extends AnyFunSuite {
     assert(Nine().value equals 9)
 
     assert(Ten().name equals "Ten")
-    assert(Ten().shortName equals "0")
+    assert(Ten().shortName equals "10")
     assert(Ten().value equals 10)
 
     assert(Jack().name equals "Jack")
-    assert(Jack().shortName equals "J")
+    assert(Jack().shortName equals "11")
     assert(Jack().value equals 11)
 
     assert(Queen().name equals "Queen")
-    assert(Queen().shortName equals "Q")
+    assert(Queen().shortName equals "12")
     assert(Queen().value equals 12)
 
     assert(King().name equals "King")
-    assert(King().shortName equals "K")
+    assert(King().shortName equals "13")
     assert(King().value equals 13)
 
     assert(OverflowAce().name equals "Ace")
-    assert(OverflowAce().shortName equals "A")
+    assert(OverflowAce().shortName equals "14")
     assert(OverflowAce().value equals 14)
   }
 
