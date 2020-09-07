@@ -32,6 +32,7 @@ object TestCards {
   /**
    * Four cards
    */
+  val FOUR_HEARTS: Card = Card(Rank.Four(), Suit.Hearts(), Color.Blue())
   val FOUR_SPADES: Card = Card(Rank.Four(), Suit.Spades(), Color.Blue())
   val FOUR_CLUBS: Card = Card(Rank.Four(), Suit.Clubs(), Color.Blue())
   val FOUR_DIAMONDS: Card = Card(Rank.Four(), Suit.Diamonds(), Color.Blue())
