@@ -49,7 +49,8 @@ case class Card(rank: Rank, suit: Suit, color: Color)
 }
 
 object Card {
-  private val pattern = "^([AJKQ2-9])\\s*([♣♠♦♥])\\s*([RB])$".r
+
+  private val pattern = "^([1-9]|1[0-4])\\s*([HSDC])\\s*([RB])$".r
 
   implicit def string2card(s: String): Card = s match {
     case pattern(rank, suit, color) => cards.Card(rank, suit, color)

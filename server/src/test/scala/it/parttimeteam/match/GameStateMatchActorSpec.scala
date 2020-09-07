@@ -53,7 +53,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
   }
 
   object FakeGameInterface {
-    val cardToDraw = Card.string2card("2♣R")
+    val cardToDraw = Card.string2card("2CR")
   }
 
   class FakeGameInterface extends GameInterface {
