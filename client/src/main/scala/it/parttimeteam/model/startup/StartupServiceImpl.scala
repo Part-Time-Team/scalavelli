@@ -2,7 +2,7 @@ package it.parttimeteam.model.startup
 
 import akka.actor.ActorRef
 import it.parttimeteam.messages.LobbyMessages._
-import it.parttimeteam.model.{GameStartUpEvent, GameStartedEvent, LobbyJoinedEvent, PrivateLobbyCreatedEvent}
+import it.parttimeteam.model.{GameStartUpEvent, GameStartedEvent, LobbyJoinErrorEvent, LobbyJoinedEvent, PrivateLobbyCreatedEvent}
 import it.parttimeteam.{ActorSystemManager, Constants}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -34,15 +34,16 @@ class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) exte
   }
 
   override def connect(address: String, port: Int): Unit = {
-    resolveRemoteActorPath(generateServerActorPath(address, port)) onComplete ({
+    resolveRemoteActorPath(generateServerActorPath(address, port)) onComplete {
       case Success(ref) => {
         ref ! Connect(startupActorRef)
       }
       case Failure(t) => {
-
+        // TODO MATTEOC notify
+        this.notifyEvent(LobbyJoinErrorEvent("Server not found error"))
       }
 
-    })
+    }
   }
 
   override def joinPublicLobby(username: String, numberOfPlayers: Int): Unit =
