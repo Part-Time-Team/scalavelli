@@ -1,8 +1,8 @@
 package it.parttimeteam.model.game
 
 import it.parttimeteam.controller.game._
+import it.parttimeteam.core.GameInterface
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.{GameInterface, GameInterfaceImpl}
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{LeaveGame, PlayerActionMade, Ready}
 import it.parttimeteam.model.startup.GameMatchInformations
