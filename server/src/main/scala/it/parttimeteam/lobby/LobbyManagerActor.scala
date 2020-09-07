@@ -67,6 +67,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
     case Terminated(actorRef) => {
       this.connectedPlayers.find(p => p._2 == actorRef) match {
         case Some((userId, _)) => {
+          context.unwatch(actorRef)
           this.lobbyManger.removePlayer(userId)
           this.connectedPlayers = this.connectedPlayers - userId
         }
@@ -85,6 +86,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
   private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
     val gameActor = context.actorOf(GameMatchManagerActor.props(lobbyType.numberOfPlayers, new GameInterfaceImpl()))
     players.foreach(p => {
+      context.unwatch(p.actorRef)
       // remove player form lobby
       this.lobbyManger.removePlayer(p.id)
       // remove player from connected players structure
@@ -100,6 +102,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
   private def executeOnClientRefPresent(clientId: String)(action: ActorRef => Unit): Unit = {
     this.getClientRef(clientId) match {
       case Some(ref) => action(ref)
+      case _ =>
     }
   }
 

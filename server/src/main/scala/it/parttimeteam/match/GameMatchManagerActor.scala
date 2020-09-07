@@ -53,7 +53,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
       this.players = players
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
-      //      this.players.foreach(p => context.watch(p.actorRef))
+      this.players.foreach(p => context.watch(p.actorRef))
       context.become(initializing(Seq.empty) orElse termination())
     }
   }
