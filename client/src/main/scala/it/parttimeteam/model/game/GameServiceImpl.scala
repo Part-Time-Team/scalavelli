@@ -106,9 +106,9 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
       case LeaveGameAction => this.leaveGame()
 
-      case SortHandByRankAction =>
+      case SortHandByRankAction => this.sortHandByRank()
 
-      case SortHandBySuitAction =>
+      case SortHandBySuitAction => this.sortHandBySuit()
 
       case PickCardCombinationAction(combinationId: String) => this.pickCardCombination(combinationId)
 
@@ -194,6 +194,20 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
+  private def sortHandByRank(): Unit = {
+    withState { state =>
+      val updatedState = this.storeOpt.get.onLocalTurnStateChanged(state.hand.sortByRank(), state.board)
+      this.updateHistoryAndNotify(updatedState)
+    }
+  }
+
+  private def sortHandBySuit(): Unit = {
+    withState { state =>
+      val updatedState = this.storeOpt.get.onLocalTurnStateChanged(state.hand.sortBySuit(), state.board)
+      this.updateHistoryAndNotify(updatedState)
+    }
+  }
+
 
   private def updateHistoryAndNotify(updatedState: PlayerGameState): Unit = {
     this.updateHistory(updatedState)
@@ -212,7 +226,6 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   private def generateClientGameState(state: PlayerGameState, turnHistory: History[PlayerGameState]): ClientGameState = {
     ClientGameState(state, turnHistory.canPrevious, turnHistory.canNext, turnHistory.canPrevious, !turnHistory.canPrevious)
   }
-
 
   /**
    * Execute the history method, updates the history and the resulting state
