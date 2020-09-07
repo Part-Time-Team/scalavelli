@@ -1,5 +1,6 @@
 package it.parttimeteam.controller.game
 
+import it.parttimeteam.core.GameInterfaceImpl
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
@@ -21,7 +22,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       app.stage = gameStage
     })
 
-    this.gameService = new GameServiceImpl(gameInfo, notifyEvent)
+    this.gameService = new GameServiceImpl(gameInfo, notifyEvent, new GameInterfaceImpl())
     this.gameService.playerReady()
   }
 
