@@ -87,7 +87,7 @@ class PrologGame() {
    */
   def sortBySuit(cards: Seq[Card]): Seq[Card] = {
 
-    val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(X))
+    val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(conversion optionalValueCards cards)(Some(X))
     this.completedResult(cards, prologResult)
   }
 
@@ -113,26 +113,6 @@ class PrologGame() {
 /**
  * Object to initialize the class PrologGame
  */
-object PrologGame extends App{
+object PrologGame {
   def apply(): PrologGame = new PrologGame()
-
-  val ACE_CLUBS: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
-  val ACE_HEARTS: Card = Card(Rank.Ace(), Suit.Hearts(), Color.Red())
-
-  /**
-   * Two cards
-   */
-  val TWO_CLUBS: Card = Card(Rank.Two(), Suit.Clubs(), Color.Blue())
-
-  /**
-   * Three cards
-   */
-  val THREE_CLUBS: Card = Card(Rank.Three(), Suit.Clubs(), Color.Blue())
-  val THREE_HEARTS: Card = Card(Rank.Three(), Suit.Hearts(), Color.Blue())
-
-  val JACK_HEARTS: Card = Card(Rank.Jack(), Suit.Hearts(), Color.Blue())
-  val QUEEN_HEARTS: Card = Card(Rank.Queen(), Suit.Hearts(), Color.Blue())
-  val KING_HEARTS: Card = Card(Rank.King(), Suit.Hearts(), Color.Blue())
-
-  PrologGame().loadDeck
 }

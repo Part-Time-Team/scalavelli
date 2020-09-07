@@ -36,11 +36,11 @@ class PrologGameConverterSuite extends AnyFunSuite {
     assertResult(card)(prologConverter getCard(prolog toTerm "B", prolog toTerm "C", prolog toTerm "1"))
   }
 
-  test("Change optional value of the card Ace if it is after King card") {
+  test("It replaces the Ace value card in the Overflow Ace card in specific cases") {
 
     assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS.copy(rank = "14")))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS)))
 
-    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS.copy(rank = "14"), TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS, TWO_CLUBS, THREE_CLUBS)))
+    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS.copy(rank = "14"), ACE_CLUBS, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS, ACE_CLUBS, TWO_CLUBS, THREE_CLUBS)))
 
     assertResult(Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS)))
   }

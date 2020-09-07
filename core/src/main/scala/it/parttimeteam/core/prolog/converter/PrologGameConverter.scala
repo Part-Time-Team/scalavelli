@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.core.cards.Rank.{Ace, King}
+import it.parttimeteam.core.cards.Rank.{Ace, King, OverflowAce}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 
 /**
@@ -49,17 +49,33 @@ class PrologGameConverter extends PrologConverter {
   /**
    * @inheritdoc
    */
-  override def optionalValueCards(cards: Seq[Card]): Seq[Card] = cards.foldLeft(Seq.empty[Card]) {
-    (acc, card) =>
-      acc match {
-        case Nil => card +: Nil
-        case _ => (acc.last.rank, card.rank) match {
-          case (King(), Ace()) =>
-            acc ++ (card.copy(rank = "14") +: Nil)
-          case _ => acc ++ (card +: Nil)
+  override def optionalValueCards(cards: Seq[Card]): Seq[Card] = {
+
+    val containAce: Seq[Card] = cards.filter(card => card.rank == Rank.Ace())
+    val containTwo: Boolean = cards.exists(card => card.rank == Rank.Two())
+
+    (containAce.size, containTwo) match {
+      // Replacing Ace with OverflowAce with an ace into sequence
+      case (1, false) =>
+        cards.foldLeft(Seq.empty[Card]) {
+          (acc, card) =>
+            card.rank match {
+              case Ace() => acc ++ (card.copy(rank = "14") +: Nil)
+              case _ => acc ++ (card +: Nil)
+            }
         }
+      // Replacing Ace with OverflowAce with more aces into sequence
+      case (2, true) => cards.foldLeft(Seq.empty[Card]) {
+        (acc, card) =>
+          card.rank match {
+            case Ace() if !acc.exists(_.rank == Rank.OverflowAce()) => acc ++ (card.copy(rank = "14") +: Nil)
+            case _ => acc ++ (card +: Nil)
+          }
       }
+      case _ => cards
+    }
   }
+
 
   /**
    * @inheritdoc
