@@ -49,7 +49,7 @@ class RemoteGameActorSpec extends TestKit(ActorSystem("test", ConfigFactory.load
     }
 
     "notify the lister on turn ended with card drawn" in {
-      val sampleCard = Card.string2card("2♣R")
+      val sampleCard = Card.string2card("2CR")
       actor ! CardDrawn(sampleCard)
       (mockListener.turnEndedWithCartDrawn _).verify(sampleCard).once()
     }

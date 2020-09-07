@@ -24,7 +24,7 @@ class GameStateStoreSpec extends AnyWordSpecLike {
 
   "an initialized game state store" should {
 
-    val sampleCard = Card("A", "♠", "B")
+    val sampleCard = Card("1", "S", "B")
 
     "update the hand after a card has drawn" in {
       val gameStateStore = GameStateStore(initialState)
