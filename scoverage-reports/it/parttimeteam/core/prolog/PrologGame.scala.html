@@ -104,42 +104,40 @@
 </span>80 <span style=''>  }
 </span>81 <span style=''>
 </span>82 <span style=''>  /**
-</span>83 <span style=''>   * Sort by suit a sequence of cards
+</span>83 <span style=''>   * Sort by suit a sequence of cards.
 </span>84 <span style=''>   *
-</span>85 <span style=''>   * @param cards cards to sort
-</span>86 <span style=''>   * @return ordered card sequence
+</span>85 <span style=''>   * @param cards cards to sort.
+</span>86 <span style=''>   * @return ordered card sequence.
 </span>87 <span style=''>   */
 </span>88 <span style=''>  def sortBySuit(cards: Seq[Card]): Seq[Card] = {
-</span>89 <span style=''>
-</span>90 <span style=''>    val prologResult: Seq[Term] = </span><span style='background: #AEF1AE'>engine goal orderBySuit + conversion.cardsConvertToString(conversion optionalValueCards cards)(Some(X))</span><span style=''>
-</span>91 <span style=''>    </span><span style='background: #AEF1AE'>this.completedResult(cards, prologResult)</span><span style=''>
-</span>92 <span style=''>  }
-</span>93 <span style=''>
-</span>94 <span style=''>  /**
-</span>95 <span style=''>   * Add color to ordered cards
-</span>96 <span style=''>   *
-</span>97 <span style=''>   * @param inputCards  input cards
-</span>98 <span style=''>   * @param sortedCards ordered cards
-</span>99 <span style=''>   * @return ordered cards with color
-</span>100 <span style=''>   */
-</span>101 <span style=''>  private def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
-</span>102 <span style=''>
-</span>103 <span style=''>    var tmpInputCards: Seq[Card] = inputCards
-</span>104 <span style=''>    </span><span style='background: #AEF1AE'>conversion.sortedCard(sortedCards).map(tuple =&gt; {
-</span>105 <span style=''></span><span style='background: #AEF1AE'>      val foundCard: Card = tmpInputCards.find(card =&gt; card.rank == tuple._1 &amp;&amp; card.suit == tuple._2).get
-</span>106 <span style=''></span><span style='background: #AEF1AE'>
-</span>107 <span style=''></span><span style='background: #AEF1AE'>      tmpInputCards = tmpInputCards.filter(_ != foundCard)
-</span>108 <span style=''></span><span style='background: #AEF1AE'>      foundCard
-</span>109 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
-</span>110 <span style=''>  }
-</span>111 <span style=''>}
-</span>112 <span style=''>
-</span>113 <span style=''>/**
-</span>114 <span style=''> * Object to initialize the class PrologGame
-</span>115 <span style=''> */
-</span>116 <span style=''>object PrologGame {
-</span>117 <span style=''>  def apply(): PrologGame = </span><span style='background: #AEF1AE'>new PrologGame()</span><span style=''>
-</span>118 <span style=''>}
+</span>89 <span style=''>    val prologResult: Seq[Term] = </span><span style='background: #AEF1AE'>engine goal orderBySuit + conversion.cardsConvertToString(conversion optionalValueCards cards)(Some(X))</span><span style=''>
+</span>90 <span style=''>    </span><span style='background: #AEF1AE'>this.completedResult(cards, prologResult)</span><span style=''>
+</span>91 <span style=''>  }
+</span>92 <span style=''>
+</span>93 <span style=''>  /**
+</span>94 <span style=''>   * Add color to ordered cards.
+</span>95 <span style=''>   *
+</span>96 <span style=''>   * @param inputCards  input cards.
+</span>97 <span style=''>   * @param sortedCards ordered cards.
+</span>98 <span style=''>   * @return ordered cards with color.
+</span>99 <span style=''>   */
+</span>100 <span style=''>  private def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
+</span>101 <span style=''>    var tmpInputCards: Seq[Card] = inputCards
+</span>102 <span style=''>    </span><span style='background: #AEF1AE'>conversion.sortedCard(sortedCards).map(tuple =&gt; {
+</span>103 <span style=''></span><span style='background: #AEF1AE'>      val foundCard: Card = tmpInputCards.find(card =&gt; card.rank == tuple._1 &amp;&amp; card.suit == tuple._2).get
+</span>104 <span style=''></span><span style='background: #AEF1AE'>
+</span>105 <span style=''></span><span style='background: #AEF1AE'>      tmpInputCards = tmpInputCards.filter(_ != foundCard)
+</span>106 <span style=''></span><span style='background: #AEF1AE'>      foundCard
+</span>107 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
+</span>108 <span style=''>  }
+</span>109 <span style=''>}
+</span>110 <span style=''>
+</span>111 <span style=''>/**
+</span>112 <span style=''> * Object to initialize the class PrologGame
+</span>113 <span style=''> */
+</span>114 <span style=''>object PrologGame {
+</span>115 <span style=''>  def apply(): PrologGame = </span><span style='background: #AEF1AE'>new PrologGame()</span><span style=''>
+</span>116 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -783,15 +781,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          89
         </td>
         <td>
           765
         </td>
         <td>
-          2659
+          2661
           -
-          2660
+          2662
         </td>
         <td>
           Select
@@ -804,15 +802,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          89
         </td>
         <td>
           445
         </td>
         <td>
-          2585
+          2587
           -
-          2662
+          2664
         </td>
         <td>
           Apply
@@ -825,15 +823,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          89
         </td>
         <td>
           626
         </td>
         <td>
-          2559
+          2561
           -
-          2662
+          2664
         </td>
         <td>
           Apply
@@ -846,15 +844,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          89
         </td>
         <td>
           605
         </td>
         <td>
-          2654
+          2656
           -
-          2661
+          2663
         </td>
         <td>
           Apply
@@ -867,15 +865,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          89
         </td>
         <td>
           494
         </td>
         <td>
-          2617
+          2619
           -
-          2652
+          2654
         </td>
         <td>
           Apply
@@ -888,15 +886,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          89
         </td>
         <td>
           780
         </td>
         <td>
-          2571
+          2573
           -
-          2662
+          2664
         </td>
         <td>
           Apply
@@ -909,15 +907,15 @@
         </td>
       </tr><tr>
         <td>
-          91
+          90
         </td>
         <td>
           479
         </td>
         <td>
-          2667
+          2669
           -
-          2708
+          2710
         </td>
         <td>
           Apply
@@ -930,15 +928,15 @@
         </td>
       </tr><tr>
         <td>
-          104
+          102
         </td>
         <td>
           462
         </td>
         <td>
-          3018
+          3023
           -
-          3257
+          3262
         </td>
         <td>
           ApplyToImplicitArgs
@@ -955,15 +953,15 @@
         </td>
       </tr><tr>
         <td>
-          104
+          102
         </td>
         <td>
           628
         </td>
         <td>
-          3056
+          3061
           -
-          3056
+          3061
         </td>
         <td>
           TypeApply
@@ -976,15 +974,15 @@
         </td>
       </tr><tr>
         <td>
-          105
+          103
         </td>
         <td>
           594
         </td>
         <td>
-          3096
+          3101
           -
-          3174
+          3179
         </td>
         <td>
           Select
@@ -997,15 +995,15 @@
         </td>
       </tr><tr>
         <td>
-          105
+          103
         </td>
         <td>
           495
         </td>
         <td>
-          3148
+          3153
           -
-          3169
+          3174
         </td>
         <td>
           Apply
@@ -1018,15 +1016,15 @@
         </td>
       </tr><tr>
         <td>
-          105
+          103
         </td>
         <td>
           737
         </td>
         <td>
-          3136
+          3141
           -
-          3144
+          3149
         </td>
         <td>
           Select
@@ -1039,15 +1037,15 @@
         </td>
       </tr><tr>
         <td>
-          105
+          103
         </td>
         <td>
           767
         </td>
         <td>
-          3123
+          3128
           -
-          3169
+          3174
         </td>
         <td>
           Apply
@@ -1060,15 +1058,15 @@
         </td>
       </tr><tr>
         <td>
-          105
+          103
         </td>
         <td>
           652
         </td>
         <td>
-          3161
+          3166
           -
-          3169
+          3174
         </td>
         <td>
           Select
@@ -1081,15 +1079,15 @@
         </td>
       </tr><tr>
         <td>
-          107
+          105
         </td>
         <td>
           788
         </td>
         <td>
-          3198
+          3203
           -
-          3234
+          3239
         </td>
         <td>
           Apply
@@ -1102,15 +1100,15 @@
         </td>
       </tr><tr>
         <td>
-          107
+          105
         </td>
         <td>
           446
         </td>
         <td>
-          3219
+          3224
           -
-          3233
+          3238
         </td>
         <td>
           Apply
@@ -1123,15 +1121,15 @@
         </td>
       </tr><tr>
         <td>
-          117
+          115
         </td>
         <td>
           729
         </td>
         <td>
-          3366
+          3371
           -
-          3382
+          3387
         </td>
         <td>
           Apply

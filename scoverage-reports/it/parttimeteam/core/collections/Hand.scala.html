@@ -29,8 +29,8 @@
 </span>5 <span style=''>/**
 </span>6 <span style=''> * Player's Hand.
 </span>7 <span style=''> *
-</span>8 <span style=''> * @param playerCards List of cards in the player's Hand.
-</span>9 <span style=''> * @param boardCards  List of cards in the player's Hand to put on the Board.
+</span>8 <span style=''> * @param playerCards Sequence of cards in the player's Hand from the turn start.
+</span>9 <span style=''> * @param boardCards  Sequence of cards in the player's Hand picked from Board.
 </span>10 <span style=''> */
 </span>11 <span style=''>case class Hand(playerCards: Seq[Card] = Seq.empty, boardCards: Seq[Card] = Seq.empty) {
 </span>12 <span style=''>  /**
@@ -45,7 +45,7 @@
 </span>21 <span style=''>   * Add cards to the list boardCards.
 </span>22 <span style=''>   *
 </span>23 <span style=''>   * @param cards Cards to add.
-</span>24 <span style=''>   * @return New Hand the updated boardCards list.
+</span>24 <span style=''>   * @return New Hand with the updated boardCards list.
 </span>25 <span style=''>   */
 </span>26 <span style=''>  def addBoardCards(cards: Seq[Card]): Hand = </span><span style='background: #AEF1AE'>this.copy(boardCards = boardCards ++ cards)</span><span style=''>
 </span>27 <span style=''>
@@ -75,19 +75,29 @@
 </span>51 <span style=''></span><span style='background: #AEF1AE'>      &quot;Hand doesn't contain given cards&quot;)</span><span style=''>
 </span>52 <span style=''>  }
 </span>53 <span style=''>
-</span>54 <span style=''>  def sortByRank(): Hand =
-</span>55 <span style=''>    </span><span style='background: #F0ADAD'>this.copy(
-</span>56 <span style=''></span><span style='background: #F0ADAD'>      playerCards = playerCards.sortByRank(),
-</span>57 <span style=''></span><span style='background: #F0ADAD'>      boardCards = boardCards.sortByRank()
-</span>58 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
-</span>59 <span style=''>
-</span>60 <span style=''>  def sortBySuit(): Hand =
-</span>61 <span style=''>    </span><span style='background: #F0ADAD'>this.copy(
-</span>62 <span style=''></span><span style='background: #F0ADAD'>      playerCards = playerCards.sortBySuit(),
-</span>63 <span style=''></span><span style='background: #F0ADAD'>      boardCards = boardCards.sortBySuit()
-</span>64 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
-</span>65 <span style=''>
-</span>66 <span style=''>}
+</span>54 <span style=''>  /**
+</span>55 <span style=''>   * Sort each Card Sequence in Hand by Rank.
+</span>56 <span style=''>   *
+</span>57 <span style=''>   * @return Hand with Sequences ordered.
+</span>58 <span style=''>   */
+</span>59 <span style=''>  def sortByRank(): Hand =
+</span>60 <span style=''>    </span><span style='background: #AEF1AE'>this.copy(
+</span>61 <span style=''></span><span style='background: #AEF1AE'>      playerCards = playerCards.sortByRank(),
+</span>62 <span style=''></span><span style='background: #AEF1AE'>      boardCards = boardCards.sortByRank()
+</span>63 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
+</span>64 <span style=''>
+</span>65 <span style=''>  /**
+</span>66 <span style=''>   * Sort each Card Sequence in Hand by Suit.
+</span>67 <span style=''>   *
+</span>68 <span style=''>   * @return Hand with Sequences ordered.
+</span>69 <span style=''>   */
+</span>70 <span style=''>  def sortBySuit(): Hand =
+</span>71 <span style=''>    </span><span style='background: #AEF1AE'>this.copy(
+</span>72 <span style=''></span><span style='background: #AEF1AE'>      playerCards = playerCards.sortBySuit(),
+</span>73 <span style=''></span><span style='background: #AEF1AE'>      boardCards = boardCards.sortBySuit()
+</span>74 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
+</span>75 <span style=''>
+</span>76 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -107,9 +117,9 @@
           378
         </td>
         <td>
-          553
+          579
           -
-          573
+          599
         </td>
         <td>
           ApplyToImplicitArgs
@@ -128,9 +138,9 @@
           471
         </td>
         <td>
-          565
+          591
           -
-          565
+          591
         </td>
         <td>
           TypeApply
@@ -149,9 +159,9 @@
           646
         </td>
         <td>
-          534
+          560
           -
-          534
+          560
         </td>
         <td>
           Select
@@ -170,9 +180,9 @@
           502
         </td>
         <td>
-          529
+          555
           -
-          574
+          600
         </td>
         <td>
           Apply
@@ -191,9 +201,9 @@
           747
         </td>
         <td>
-          795
+          826
           -
-          795
+          826
         </td>
         <td>
           TypeApply
@@ -212,9 +222,9 @@
           683
         </td>
         <td>
-          784
+          815
           -
-          803
+          834
         </td>
         <td>
           ApplyToImplicitArgs
@@ -233,9 +243,9 @@
           787
         </td>
         <td>
-          761
+          792
           -
-          804
+          835
         </td>
         <td>
           Apply
@@ -254,9 +264,9 @@
           511
         </td>
         <td>
-          766
+          797
           -
-          766
+          797
         </td>
         <td>
           Select
@@ -275,9 +285,9 @@
           636
         </td>
         <td>
-          1053
+          1084
           -
-          1075
+          1106
         </td>
         <td>
           Apply
@@ -296,9 +306,9 @@
           655
         </td>
         <td>
-          1033
+          1064
           -
-          1130
+          1161
         </td>
         <td>
           Apply
@@ -317,9 +327,9 @@
           478
         </td>
         <td>
-          1107
+          1138
           -
-          1128
+          1159
         </td>
         <td>
           Apply
@@ -338,9 +348,9 @@
           396
         </td>
         <td>
-          1088
+          1119
           -
-          1129
+          1160
         </td>
         <td>
           Apply
@@ -359,9 +369,9 @@
           770
         </td>
         <td>
-          1490
+          1521
           -
-          1540
+          1571
         </td>
         <td>
           Apply
@@ -380,9 +390,9 @@
           504
         </td>
         <td>
-          1520
+          1551
           -
-          1539
+          1570
         </td>
         <td>
           Apply
@@ -401,9 +411,9 @@
           612
         </td>
         <td>
-          1608
+          1639
           -
-          1627
+          1658
         </td>
         <td>
           Apply
@@ -422,9 +432,9 @@
           524
         </td>
         <td>
-          1579
+          1610
           -
-          1628
+          1659
         </td>
         <td>
           Apply
@@ -443,9 +453,9 @@
           782
         </td>
         <td>
-          1665
+          1696
           -
-          1685
+          1716
         </td>
         <td>
           Apply
@@ -464,9 +474,9 @@
           638
         </td>
         <td>
-          1646
+          1677
           -
-          1686
+          1717
         </td>
         <td>
           Apply
@@ -485,9 +495,9 @@
           656
         </td>
         <td>
-          1634
+          1665
           -
-          1810
+          1841
         </td>
         <td>
           Apply
@@ -506,9 +516,9 @@
           470
         </td>
         <td>
-          1694
+          1725
           -
-          1767
+          1798
         </td>
         <td>
           Apply
@@ -527,9 +537,9 @@
           390
         </td>
         <td>
-          1775
+          1806
           -
-          1809
+          1840
         </td>
         <td>
           Literal
@@ -542,15 +552,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          60
         </td>
         <td>
           602
         </td>
         <td>
-          1847
+          1983
           -
-          1952
+          2088
         </td>
         <td>
           Apply
@@ -558,62 +568,62 @@
         <td>
           it.parttimeteam.core.collections.Hand.copy
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.copy(cards.this.Card.MyRichCardSeq(Hand.this.playerCards).sortByRank(), cards.this.Card.MyRichCardSeq(Hand.this.boardCards).sortByRank())
-        </td>
-      </tr><tr>
-        <td>
-          56
-        </td>
-        <td>
-          497
-        </td>
-        <td>
-          1878
-          -
-          1902
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Card.MyRichCardSeq.sortByRank
-        </td>
-        <td style="background: #F0ADAD">
-          cards.this.Card.MyRichCardSeq(Hand.this.playerCards).sortByRank()
-        </td>
-      </tr><tr>
-        <td>
-          57
-        </td>
-        <td>
-          758
-        </td>
-        <td>
-          1923
-          -
-          1946
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Card.MyRichCardSeq.sortByRank
-        </td>
-        <td style="background: #F0ADAD">
-          cards.this.Card.MyRichCardSeq(Hand.this.boardCards).sortByRank()
         </td>
       </tr><tr>
         <td>
           61
         </td>
         <td>
+          497
+        </td>
+        <td>
+          2014
+          -
+          2038
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.MyRichCardSeq.sortByRank
+        </td>
+        <td style="background: #AEF1AE">
+          cards.this.Card.MyRichCardSeq(Hand.this.playerCards).sortByRank()
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          758
+        </td>
+        <td>
+          2059
+          -
+          2082
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.MyRichCardSeq.sortByRank
+        </td>
+        <td style="background: #AEF1AE">
+          cards.this.Card.MyRichCardSeq(Hand.this.boardCards).sortByRank()
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
           631
         </td>
         <td>
-          1985
+          2226
           -
-          2090
+          2331
         </td>
         <td>
           Apply
@@ -621,20 +631,20 @@
         <td>
           it.parttimeteam.core.collections.Hand.copy
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           this.copy(cards.this.Card.MyRichCardSeq(Hand.this.playerCards).sortBySuit(), cards.this.Card.MyRichCardSeq(Hand.this.boardCards).sortBySuit())
         </td>
       </tr><tr>
         <td>
-          62
+          72
         </td>
         <td>
           510
         </td>
         <td>
-          2016
+          2257
           -
-          2040
+          2281
         </td>
         <td>
           Apply
@@ -642,20 +652,20 @@
         <td>
           it.parttimeteam.core.cards.Card.MyRichCardSeq.sortBySuit
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           cards.this.Card.MyRichCardSeq(Hand.this.playerCards).sortBySuit()
         </td>
       </tr><tr>
         <td>
-          63
+          73
         </td>
         <td>
           783
         </td>
         <td>
-          2061
+          2302
           -
-          2084
+          2325
         </td>
         <td>
           Apply
@@ -663,7 +673,7 @@
         <td>
           it.parttimeteam.core.cards.Card.MyRichCardSeq.sortBySuit
         </td>
-        <td style="background: #F0ADAD">
+        <td style="background: #AEF1AE">
           cards.this.Card.MyRichCardSeq(Hand.this.boardCards).sortBySuit()
         </td>
       </tr>
