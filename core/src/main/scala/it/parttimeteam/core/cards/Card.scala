@@ -82,6 +82,11 @@ object Card {
      */
     def sortBySuit(): Seq[Card] = this.prologGame.sortBySuit(cards)
 
+    /**
+     * Try to validate the Sequence.
+     *
+     * @return True if is valid, false anywhere.
+     */
     def isValid: Boolean =
       if (cards.forall(c => c.rank equals cards.head.rank))
         this.prologGame.validateQuarter(cards)
