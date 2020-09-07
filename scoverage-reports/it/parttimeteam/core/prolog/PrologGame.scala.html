@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core.prolog
 </span>2 <span style=''>
 </span>3 <span style=''>import alice.tuprolog.{Term, Var}
-</span>4 <span style=''>import it.parttimeteam.core.cards.Card
+</span>4 <span style=''>import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 </span>5 <span style=''>import it.parttimeteam.core.prolog.converter.PrologGameConverter
 </span>6 <span style=''>import it.parttimeteam.core.prolog.engine.{PrologGameEngine, PrologStruct}
 </span>7 <span style=''>
@@ -33,115 +33,113 @@
 </span>9 <span style=''>
 </span>10 <span style=''>class PrologGame() {
 </span>11 <span style=''>
-</span>12 <span style=''>  import PrologGame._
-</span>13 <span style=''>
-</span>14 <span style=''>  private val conversion: PrologGameConverter = </span><span style='background: #AEF1AE'>new PrologGameConverter</span><span style=''>
-</span>15 <span style=''>  private val engine: PrologGameEngine = </span><span style='background: #AEF1AE'>new PrologGameEngine</span><span style=''>
-</span>16 <span style=''>
-</span>17 <span style=''>  /**
-</span>18 <span style=''>   * Loading deck
-</span>19 <span style=''>   *
-</span>20 <span style=''>   * @return deck entity
+</span>12 <span style=''>  /**
+</span>13 <span style=''>   * Variable for the goals of the prolog
+</span>14 <span style=''>   */
+</span>15 <span style=''>  private val X: Var = </span><span style='background: #AEF1AE'>new Var(&quot;X&quot;)</span><span style=''>
+</span>16 <span style=''>  private val Y: Var = </span><span style='background: #AEF1AE'>new Var(&quot;Y&quot;)</span><span style=''>
+</span>17 <span style=''>  private val Z: Var = </span><span style='background: #AEF1AE'>new Var(&quot;Z&quot;)</span><span style=''>
+</span>18 <span style=''>
+</span>19 <span style=''>  /**
+</span>20 <span style=''>   * Predicate for the goals of the prolog
 </span>21 <span style=''>   */
-</span>22 <span style=''>  def loadDeck: Seq[Card] = {
-</span>23 <span style=''>
-</span>24 <span style=''>    val deckToLoad: Iterator[Seq[Term]] = </span><span style='background: #AEF1AE'>engine goals PrologStruct(card, X, Y, Z) grouped 3</span><span style=''>
-</span>25 <span style=''>
-</span>26 <span style=''>    @tailrec
-</span>27 <span style=''>    def _loadDeck(deck: Seq[Card])(deckToLoad: Seq[Seq[Term]]): Seq[Card] = deckToLoad match {
-</span>28 <span style=''>
-</span>29 <span style=''>      case h :: t =&gt; </span><span style='background: #AEF1AE'>_loadDeck(deck :+ conversion.getCard(h.head, h(1), h(2)))(t)</span><span style=''>
-</span>30 <span style=''>      case _ =&gt; deck
-</span>31 <span style=''>    }
-</span>32 <span style=''>
-</span>33 <span style=''>    </span><span style='background: #AEF1AE'>_loadDeck(List())(deckToLoad.toList)</span><span style=''>
-</span>34 <span style=''>  }
-</span>35 <span style=''>
-</span>36 <span style=''>  /**
-</span>37 <span style=''>   * Validate tris or quarter of cards.
-</span>38 <span style=''>   *
-</span>39 <span style=''>   * @param cards Cards to validate.
-</span>40 <span style=''>   * @return True if the goal is successful, False otherwise.
-</span>41 <span style=''>   */
-</span>42 <span style=''>  def validateQuarter(cards: Seq[Card]): Boolean = {
-</span>43 <span style=''>    </span><span style='background: #AEF1AE'>engine isSuccess validationQuarter + conversion.cardsConvertToString(cards)(None)</span><span style=''>
-</span>44 <span style=''>  }
-</span>45 <span style=''>
-</span>46 <span style=''>  /**
-</span>47 <span style=''>   * Validate sequence or scala of cards
-</span>48 <span style=''>   *
-</span>49 <span style=''>   * @param cards cards to validate
-</span>50 <span style=''>   * @return true if the goal is successful, false otherwise
-</span>51 <span style=''>   */
-</span>52 <span style=''>  def validateChain(cards: Seq[Card]): Boolean = {
-</span>53 <span style=''>    </span><span style='background: #AEF1AE'>engine isSuccess validationChain + conversion.cardsConvertToString(conversion optionalValueCards cards)(None)</span><span style=''>
-</span>54 <span style=''>  }
-</span>55 <span style=''>
-</span>56 <span style=''>  /**
-</span>57 <span style=''>   * Sort by value a sequence of cards
-</span>58 <span style=''>   *
-</span>59 <span style=''>   * @param cards cards to sort
-</span>60 <span style=''>   * @return ordered card sequence
-</span>61 <span style=''>   */
-</span>62 <span style=''>  def sortByRank(cards: Seq[Card]): Seq[Card] = {
-</span>63 <span style=''>
-</span>64 <span style=''>    val prologResult: Seq[Term] = </span><span style='background: #AEF1AE'>engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(X))</span><span style=''>
-</span>65 <span style=''>    </span><span style='background: #AEF1AE'>this.completedResult(cards, prologResult)</span><span style=''>
-</span>66 <span style=''>  }
-</span>67 <span style=''>
-</span>68 <span style=''>  /**
-</span>69 <span style=''>   * Sort by suit a sequence of cards
-</span>70 <span style=''>   *
-</span>71 <span style=''>   * @param cards cards to sort
-</span>72 <span style=''>   * @return ordered card sequence
-</span>73 <span style=''>   */
-</span>74 <span style=''>  def sortBySuit(cards: Seq[Card]): Seq[Card] = {
-</span>75 <span style=''>
-</span>76 <span style=''>    val prologResult: Seq[Term] = </span><span style='background: #AEF1AE'>engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(X))</span><span style=''>
-</span>77 <span style=''>    </span><span style='background: #AEF1AE'>this.completedResult(cards, prologResult)</span><span style=''>
-</span>78 <span style=''>  }
-</span>79 <span style=''>
-</span>80 <span style=''>  /**
-</span>81 <span style=''>   * Add color to ordered cards
-</span>82 <span style=''>   *
-</span>83 <span style=''>   * @param inputCards  input cards
-</span>84 <span style=''>   * @param sortedCards ordered cards
-</span>85 <span style=''>   * @return ordered cards with color
-</span>86 <span style=''>   */
-</span>87 <span style=''>  private def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
-</span>88 <span style=''>
-</span>89 <span style=''>    var tmpInputCards: Seq[Card] = inputCards
-</span>90 <span style=''>    </span><span style='background: #AEF1AE'>conversion.sortedCard(sortedCards).map(tuple =&gt; {
-</span>91 <span style=''></span><span style='background: #AEF1AE'>      val foundCard: Card = tmpInputCards.find(card =&gt; card.rank == tuple._1 &amp;&amp; card.suit == tuple._2).get
-</span>92 <span style=''></span><span style='background: #AEF1AE'>
-</span>93 <span style=''></span><span style='background: #AEF1AE'>      tmpInputCards = tmpInputCards.filter(_ != foundCard)
-</span>94 <span style=''></span><span style='background: #AEF1AE'>      foundCard
-</span>95 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
-</span>96 <span style=''>  }
-</span>97 <span style=''>}
-</span>98 <span style=''>
-</span>99 <span style=''>/**
-</span>100 <span style=''> * Object to initialize the class PrologGame
-</span>101 <span style=''> */
-</span>102 <span style=''>object PrologGame {
-</span>103 <span style=''>  def apply(): PrologGame = </span><span style='background: #AEF1AE'>new PrologGame()</span><span style=''>
-</span>104 <span style=''>
-</span>105 <span style=''>  /**
-</span>106 <span style=''>   * Variable for the goals of the prolog
-</span>107 <span style=''>   */
-</span>108 <span style=''>  private val X: Var = </span><span style='background: #AEF1AE'>new Var(&quot;X&quot;)</span><span style=''>
-</span>109 <span style=''>  private val Y: Var = </span><span style='background: #AEF1AE'>new Var(&quot;Y&quot;)</span><span style=''>
-</span>110 <span style=''>  private val Z: Var = </span><span style='background: #AEF1AE'>new Var(&quot;Z&quot;)</span><span style=''>
-</span>111 <span style=''>
-</span>112 <span style=''>  /**
-</span>113 <span style=''>   * Predicate for the goals of the prolog
-</span>114 <span style=''>   */
-</span>115 <span style=''>  private val card: String = </span><span style='background: #AEF1AE'>&quot;card&quot;</span><span style=''>
-</span>116 <span style=''>  private val validationQuarter: String = </span><span style='background: #AEF1AE'>&quot;validationQuarter&quot;</span><span style=''>
-</span>117 <span style=''>  private val validationChain: String = </span><span style='background: #AEF1AE'>&quot;validationChain&quot;</span><span style=''>
-</span>118 <span style=''>  private val orderByValue: String = </span><span style='background: #AEF1AE'>&quot;quicksortValue&quot;</span><span style=''>
-</span>119 <span style=''>  private val orderBySuit: String = </span><span style='background: #AEF1AE'>&quot;quicksortSuit&quot;</span><span style=''>
-</span>120 <span style=''>}
+</span>22 <span style=''>  private val card: String = </span><span style='background: #AEF1AE'>&quot;card&quot;</span><span style=''>
+</span>23 <span style=''>  private val validationQuarter: String = </span><span style='background: #AEF1AE'>&quot;validationQuarter&quot;</span><span style=''>
+</span>24 <span style=''>  private val validationChain: String = </span><span style='background: #AEF1AE'>&quot;validationChain&quot;</span><span style=''>
+</span>25 <span style=''>  private val orderByValue: String = </span><span style='background: #AEF1AE'>&quot;quicksortValue&quot;</span><span style=''>
+</span>26 <span style=''>  private val orderBySuit: String = </span><span style='background: #AEF1AE'>&quot;quicksortSuit&quot;</span><span style=''>
+</span>27 <span style=''>
+</span>28 <span style=''>  private val conversion: PrologGameConverter = </span><span style='background: #AEF1AE'>new PrologGameConverter</span><span style=''>
+</span>29 <span style=''>  private val engine: PrologGameEngine = </span><span style='background: #AEF1AE'>new PrologGameEngine</span><span style=''>
+</span>30 <span style=''>
+</span>31 <span style=''>  /**
+</span>32 <span style=''>   * Loading deck
+</span>33 <span style=''>   *
+</span>34 <span style=''>   * @return deck entity
+</span>35 <span style=''>   */
+</span>36 <span style=''>  def loadDeck: Seq[Card] = {
+</span>37 <span style=''>
+</span>38 <span style=''>    val deckToLoad: Iterator[Seq[Term]] = </span><span style='background: #AEF1AE'>engine goals PrologStruct(card, X, Y, Z) grouped 3</span><span style=''>
+</span>39 <span style=''>
+</span>40 <span style=''>    @tailrec
+</span>41 <span style=''>    def _loadDeck(deck: Seq[Card])(deckToLoad: Seq[Seq[Term]]): Seq[Card] = deckToLoad match {
+</span>42 <span style=''>
+</span>43 <span style=''>      case h :: t =&gt; </span><span style='background: #AEF1AE'>_loadDeck(deck :+ conversion.getCard(h.head, h(1), h(2)))(t)</span><span style=''>
+</span>44 <span style=''>      case _ =&gt; deck
+</span>45 <span style=''>    }
+</span>46 <span style=''>
+</span>47 <span style=''>    </span><span style='background: #AEF1AE'>_loadDeck(List())(deckToLoad.toList)</span><span style=''>
+</span>48 <span style=''>  }
+</span>49 <span style=''>
+</span>50 <span style=''>  /**
+</span>51 <span style=''>   * Validate tris or quarter of cards.
+</span>52 <span style=''>   *
+</span>53 <span style=''>   * @param cards Cards to validate.
+</span>54 <span style=''>   * @return True if the goal is successful, False otherwise.
+</span>55 <span style=''>   */
+</span>56 <span style=''>  def validateQuarter(cards: Seq[Card]): Boolean = {
+</span>57 <span style=''>    </span><span style='background: #AEF1AE'>engine isSuccess validationQuarter + conversion.cardsConvertToString(cards)(None)</span><span style=''>
+</span>58 <span style=''>  }
+</span>59 <span style=''>
+</span>60 <span style=''>  /**
+</span>61 <span style=''>   * Validate sequence or scala of cards
+</span>62 <span style=''>   *
+</span>63 <span style=''>   * @param cards cards to validate
+</span>64 <span style=''>   * @return true if the goal is successful, false otherwise
+</span>65 <span style=''>   */
+</span>66 <span style=''>  def validateChain(cards: Seq[Card]): Boolean = {
+</span>67 <span style=''>    </span><span style='background: #AEF1AE'>engine isSuccess validationChain + conversion.cardsConvertToString(conversion optionalValueCards cards)(None)</span><span style=''>
+</span>68 <span style=''>  }
+</span>69 <span style=''>
+</span>70 <span style=''>  /**
+</span>71 <span style=''>   * Sort by value a sequence of cards
+</span>72 <span style=''>   *
+</span>73 <span style=''>   * @param cards cards to sort
+</span>74 <span style=''>   * @return ordered card sequence
+</span>75 <span style=''>   */
+</span>76 <span style=''>  def sortByRank(cards: Seq[Card]): Seq[Card] = {
+</span>77 <span style=''>
+</span>78 <span style=''>    val prologResult: Seq[Term] = </span><span style='background: #AEF1AE'>engine goal orderByValue + conversion.cardsConvertToString(cards)(Some(X))</span><span style=''>
+</span>79 <span style=''>    </span><span style='background: #AEF1AE'>this.completedResult(cards, prologResult)</span><span style=''>
+</span>80 <span style=''>  }
+</span>81 <span style=''>
+</span>82 <span style=''>  /**
+</span>83 <span style=''>   * Sort by suit a sequence of cards
+</span>84 <span style=''>   *
+</span>85 <span style=''>   * @param cards cards to sort
+</span>86 <span style=''>   * @return ordered card sequence
+</span>87 <span style=''>   */
+</span>88 <span style=''>  def sortBySuit(cards: Seq[Card]): Seq[Card] = {
+</span>89 <span style=''>
+</span>90 <span style=''>    val prologResult: Seq[Term] = </span><span style='background: #AEF1AE'>engine goal orderBySuit + conversion.cardsConvertToString(conversion optionalValueCards cards)(Some(X))</span><span style=''>
+</span>91 <span style=''>    </span><span style='background: #AEF1AE'>this.completedResult(cards, prologResult)</span><span style=''>
+</span>92 <span style=''>  }
+</span>93 <span style=''>
+</span>94 <span style=''>  /**
+</span>95 <span style=''>   * Add color to ordered cards
+</span>96 <span style=''>   *
+</span>97 <span style=''>   * @param inputCards  input cards
+</span>98 <span style=''>   * @param sortedCards ordered cards
+</span>99 <span style=''>   * @return ordered cards with color
+</span>100 <span style=''>   */
+</span>101 <span style=''>  private def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
+</span>102 <span style=''>
+</span>103 <span style=''>    var tmpInputCards: Seq[Card] = inputCards
+</span>104 <span style=''>    </span><span style='background: #AEF1AE'>conversion.sortedCard(sortedCards).map(tuple =&gt; {
+</span>105 <span style=''></span><span style='background: #AEF1AE'>      val foundCard: Card = tmpInputCards.find(card =&gt; card.rank == tuple._1 &amp;&amp; card.suit == tuple._2).get
+</span>106 <span style=''></span><span style='background: #AEF1AE'>
+</span>107 <span style=''></span><span style='background: #AEF1AE'>      tmpInputCards = tmpInputCards.filter(_ != foundCard)
+</span>108 <span style=''></span><span style='background: #AEF1AE'>      foundCard
+</span>109 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
+</span>110 <span style=''>  }
+</span>111 <span style=''>}
+</span>112 <span style=''>
+</span>113 <span style=''>/**
+</span>114 <span style=''> * Object to initialize the class PrologGame
+</span>115 <span style=''> */
+</span>116 <span style=''>object PrologGame {
+</span>117 <span style=''>  def apply(): PrologGame = </span><span style='background: #AEF1AE'>new PrologGame()</span><span style=''>
+</span>118 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -155,15 +153,183 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
-          629
+          472
         </td>
         <td>
-          377
+          404
           -
-          400
+          416
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Var.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new alice.tuprolog.Var(&quot;X&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          386
+        </td>
+        <td>
+          440
+          -
+          452
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Var.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new alice.tuprolog.Var(&quot;Y&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          645
+        </td>
+        <td>
+          476
+          -
+          488
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          alice.tuprolog.Var.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new alice.tuprolog.Var(&quot;Z&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          491
+        </td>
+        <td>
+          574
+          -
+          580
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;card&quot;
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          750
+        </td>
+        <td>
+          623
+          -
+          642
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;validationQuarter&quot;
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          604
+        </td>
+        <td>
+          683
+          -
+          700
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;validationChain&quot;
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          512
+        </td>
+        <td>
+          738
+          -
+          754
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;quicksortValue&quot;
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          775
+        </td>
+        <td>
+          791
+          -
+          806
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;quicksortSuit&quot;
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          637
+        </td>
+        <td>
+          856
+          -
+          879
         </td>
         <td>
           Apply
@@ -176,15 +342,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          29
         </td>
         <td>
-          457
+          461
         </td>
         <td>
-          442
+          921
           -
-          462
+          941
         </td>
         <td>
           Apply
@@ -197,15 +363,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          38
         </td>
         <td>
-          709
+          719
         </td>
         <td>
-          597
+          1076
           -
-          647
+          1126
         </td>
         <td>
           Apply
@@ -214,19 +380,19 @@
           scala.collection.IterableLike.grouped
         </td>
         <td style="background: #AEF1AE">
-          PrologGame.this.engine.goals(it.parttimeteam.core.prolog.engine.PrologStruct.apply(PrologGame.card, PrologGame.X, PrologGame.Y, PrologGame.Z)).grouped(3)
+          PrologGame.this.engine.goals(it.parttimeteam.core.prolog.engine.PrologStruct.apply(PrologGame.this.card, PrologGame.this.X, PrologGame.this.Y, PrologGame.this.Z)).grouped(3)
         </td>
       </tr><tr>
         <td>
-          29
+          43
         </td>
         <td>
-          639
+          647
         </td>
         <td>
-          779
+          1258
           -
-          839
+          1318
         </td>
         <td>
           Apply
@@ -239,36 +405,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          47
         </td>
         <td>
-          757
+          606
         </td>
         <td>
-          890
+          1351
           -
-          907
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.collection.TraversableOnce.toList
-        </td>
-        <td style="background: #AEF1AE">
-          deckToLoad.toList
-        </td>
-      </tr><tr>
-        <td>
-          33
-        </td>
-        <td>
-          598
-        </td>
-        <td>
-          872
-          -
-          908
+          1387
         </td>
         <td>
           Apply
@@ -281,15 +426,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          47
         </td>
         <td>
-          484
+          488
         </td>
         <td>
-          882
+          1361
           -
-          888
+          1367
         </td>
         <td>
           Select
@@ -302,36 +447,78 @@
         </td>
       </tr><tr>
         <td>
-          43
+          47
         </td>
         <td>
-          478
+          769
         </td>
         <td>
-          1127
+          1369
           -
-          1208
+          1386
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.TraversableOnce.toList
+        </td>
+        <td style="background: #AEF1AE">
+          deckToLoad.toList
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          630
+        </td>
+        <td>
+          1623
+          -
+          1687
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.core.prolog.engine.PrologGameEngine.isSuccess
+          java.lang.String.+
         </td>
         <td style="background: #AEF1AE">
-          PrologGame.this.engine.isSuccess(PrologGame.validationQuarter.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.None)))
+          PrologGame.this.validationQuarter.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.None))
         </td>
       </tr><tr>
         <td>
-          43
+          57
         </td>
         <td>
-          764
+          525
         </td>
         <td>
-          1164
+          1682
           -
-          1208
+          1686
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.None
+        </td>
+        <td style="background: #AEF1AE">
+          scala.None
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          776
+        </td>
+        <td>
+          1643
+          -
+          1687
         </td>
         <td>
           Apply
@@ -344,99 +531,36 @@
         </td>
       </tr><tr>
         <td>
-          43
+          57
         </td>
         <td>
-          521
+          482
         </td>
         <td>
-          1203
+          1606
           -
-          1207
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.None
-        </td>
-        <td style="background: #AEF1AE">
-          scala.None
-        </td>
-      </tr><tr>
-        <td>
-          43
-        </td>
-        <td>
-          622
-        </td>
-        <td>
-          1144
-          -
-          1208
+          1687
         </td>
         <td>
           Apply
         </td>
         <td>
-          java.lang.String.+
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.isSuccess
         </td>
         <td style="background: #AEF1AE">
-          PrologGame.validationQuarter.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.None))
+          PrologGame.this.engine.isSuccess(PrologGame.this.validationQuarter.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.None)))
         </td>
       </tr><tr>
         <td>
-          53
+          67
         </td>
         <td>
-          651
+          720
         </td>
         <td>
-          1528
+          1970
           -
-          1532
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.None
-        </td>
-        <td style="background: #AEF1AE">
-          scala.None
-        </td>
-      </tr><tr>
-        <td>
-          53
-        </td>
-        <td>
-          752
-        </td>
-        <td>
-          1441
-          -
-          1533
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.String.+
-        </td>
-        <td style="background: #AEF1AE">
-          PrologGame.validationChain.+(PrologGame.this.conversion.cardsConvertToString(PrologGame.this.conversion.optionalValueCards(cards))(scala.None))
-        </td>
-      </tr><tr>
-        <td>
-          53
-        </td>
-        <td>
-          710
-        </td>
-        <td>
-          1491
-          -
-          1526
+          2005
         </td>
         <td>
           Apply
@@ -449,15 +573,36 @@
         </td>
       </tr><tr>
         <td>
-          53
+          67
         </td>
         <td>
-          494
+          603
         </td>
         <td>
-          1459
+          1903
           -
-          1533
+          2012
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.isSuccess
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGame.this.engine.isSuccess(PrologGame.this.validationChain.+(PrologGame.this.conversion.cardsConvertToString(PrologGame.this.conversion.optionalValueCards(cards))(scala.None)))
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          498
+        </td>
+        <td>
+          1938
+          -
+          2012
         </td>
         <td>
           Apply
@@ -470,99 +615,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          67
         </td>
         <td>
-          595
+          764
         </td>
         <td>
-          1424
+          1920
           -
-          1533
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.prolog.engine.PrologGameEngine.isSuccess
-        </td>
-        <td style="background: #AEF1AE">
-          PrologGame.this.engine.isSuccess(PrologGame.validationChain.+(PrologGame.this.conversion.cardsConvertToString(PrologGame.this.conversion.optionalValueCards(cards))(scala.None)))
-        </td>
-      </tr><tr>
-        <td>
-          64
-        </td>
-        <td>
-          777
-        </td>
-        <td>
-          1813
-          -
-          1820
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Some.apply
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Some.apply[alice.tuprolog.Var](PrologGame.X)
-        </td>
-      </tr><tr>
-        <td>
-          64
-        </td>
-        <td>
-          624
-        </td>
-        <td>
-          1774
-          -
-          1821
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.prolog.converter.PrologGameConverter.cardsConvertToString
-        </td>
-        <td style="background: #AEF1AE">
-          PrologGame.this.conversion.cardsConvertToString(cards)(scala.Some.apply[alice.tuprolog.Var](PrologGame.X))
-        </td>
-      </tr><tr>
-        <td>
-          64
-        </td>
-        <td>
-          725
-        </td>
-        <td>
-          1747
-          -
-          1821
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.prolog.engine.PrologGameEngine.goal
-        </td>
-        <td style="background: #AEF1AE">
-          PrologGame.this.engine.goal(PrologGame.orderByValue.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.Some.apply[alice.tuprolog.Var](PrologGame.X))))
-        </td>
-      </tr><tr>
-        <td>
-          64
-        </td>
-        <td>
-          479
-        </td>
-        <td>
-          1759
-          -
-          1821
+          2012
         </td>
         <td>
           Apply
@@ -571,145 +632,61 @@
           java.lang.String.+
         </td>
         <td style="background: #AEF1AE">
-          PrologGame.orderByValue.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.Some.apply[alice.tuprolog.Var](PrologGame.X)))
+          PrologGame.this.validationChain.+(PrologGame.this.conversion.cardsConvertToString(PrologGame.this.conversion.optionalValueCards(cards))(scala.None))
         </td>
       </tr><tr>
         <td>
-          64
+          67
         </td>
         <td>
-          502
+          659
         </td>
         <td>
-          1818
+          2007
           -
-          1819
+          2011
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.core.prolog.PrologGame.X
+          scala.None
         </td>
         <td style="background: #AEF1AE">
-          PrologGame.X
+          scala.None
         </td>
       </tr><tr>
         <td>
-          65
+          78
+        </td>
+        <td>
+          483
+        </td>
+        <td>
+          2238
+          -
+          2300
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGame.this.orderByValue.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.Some.apply[alice.tuprolog.Var](PrologGame.this.X)))
+        </td>
+      </tr><tr>
+        <td>
+          78
         </td>
         <td>
           632
         </td>
         <td>
-          1826
+          2253
           -
-          1867
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.prolog.PrologGame.completedResult
-        </td>
-        <td style="background: #AEF1AE">
-          this.completedResult(cards, prologResult)
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          442
-        </td>
-        <td>
-          2092
-          -
-          2153
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.String.+
-        </td>
-        <td style="background: #AEF1AE">
-          PrologGame.orderBySuit.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.Some.apply[alice.tuprolog.Var](PrologGame.X)))
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          490
-        </td>
-        <td>
-          2150
-          -
-          2151
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.prolog.PrologGame.X
-        </td>
-        <td style="background: #AEF1AE">
-          PrologGame.X
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          768
-        </td>
-        <td>
-          2080
-          -
-          2153
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.prolog.engine.PrologGameEngine.goal
-        </td>
-        <td style="background: #AEF1AE">
-          PrologGame.this.engine.goal(PrologGame.orderBySuit.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.Some.apply[alice.tuprolog.Var](PrologGame.X))))
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          753
-        </td>
-        <td>
-          2145
-          -
-          2152
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Some.apply
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Some.apply[alice.tuprolog.Var](PrologGame.X)
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          597
-        </td>
-        <td>
-          2106
-          -
-          2153
+          2300
         </td>
         <td>
           Apply
@@ -718,19 +695,82 @@
           it.parttimeteam.core.prolog.converter.PrologGameConverter.cardsConvertToString
         </td>
         <td style="background: #AEF1AE">
-          PrologGame.this.conversion.cardsConvertToString(cards)(scala.Some.apply[alice.tuprolog.Var](PrologGame.X))
+          PrologGame.this.conversion.cardsConvertToString(cards)(scala.Some.apply[alice.tuprolog.Var](PrologGame.this.X))
         </td>
       </tr><tr>
         <td>
-          77
+          78
         </td>
         <td>
-          618
+          506
         </td>
         <td>
-          2158
+          2297
           -
-          2199
+          2298
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.PrologGame.X
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGame.this.X
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          736
+        </td>
+        <td>
+          2226
+          -
+          2300
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.goal
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGame.this.engine.goal(PrologGame.this.orderByValue.+(PrologGame.this.conversion.cardsConvertToString(cards)(scala.Some.apply[alice.tuprolog.Var](PrologGame.this.X))))
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          789
+        </td>
+        <td>
+          2292
+          -
+          2299
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[alice.tuprolog.Var](PrologGame.this.X)
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          640
+        </td>
+        <td>
+          2305
+          -
+          2346
         </td>
         <td>
           Apply
@@ -746,33 +786,159 @@
           90
         </td>
         <td>
-          776
+          765
         </td>
         <td>
-          2547
+          2659
           -
-          2547
+          2660
         </td>
         <td>
-          TypeApply
+          Select
         </td>
         <td>
-          scala.collection.Seq.canBuildFrom
+          it.parttimeteam.core.prolog.PrologGame.X
         </td>
         <td style="background: #AEF1AE">
-          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+          PrologGame.this.X
         </td>
       </tr><tr>
         <td>
           90
         </td>
         <td>
-          620
+          445
         </td>
         <td>
-          2509
+          2585
           -
-          2748
+          2662
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.converter.PrologGameConverter.cardsConvertToString
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGame.this.conversion.cardsConvertToString(PrologGame.this.conversion.optionalValueCards(cards))(scala.Some.apply[alice.tuprolog.Var](PrologGame.this.X))
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          626
+        </td>
+        <td>
+          2559
+          -
+          2662
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.engine.PrologGameEngine.goal
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGame.this.engine.goal(PrologGame.this.orderBySuit.+(PrologGame.this.conversion.cardsConvertToString(PrologGame.this.conversion.optionalValueCards(cards))(scala.Some.apply[alice.tuprolog.Var](PrologGame.this.X))))
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          605
+        </td>
+        <td>
+          2654
+          -
+          2661
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Some.apply[alice.tuprolog.Var](PrologGame.this.X)
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          494
+        </td>
+        <td>
+          2617
+          -
+          2652
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.converter.PrologGameConverter.optionalValueCards
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGame.this.conversion.optionalValueCards(cards)
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          780
+        </td>
+        <td>
+          2571
+          -
+          2662
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGame.this.orderBySuit.+(PrologGame.this.conversion.cardsConvertToString(PrologGame.this.conversion.optionalValueCards(cards))(scala.Some.apply[alice.tuprolog.Var](PrologGame.this.X)))
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          479
+        </td>
+        <td>
+          2667
+          -
+          2708
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.PrologGame.completedResult
+        </td>
+        <td style="background: #AEF1AE">
+          this.completedResult(cards, prologResult)
+        </td>
+      </tr><tr>
+        <td>
+          104
+        </td>
+        <td>
+          462
+        </td>
+        <td>
+          3018
+          -
+          3257
         </td>
         <td>
           ApplyToImplicitArgs
@@ -789,36 +955,36 @@
         </td>
       </tr><tr>
         <td>
-          91
+          104
         </td>
         <td>
-          726
+          628
         </td>
         <td>
-          2652
+          3056
           -
-          2660
+          3056
         </td>
         <td>
-          Select
+          TypeApply
         </td>
         <td>
-          scala.Tuple2._2
+          scala.collection.Seq.canBuildFrom
         </td>
         <td style="background: #AEF1AE">
-          tuple._2
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
         </td>
       </tr><tr>
         <td>
-          91
+          105
         </td>
         <td>
-          755
+          594
         </td>
         <td>
-          2587
+          3096
           -
-          2665
+          3174
         </td>
         <td>
           Select
@@ -831,15 +997,15 @@
         </td>
       </tr><tr>
         <td>
-          91
+          105
         </td>
         <td>
-          644
+          495
         </td>
         <td>
-          2639
+          3148
           -
-          2660
+          3169
         </td>
         <td>
           Apply
@@ -852,36 +1018,15 @@
         </td>
       </tr><tr>
         <td>
-          91
+          105
         </td>
         <td>
-          491
+          737
         </td>
         <td>
-          2614
+          3136
           -
-          2660
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Boolean.&amp;&amp;
-        </td>
-        <td style="background: #AEF1AE">
-          card.rank.==(tuple._1).&amp;&amp;(card.suit.==(tuple._2))
-        </td>
-      </tr><tr>
-        <td>
-          91
-        </td>
-        <td>
-          475
-        </td>
-        <td>
-          2627
-          -
-          2635
+          3144
         </td>
         <td>
           Select
@@ -894,36 +1039,57 @@
         </td>
       </tr><tr>
         <td>
-          93
+          105
         </td>
         <td>
-          587
+          767
         </td>
         <td>
-          2710
+          3123
           -
-          2724
+          3169
         </td>
         <td>
           Apply
         </td>
         <td>
-          java.lang.Object.!=
+          scala.Boolean.&amp;&amp;
         </td>
         <td style="background: #AEF1AE">
-          x$1.!=(foundCard)
+          card.rank.==(tuple._1).&amp;&amp;(card.suit.==(tuple._2))
         </td>
       </tr><tr>
         <td>
-          93
+          105
         </td>
         <td>
-          443
+          652
         </td>
         <td>
-          2689
+          3161
           -
-          2725
+          3169
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._2
+        </td>
+        <td style="background: #AEF1AE">
+          tuple._2
+        </td>
+      </tr><tr>
+        <td>
+          107
+        </td>
+        <td>
+          788
+        </td>
+        <td>
+          3198
+          -
+          3234
         </td>
         <td>
           Apply
@@ -936,15 +1102,36 @@
         </td>
       </tr><tr>
         <td>
-          103
+          107
         </td>
         <td>
-          458
+          446
         </td>
         <td>
-          2857
+          3219
           -
-          2873
+          3233
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.!=
+        </td>
+        <td style="background: #AEF1AE">
+          x$1.!=(foundCard)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          729
+        </td>
+        <td>
+          3366
+          -
+          3382
         </td>
         <td>
           Apply
@@ -954,174 +1141,6 @@
         </td>
         <td style="background: #AEF1AE">
           new PrologGame()
-        </td>
-      </tr><tr>
-        <td>
-          108
-        </td>
-        <td>
-          719
-        </td>
-        <td>
-          2952
-          -
-          2964
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          alice.tuprolog.Var.&lt;init&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          new alice.tuprolog.Var(&quot;X&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          109
-        </td>
-        <td>
-          553
-        </td>
-        <td>
-          2988
-          -
-          3000
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          alice.tuprolog.Var.&lt;init&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          new alice.tuprolog.Var(&quot;Y&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          110
-        </td>
-        <td>
-          485
-        </td>
-        <td>
-          3024
-          -
-          3036
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          alice.tuprolog.Var.&lt;init&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          new alice.tuprolog.Var(&quot;Z&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          115
-        </td>
-        <td>
-          748
-        </td>
-        <td>
-          3122
-          -
-          3128
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;card&quot;
-        </td>
-      </tr><tr>
-        <td>
-          116
-        </td>
-        <td>
-          588
-        </td>
-        <td>
-          3171
-          -
-          3190
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;validationQuarter&quot;
-        </td>
-      </tr><tr>
-        <td>
-          117
-        </td>
-        <td>
-          437
-        </td>
-        <td>
-          3231
-          -
-          3248
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;validationChain&quot;
-        </td>
-      </tr><tr>
-        <td>
-          118
-        </td>
-        <td>
-          778
-        </td>
-        <td>
-          3286
-          -
-          3302
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;quicksortValue&quot;
-        </td>
-      </tr><tr>
-        <td>
-          119
-        </td>
-        <td>
-          610
-        </td>
-        <td>
-          3339
-          -
-          3354
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;quicksortSuit&quot;
         </td>
       </tr>
     </table>

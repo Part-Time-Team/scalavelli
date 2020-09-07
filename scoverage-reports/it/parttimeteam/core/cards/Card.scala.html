@@ -73,47 +73,48 @@
 </span>49 <span style=''>}
 </span>50 <span style=''>
 </span>51 <span style=''>object Card {
-</span>52 <span style=''>  private val pattern = </span><span style='background: #AEF1AE'>&quot;^([AJKQ2-9])\\s*([♣♠♦♥])\\s*([RB])$&quot;.r</span><span style=''>
-</span>53 <span style=''>
-</span>54 <span style=''>  implicit def string2card(s: String): Card = s match {
-</span>55 <span style=''>    case pattern(rank, suit, color) =&gt; </span><span style='background: #AEF1AE'>cards.Card(rank, suit, color)</span><span style=''>
-</span>56 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(s&quot;Invalid card string $s&quot;)</span><span style=''>
-</span>57 <span style=''>  }
-</span>58 <span style=''>
-</span>59 <span style=''>  /**
-</span>60 <span style=''>   * Provide to a Card Sequence new functions to sort them by Rank and Suit.
-</span>61 <span style=''>   *
-</span>62 <span style=''>   * @param cards Poor Card Sequence.
-</span>63 <span style=''>   */
-</span>64 <span style=''>  implicit class MyRichCardSeq(cards: Seq[Card]) {
-</span>65 <span style=''>    /**
-</span>66 <span style=''>     * Class PrologGame.
-</span>67 <span style=''>     */
-</span>68 <span style=''>    val prologGame = </span><span style='background: #AEF1AE'>new PrologGame</span><span style=''>
-</span>69 <span style=''>
-</span>70 <span style=''>    /**
-</span>71 <span style=''>     * Sort first by rank, then by suit.
-</span>72 <span style=''>     *
-</span>73 <span style=''>     * @return Ordered Sequence.
-</span>74 <span style=''>     */
-</span>75 <span style=''>    def sortByRank(): Seq[Card] = </span><span style='background: #AEF1AE'>this.prologGame.sortByRank(cards)</span><span style=''>
-</span>76 <span style=''>
-</span>77 <span style=''>    /**
-</span>78 <span style=''>     * Sort first by suit, then by rank.
-</span>79 <span style=''>     *
-</span>80 <span style=''>     * @return Ordered Sequence.
-</span>81 <span style=''>     */
-</span>82 <span style=''>    def sortBySuit(): Seq[Card] = </span><span style='background: #AEF1AE'>this.prologGame.sortBySuit(cards)</span><span style=''>
-</span>83 <span style=''>
-</span>84 <span style=''>    def isValid: Boolean =
-</span>85 <span style=''>      if (</span><span style='background: #AEF1AE'>cards.forall(c =&gt; c.rank equals cards.head.rank)</span><span style=''>)
-</span>86 <span style=''>        </span><span style='background: #AEF1AE'>this.prologGame.validateQuarter(cards)</span><span style=''>
-</span>87 <span style=''>      else
-</span>88 <span style=''>        </span><span style='background: #AEF1AE'>this.prologGame.validateChain(cards)</span><span style=''>
-</span>89 <span style=''>
-</span>90 <span style=''>  }
-</span>91 <span style=''>
-</span>92 <span style=''>}
+</span>52 <span style=''>
+</span>53 <span style=''>  private val pattern = </span><span style='background: #AEF1AE'>&quot;^([1-9]|1[0-4])\\s*([HSDC])\\s*([RB])$&quot;.r</span><span style=''>
+</span>54 <span style=''>
+</span>55 <span style=''>  implicit def string2card(s: String): Card = s match {
+</span>56 <span style=''>    case pattern(rank, suit, color) =&gt; </span><span style='background: #AEF1AE'>cards.Card(rank, suit, color)</span><span style=''>
+</span>57 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(s&quot;Invalid card string $s&quot;)</span><span style=''>
+</span>58 <span style=''>  }
+</span>59 <span style=''>
+</span>60 <span style=''>  /**
+</span>61 <span style=''>   * Provide to a Card Sequence new functions to sort them by Rank and Suit.
+</span>62 <span style=''>   *
+</span>63 <span style=''>   * @param cards Poor Card Sequence.
+</span>64 <span style=''>   */
+</span>65 <span style=''>  implicit class MyRichCardSeq(cards: Seq[Card]) {
+</span>66 <span style=''>    /**
+</span>67 <span style=''>     * Class PrologGame.
+</span>68 <span style=''>     */
+</span>69 <span style=''>    val prologGame = </span><span style='background: #AEF1AE'>new PrologGame</span><span style=''>
+</span>70 <span style=''>
+</span>71 <span style=''>    /**
+</span>72 <span style=''>     * Sort first by rank, then by suit.
+</span>73 <span style=''>     *
+</span>74 <span style=''>     * @return Ordered Sequence.
+</span>75 <span style=''>     */
+</span>76 <span style=''>    def sortByRank(): Seq[Card] = </span><span style='background: #AEF1AE'>this.prologGame.sortByRank(cards)</span><span style=''>
+</span>77 <span style=''>
+</span>78 <span style=''>    /**
+</span>79 <span style=''>     * Sort first by suit, then by rank.
+</span>80 <span style=''>     *
+</span>81 <span style=''>     * @return Ordered Sequence.
+</span>82 <span style=''>     */
+</span>83 <span style=''>    def sortBySuit(): Seq[Card] = </span><span style='background: #AEF1AE'>this.prologGame.sortBySuit(cards)</span><span style=''>
+</span>84 <span style=''>
+</span>85 <span style=''>    def isValid: Boolean =
+</span>86 <span style=''>      if (</span><span style='background: #AEF1AE'>cards.forall(c =&gt; c.rank equals cards.head.rank)</span><span style=''>)
+</span>87 <span style=''>        </span><span style='background: #AEF1AE'>this.prologGame.validateQuarter(cards)</span><span style=''>
+</span>88 <span style=''>      else
+</span>89 <span style=''>        </span><span style='background: #AEF1AE'>this.prologGame.validateChain(cards)</span><span style=''>
+</span>90 <span style=''>
+</span>91 <span style=''>  }
+</span>92 <span style=''>
+</span>93 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -130,7 +131,7 @@
           37
         </td>
         <td>
-          558
+          565
         </td>
         <td>
           908
@@ -151,7 +152,7 @@
           38
         </td>
         <td>
-          737
+          749
         </td>
         <td>
           927
@@ -172,7 +173,7 @@
           38
         </td>
         <td>
-          408
+          411
         </td>
         <td>
           941
@@ -193,7 +194,7 @@
           38
         </td>
         <td>
-          593
+          601
         </td>
         <td>
           955
@@ -214,28 +215,7 @@
           39
         </td>
         <td>
-          540
-        </td>
-        <td>
-          975
-          -
-          1008
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Int.==
-        </td>
-        <td style="background: #AEF1AE">
-          card.rank.value.+(1).==(Card.this.rank.value)
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          683
+          692
         </td>
         <td>
           998
@@ -256,7 +236,7 @@
           39
         </td>
         <td>
-          423
+          426
         </td>
         <td>
           993
@@ -274,10 +254,31 @@
         </td>
       </tr><tr>
         <td>
+          39
+        </td>
+        <td>
+          545
+        </td>
+        <td>
+          975
+          -
+          1008
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Int.==
+        </td>
+        <td style="background: #AEF1AE">
+          card.rank.value.+(1).==(Card.this.rank.value)
+        </td>
+      </tr><tr>
+        <td>
           42
         </td>
         <td>
-          456
+          460
         </td>
         <td>
           1048
@@ -298,28 +299,7 @@
           45
         </td>
         <td>
-          708
-        </td>
-        <td>
-          1116
-          -
-          1122
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Card.suit
-        </td>
-        <td style="background: #AEF1AE">
-          t.suit
-        </td>
-      </tr><tr>
-        <td>
-          45
-        </td>
-        <td>
-          549
+          555
         </td>
         <td>
           1108
@@ -337,10 +317,31 @@
         </td>
       </tr><tr>
         <td>
+          45
+        </td>
+        <td>
+          718
+        </td>
+        <td>
+          1116
+          -
+          1122
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.suit
+        </td>
+        <td style="background: #AEF1AE">
+          t.suit
+        </td>
+      </tr><tr>
+        <td>
           46
         </td>
         <td>
-          606
+          660
         </td>
         <td>
           1130
@@ -348,7 +349,7 @@
           1156
         </td>
         <td>
-          Block
+          Apply
         </td>
         <td>
           it.parttimeteam.core.cards.Rank.compareTo
@@ -361,7 +362,7 @@
           46
         </td>
         <td>
-          411
+          414
         </td>
         <td>
           1150
@@ -382,7 +383,7 @@
           46
         </td>
         <td>
-          652
+          614
         </td>
         <td>
           1130
@@ -390,7 +391,7 @@
           1156
         </td>
         <td>
-          Apply
+          Block
         </td>
         <td>
           it.parttimeteam.core.cards.Rank.compareTo
@@ -403,28 +404,7 @@
           48
         </td>
         <td>
-          541
-        </td>
-        <td>
-          1172
-          -
-          1198
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Suit.compareTo
-        </td>
-        <td style="background: #AEF1AE">
-          this.suit.compareTo(t.suit)
-        </td>
-      </tr><tr>
-        <td>
-          48
-        </td>
-        <td>
-          678
+          687
         </td>
         <td>
           1172
@@ -445,7 +425,7 @@
           48
         </td>
         <td>
-          426
+          429
         </td>
         <td>
           1192
@@ -463,36 +443,36 @@
         </td>
       </tr><tr>
         <td>
-          52
+          48
         </td>
         <td>
-          732
+          547
         </td>
         <td>
-          1240
+          1172
           -
-          1279
+          1198
         </td>
         <td>
-          Select
+          Block
         </td>
         <td>
-          scala.collection.immutable.StringLike.r
+          it.parttimeteam.core.cards.Suit.compareTo
         </td>
         <td style="background: #AEF1AE">
-          scala.Predef.augmentString(&quot;^([AJKQ2-9])\\s*([♣♠♦♥])\\s*([RB])$&quot;).r
+          this.suit.compareTo(t.suit)
         </td>
       </tr><tr>
         <td>
-          52
+          53
         </td>
         <td>
-          477
+          481
         </td>
         <td>
-          1240
+          1241
           -
-          1277
+          1281
         </td>
         <td>
           Literal
@@ -501,40 +481,40 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;^([AJKQ2-9])\\s*([♣♠♦♥])\\s*([RB])$&quot;
+          &quot;^([1-9]|1[0-4])\\s*([HSDC])\\s*([RB])$&quot;
         </td>
       </tr><tr>
         <td>
-          55
+          53
         </td>
         <td>
-          550
+          744
         </td>
         <td>
-          1387
+          1241
           -
-          1391
+          1283
         </td>
         <td>
-          ApplyImplicitView
+          Select
         </td>
         <td>
-          it.parttimeteam.core.cards.Rank.string2rank
+          scala.collection.immutable.StringLike.r
         </td>
         <td style="background: #AEF1AE">
-          cards.this.Rank.string2rank(rank)
+          scala.Predef.augmentString(&quot;^([1-9]|1[0-4])\\s*([HSDC])\\s*([RB])$&quot;).r
         </td>
       </tr><tr>
         <td>
-          55
+          56
         </td>
         <td>
-          415
+          418
         </td>
         <td>
-          1393
-          -
           1397
+          -
+          1401
         </td>
         <td>
           ApplyImplicitView
@@ -547,15 +527,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          56
         </td>
         <td>
-          672
+          681
         </td>
         <td>
-          1399
+          1403
           -
-          1404
+          1408
         </td>
         <td>
           ApplyImplicitView
@@ -568,15 +548,36 @@
         </td>
       </tr><tr>
         <td>
-          55
+          56
         </td>
         <td>
-          590
+          557
         </td>
         <td>
-          1376
+          1391
           -
-          1405
+          1395
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #AEF1AE">
+          cards.this.Rank.string2rank(rank)
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          598
+        </td>
+        <td>
+          1380
+          -
+          1409
         </td>
         <td>
           Apply
@@ -589,15 +590,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          57
         </td>
         <td>
-          446
+          450
         </td>
         <td>
-          1420
+          1424
           -
-          1473
+          1477
         </td>
         <td>
           Throw
@@ -610,15 +611,15 @@
         </td>
       </tr><tr>
         <td>
-          68
+          69
         </td>
         <td>
-          687
+          697
         </td>
         <td>
-          1724
+          1728
           -
-          1738
+          1742
         </td>
         <td>
           Apply
@@ -631,15 +632,36 @@
         </td>
       </tr><tr>
         <td>
-          75
+          76
         </td>
         <td>
-          454
+          549
         </td>
         <td>
-          1871
+          1902
           -
-          1904
+          1907
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.MyRichCardSeq.cards
+        </td>
+        <td style="background: #AEF1AE">
+          MyRichCardSeq.this.cards
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          458
+        </td>
+        <td>
+          1875
+          -
+          1908
         </td>
         <td>
           Apply
@@ -652,15 +674,15 @@
         </td>
       </tr><tr>
         <td>
-          75
+          83
         </td>
         <td>
-          543
+          735
         </td>
         <td>
-          1898
+          2068
           -
-          1903
+          2073
         </td>
         <td>
           Select
@@ -673,15 +695,15 @@
         </td>
       </tr><tr>
         <td>
-          82
+          83
         </td>
         <td>
-          572
+          579
         </td>
         <td>
-          2037
+          2041
           -
-          2070
+          2074
         </td>
         <td>
           Apply
@@ -694,36 +716,15 @@
         </td>
       </tr><tr>
         <td>
-          82
+          86
         </td>
         <td>
-          724
+          406
         </td>
         <td>
-          2064
+          2145
           -
-          2069
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Card.MyRichCardSeq.cards
-        </td>
-        <td style="background: #AEF1AE">
-          MyRichCardSeq.this.cards
-        </td>
-      </tr><tr>
-        <td>
-          85
-        </td>
-        <td>
-          403
-        </td>
-        <td>
-          2141
-          -
-          2156
+          2160
         </td>
         <td>
           Select
@@ -736,15 +737,15 @@
         </td>
       </tr><tr>
         <td>
-          85
+          86
         </td>
         <td>
-          584
+          591
         </td>
         <td>
-          2109
+          2113
           -
-          2157
+          2161
         </td>
         <td>
           Apply
@@ -757,15 +758,15 @@
         </td>
       </tr><tr>
         <td>
-          85
+          86
         </td>
         <td>
-          673
+          682
         </td>
         <td>
-          2127
+          2131
           -
-          2156
+          2160
         </td>
         <td>
           Apply
@@ -778,36 +779,15 @@
         </td>
       </tr><tr>
         <td>
-          86
+          87
         </td>
         <td>
-          689
+          541
         </td>
         <td>
-          2167
+          2171
           -
-          2205
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.prolog.PrologGame.validateQuarter
-        </td>
-        <td style="background: #AEF1AE">
-          this.prologGame.validateQuarter(MyRichCardSeq.this.cards)
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          536
-        </td>
-        <td>
-          2167
-          -
-          2205
+          2209
         </td>
         <td>
           Block
@@ -820,15 +800,36 @@
         </td>
       </tr><tr>
         <td>
-          86
+          87
         </td>
         <td>
-          440
+          699
         </td>
         <td>
-          2199
+          2171
           -
-          2204
+          2209
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.PrologGame.validateQuarter
+        </td>
+        <td style="background: #AEF1AE">
+          this.prologGame.validateQuarter(MyRichCardSeq.this.cards)
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          443
+        </td>
+        <td>
+          2203
+          -
+          2208
         </td>
         <td>
           Select
@@ -841,36 +842,15 @@
         </td>
       </tr><tr>
         <td>
-          88
+          89
         </td>
         <td>
-          387
+          726
         </td>
         <td>
-          2255
+          2229
           -
-          2260
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Card.MyRichCardSeq.cards
-        </td>
-        <td style="background: #AEF1AE">
-          MyRichCardSeq.this.cards
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          716
-        </td>
-        <td>
-          2225
-          -
-          2261
+          2265
         </td>
         <td>
           Apply
@@ -883,15 +863,36 @@
         </td>
       </tr><tr>
         <td>
-          88
+          89
         </td>
         <td>
-          548
+          387
         </td>
         <td>
-          2225
+          2259
           -
-          2261
+          2264
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.MyRichCardSeq.cards
+        </td>
+        <td style="background: #AEF1AE">
+          MyRichCardSeq.this.cards
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          554
+        </td>
+        <td>
+          2229
+          -
+          2265
         </td>
         <td>
           Block
