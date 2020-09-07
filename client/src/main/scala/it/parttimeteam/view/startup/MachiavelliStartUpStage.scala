@@ -78,8 +78,10 @@ class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListene
   }
 
   override def notifyError(result: String): Unit = {
-    val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
-    Platform.runLater(alert.showAndWait())
+    Platform.runLater {
+      val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
+      alert.showAndWait()
+    }
   }
 }
 
