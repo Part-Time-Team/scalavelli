@@ -68,6 +68,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def gameLost(winnerName: String): Unit = notifyEvent(GameLostEvent(winnerName))
 
+    override def gameEndedWithErrorEvent(reason: String): Unit = notifyEvent(GameEndedWithErrorEvent(reason))
+
   }
 
   private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener), "client-game")
