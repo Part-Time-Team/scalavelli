@@ -5,8 +5,8 @@ import it.parttimeteam.core.cards.Card
 /**
  * Player's Hand.
  *
- * @param playerCards List of cards in the player's Hand.
- * @param boardCards  List of cards in the player's Hand to put on the Board.
+ * @param playerCards Sequence of cards in the player's Hand from the turn start.
+ * @param boardCards  Sequence of cards in the player's Hand picked from Board.
  */
 case class Hand(playerCards: Seq[Card] = Seq.empty, boardCards: Seq[Card] = Seq.empty) {
   /**
@@ -21,7 +21,7 @@ case class Hand(playerCards: Seq[Card] = Seq.empty, boardCards: Seq[Card] = Seq.
    * Add cards to the list boardCards.
    *
    * @param cards Cards to add.
-   * @return New Hand the updated boardCards list.
+   * @return New Hand with the updated boardCards list.
    */
   def addBoardCards(cards: Seq[Card]): Hand = this.copy(boardCards = boardCards ++ cards)
 
@@ -51,12 +51,22 @@ case class Hand(playerCards: Seq[Card] = Seq.empty, boardCards: Seq[Card] = Seq.
       "Hand doesn't contain given cards")
   }
 
+  /**
+   * Sort each Card Sequence in Hand by Rank.
+   *
+   * @return Hand with Sequences ordered.
+   */
   def sortByRank(): Hand =
     this.copy(
       playerCards = playerCards.sortByRank(),
       boardCards = boardCards.sortByRank()
     )
 
+  /**
+   * Sort each Card Sequence in Hand by Suit.
+   *
+   * @return Hand with Sequences ordered.
+   */
   def sortBySuit(): Hand =
     this.copy(
       playerCards = playerCards.sortBySuit(),

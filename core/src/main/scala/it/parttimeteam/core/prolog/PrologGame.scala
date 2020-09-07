@@ -66,26 +66,24 @@ class PrologGame() {
   }
 
   /**
-   * Sort by suit a sequence of cards
+   * Sort by suit a sequence of cards.
    *
-   * @param cards cards to sort
-   * @return ordered card sequence
+   * @param cards cards to sort.
+   * @return ordered card sequence.
    */
   def sortBySuit(cards: Seq[Card]): Seq[Card] = {
-
     val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(X))
     this.completedResult(cards, prologResult)
   }
 
   /**
-   * Add color to ordered cards
+   * Add color to ordered cards.
    *
-   * @param inputCards  input cards
-   * @param sortedCards ordered cards
-   * @return ordered cards with color
+   * @param inputCards  input cards.
+   * @param sortedCards ordered cards.
+   * @return ordered cards with color.
    */
   private def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
-
     var tmpInputCards: Seq[Card] = inputCards
     conversion.sortedCard(sortedCards).map(tuple => {
       val foundCard: Card = tmpInputCards.find(card => card.rank == tuple._1 && card.suit == tuple._2).get
