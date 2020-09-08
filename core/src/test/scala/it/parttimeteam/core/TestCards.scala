@@ -50,11 +50,18 @@ object TestCards {
    * Six cards.
    */
   val SIX_HEARTS: Card = Card(Rank.Six(), Suit.Hearts(), Color.Red())
+  val SIX_CLUBS: Card = Card(Rank.Six(), Suit.Hearts(), Color.Red())
 
   /**
    * Seven cards.
    */
   val SEVEN_HEARTS: Card = Card(Rank.Seven(), Suit.Hearts(), Color.Red())
+  val SEVEN_CLUBS: Card = Card(Rank.Seven(), Suit.Hearts(), Color.Red())
+
+  /**
+   * Eight cards.
+   */
+  val EIGHT_CLUBS: Card = Card(Rank.Eight(), Suit.Hearts(), Color.Red())
 
   /**
    * Nine cards.
