@@ -53,7 +53,6 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
       this.players = players
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
-      this.players.foreach(p => context.watch(p.actorRef))
       context.become(initializing(Seq.empty) orElse termination())
     }
   }
@@ -100,6 +99,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
    *
    */
   private def initializeGame(): Unit = {
+    this.players.foreach(p => context.watch(p.actorRef))
     this.turnManager = TurnManager[GamePlayer](players)
     log.debug("initializing game..")
     val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
