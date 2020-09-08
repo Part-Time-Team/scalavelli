@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
+import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.prolog.converter.PrologGameConverter
 import it.parttimeteam.core.prolog.engine.{PrologGameEngine, PrologStruct}
 
@@ -86,7 +86,7 @@ class PrologGame() {
    * @return ordered card sequence.
    */
   def sortBySuit(cards: Seq[Card]): Seq[Card] = {
-    val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(conversion optionalValueCards cards)(Some(X))
+    val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(X))
     this.completedResult(cards, prologResult)
   }
 
