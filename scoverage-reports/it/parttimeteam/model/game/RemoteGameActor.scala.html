@@ -27,7 +27,7 @@
 </span>3 <span style=''>import akka.actor.{Actor, ActorLogging, Props}
 </span>4 <span style=''>import it.parttimeteam.core.cards.Card
 </span>5 <span style=''>import it.parttimeteam.gamestate.PlayerGameState
-</span>6 <span style=''>import it.parttimeteam.messages.GameMessage.{CardDrawn, Error, GameEndedForPlayerLeft, GameStateUpdated, Lost, OpponentInTurn, PlayerTurn, TurnEnded, Won}
+</span>6 <span style=''>import it.parttimeteam.messages.GameMessage.{CardDrawn, Error, GameStateUpdated, Lost, OpponentInTurn, PlayerTurn, TurnEnded, Won}
 </span>7 <span style=''>
 </span>8 <span style=''>object RemoteGameActor {
 </span>9 <span style=''>  def props(listener: MatchServerResponseListener) = </span><span style='background: #AEF1AE'>Props(new RemoteGameActor(listener))</span><span style=''>
@@ -57,32 +57,28 @@
 </span>33 <span style=''>
 </span>34 <span style=''>    case Lost(winnerName) =&gt; </span><span style='background: #AEF1AE'>this.listener.gameLost(winnerName)</span><span style=''>
 </span>35 <span style=''>
-</span>36 <span style=''>    case GameEndedForPlayerLeft =&gt; </span><span style='background: #F0ADAD'>this.listener.gameEndedWithErrorEvent(&quot;a player left the game&quot;)</span><span style=''>
-</span>37 <span style=''>
-</span>38 <span style=''>    case Error(_) </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>39 <span style=''>  }
-</span>40 <span style=''>}
-</span>41 <span style=''>
+</span>36 <span style=''>    case Error(_) </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>37 <span style=''>  }
+</span>38 <span style=''>}
+</span>39 <span style=''>
+</span>40 <span style=''>
+</span>41 <span style=''>trait MatchServerResponseListener {
 </span>42 <span style=''>
-</span>43 <span style=''>trait MatchServerResponseListener {
+</span>43 <span style=''>  def gameStateUpdated(gameState: PlayerGameState)
 </span>44 <span style=''>
-</span>45 <span style=''>  def gameStateUpdated(gameState: PlayerGameState)
+</span>45 <span style=''>  def turnStarted()
 </span>46 <span style=''>
-</span>47 <span style=''>  def turnStarted()
+</span>47 <span style=''>  def turnEnded()
 </span>48 <span style=''>
-</span>49 <span style=''>  def turnEnded()
+</span>49 <span style=''>  def opponentInTurn(opponentName: String)
 </span>50 <span style=''>
-</span>51 <span style=''>  def opponentInTurn(opponentName: String)
+</span>51 <span style=''>  def turnEndedWithCartDrawn(card: Card)
 </span>52 <span style=''>
-</span>53 <span style=''>  def turnEndedWithCartDrawn(card: Card)
+</span>53 <span style=''>  def gameWon()
 </span>54 <span style=''>
-</span>55 <span style=''>  def gameEndedWithErrorEvent(reason: String)
+</span>55 <span style=''>  def gameLost(winnerName: String)
 </span>56 <span style=''>
-</span>57 <span style=''>  def gameWon()
-</span>58 <span style=''>
-</span>59 <span style=''>  def gameLost(winnerName: String)
-</span>60 <span style=''>
-</span>61 <span style=''>}
+</span>57 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -99,33 +95,12 @@
           9
         </td>
         <td>
-          1081
+          2066
         </td>
         <td>
-          405
+          387
           -
-          441
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.Props.apply
-        </td>
-        <td style="background: #AEF1AE">
-          akka.actor.Props.apply[it.parttimeteam.model.game.RemoteGameActor](new RemoteGameActor(listener))((ClassTag.apply[it.parttimeteam.model.game.RemoteGameActor](classOf[it.parttimeteam.model.game.RemoteGameActor]): scala.reflect.ClassTag[it.parttimeteam.model.game.RemoteGameActor]))
-        </td>
-      </tr><tr>
-        <td>
-          9
-        </td>
-        <td>
-          1317
-        </td>
-        <td>
-          411
-          -
-          440
+          416
         </td>
         <td>
           Apply
@@ -138,15 +113,36 @@
         </td>
       </tr><tr>
         <td>
+          9
+        </td>
+        <td>
+          1457
+        </td>
+        <td>
+          381
+          -
+          417
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.Props.apply
+        </td>
+        <td style="background: #AEF1AE">
+          akka.actor.Props.apply[it.parttimeteam.model.game.RemoteGameActor](new RemoteGameActor(listener))((ClassTag.apply[it.parttimeteam.model.game.RemoteGameActor](classOf[it.parttimeteam.model.game.RemoteGameActor]): scala.reflect.ClassTag[it.parttimeteam.model.game.RemoteGameActor]))
+        </td>
+      </tr><tr>
+        <td>
           14
         </td>
         <td>
-          1833
+          1284
         </td>
         <td>
-          587
+          563
           -
-          587
+          563
         </td>
         <td>
           Apply
@@ -162,33 +158,12 @@
           17
         </td>
         <td>
-          1393
+          900
         </td>
         <td>
-          638
+          624
           -
-          682
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.event.LoggingAdapter.debug
-        </td>
-        <td style="background: #AEF1AE">
-          RemoteGameActor.this.log.debug(scala.StringContext.apply(&quot;Received game state &quot;, &quot;&quot;).s(gameState))
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          2054
-        </td>
-        <td>
-          648
-          -
-          681
+          657
         </td>
         <td>
           Apply
@@ -201,15 +176,36 @@
         </td>
       </tr><tr>
         <td>
+          17
+        </td>
+        <td>
+          1905
+        </td>
+        <td>
+          614
+          -
+          658
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.event.LoggingAdapter.debug
+        </td>
+        <td style="background: #AEF1AE">
+          RemoteGameActor.this.log.debug(scala.StringContext.apply(&quot;Received game state &quot;, &quot;&quot;).s(gameState))
+        </td>
+      </tr><tr>
+        <td>
           18
         </td>
         <td>
-          819
+          1317
         </td>
         <td>
-          689
+          665
           -
-          730
+          706
         </td>
         <td>
           Apply
@@ -225,12 +221,12 @@
           22
         </td>
         <td>
-          1825
+          1006
         </td>
         <td>
-          769
+          745
           -
-          793
+          769
         </td>
         <td>
           Apply
@@ -246,12 +242,12 @@
           23
         </td>
         <td>
-          1568
+          1946
         </td>
         <td>
-          800
+          776
           -
-          827
+          803
         </td>
         <td>
           Apply
@@ -267,12 +263,12 @@
           26
         </td>
         <td>
-          907
+          1382
         </td>
         <td>
-          868
+          844
           -
-          902
+          878
         </td>
         <td>
           Apply
@@ -288,12 +284,12 @@
           28
         </td>
         <td>
-          1939
+          786
         </td>
         <td>
-          932
+          908
           -
-          974
+          950
         </td>
         <td>
           Apply
@@ -309,12 +305,12 @@
           30
         </td>
         <td>
-          1327
+          2068
         </td>
         <td>
-          998
+          974
           -
-          1023
+          999
         </td>
         <td>
           Apply
@@ -330,12 +326,12 @@
           32
         </td>
         <td>
-          1072
+          1528
         </td>
         <td>
-          1041
+          1017
           -
-          1064
+          1040
         </td>
         <td>
           Apply
@@ -351,12 +347,12 @@
           34
         </td>
         <td>
-          2059
+          878
         </td>
         <td>
-          1095
+          1071
           -
-          1129
+          1105
         </td>
         <td>
           Apply
@@ -372,33 +368,12 @@
           36
         </td>
         <td>
-          1435
+          1852
         </td>
         <td>
-          1166
+          1125
           -
-          1229
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.MatchServerResponseListener.gameEndedWithErrorEvent
-        </td>
-        <td style="background: #F0ADAD">
-          this.listener.gameEndedWithErrorEvent(&quot;a player left the game&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          38
-        </td>
-        <td>
-          872
-        </td>
-        <td>
-          1249
-          -
-          1251
+          1127
         </td>
         <td>
           Literal

@@ -92,33 +92,28 @@
 </span>68 <span style=''>   */
 </span>69 <span style=''>  override def removePlayer(playerId: String): Unit = {
 </span>70 <span style=''>    </span><span style='background: #AEF1AE'>playersToLobby.get(playerId)</span><span style=''> match {
-</span>71 <span style=''>      case Some(lobbyType) =&gt; {
-</span>72 <span style=''>        </span><span style='background: #AEF1AE'>lobbies.get(lobbyType)</span><span style=''> match {
-</span>73 <span style=''>          case Some(lobby) =&gt; </span><span style='background: #AEF1AE'>lobby.removePlayer(playerId)</span><span style=''>
-</span>74 <span style=''>          case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>75 <span style=''>        }
-</span>76 <span style=''>        </span><span style='background: #AEF1AE'>playersToLobby = playersToLobby - playerId</span><span style=''>
-</span>77 <span style=''>      }
-</span>78 <span style=''>      case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>79 <span style=''>    }
-</span>80 <span style=''>
-</span>81 <span style=''>  }
+</span>71 <span style=''>      case Some(lobbyType) =&gt; </span><span style='background: #AEF1AE'>lobbies.get(lobbyType)</span><span style=''> match {
+</span>72 <span style=''>        case Some(lobby) =&gt; </span><span style='background: #AEF1AE'>lobby.removePlayer(playerId)</span><span style=''>
+</span>73 <span style=''>      }
+</span>74 <span style=''>    }
+</span>75 <span style=''>    </span><span style='background: #AEF1AE'>playersToLobby = playersToLobby - playerId</span><span style=''>
+</span>76 <span style=''>  }
+</span>77 <span style=''>
+</span>78 <span style=''>  /**
+</span>79 <span style=''>   * @inheritdoc
+</span>80 <span style=''>   */
+</span>81 <span style=''>  override def getLobby(lobbyType: LobbyType): Option[Lobby[T]] = </span><span style='background: #AEF1AE'>lobbies.get(lobbyType)</span><span style=''>
 </span>82 <span style=''>
 </span>83 <span style=''>  /**
 </span>84 <span style=''>   * @inheritdoc
 </span>85 <span style=''>   */
-</span>86 <span style=''>  override def getLobby(lobbyType: LobbyType): Option[Lobby[T]] = </span><span style='background: #AEF1AE'>lobbies.get(lobbyType)</span><span style=''>
-</span>87 <span style=''>
-</span>88 <span style=''>  /**
-</span>89 <span style=''>   * @inheritdoc
-</span>90 <span style=''>   */
-</span>91 <span style=''>  override def attemptExtractPlayerForMatch(lobbyType: LobbyType): Option[Seq[T]] =
-</span>92 <span style=''>    </span><span style='background: #AEF1AE'>this.getLobby(lobbyType).flatMap(lobby =&gt; {
-</span>93 <span style=''></span><span style='background: #AEF1AE'>      val updatedLobby = lobby.extractPlayersForMatch()
-</span>94 <span style=''></span><span style='background: #AEF1AE'>      lobbies = lobbies + (lobbyType -&gt; updatedLobby.first)
-</span>95 <span style=''></span><span style='background: #AEF1AE'>      updatedLobby.second
-</span>96 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
-</span>97 <span style=''>}
+</span>86 <span style=''>  override def attemptExtractPlayerForMatch(lobbyType: LobbyType): Option[Seq[T]] =
+</span>87 <span style=''>    </span><span style='background: #AEF1AE'>this.getLobby(lobbyType).flatMap(lobby =&gt; {
+</span>88 <span style=''></span><span style='background: #AEF1AE'>      val updatedLobby = lobby.extractPlayersForMatch()
+</span>89 <span style=''></span><span style='background: #AEF1AE'>      lobbies = lobbies + (lobbyType -&gt; updatedLobby.first)
+</span>90 <span style=''></span><span style='background: #AEF1AE'>      updatedLobby.second
+</span>91 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
+</span>92 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -135,7 +130,7 @@
           6
         </td>
         <td>
-          223
+          217
         </td>
         <td>
           147
@@ -156,7 +151,7 @@
           52
         </td>
         <td>
-          82
+          79
         </td>
         <td>
           1266
@@ -177,7 +172,7 @@
           53
         </td>
         <td>
-          335
+          326
         </td>
         <td>
           1326
@@ -198,7 +193,7 @@
           59
         </td>
         <td>
-          172
+          167
         </td>
         <td>
           1448
@@ -219,7 +214,7 @@
           59
         </td>
         <td>
-          84
+          81
         </td>
         <td>
           1438
@@ -243,7 +238,7 @@
           60
         </td>
         <td>
-          205
+          199
         </td>
         <td>
           1505
@@ -264,28 +259,7 @@
           60
         </td>
         <td>
-          40
-        </td>
-        <td>
-          1529
-          -
-          1552
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.lobby.Lobby.addPlayer
-        </td>
-        <td style="background: #AEF1AE">
-          lobby.addPlayer(player)
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          341
+          332
         </td>
         <td>
           1516
@@ -303,31 +277,31 @@
         </td>
       </tr><tr>
         <td>
-          61
+          60
         </td>
         <td>
-          289
+          39
         </td>
         <td>
-          1584
+          1529
           -
-          1651
+          1552
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Predef.ArrowAssoc.-&gt;
+          it.parttimeteam.lobby.Lobby.addPlayer
         </td>
         <td style="background: #AEF1AE">
-          scala.Predef.ArrowAssoc[it.parttimeteam.lobby.LobbyType](lobbyType).-&gt;[it.parttimeteam.lobby.Lobby[T]](GameLobby.apply[T](lobbyType.numberOfPlayers, GameLobby.apply$default$2[Nothing]).addPlayer(player))
+          lobby.addPlayer(player)
         </td>
       </tr><tr>
         <td>
           61
         </td>
         <td>
-          145
+          142
         </td>
         <td>
           1573
@@ -348,7 +322,7 @@
           61
         </td>
         <td>
-          54
+          52
         </td>
         <td>
           1597
@@ -366,31 +340,31 @@
         </td>
       </tr><tr>
         <td>
-          63
+          61
         </td>
         <td>
-          173
+          282
         </td>
         <td>
-          1680
+          1584
           -
-          1721
+          1651
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.collection.immutable.Map.+
+          scala.Predef.ArrowAssoc.-&gt;
         </td>
         <td style="background: #AEF1AE">
-          LobbyManagerImpl.this.playersToLobby.+[it.parttimeteam.lobby.LobbyType](scala.Predef.ArrowAssoc[String](player.id).-&gt;[it.parttimeteam.lobby.LobbyType](lobbyType))
+          scala.Predef.ArrowAssoc[it.parttimeteam.lobby.LobbyType](lobbyType).-&gt;[it.parttimeteam.lobby.Lobby[T]](GameLobby.apply[T](lobbyType.numberOfPlayers, GameLobby.apply$default$2[Nothing]).addPlayer(player))
         </td>
       </tr><tr>
         <td>
           63
         </td>
         <td>
-          312
+          304
         </td>
         <td>
           1698
@@ -405,6 +379,27 @@
         </td>
         <td style="background: #AEF1AE">
           scala.Predef.ArrowAssoc[String](player.id).-&gt;[it.parttimeteam.lobby.LobbyType](lobbyType)
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          168
+        </td>
+        <td>
+          1680
+          -
+          1721
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.Map.+
+        </td>
+        <td style="background: #AEF1AE">
+          LobbyManagerImpl.this.playersToLobby.+[it.parttimeteam.lobby.LobbyType](scala.Predef.ArrowAssoc[String](player.id).-&gt;[it.parttimeteam.lobby.LobbyType](lobbyType))
         </td>
       </tr><tr>
         <td>
@@ -432,7 +427,7 @@
           70
         </td>
         <td>
-          342
+          333
         </td>
         <td>
           1816
@@ -450,15 +445,15 @@
         </td>
       </tr><tr>
         <td>
-          72
+          71
         </td>
         <td>
-          204
+          198
         </td>
         <td>
-          1893
+          1883
           -
-          1915
+          1905
         </td>
         <td>
           Apply
@@ -471,15 +466,15 @@
         </td>
       </tr><tr>
         <td>
-          73
+          72
         </td>
         <td>
-          47
+          46
         </td>
         <td>
-          1954
+          1942
           -
-          1982
+          1970
         </td>
         <td>
           Apply
@@ -492,57 +487,15 @@
         </td>
       </tr><tr>
         <td>
-          74
-        </td>
-        <td>
-          290
-        </td>
-        <td>
-          2000
-          -
-          2002
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          158
-        </td>
-        <td>
-          2038
-          -
-          2063
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.MapLike.-
-        </td>
-        <td style="background: #AEF1AE">
-          LobbyManagerImpl.this.playersToLobby.-(playerId)
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
           75
         </td>
         <td>
-          2021
+          155
+        </td>
+        <td>
+          1989
           -
-          2063
+          2031
         </td>
         <td>
           Apply
@@ -555,36 +508,36 @@
         </td>
       </tr><tr>
         <td>
-          78
+          75
         </td>
         <td>
-          313
+          283
         </td>
         <td>
-          2085
+          2006
           -
-          2087
+          2031
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          scala.collection.MapLike.-
         </td>
-        <td style="background: #F0ADAD">
-          ()
+        <td style="background: #AEF1AE">
+          LobbyManagerImpl.this.playersToLobby.-(playerId)
         </td>
       </tr><tr>
         <td>
-          86
+          81
         </td>
         <td>
-          167
+          73
         </td>
         <td>
-          2195
+          2132
           -
-          2217
+          2154
         </td>
         <td>
           Apply
@@ -597,15 +550,15 @@
         </td>
       </tr><tr>
         <td>
-          92
+          87
         </td>
         <td>
-          96
+          280
         </td>
         <td>
-          2336
+          2273
           -
-          2528
+          2465
         </td>
         <td>
           Apply
@@ -622,15 +575,15 @@
         </td>
       </tr><tr>
         <td>
-          93
+          88
         </td>
         <td>
-          36
+          305
         </td>
         <td>
-          2405
+          2342
           -
-          2435
+          2372
         </td>
         <td>
           Apply
@@ -643,36 +596,15 @@
         </td>
       </tr><tr>
         <td>
-          94
+          89
         </td>
         <td>
-          218
+          163
         </td>
         <td>
-          2463
+          2413
           -
-          2494
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Predef.ArrowAssoc.-&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Predef.ArrowAssoc[it.parttimeteam.lobby.LobbyType](lobbyType).-&gt;[it.parttimeteam.lobby.Lobby[T]](updatedLobby.first)
-        </td>
-      </tr><tr>
-        <td>
-          94
-        </td>
-        <td>
-          264
-        </td>
-        <td>
-          2476
-          -
-          2494
+          2431
         </td>
         <td>
           Select
@@ -685,15 +617,15 @@
         </td>
       </tr><tr>
         <td>
-          94
+          89
         </td>
         <td>
-          48
+          258
         </td>
         <td>
-          2452
+          2389
           -
-          2495
+          2432
         </td>
         <td>
           Apply
@@ -706,15 +638,36 @@
         </td>
       </tr><tr>
         <td>
-          94
+          89
         </td>
         <td>
-          287
+          36
         </td>
         <td>
-          2442
+          2400
           -
-          2495
+          2431
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Predef.ArrowAssoc.-&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.ArrowAssoc[it.parttimeteam.lobby.LobbyType](lobbyType).-&gt;[it.parttimeteam.lobby.Lobby[T]](updatedLobby.first)
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          212
+        </td>
+        <td>
+          2379
+          -
+          2432
         </td>
         <td>
           Apply
@@ -727,15 +680,15 @@
         </td>
       </tr><tr>
         <td>
-          95
+          90
         </td>
         <td>
-          157
+          47
         </td>
         <td>
-          2502
+          2439
           -
-          2521
+          2458
         </td>
         <td>
           Select
