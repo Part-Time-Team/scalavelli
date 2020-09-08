@@ -13,8 +13,6 @@ class StartUpControllerImpl extends StartUpController {
   private var startGameFunction: GameMatchInformations => Unit = _
 
   override def start(app: JFXApp, startGame: GameMatchInformations => Unit): Unit = {
-    println("StartUpController - start()")
-
     Platform.runLater({
       startUpStage = MachiavelliStartUpStage(this)
       app.stage = startUpStage
