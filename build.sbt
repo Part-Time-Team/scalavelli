@@ -1,6 +1,6 @@
 name := "scalavelli"
 
-version in ThisBuild := "0.1.1"
+version in ThisBuild := "0.1.2"
 
 scalaVersion in ThisBuild := "2.12.8"
 organization in ThisBuild := "it.parttimeteam"
