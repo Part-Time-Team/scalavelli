@@ -70,7 +70,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
 
     override def draw(deck: Deck): (Deck, Card) = (deck, FakeGameInterface.cardToDraw)
 
-    override def validateTurn(board: Board, hand: Hand): Boolean = ???
+    override def validateMove(board: Board, hand: Hand): Boolean = ???
 
     override def validateCombination(cards: Seq[Card]): Boolean = ???
 
@@ -78,15 +78,9 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
 
     override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
 
-    /**
-     * Update a combination in the board by his id with some cards.
-     *
-     * @param board Board with the combination to update.
-     * @param id    Id of the combnation to update.
-     * @param cards Cards to pur in the combination.
-     * @return Updated board.
-     */
     override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = ???
+
+    override def validateTurn(board: Board, startBoard: Board, hand: Hand, startHand: Hand): Boolean = ???
   }
 
 }
