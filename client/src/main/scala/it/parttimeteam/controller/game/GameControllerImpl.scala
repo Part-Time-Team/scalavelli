@@ -14,6 +14,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
   private var gameStage: MachiavelliGameStage = _
   private var gameService: GameService = _
   private var currentState: ClientGameState = _
+  private var turnTimer: TurnTimer = _
 
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
