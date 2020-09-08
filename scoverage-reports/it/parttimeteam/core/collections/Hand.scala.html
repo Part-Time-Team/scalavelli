@@ -29,8 +29,8 @@
 </span>5 <span style=''>/**
 </span>6 <span style=''> * Player's Hand.
 </span>7 <span style=''> *
-</span>8 <span style=''> * @param playerCards List of cards in the player's Hand.
-</span>9 <span style=''> * @param boardCards  List of cards in the player's Hand to put on the Board.
+</span>8 <span style=''> * @param playerCards Sequence of cards in the player's Hand from the turn start.
+</span>9 <span style=''> * @param boardCards  Sequence of cards in the player's Hand picked from Board.
 </span>10 <span style=''> */
 </span>11 <span style=''>case class Hand(playerCards: Seq[Card] = Seq.empty, boardCards: Seq[Card] = Seq.empty) {
 </span>12 <span style=''>  /**
@@ -45,7 +45,7 @@
 </span>21 <span style=''>   * Add cards to the list boardCards.
 </span>22 <span style=''>   *
 </span>23 <span style=''>   * @param cards Cards to add.
-</span>24 <span style=''>   * @return New Hand the updated boardCards list.
+</span>24 <span style=''>   * @return New Hand with the updated boardCards list.
 </span>25 <span style=''>   */
 </span>26 <span style=''>  def addBoardCards(cards: Seq[Card]): Hand = </span><span style='background: #AEF1AE'>this.copy(boardCards = boardCards ++ cards)</span><span style=''>
 </span>27 <span style=''>
@@ -74,7 +74,30 @@
 </span>50 <span style=''></span><span style='background: #AEF1AE'>      this.copy(playerCards = updatePlayerCards, boardCards = updateBoardCards),
 </span>51 <span style=''></span><span style='background: #AEF1AE'>      &quot;Hand doesn't contain given cards&quot;)</span><span style=''>
 </span>52 <span style=''>  }
-</span>53 <span style=''>}
+</span>53 <span style=''>
+</span>54 <span style=''>  /**
+</span>55 <span style=''>   * Sort each Card Sequence in Hand by Rank.
+</span>56 <span style=''>   *
+</span>57 <span style=''>   * @return Hand with Sequences ordered.
+</span>58 <span style=''>   */
+</span>59 <span style=''>  def sortByRank(): Hand =
+</span>60 <span style=''>    </span><span style='background: #AEF1AE'>this.copy(
+</span>61 <span style=''></span><span style='background: #AEF1AE'>      playerCards = playerCards.sortByRank(),
+</span>62 <span style=''></span><span style='background: #AEF1AE'>      boardCards = boardCards.sortByRank()
+</span>63 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
+</span>64 <span style=''>
+</span>65 <span style=''>  /**
+</span>66 <span style=''>   * Sort each Card Sequence in Hand by Suit.
+</span>67 <span style=''>   *
+</span>68 <span style=''>   * @return Hand with Sequences ordered.
+</span>69 <span style=''>   */
+</span>70 <span style=''>  def sortBySuit(): Hand =
+</span>71 <span style=''>    </span><span style='background: #AEF1AE'>this.copy(
+</span>72 <span style=''></span><span style='background: #AEF1AE'>      playerCards = playerCards.sortBySuit(),
+</span>73 <span style=''></span><span style='background: #AEF1AE'>      boardCards = boardCards.sortBySuit()
+</span>74 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
+</span>75 <span style=''>
+</span>76 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -91,12 +114,12 @@
           18
         </td>
         <td>
-          472
+          400
         </td>
         <td>
-          553
+          579
           -
-          573
+          599
         </td>
         <td>
           ApplyToImplicitArgs
@@ -112,12 +135,12 @@
           18
         </td>
         <td>
-          394
+          668
         </td>
         <td>
-          534
+          560
           -
-          534
+          560
         </td>
         <td>
           Select
@@ -133,33 +156,12 @@
           18
         </td>
         <td>
-          624
+          524
         </td>
         <td>
-          565
+          555
           -
-          565
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.Seq.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          643
-        </td>
-        <td>
-          529
-          -
-          574
+          600
         </td>
         <td>
           Apply
@@ -172,36 +174,15 @@
         </td>
       </tr><tr>
         <td>
-          26
+          18
         </td>
         <td>
-          600
+          493
         </td>
         <td>
-          766
+          591
           -
-          766
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.collections.Hand.copy$default$1
-        </td>
-        <td style="background: #AEF1AE">
-          this.copy$default$1
-        </td>
-      </tr><tr>
-        <td>
-          26
-        </td>
-        <td>
-          498
-        </td>
-        <td>
-          795
-          -
-          795
+          591
         </td>
         <td>
           TypeApply
@@ -217,12 +198,12 @@
           26
         </td>
         <td>
-          752
+          705
         </td>
         <td>
-          784
+          815
           -
-          803
+          834
         </td>
         <td>
           ApplyToImplicitArgs
@@ -238,12 +219,12 @@
           26
         </td>
         <td>
-          518
+          809
         </td>
         <td>
-          761
+          792
           -
-          804
+          835
         </td>
         <td>
           Apply
@@ -256,36 +237,57 @@
         </td>
       </tr><tr>
         <td>
-          35
+          26
         </td>
         <td>
-          764
+          533
         </td>
         <td>
-          1053
+          797
           -
-          1075
+          797
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          scala.collection.SeqLike.contains
+          it.parttimeteam.core.collections.Hand.copy$default$1
         </td>
         <td style="background: #AEF1AE">
-          Hand.this.playerCards.contains[it.parttimeteam.core.cards.Card](c)
+          this.copy$default$1
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          769
+        </td>
+        <td>
+          826
+          -
+          826
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
         </td>
       </tr><tr>
         <td>
           35
         </td>
         <td>
-          390
+          677
         </td>
         <td>
-          1033
+          1064
           -
-          1130
+          1161
         </td>
         <td>
           Apply
@@ -298,15 +300,15 @@
         </td>
       </tr><tr>
         <td>
-          36
+          35
         </td>
         <td>
-          626
+          658
         </td>
         <td>
-          1107
+          1084
           -
-          1128
+          1106
         </td>
         <td>
           Apply
@@ -315,19 +317,19 @@
           scala.collection.SeqLike.contains
         </td>
         <td style="background: #AEF1AE">
-          Hand.this.boardCards.contains[it.parttimeteam.core.cards.Card](c)
+          Hand.this.playerCards.contains[it.parttimeteam.core.cards.Card](c)
         </td>
       </tr><tr>
         <td>
           36
         </td>
         <td>
-          464
+          418
         </td>
         <td>
-          1088
+          1119
           -
-          1129
+          1160
         </td>
         <td>
           Apply
@@ -340,15 +342,15 @@
         </td>
       </tr><tr>
         <td>
-          46
+          36
         </td>
         <td>
-          644
+          500
         </td>
         <td>
-          1520
+          1138
           -
-          1539
+          1159
         </td>
         <td>
           Apply
@@ -357,19 +359,19 @@
           scala.collection.SeqLike.contains
         </td>
         <td style="background: #AEF1AE">
-          cards.contains[it.parttimeteam.core.cards.Card](card)
+          Hand.this.boardCards.contains[it.parttimeteam.core.cards.Card](c)
         </td>
       </tr><tr>
         <td>
           46
         </td>
         <td>
-          491
+          792
         </td>
         <td>
-          1490
+          1521
           -
-          1540
+          1571
         </td>
         <td>
           Apply
@@ -382,15 +384,15 @@
         </td>
       </tr><tr>
         <td>
-          47
+          46
         </td>
         <td>
-          740
+          526
         </td>
         <td>
-          1608
+          1551
           -
-          1627
+          1570
         </td>
         <td>
           Apply
@@ -406,12 +408,12 @@
           47
         </td>
         <td>
-          590
+          546
         </td>
         <td>
-          1579
+          1610
           -
-          1628
+          1659
         </td>
         <td>
           Apply
@@ -424,36 +426,57 @@
         </td>
       </tr><tr>
         <td>
-          49
+          47
         </td>
         <td>
-          765
+          634
         </td>
         <td>
-          1646
+          1639
           -
-          1686
+          1658
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.collection.IterableLike.forall
+          scala.collection.SeqLike.contains
         </td>
         <td style="background: #AEF1AE">
-          cards.forall(((c: it.parttimeteam.core.cards.Card) =&gt; this.containsCards(c)))
+          cards.contains[it.parttimeteam.core.cards.Card](card)
         </td>
       </tr><tr>
         <td>
           49
         </td>
         <td>
-          504
+          678
         </td>
         <td>
           1665
           -
-          1685
+          1841
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.util.Either.cond
+        </td>
+        <td style="background: #AEF1AE">
+          scala.`package`.Either.cond[String, it.parttimeteam.core.collections.Hand](cards.forall(((c: it.parttimeteam.core.cards.Card) =&gt; this.containsCards(c))), this.copy(updatePlayerCards, updateBoardCards), &quot;Hand doesn\'t contain given cards&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          804
+        </td>
+        <td>
+          1696
+          -
+          1716
         </td>
         <td>
           Apply
@@ -469,33 +492,33 @@
           49
         </td>
         <td>
-          386
+          660
         </td>
         <td>
-          1634
+          1677
           -
-          1810
+          1717
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.util.Either.cond
+          scala.collection.IterableLike.forall
         </td>
         <td style="background: #AEF1AE">
-          scala.`package`.Either.cond[String, it.parttimeteam.core.collections.Hand](cards.forall(((c: it.parttimeteam.core.cards.Card) =&gt; this.containsCards(c))), this.copy(updatePlayerCards, updateBoardCards), &quot;Hand doesn\'t contain given cards&quot;)
+          cards.forall(((c: it.parttimeteam.core.cards.Card) =&gt; this.containsCards(c)))
         </td>
       </tr><tr>
         <td>
           50
         </td>
         <td>
-          619
+          492
         </td>
         <td>
-          1694
+          1725
           -
-          1767
+          1798
         </td>
         <td>
           Apply
@@ -511,12 +534,12 @@
           51
         </td>
         <td>
-          466
+          412
         </td>
         <td>
-          1775
+          1806
           -
-          1809
+          1840
         </td>
         <td>
           Literal
@@ -526,6 +549,132 @@
         </td>
         <td style="background: #AEF1AE">
           &quot;Hand doesn\'t contain given cards&quot;
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          624
+        </td>
+        <td>
+          1983
+          -
+          2088
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy(cards.this.Card.MyRichCardSeq(Hand.this.playerCards).sortByRank(), cards.this.Card.MyRichCardSeq(Hand.this.boardCards).sortByRank())
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          519
+        </td>
+        <td>
+          2014
+          -
+          2038
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.MyRichCardSeq.sortByRank
+        </td>
+        <td style="background: #AEF1AE">
+          cards.this.Card.MyRichCardSeq(Hand.this.playerCards).sortByRank()
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          780
+        </td>
+        <td>
+          2059
+          -
+          2082
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.MyRichCardSeq.sortByRank
+        </td>
+        <td style="background: #AEF1AE">
+          cards.this.Card.MyRichCardSeq(Hand.this.boardCards).sortByRank()
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          653
+        </td>
+        <td>
+          2226
+          -
+          2331
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.copy
+        </td>
+        <td style="background: #AEF1AE">
+          this.copy(cards.this.Card.MyRichCardSeq(Hand.this.playerCards).sortBySuit(), cards.this.Card.MyRichCardSeq(Hand.this.boardCards).sortBySuit())
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          532
+        </td>
+        <td>
+          2257
+          -
+          2281
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.MyRichCardSeq.sortBySuit
+        </td>
+        <td style="background: #AEF1AE">
+          cards.this.Card.MyRichCardSeq(Hand.this.playerCards).sortBySuit()
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          805
+        </td>
+        <td>
+          2302
+          -
+          2325
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Card.MyRichCardSeq.sortBySuit
+        </td>
+        <td style="background: #AEF1AE">
+          cards.this.Card.MyRichCardSeq(Hand.this.boardCards).sortBySuit()
         </td>
       </tr>
     </table>
