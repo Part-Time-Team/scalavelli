@@ -663,10 +663,10 @@
       </span>
       
       <p class="shortcomment cmt">Validate a card sequence.</p><div class="fullcomment"><div class="comment cmt"><p>Validate a card sequence.</p></div><dl class="paramcmts block"><dt class="param">cards</dt><dd class="cmt"><p>Card Sequence to validate.</p></dd><dt>returns</dt><dd class="cmt"><p>True if is valid, false anywhere.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="it.parttimeteam.core.GameInterfaceImpl">GameInterfaceImpl</a> → <a href="GameInterface.html" class="extype" name="it.parttimeteam.core.GameInterface">GameInterface</a></dd></dl></div>
-    </li><li name="it.parttimeteam.core.GameInterfaceImpl#validateTurn" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="validateTurn(board:it.parttimeteam.core.collections.Board,hand:it.parttimeteam.core.collections.Hand):Boolean"></a><a id="validateTurn(Board,Hand):Boolean"></a>
+    </li><li name="it.parttimeteam.core.GameInterfaceImpl#validateMove" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateMove(board:it.parttimeteam.core.collections.Board,hand:it.parttimeteam.core.collections.Hand):Boolean"></a><a id="validateMove(Board,Hand):Boolean"></a>
       <span class="permalink">
-      <a href="../../../it/parttimeteam/core/GameInterfaceImpl.html#validateTurn(board:it.parttimeteam.core.collections.Board,hand:it.parttimeteam.core.collections.Hand):Boolean" title="Permalink">
+      <a href="../../../it/parttimeteam/core/GameInterfaceImpl.html#validateMove(board:it.parttimeteam.core.collections.Board,hand:it.parttimeteam.core.collections.Hand):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -675,10 +675,29 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">validateTurn</span><span class="params">(<span name="board">board: <a href="collections/Board.html" class="extype" name="it.parttimeteam.core.collections.Board">Board</a></span>, <span name="hand">hand: <a href="collections/Hand.html" class="extype" name="it.parttimeteam.core.collections.Hand">Hand</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">validateMove</span><span class="params">(<span name="board">board: <a href="collections/Board.html" class="extype" name="it.parttimeteam.core.collections.Board">Board</a></span>, <span name="hand">hand: <a href="collections/Hand.html" class="extype" name="it.parttimeteam.core.collections.Hand">Hand</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       
       <p class="shortcomment cmt">Validate an entire board and hand.</p><div class="fullcomment"><div class="comment cmt"><p>Validate an entire board and hand.</p></div><dl class="paramcmts block"><dt class="param">board</dt><dd class="cmt"><p>Board to validate.</p></dd><dt class="param">hand</dt><dd class="cmt"><p>Hand to validate.</p></dd><dt>returns</dt><dd class="cmt"><p>True if is valid, false anywhere.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="it.parttimeteam.core.GameInterfaceImpl">GameInterfaceImpl</a> → <a href="GameInterface.html" class="extype" name="it.parttimeteam.core.GameInterface">GameInterface</a></dd></dl></div>
+    </li><li name="it.parttimeteam.core.GameInterfaceImpl#validateTurn" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateTurn(board:it.parttimeteam.core.collections.Board,startBoard:it.parttimeteam.core.collections.Board,hand:it.parttimeteam.core.collections.Hand,startHand:it.parttimeteam.core.collections.Hand):Boolean"></a><a id="validateTurn(Board,Board,Hand,Hand):Boolean"></a>
+      <span class="permalink">
+      <a href="../../../it/parttimeteam/core/GameInterfaceImpl.html#validateTurn(board:it.parttimeteam.core.collections.Board,startBoard:it.parttimeteam.core.collections.Board,hand:it.parttimeteam.core.collections.Hand,startHand:it.parttimeteam.core.collections.Hand):Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateTurn</span><span class="params">(<span name="board">board: <a href="collections/Board.html" class="extype" name="it.parttimeteam.core.collections.Board">Board</a></span>, <span name="startBoard">startBoard: <a href="collections/Board.html" class="extype" name="it.parttimeteam.core.collections.Board">Board</a></span>, <span name="hand">hand: <a href="collections/Hand.html" class="extype" name="it.parttimeteam.core.collections.Hand">Hand</a></span>, <span name="startHand">startHand: <a href="collections/Hand.html" class="extype" name="it.parttimeteam.core.collections.Hand">Hand</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Validate an entire turn.</p><div class="fullcomment"><div class="comment cmt"><p>Validate an entire turn. Checks made are:
+1) Newest Board and Hand must be valid;
+2) Newest Hand size must be less than the oldest one;
+3) Newest Hand boardCards must be empty.</p></div><dl class="paramcmts block"><dt class="param">board</dt><dd class="cmt"><p>Board to validate with startBoard.</p></dd><dt class="param">startBoard</dt><dd class="cmt"><p>Starting Board.</p></dd><dt class="param">hand</dt><dd class="cmt"><p>Hand to validate with startHand.</p></dd><dt class="param">startHand</dt><dd class="cmt"><p>Starting Hand.</p></dd><dt>returns</dt><dd class="cmt"><p>True if is valid, false anywhere.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="it.parttimeteam.core.GameInterfaceImpl">GameInterfaceImpl</a> → <a href="GameInterface.html" class="extype" name="it.parttimeteam.core.GameInterface">GameInterface</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">

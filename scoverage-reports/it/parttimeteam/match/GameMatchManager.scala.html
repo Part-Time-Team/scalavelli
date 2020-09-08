@@ -61,7 +61,7 @@
 </span>37 <span style=''>  }
 </span>38 <span style=''>
 </span>39 <span style=''>  private def nextStateOnPlayerMove(currentState: GameState, playerInTurn: GamePlayer, updatedHand: Hand, updatedBoard: Board) = {
-</span>40 <span style=''>    if (</span><span style='background: #F0ADAD'>gameApi.validateTurn(updatedBoard, updatedHand)</span><span style=''>) </span><span style='background: #F0ADAD'>{
+</span>40 <span style=''>    if (</span><span style='background: #F0ADAD'>gameApi.validateMove(updatedBoard, updatedHand)</span><span style=''>) </span><span style='background: #F0ADAD'>{
 </span>41 <span style=''></span><span style='background: #F0ADAD'>      val updatedState = currentState
 </span>42 <span style=''></span><span style='background: #F0ADAD'>        .getPlayer(playerInTurn.id)
 </span>43 <span style=''></span><span style='background: #F0ADAD'>        .map(p =&gt; currentState.updatePlayer(p.copy(
@@ -240,10 +240,10 @@
           Apply
         </td>
         <td>
-          it.parttimeteam.core.GameInterface.validateTurn
+          it.parttimeteam.core.GameInterface.validateMove
         </td>
         <td style="background: #F0ADAD">
-          GameMatchManager.this.gameApi.validateTurn(updatedBoard, updatedHand)
+          GameMatchManager.this.gameApi.validateMove(updatedBoard, updatedHand)
         </td>
       </tr><tr>
         <td>
