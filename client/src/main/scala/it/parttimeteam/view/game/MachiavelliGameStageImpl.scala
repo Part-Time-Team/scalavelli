@@ -2,7 +2,7 @@ package it.parttimeteam.view.game
 
 import it.parttimeteam.controller.game.GameListener
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.gamestate.PlayerGameState
+import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
 import it.parttimeteam.view.utils.MachiavelliAlert
 import scalafx.application.Platform
@@ -21,20 +21,7 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
 
   scene = gameScene
 
-  onCloseRequest = e => {
-    val alert: Alert = MachiavelliAlert("Leave the game", "Are you sure you want to leave the game? The action cannot be undone.", AlertType.Confirmation)
-
-    alert.showAndWait match {
-      case Some(b) =>
-        if (b == ButtonType.OK) {
-          gameListener.onViewEvent(LeaveGameEvent)
-          System.exit(0)
-        }
-
-      case None =>
-    }
-    e.consume()
-  }
+  onCloseRequest = _ => System.exit(0)
 
   /** @inheritdoc */
   override def showTimer(): Unit = {
@@ -51,15 +38,10 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   }
 
   /** @inheritdoc */
-  override def updateState(state: PlayerGameState): Unit = {
+  override def updateState(viewGameState: ClientGameState): Unit = {
     Platform.runLater({
-      gameScene.setState(state)
+      gameScene.setState(viewGameState)
     })
-  }
-
-  /** @inheritdoc */
-  override def updateHistoryState(canUndo: Boolean, canRedo: Boolean): Unit = {
-    gameScene.setHistoryState(canUndo, canRedo)
   }
 
   /** @inheritdoc */
@@ -80,12 +62,14 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   /** @inheritdoc */
   override def notifyGameEnd(gameEndType: GameEndType): Unit = {
     Platform.runLater({
-      val message = gameEndType match {
+      val message: String = gameEndType match {
         case GameWon => "Congratulations! You won the game! Do you want to play again?"
 
         case GameLost(winnerUsername: String) => s"This game has a winner. And the winner is.. $winnerUsername! Do you want to play again?"
 
         case GameEndWithError(reason: String) => s"The game ended. $reason. Do you want to play again?"
+
+        case _ => ""
       }
 
       val alert = MachiavelliAlert("Game ended", message, AlertType.Information)
@@ -181,7 +165,19 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = gameListener.onViewEvent(UpdateCardCombinationEvent(combinationId, cards))
 
   /** @inheritdoc*/
-  override def leaveGame(): Unit = gameListener.onViewEvent(LeaveGameEvent)
+  override def leaveGame(): Unit = {
+    val alert: Alert = MachiavelliAlert("Leave the game", "Are you sure you want to leave the game? The action cannot be undone.", AlertType.Confirmation)
+
+    alert.showAndWait match {
+      case Some(b) =>
+        if (b == ButtonType.OK) {
+          gameListener.onViewEvent(LeaveGameEvent)
+          System.exit(0)
+        }
+
+      case None =>
+    }
+  }
 
   /** @inheritdoc*/
   override def resetHistory(): Unit = gameListener.onViewEvent(ResetEvent)

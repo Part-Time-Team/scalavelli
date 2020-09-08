@@ -29,10 +29,10 @@ class RankPropSpec
   val failures: TableFor1[String] = Table(
     "rank",
     "s",
-    "♣",
-    "♠",
-    "♦",
-    "♥"
+    "C",
+    "S",
+    "D",
+    "H"
   )
 
   property("string2rank must return shortName at name input") {

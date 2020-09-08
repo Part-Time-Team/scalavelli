@@ -5,7 +5,7 @@ import it.parttimeteam.`match`.GameMatchManagerActor.{CardDrawnInfo, GamePlayers
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.player.Player.PlayerId
-import it.parttimeteam.core.{GameManager, GameState}
+import it.parttimeteam.core.{GameInterface, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
@@ -13,7 +13,7 @@ import it.parttimeteam.messages.PlayerActionNotValidError
 
 
 object GameMatchManagerActor {
-  def props(numberOfPlayers: Int, gameApi: GameManager): Props = Props(new GameMatchManagerActor(numberOfPlayers, gameApi: GameManager))
+  def props(numberOfPlayers: Int, gameApi: GameInterface): Props = Props(new GameMatchManagerActor(numberOfPlayers, gameApi: GameInterface))
 
 
   case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
@@ -37,7 +37,7 @@ object GameMatchManagerActor {
  * @param numberOfPlayers number of players
  * @param gameApi
  */
-class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManager)
+class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInterface)
   extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
@@ -53,7 +53,6 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
       this.players = players
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
-      //      this.players.foreach(p => context.watch(p.actorRef))
       context.become(initializing(Seq.empty) orElse termination())
     }
   }
@@ -100,6 +99,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
    *
    */
   private def initializeGame(): Unit = {
+    this.players.foreach(p => context.watch(p.actorRef))
     this.turnManager = TurnManager[GamePlayer](players)
     log.debug("initializing game..")
     val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
@@ -132,16 +132,14 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameManag
     // if game not ended
     if (!stateResult.updatedState.playerWon(playerInTurn.id)) {
 
-      stateResult.additionalInformation match {
-        case Some(CardDrawnInfo(card)) => playerInTurn.actorRef ! CardDrawn(card)
-        case _ => playerInTurn.actorRef ! TurnEnded
-      }
+      playerInTurn.actorRef ! TurnEnded
 
       // update the turn
       this.turnManager.nextTurn
 
       // notify the next player it's his turn
       this.turnManager.getInTurn.actorRef ! PlayerTurn
+      this.broadcastMessageToNonCurrentPlayers(this.turnManager.getInTurn.id)(OpponentInTurn(this.turnManager.getInTurn.username))
 
       //switch the actor behaviour
       context.become(inTurn(stateResult.updatedState, this.turnManager.getInTurn))

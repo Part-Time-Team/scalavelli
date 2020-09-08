@@ -3,7 +3,7 @@ package it.parttimeteam.model.game
 import akka.actor.{Actor, ActorLogging, Props}
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.messages.GameMessage.{CardDrawn, Error, GameStateUpdated, Lost, OpponentInTurn, PlayerTurn, TurnEnded, Won}
+import it.parttimeteam.messages.GameMessage.{CardDrawn, Error, GameEndedForPlayerLeft, GameStateUpdated, Lost, OpponentInTurn, PlayerTurn, TurnEnded, Won}
 
 object RemoteGameActor {
   def props(listener: MatchServerResponseListener) = Props(new RemoteGameActor(listener))
@@ -33,6 +33,8 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
 
     case Lost(winnerName) => this.listener.gameLost(winnerName)
 
+    case GameEndedForPlayerLeft => this.listener.gameEndedWithErrorEvent("a player left the game")
+
     case Error(_) =>
   }
 }
@@ -49,6 +51,8 @@ trait MatchServerResponseListener {
   def opponentInTurn(opponentName: String)
 
   def turnEndedWithCartDrawn(card: Card)
+
+  def gameEndedWithErrorEvent(reason: String)
 
   def gameWon()
 

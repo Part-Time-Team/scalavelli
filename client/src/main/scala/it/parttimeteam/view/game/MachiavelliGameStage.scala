@@ -1,7 +1,7 @@
 package it.parttimeteam.view.game
 
 import it.parttimeteam.controller.game.GameListener
-import it.parttimeteam.gamestate.PlayerGameState
+import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view._
 import it.parttimeteam.view.game.listeners.GameStageListener
 
@@ -79,9 +79,9 @@ trait MachiavelliGameStage extends BaseStage with GameStageListener {
   /**
     * Updates the displayed game state with the actual one.
     *
-    * @param playerGameState the actual game state
+    * @param gameState the actual game state
     */
-  def updateState(playerGameState: PlayerGameState): Unit
+  def updateState(gameState: ClientGameState): Unit
 
   /**
     * Notify the player an error.
@@ -89,14 +89,6 @@ trait MachiavelliGameStage extends BaseStage with GameStageListener {
     * @param error the error occurred
     */
   def notifyError(error: String): Unit
-
-  /**
-    * Set history possible actions
-    *
-    * @param canUndo if the undo action is available
-    * @param canRedo if the redo action is available
-    */
-  def updateHistoryState(canUndo: Boolean, canRedo: Boolean): Unit
 }
 
 /**

@@ -33,8 +33,10 @@ sealed class Rank(val value: Int,
 
 object Rank {
 
+  /**
+   * Number rank
+   */
   val ACE = "1"
-  val ACE_SYMBOL = "A"
   val TWO = "2"
   val THREE = "3"
   val FOUR = "4"
@@ -43,19 +45,16 @@ object Rank {
   val SEVEN = "7"
   val EIGHT = "8"
   val NINE = "9"
-  val TEN = "0"
+  val TEN = "10"
   val JACK = "11"
-  val JACK_SYMBOL = "J"
   val QUEEN = "12"
-  val QUEEN_SYMBOL = "Q"
   val KING = "13"
-  val KING_SYMBOL = "K"
   val OVERFLOW_ACE = "14"
 
   /**
    * The first rank.
    */
-  case class Ace() extends Rank(1, "Ace", "A") {
+  case class Ace() extends Rank(1, "Ace", "1") {
     /**
      * Compare an Ace with another card.
      *
@@ -71,7 +70,7 @@ object Rank {
   /**
    * The optional OverflowAce with value 14
    */
-  case class OverflowAce() extends Rank(14, "Ace", "A")
+  case class OverflowAce() extends Rank(14, "Ace", "14")
 
   /**
    * The second rank.
@@ -116,22 +115,22 @@ object Rank {
   /**
    * The tenth rank.
    */
-  case class Ten() extends Rank(10, "Ten", "0")
+  case class Ten() extends Rank(10, "Ten", "10")
 
   /**
    * The eleventh rank.
    */
-  case class Jack() extends Rank(11, "Jack", "J")
+  case class Jack() extends Rank(11, "Jack", "11")
 
   /**
    * The twelveth rank.
    */
-  case class Queen() extends Rank(12, "Queen", "Q")
+  case class Queen() extends Rank(12, "Queen", "12")
 
   /**
    * The thirteenth rank.
    */
-  case class King() extends Rank(13, "King", "K") {
+  case class King() extends Rank(13, "King", "13") {
     /**
      * Compare King with another card.
      *
@@ -151,20 +150,20 @@ object Rank {
    * @return Rank converted.
    */
   implicit def string2rank(s: String): Rank = s match {
-    case ACE | ACE_SYMBOL => Ace()
-    case TWO => Two()
-    case THREE => Three()
-    case FOUR => Four()
-    case FIVE => Five()
-    case SIX => Six()
-    case SEVEN => Seven()
-    case EIGHT => Eight()
-    case NINE => Nine()
-    case TEN => Ten()
-    case JACK   | JACK_SYMBOL => Jack()
-    case QUEEN  | QUEEN_SYMBOL => Queen()
-    case KING   | KING_SYMBOL=> King()
-    case OVERFLOW_ACE => OverflowAce()
+    case this.ACE    => Ace()
+    case this.TWO    => Two()
+    case this.THREE  => Three()
+    case this.FOUR   => Four()
+    case this.FIVE   => Five()
+    case this.SIX    => Six()
+    case this.SEVEN  => Seven()
+    case this.EIGHT  => Eight()
+    case this.NINE   => Nine()
+    case this.TEN    => Ten()
+    case this.JACK   => Jack()
+    case this.QUEEN  => Queen()
+    case this.KING   => King()
+    case this.OVERFLOW_ACE => OverflowAce()
     case _ => throw new RuntimeException(f"Unknown rank $s")
   }
 }

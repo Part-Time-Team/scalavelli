@@ -1,5 +1,6 @@
 package it.parttimeteam.controller.game
 
+import it.parttimeteam.core.GameInterfaceImpl
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
@@ -12,6 +13,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
   private var gameStage: MachiavelliGameStage = _
   private var gameService: GameService = _
+  private var currentState: ClientGameState = _
 
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
@@ -20,21 +22,17 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       app.stage = gameStage
     })
 
-    this.gameService = new GameServiceImpl(gameInfo, notifyEvent)
+    this.gameService = new GameServiceImpl(gameInfo, notifyEvent, new GameInterfaceImpl())
     this.gameService.playerReady()
   }
 
   def notifyEvent(serverGameEvent: ServerGameEvent): Unit = serverGameEvent match {
 
-    case StateUpdatedEvent(state: PlayerGameState) => {
-      println("Board: " + state.board)
-      println("Hand: " + state.hand)
-
-      val historyState = gameService.getHistoryState
+    case StateUpdatedEvent(state: ClientGameState) => {
+      currentState = state
       Platform.runLater({
         gameStage.matchReady()
         gameStage.updateState(state)
-        gameStage.updateHistoryState(historyState._1, historyState._2)
       })
     }
 
@@ -43,9 +41,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     }
 
     case InTurnEvent => {
-      val historyState = gameService.getHistoryState
       gameStage.setInTurn()
-      gameStage.updateHistoryState(historyState._1, historyState._2)
       gameStage.showTimer()
     }
 
@@ -91,10 +87,10 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     case SortHandByRankEvent => gameService.notifyUserAction(SortHandByRankAction)
 
     case EndTurnEvent => {
-      if (gameService.playerMadeAnAction()) {
-        gameService.notifyUserAction(EndTurnAction)
-      } else {
+      if (currentState.canDrawCard) {
         gameService.notifyUserAction(EndTurnAndDrawAction)
+      } else {
+        gameService.notifyUserAction(EndTurnAction)
       }
     }
 
@@ -129,7 +125,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       Card("7", "♥", "B")
     ))
 
-    hand = hand.addTableCards(Seq(
+    hand = hand.addBoardCards(Seq(
       Card("K", "♥", "B"),
       Card("Q", "♠", "B")
     ))

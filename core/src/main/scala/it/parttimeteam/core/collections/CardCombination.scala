@@ -1,7 +1,6 @@
 package it.parttimeteam.core.collections
 
 import it.parttimeteam.core.cards.Card
-import it.parttimeteam.core.prolog.PrologGame
 
 /**
  * Represent a combination of cards. Can be a Quarter or a Chair.
@@ -43,5 +42,12 @@ case class CardCombination(id: String, cards: Seq[Card]) {
 }
 
 object CardCombination {
+  /**
+   * Create a new Card Combination, sorting his cards by Rank.
+   *
+   * @param id    Id of the combination.
+   * @param cards Sequence of cards.
+   * @return New Card Combination.
+   */
   def apply(id: String, cards: Seq[Card]): CardCombination = new CardCombination(id, cards.sortByRank())
 }

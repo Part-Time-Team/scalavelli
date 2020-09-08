@@ -68,11 +68,16 @@ class LobbyManagerImpl[T <: Player] extends LobbyManager[T] {
    */
   override def removePlayer(playerId: String): Unit = {
     playersToLobby.get(playerId) match {
-      case Some(lobbyType) => lobbies.get(lobbyType) match {
-        case Some(lobby) => lobby.removePlayer(playerId)
+      case Some(lobbyType) => {
+        lobbies.get(lobbyType) match {
+          case Some(lobby) => lobby.removePlayer(playerId)
+          case _ =>
+        }
+        playersToLobby = playersToLobby - playerId
       }
+      case _ =>
     }
-    playersToLobby = playersToLobby - playerId
+
   }
 
   /**

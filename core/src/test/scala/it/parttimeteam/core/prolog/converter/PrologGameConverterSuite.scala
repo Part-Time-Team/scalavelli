@@ -15,8 +15,8 @@ class PrologGameConverterSuite extends AnyFunSuite {
 
     val sequence: Seq[Card] = Seq(ACE_CLUBS, FOUR_SPADES, KING_DIAMONDS)
 
-    assertResult("([(1,\"Clubs\"),(4,\"Spades\"),(13,\"Diamonds\")]).")(prologConverter.cardsConvertToString(sequence)(None))
-    assertResult("([(1,\"Clubs\"),(4,\"Spades\"),(13,\"Diamonds\")],X).")(prologConverter.cardsConvertToString(sequence)(Some(new Var("X"))))
+    assertResult("([(1,\"C\"),(4,\"S\"),(13,\"D\")]).")(prologConverter.cardsConvertToString(sequence)(None))
+    assertResult("([(1,\"C\"),(4,\"S\"),(13,\"D\")],X).")(prologConverter.cardsConvertToString(sequence)(Some(new Var("X"))))
   }
 
   test("Convert a sequence of term into a tuple sequence") {
@@ -33,14 +33,14 @@ class PrologGameConverterSuite extends AnyFunSuite {
   test("Get a card given the color, rank and suit") {
     val card: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
 
-    assertResult(card)(prologConverter getCard(prolog toTerm "B", prolog toTerm "Clubs", prolog toTerm "1"))
+    assertResult(card)(prologConverter getCard(prolog toTerm "B", prolog toTerm "C", prolog toTerm "1"))
   }
 
-  test("Change optional value of the card Ace if it is after King card") {
+  test("It replaces the Ace value card in the Overflow Ace card in specific cases") {
 
     assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS.copy(rank = "14")))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS)))
 
-    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS.copy(rank = "14"), TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS, TWO_CLUBS, THREE_CLUBS)))
+    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS.copy(rank = "14"), ACE_CLUBS, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS, ACE_CLUBS, TWO_CLUBS, THREE_CLUBS)))
 
     assertResult(Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS)))
   }

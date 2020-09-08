@@ -36,7 +36,7 @@ trait PrologConverter {
   def getCard(color: Term, suit: Term, rank: Term): Card
 
   /**
-   * Converts the value card Ace if it is after King card
+   * It replaces the Ace value card in the Overflow Ace card in specific cases
    *
    * @param cards sequence of cards
    * @return new sequence of cards

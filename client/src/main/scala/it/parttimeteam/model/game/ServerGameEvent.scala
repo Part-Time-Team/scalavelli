@@ -1,10 +1,8 @@
 package it.parttimeteam.model.game
 
-import it.parttimeteam.gamestate.PlayerGameState
-
 sealed class ServerGameEvent
 
-case class StateUpdatedEvent(state: PlayerGameState) extends ServerGameEvent
+case class StateUpdatedEvent(state: ClientGameState) extends ServerGameEvent
 
 case class OpponentInTurnEvent(actualPlayerName: String) extends ServerGameEvent
 

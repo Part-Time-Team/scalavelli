@@ -10,8 +10,4 @@ trait GameService {
   def playerReady(): Unit
 
   def notifyUserAction(action: UserGameAction): Unit
-
-  def getHistoryState: (Boolean, Boolean)
-
-  def playerMadeAnAction(): Boolean
 }

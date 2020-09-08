@@ -3,63 +3,74 @@ package it.parttimeteam.core.collections
 import it.parttimeteam.core.cards.Card
 
 /**
- * Player's hand
+ * Player's Hand.
  *
- * @param playerCards list of cards in the player's hand
- * @param tableCards  list of cards in the player's hand to put at the table
+ * @param playerCards Sequence of cards in the player's Hand from the turn start.
+ * @param boardCards  Sequence of cards in the player's Hand picked from Board.
  */
-case class Hand(playerCards: Seq[Card] = Seq.empty, tableCards: Seq[Card] = Seq.empty) {
-
+case class Hand(playerCards: Seq[Card] = Seq.empty, boardCards: Seq[Card] = Seq.empty) {
   /**
-   * Get player's hand
+   * Add cards to the list playerCards.
    *
-   * @return player's hand
-   */
-  def getHand: Hand = {
-    Hand(playerCards, tableCards)
-  }
-
-  /**
-   * Add cards to the list playerCards
-   *
-   * @param cards cards to add
-   * @return new Hand with the updated playerCards list
+   * @param cards Cards to add.
+   * @return New Hand with the updated playerCards list.
    */
   def addPlayerCards(cards: Seq[Card]): Hand = this.copy(playerCards = playerCards ++ cards)
 
   /**
-   * Add cards to the list tablePlayer
+   * Add cards to the list boardCards.
    *
-   * @param cards cards to add
-   * @return new Hand the updated tableCards list
+   * @param cards Cards to add.
+   * @return New Hand with the updated boardCards list.
    */
-  def addTableCards(cards: Seq[Card]): Hand = this.copy(tableCards = tableCards ++ cards)
+  def addBoardCards(cards: Seq[Card]): Hand = this.copy(boardCards = boardCards ++ cards)
 
   /**
-   * Check if hand contain some cards.
+   * Check if hand contain some Cards.
    *
-   * @param cards Cards that must be contained in the hand.
-   * @return True if all cards are contained, false anywhere.
+   * @param cards Cards that must be contained in the Hand.
+   * @return True if all Cards are contained, false anywhere.
    */
   def containsCards(cards: Card*): Boolean =
     (cards exists (c => playerCards contains c)) ||
-      (cards exists (c => tableCards contains c))
+      (cards exists (c => boardCards contains c))
 
   /**
-   * Remove cards contained in the hand or return an error string if the hand
-   * doesn't contain all the cards in the parameter.
+   * Remove cards contained in the Hand or return an error string if the Hand
+   * doesn't contain all the Cards in the parameter.
    *
    * @param cards Cards to remove from Hand.
-   * @return
+   * @return New Hand without Cards or a string with the error.
    */
   def removeCards(cards: Seq[Card]): Either[String, Hand] = {
-
     val updatePlayerCards: Seq[Card] = playerCards.filterNot(card => cards contains card)
-
-    val updateBoardCards: Seq[Card] = tableCards.filterNot(card => cards contains card)
+    val updateBoardCards: Seq[Card] = boardCards.filterNot(card => cards contains card)
 
     Either.cond(cards forall (c => this containsCards c),
-      this.copy(playerCards = updatePlayerCards, tableCards = updateBoardCards),
+      this.copy(playerCards = updatePlayerCards, boardCards = updateBoardCards),
       "Hand doesn't contain given cards")
   }
+
+  /**
+   * Sort each Card Sequence in Hand by Rank.
+   *
+   * @return Hand with Sequences ordered.
+   */
+  def sortByRank(): Hand =
+    this.copy(
+      playerCards = playerCards.sortByRank(),
+      boardCards = boardCards.sortByRank()
+    )
+
+  /**
+   * Sort each Card Sequence in Hand by Suit.
+   *
+   * @return Hand with Sequences ordered.
+   */
+  def sortBySuit(): Hand =
+    this.copy(
+      playerCards = playerCards.sortBySuit(),
+      boardCards = boardCards.sortBySuit()
+    )
+
 }
