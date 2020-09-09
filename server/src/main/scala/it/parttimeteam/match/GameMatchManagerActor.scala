@@ -110,7 +110,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
 
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
-
+      log.info(s"received action $action from ${playerInTurn.username}")
       this.gameMatchManager.determineNextState(gameState, playerInTurn, action) match {
         case Right(stateResult) =>
           this.handleStateResult(stateResult, playerInTurn)
