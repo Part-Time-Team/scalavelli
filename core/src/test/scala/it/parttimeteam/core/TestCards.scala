@@ -10,7 +10,8 @@ object TestCards {
   /**
    * Ace cards.
    */
-  val ACE_CLUBS: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
+  val ACE_CLUBS_BLUE: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
+  val ACE_CLUBS_RED: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Red())
   val OVERFLOW_ACE_CLUBS: Card = Card(Rank.OverflowAce(), Suit.Clubs(), Color.Blue())
   val ACE_SPADES: Card = Card(Rank.Ace(), Suit.Spades(), Color.Blue())
   val ACE_DIAMONDS: Card = Card(Rank.Ace(), Suit.Diamonds(), Color.Red())

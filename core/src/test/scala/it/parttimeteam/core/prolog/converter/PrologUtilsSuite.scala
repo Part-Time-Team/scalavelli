@@ -31,7 +31,7 @@ class PrologUtilsSuite extends AnyFunSuite  with TableDrivenPropertyChecks with 
      */
     val card: TableFor1[Seq[Card]] = Table(
       "card",
-      Seq(FOUR_SPADES, FIVE_HEARTS, ACE_CLUBS),
+      Seq(FOUR_SPADES, FIVE_HEARTS, ACE_CLUBS_BLUE),
       Seq(KING_CLUBS, THREE_CLUBS, JACK_HEARTS)
     )
 
