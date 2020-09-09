@@ -15,8 +15,8 @@ class PrologGameConverterSuite extends AnyFunSuite {
 
     val sequence: Seq[Card] = Seq(ACE_CLUBS_BLUE, FOUR_SPADES, KING_DIAMONDS)
 
-    assertResult("([(1,\"C\"),(4,\"S\"),(13,\"D\")]).")(prologConverter.cardsConvertToString(sequence)(None))
-    assertResult("([(1,\"C\"),(4,\"S\"),(13,\"D\")],X).")(prologConverter.cardsConvertToString(sequence)(Some(new Var("X"))))
+    assertResult("([(1,\"C\",\"B\"),(4,\"S\",\"B\"),(13,\"D\",\"R\")]).")(prologConverter.cardsConvertToString(sequence)(None))
+    assertResult("([(1,\"C\",\"B\"),(4,\"S\",\"B\"),(13,\"D\",\"R\")],X).")(prologConverter.cardsConvertToString(sequence)(Some(new Var("X"))))
   }
 
   test("Convert a sequence of term into a tuple sequence") {
@@ -25,7 +25,7 @@ class PrologGameConverterSuite extends AnyFunSuite {
     val sequence: Seq[Card] = Seq(ACE_CLUBS_BLUE, ACE_SPADES, ACE_DIAMONDS)
 
     val termSeq: Seq[Term] = prologEngine goal "quicksortValue" + prologConverter.cardsConvertToString(sequence)(Some(new Var("X")))
-    val tupleSeq: Seq[(Rank, Suit)] = sequence map (card => (card.rank, card.suit))
+    val tupleSeq: Seq[Card] = sequence map (card => Card(card.rank, card.suit, card.color))
 
     assertResult(tupleSeq)(prologConverter.sortedCard(termSeq))
   }
