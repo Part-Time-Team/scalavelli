@@ -34,7 +34,7 @@
 </span>10 <span style=''>sealed class Rank(val value: Int,
 </span>11 <span style=''>                  val name: String,
 </span>12 <span style=''>                  val shortName: String)
-</span>13 <span style=''>    extends Comparable[Rank] with Serializable {
+</span>13 <span style=''>  extends Comparable[Rank] with Serializable {
 </span>14 <span style=''>
 </span>15 <span style=''>  /**
 </span>16 <span style=''>   * Base compare between two ranks.
@@ -46,151 +46,162 @@
 </span>22 <span style=''>
 </span>23 <span style=''>  /**
 </span>24 <span style=''>   * Check if value of rank is the same of another rank.
-</span>25 <span style=''>   * @param obj Object to compare.
-</span>26 <span style=''>   * @return True if have the same value. false anywhere.
-</span>27 <span style=''>   */
-</span>28 <span style=''>  override def equals(obj: Any): Boolean = obj match {
-</span>29 <span style=''>    case obj: Rank =&gt; </span><span style='background: #AEF1AE'>this.value equals obj.value</span><span style=''>
-</span>30 <span style=''>    case _ =&gt; </span><span style='background: #F0ADAD'>super.equals(obj)</span><span style=''>
-</span>31 <span style=''>  }
-</span>32 <span style=''>}
-</span>33 <span style=''>
-</span>34 <span style=''>object Rank {
-</span>35 <span style=''>
-</span>36 <span style=''>  /**
-</span>37 <span style=''>   * Number rank
-</span>38 <span style=''>   */
-</span>39 <span style=''>  val ACE = </span><span style='background: #AEF1AE'>&quot;1&quot;</span><span style=''>
-</span>40 <span style=''>  val TWO = </span><span style='background: #AEF1AE'>&quot;2&quot;</span><span style=''>
-</span>41 <span style=''>  val THREE = </span><span style='background: #AEF1AE'>&quot;3&quot;</span><span style=''>
-</span>42 <span style=''>  val FOUR = </span><span style='background: #AEF1AE'>&quot;4&quot;</span><span style=''>
-</span>43 <span style=''>  val FIVE = </span><span style='background: #AEF1AE'>&quot;5&quot;</span><span style=''>
-</span>44 <span style=''>  val SIX = </span><span style='background: #AEF1AE'>&quot;6&quot;</span><span style=''>
-</span>45 <span style=''>  val SEVEN = </span><span style='background: #AEF1AE'>&quot;7&quot;</span><span style=''>
-</span>46 <span style=''>  val EIGHT = </span><span style='background: #AEF1AE'>&quot;8&quot;</span><span style=''>
-</span>47 <span style=''>  val NINE = </span><span style='background: #AEF1AE'>&quot;9&quot;</span><span style=''>
-</span>48 <span style=''>  val TEN = </span><span style='background: #AEF1AE'>&quot;10&quot;</span><span style=''>
-</span>49 <span style=''>  val JACK = </span><span style='background: #AEF1AE'>&quot;11&quot;</span><span style=''>
-</span>50 <span style=''>  val QUEEN = </span><span style='background: #AEF1AE'>&quot;12&quot;</span><span style=''>
-</span>51 <span style=''>  val KING = </span><span style='background: #AEF1AE'>&quot;13&quot;</span><span style=''>
-</span>52 <span style=''>  val OVERFLOW_ACE = </span><span style='background: #AEF1AE'>&quot;14&quot;</span><span style=''>
-</span>53 <span style=''>
-</span>54 <span style=''>  /**
-</span>55 <span style=''>   * The first rank.
-</span>56 <span style=''>   */
-</span>57 <span style=''>  case class Ace() extends Rank(1, &quot;Ace&quot;, &quot;1&quot;) {
-</span>58 <span style=''>    /**
-</span>59 <span style=''>     * Compare an Ace with another card.
-</span>60 <span style=''>     *
-</span>61 <span style=''>     * @param t Rank to compare.
-</span>62 <span style=''>     * @return Compare result.
-</span>63 <span style=''>     */
-</span>64 <span style=''>    override def compareTo(t: Rank): Int = t match {
-</span>65 <span style=''>      case t if </span><span style='background: #AEF1AE'>t.value equals 13</span><span style=''> =&gt; </span><span style='background: #AEF1AE'>1</span><span style=''>
-</span>66 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>super.compareTo(t)</span><span style=''>
-</span>67 <span style=''>    }
-</span>68 <span style=''>  }
+</span>25 <span style=''>   *
+</span>26 <span style=''>   * @param obj Object to compare.
+</span>27 <span style=''>   * @return True if have the same value. false anywhere.
+</span>28 <span style=''>   */
+</span>29 <span style=''>  override def equals(obj: Any): Boolean = obj match {
+</span>30 <span style=''>    case obj: Rank =&gt; </span><span style='background: #AEF1AE'>this.value equals obj.value</span><span style=''>
+</span>31 <span style=''>    case _ =&gt; </span><span style='background: #F0ADAD'>super.equals(obj)</span><span style=''>
+</span>32 <span style=''>  }
+</span>33 <span style=''>}
+</span>34 <span style=''>
+</span>35 <span style=''>object Rank {
+</span>36 <span style=''>
+</span>37 <span style=''>  /**
+</span>38 <span style=''>   * Number rank
+</span>39 <span style=''>   */
+</span>40 <span style=''>  val ACE = </span><span style='background: #AEF1AE'>&quot;1&quot;</span><span style=''>
+</span>41 <span style=''>  val TWO = </span><span style='background: #AEF1AE'>&quot;2&quot;</span><span style=''>
+</span>42 <span style=''>  val THREE = </span><span style='background: #AEF1AE'>&quot;3&quot;</span><span style=''>
+</span>43 <span style=''>  val FOUR = </span><span style='background: #AEF1AE'>&quot;4&quot;</span><span style=''>
+</span>44 <span style=''>  val FIVE = </span><span style='background: #AEF1AE'>&quot;5&quot;</span><span style=''>
+</span>45 <span style=''>  val SIX = </span><span style='background: #AEF1AE'>&quot;6&quot;</span><span style=''>
+</span>46 <span style=''>  val SEVEN = </span><span style='background: #AEF1AE'>&quot;7&quot;</span><span style=''>
+</span>47 <span style=''>  val EIGHT = </span><span style='background: #AEF1AE'>&quot;8&quot;</span><span style=''>
+</span>48 <span style=''>  val NINE = </span><span style='background: #AEF1AE'>&quot;9&quot;</span><span style=''>
+</span>49 <span style=''>  val TEN = </span><span style='background: #AEF1AE'>&quot;10&quot;</span><span style=''>
+</span>50 <span style=''>  val JACK = </span><span style='background: #AEF1AE'>&quot;11&quot;</span><span style=''>
+</span>51 <span style=''>  val QUEEN = </span><span style='background: #AEF1AE'>&quot;12&quot;</span><span style=''>
+</span>52 <span style=''>  val KING = </span><span style='background: #AEF1AE'>&quot;13&quot;</span><span style=''>
+</span>53 <span style=''>  val OVERFLOW_ACE = </span><span style='background: #AEF1AE'>&quot;14&quot;</span><span style=''>
+</span>54 <span style=''>
+</span>55 <span style=''>  /**
+</span>56 <span style=''>   * The first rank.
+</span>57 <span style=''>   */
+</span>58 <span style=''>  case class Ace() extends Rank(1, &quot;Ace&quot;, &quot;1&quot;) {
+</span>59 <span style=''>    /**
+</span>60 <span style=''>     * Compare an Ace with another card.
+</span>61 <span style=''>     *
+</span>62 <span style=''>     * @param t Rank to compare.
+</span>63 <span style=''>     * @return Compare result.
+</span>64 <span style=''>     */
+</span>65 <span style=''>    override def compareTo(t: Rank): Int = t match {
+</span>66 <span style=''>      case t if </span><span style='background: #AEF1AE'>t.value equals 13</span><span style=''> =&gt; </span><span style='background: #AEF1AE'>1</span><span style=''>
+</span>67 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>super.compareTo(t)</span><span style=''>
+</span>68 <span style=''>    }
 </span>69 <span style=''>
-</span>70 <span style=''>  /**
-</span>71 <span style=''>   * The optional OverflowAce with value 14
-</span>72 <span style=''>   */
-</span>73 <span style=''>  case class OverflowAce() extends Rank(14, &quot;Ace&quot;, &quot;14&quot;)
-</span>74 <span style=''>
-</span>75 <span style=''>  /**
-</span>76 <span style=''>   * The second rank.
-</span>77 <span style=''>   */
-</span>78 <span style=''>  case class Two() extends Rank(2, &quot;Two&quot;, &quot;2&quot;)
-</span>79 <span style=''>
-</span>80 <span style=''>  /**
-</span>81 <span style=''>   * The third rank.
-</span>82 <span style=''>   */
-</span>83 <span style=''>  case class Three() extends Rank(3, &quot;Three&quot;, &quot;3&quot;)
-</span>84 <span style=''>
-</span>85 <span style=''>  /**
-</span>86 <span style=''>   * The fourth rank.
-</span>87 <span style=''>   */
-</span>88 <span style=''>  case class Four() extends Rank(4, &quot;Four&quot;, &quot;4&quot;)
-</span>89 <span style=''>
-</span>90 <span style=''>  /**
-</span>91 <span style=''>   * The fifth rank.
-</span>92 <span style=''>   */
-</span>93 <span style=''>  case class Five() extends Rank(5, &quot;Five&quot;, &quot;5&quot;)
-</span>94 <span style=''>
-</span>95 <span style=''>  /**
-</span>96 <span style=''>   * The sixth rank.
-</span>97 <span style=''>   */
-</span>98 <span style=''>  case class Six() extends Rank(6, &quot;Six&quot;, &quot;6&quot;)
-</span>99 <span style=''>
-</span>100 <span style=''>  /**
-</span>101 <span style=''>   * The seventh rank.
-</span>102 <span style=''>   */
-</span>103 <span style=''>  case class Seven() extends Rank(7, &quot;Seven&quot;, &quot;7&quot;)
-</span>104 <span style=''>
-</span>105 <span style=''>  /**
-</span>106 <span style=''>   * The eigth rank.
-</span>107 <span style=''>   */
-</span>108 <span style=''>  case class Eight() extends Rank(8, &quot;Eight&quot;, &quot;8&quot;)
-</span>109 <span style=''>
-</span>110 <span style=''>  /**
-</span>111 <span style=''>   * The ninth rank.
-</span>112 <span style=''>   */
-</span>113 <span style=''>  case class Nine() extends Rank(9, &quot;Nine&quot;, &quot;9&quot;)
-</span>114 <span style=''>
-</span>115 <span style=''>  /**
-</span>116 <span style=''>   * The tenth rank.
-</span>117 <span style=''>   */
-</span>118 <span style=''>  case class Ten() extends Rank(10, &quot;Ten&quot;, &quot;10&quot;)
-</span>119 <span style=''>
-</span>120 <span style=''>  /**
-</span>121 <span style=''>   * The eleventh rank.
-</span>122 <span style=''>   */
-</span>123 <span style=''>  case class Jack() extends Rank(11, &quot;Jack&quot;, &quot;11&quot;)
-</span>124 <span style=''>
-</span>125 <span style=''>  /**
-</span>126 <span style=''>   * The twelveth rank.
-</span>127 <span style=''>   */
-</span>128 <span style=''>  case class Queen() extends Rank(12, &quot;Queen&quot;, &quot;12&quot;)
-</span>129 <span style=''>
-</span>130 <span style=''>  /**
-</span>131 <span style=''>   * The thirteenth rank.
-</span>132 <span style=''>   */
-</span>133 <span style=''>  case class King() extends Rank(13, &quot;King&quot;, &quot;13&quot;) {
-</span>134 <span style=''>    /**
-</span>135 <span style=''>     * Compare King with another card.
-</span>136 <span style=''>     *
-</span>137 <span style=''>     * @param t Rank to compare.
-</span>138 <span style=''>     * @return Compare result.
-</span>139 <span style=''>     */
-</span>140 <span style=''>    override def compareTo(t: Rank): Int = t match {
-</span>141 <span style=''>      case t if </span><span style='background: #AEF1AE'>t.value equals 1</span><span style=''> =&gt; </span><span style='background: #AEF1AE'>-1</span><span style=''>
-</span>142 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>super.compareTo(t)</span><span style=''>
-</span>143 <span style=''>    }
-</span>144 <span style=''>  }
-</span>145 <span style=''>
-</span>146 <span style=''>  /**
-</span>147 <span style=''>   * Transform a string in the matching rank.
-</span>148 <span style=''>   *
-</span>149 <span style=''>   * @param s String to convert.
-</span>150 <span style=''>   * @return Rank converted.
-</span>151 <span style=''>   */
-</span>152 <span style=''>  implicit def string2rank(s: String): Rank = s match {
-</span>153 <span style=''>    case this.ACE    =&gt; </span><span style='background: #AEF1AE'>Ace()</span><span style=''>
-</span>154 <span style=''>    case this.TWO    =&gt; </span><span style='background: #AEF1AE'>Two()</span><span style=''>
-</span>155 <span style=''>    case this.THREE  =&gt; </span><span style='background: #AEF1AE'>Three()</span><span style=''>
-</span>156 <span style=''>    case this.FOUR   =&gt; </span><span style='background: #AEF1AE'>Four()</span><span style=''>
-</span>157 <span style=''>    case this.FIVE   =&gt; </span><span style='background: #AEF1AE'>Five()</span><span style=''>
-</span>158 <span style=''>    case this.SIX    =&gt; </span><span style='background: #AEF1AE'>Six()</span><span style=''>
-</span>159 <span style=''>    case this.SEVEN  =&gt; </span><span style='background: #AEF1AE'>Seven()</span><span style=''>
-</span>160 <span style=''>    case this.EIGHT  =&gt; </span><span style='background: #AEF1AE'>Eight()</span><span style=''>
-</span>161 <span style=''>    case this.NINE   =&gt; </span><span style='background: #AEF1AE'>Nine()</span><span style=''>
-</span>162 <span style=''>    case this.TEN    =&gt; </span><span style='background: #AEF1AE'>Ten()</span><span style=''>
-</span>163 <span style=''>    case this.JACK   =&gt; </span><span style='background: #AEF1AE'>Jack()</span><span style=''>
-</span>164 <span style=''>    case this.QUEEN  =&gt; </span><span style='background: #AEF1AE'>Queen()</span><span style=''>
-</span>165 <span style=''>    case this.KING   =&gt; </span><span style='background: #AEF1AE'>King()</span><span style=''>
-</span>166 <span style=''>    case this.OVERFLOW_ACE =&gt; </span><span style='background: #AEF1AE'>OverflowAce()</span><span style=''>
-</span>167 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(f&quot;Unknown rank $s&quot;)</span><span style=''>
-</span>168 <span style=''>  }
-</span>169 <span style=''>}
+</span>70 <span style=''>    override def equals(obj: Any): Boolean = obj match {
+</span>71 <span style=''>      case OverflowAce() =&gt; </span><span style='background: #AEF1AE'>true</span><span style=''>
+</span>72 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>super.equals(obj)</span><span style=''>
+</span>73 <span style=''>    }
+</span>74 <span style=''>  }
+</span>75 <span style=''>
+</span>76 <span style=''>  /**
+</span>77 <span style=''>   * The optional OverflowAce with value 14
+</span>78 <span style=''>   */
+</span>79 <span style=''>  case class OverflowAce() extends Rank(14, &quot;Ace&quot;, &quot;14&quot;) {
+</span>80 <span style=''>    override def equals(obj: Any): Boolean = obj match {
+</span>81 <span style=''>      case Ace() =&gt; </span><span style='background: #F0ADAD'>true</span><span style=''>
+</span>82 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>super.equals(obj)</span><span style=''>
+</span>83 <span style=''>    }
+</span>84 <span style=''>  }
+</span>85 <span style=''>
+</span>86 <span style=''>  /**
+</span>87 <span style=''>   * The second rank.
+</span>88 <span style=''>   */
+</span>89 <span style=''>  case class Two() extends Rank(2, &quot;Two&quot;, &quot;2&quot;)
+</span>90 <span style=''>
+</span>91 <span style=''>  /**
+</span>92 <span style=''>   * The third rank.
+</span>93 <span style=''>   */
+</span>94 <span style=''>  case class Three() extends Rank(3, &quot;Three&quot;, &quot;3&quot;)
+</span>95 <span style=''>
+</span>96 <span style=''>  /**
+</span>97 <span style=''>   * The fourth rank.
+</span>98 <span style=''>   */
+</span>99 <span style=''>  case class Four() extends Rank(4, &quot;Four&quot;, &quot;4&quot;)
+</span>100 <span style=''>
+</span>101 <span style=''>  /**
+</span>102 <span style=''>   * The fifth rank.
+</span>103 <span style=''>   */
+</span>104 <span style=''>  case class Five() extends Rank(5, &quot;Five&quot;, &quot;5&quot;)
+</span>105 <span style=''>
+</span>106 <span style=''>  /**
+</span>107 <span style=''>   * The sixth rank.
+</span>108 <span style=''>   */
+</span>109 <span style=''>  case class Six() extends Rank(6, &quot;Six&quot;, &quot;6&quot;)
+</span>110 <span style=''>
+</span>111 <span style=''>  /**
+</span>112 <span style=''>   * The seventh rank.
+</span>113 <span style=''>   */
+</span>114 <span style=''>  case class Seven() extends Rank(7, &quot;Seven&quot;, &quot;7&quot;)
+</span>115 <span style=''>
+</span>116 <span style=''>  /**
+</span>117 <span style=''>   * The eigth rank.
+</span>118 <span style=''>   */
+</span>119 <span style=''>  case class Eight() extends Rank(8, &quot;Eight&quot;, &quot;8&quot;)
+</span>120 <span style=''>
+</span>121 <span style=''>  /**
+</span>122 <span style=''>   * The ninth rank.
+</span>123 <span style=''>   */
+</span>124 <span style=''>  case class Nine() extends Rank(9, &quot;Nine&quot;, &quot;9&quot;)
+</span>125 <span style=''>
+</span>126 <span style=''>  /**
+</span>127 <span style=''>   * The tenth rank.
+</span>128 <span style=''>   */
+</span>129 <span style=''>  case class Ten() extends Rank(10, &quot;Ten&quot;, &quot;10&quot;)
+</span>130 <span style=''>
+</span>131 <span style=''>  /**
+</span>132 <span style=''>   * The eleventh rank.
+</span>133 <span style=''>   */
+</span>134 <span style=''>  case class Jack() extends Rank(11, &quot;Jack&quot;, &quot;11&quot;)
+</span>135 <span style=''>
+</span>136 <span style=''>  /**
+</span>137 <span style=''>   * The twelveth rank.
+</span>138 <span style=''>   */
+</span>139 <span style=''>  case class Queen() extends Rank(12, &quot;Queen&quot;, &quot;12&quot;)
+</span>140 <span style=''>
+</span>141 <span style=''>  /**
+</span>142 <span style=''>   * The thirteenth rank.
+</span>143 <span style=''>   */
+</span>144 <span style=''>  case class King() extends Rank(13, &quot;King&quot;, &quot;13&quot;) {
+</span>145 <span style=''>    /**
+</span>146 <span style=''>     * Compare King with another card.
+</span>147 <span style=''>     *
+</span>148 <span style=''>     * @param t Rank to compare.
+</span>149 <span style=''>     * @return Compare result.
+</span>150 <span style=''>     */
+</span>151 <span style=''>    override def compareTo(t: Rank): Int = t match {
+</span>152 <span style=''>      case t if </span><span style='background: #AEF1AE'>t.value equals 1</span><span style=''> =&gt; </span><span style='background: #AEF1AE'>-1</span><span style=''>
+</span>153 <span style=''>      case _ =&gt; </span><span style='background: #AEF1AE'>super.compareTo(t)</span><span style=''>
+</span>154 <span style=''>    }
+</span>155 <span style=''>  }
+</span>156 <span style=''>
+</span>157 <span style=''>  /**
+</span>158 <span style=''>   * Transform a string in the matching rank.
+</span>159 <span style=''>   *
+</span>160 <span style=''>   * @param s String to convert.
+</span>161 <span style=''>   * @return Rank converted.
+</span>162 <span style=''>   */
+</span>163 <span style=''>  implicit def string2rank(s: String): Rank = s match {
+</span>164 <span style=''>    case this.ACE =&gt; </span><span style='background: #AEF1AE'>Ace()</span><span style=''>
+</span>165 <span style=''>    case this.TWO =&gt; </span><span style='background: #AEF1AE'>Two()</span><span style=''>
+</span>166 <span style=''>    case this.THREE =&gt; </span><span style='background: #AEF1AE'>Three()</span><span style=''>
+</span>167 <span style=''>    case this.FOUR =&gt; </span><span style='background: #AEF1AE'>Four()</span><span style=''>
+</span>168 <span style=''>    case this.FIVE =&gt; </span><span style='background: #AEF1AE'>Five()</span><span style=''>
+</span>169 <span style=''>    case this.SIX =&gt; </span><span style='background: #AEF1AE'>Six()</span><span style=''>
+</span>170 <span style=''>    case this.SEVEN =&gt; </span><span style='background: #AEF1AE'>Seven()</span><span style=''>
+</span>171 <span style=''>    case this.EIGHT =&gt; </span><span style='background: #AEF1AE'>Eight()</span><span style=''>
+</span>172 <span style=''>    case this.NINE =&gt; </span><span style='background: #AEF1AE'>Nine()</span><span style=''>
+</span>173 <span style=''>    case this.TEN =&gt; </span><span style='background: #AEF1AE'>Ten()</span><span style=''>
+</span>174 <span style=''>    case this.JACK =&gt; </span><span style='background: #AEF1AE'>Jack()</span><span style=''>
+</span>175 <span style=''>    case this.QUEEN =&gt; </span><span style='background: #AEF1AE'>Queen()</span><span style=''>
+</span>176 <span style=''>    case this.KING =&gt; </span><span style='background: #AEF1AE'>King()</span><span style=''>
+</span>177 <span style=''>    case this.OVERFLOW_ACE =&gt; </span><span style='background: #AEF1AE'>OverflowAce()</span><span style=''>
+</span>178 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(f&quot;Unknown rank $s&quot;)</span><span style=''>
+</span>179 <span style=''>  }
+</span>180 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -207,33 +218,12 @@
           21
         </td>
         <td>
-          752
+          421
         </td>
         <td>
-          488
+          502
           -
-          493
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Rank.value
-        </td>
-        <td style="background: #AEF1AE">
-          Rank.this.value
-        </td>
-      </tr><tr>
-        <td>
-          21
-        </td>
-        <td>
-          420
-        </td>
-        <td>
-          504
-          -
-          511
+          509
         </td>
         <td>
           ApplyImplicitView
@@ -249,12 +239,33 @@
           21
         </td>
         <td>
-          581
+          693
         </td>
         <td>
-          504
+          486
           -
-          511
+          509
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Integer.compareTo
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.int2Integer(Rank.this.value).compareTo(scala.Predef.int2Integer(t.value))
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          585
+        </td>
+        <td>
+          502
+          -
+          509
         </td>
         <td>
           Select
@@ -270,33 +281,33 @@
           21
         </td>
         <td>
-          689
+          757
         </td>
         <td>
-          488
+          486
           -
-          511
+          491
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          java.lang.Integer.compareTo
+          it.parttimeteam.core.cards.Rank.value
         </td>
         <td style="background: #AEF1AE">
-          scala.Predef.int2Integer(Rank.this.value).compareTo(scala.Predef.int2Integer(t.value))
+          Rank.this.value
         </td>
       </tr><tr>
         <td>
-          29
+          30
         </td>
         <td>
-          472
+          474
         </td>
         <td>
-          752
+          755
           -
-          779
+          782
         </td>
         <td>
           Apply
@@ -309,15 +320,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          30
         </td>
         <td>
-          610
+          614
         </td>
         <td>
-          770
+          773
           -
-          779
+          782
         </td>
         <td>
           Select
@@ -330,15 +341,15 @@
         </td>
       </tr><tr>
         <td>
-          30
+          31
         </td>
         <td>
-          713
+          717
         </td>
         <td>
-          794
+          797
           -
-          811
+          814
         </td>
         <td>
           Apply
@@ -351,15 +362,15 @@
         </td>
       </tr><tr>
         <td>
-          39
+          40
         </td>
         <td>
-          562
+          565
         </td>
         <td>
-          875
-          -
           878
+          -
+          881
         </td>
         <td>
           Literal
@@ -372,15 +383,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          41
         </td>
         <td>
           402
         </td>
         <td>
-          891
-          -
           894
+          -
+          897
         </td>
         <td>
           Literal
@@ -393,15 +404,15 @@
         </td>
       </tr><tr>
         <td>
-          41
+          42
         </td>
         <td>
-          753
+          758
         </td>
         <td>
-          909
-          -
           912
+          -
+          915
         </td>
         <td>
           Literal
@@ -414,15 +425,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          43
         </td>
         <td>
-          602
+          606
         </td>
         <td>
-          926
-          -
           929
+          -
+          932
         </td>
         <td>
           Literal
@@ -435,15 +446,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          44
         </td>
         <td>
-          421
+          422
         </td>
         <td>
-          943
-          -
           946
+          -
+          949
         </td>
         <td>
           Literal
@@ -456,15 +467,15 @@
         </td>
       </tr><tr>
         <td>
-          44
+          45
         </td>
         <td>
-          699
+          703
         </td>
         <td>
-          959
-          -
           962
+          -
+          965
         </td>
         <td>
           Literal
@@ -477,15 +488,15 @@
         </td>
       </tr><tr>
         <td>
-          45
+          46
         </td>
         <td>
-          538
+          540
         </td>
         <td>
-          977
-          -
           980
+          -
+          983
         </td>
         <td>
           Literal
@@ -498,15 +509,15 @@
         </td>
       </tr><tr>
         <td>
-          46
+          47
         </td>
         <td>
-          474
+          476
         </td>
         <td>
-          995
-          -
           998
+          -
+          1001
         </td>
         <td>
           Literal
@@ -519,15 +530,15 @@
         </td>
       </tr><tr>
         <td>
-          47
+          48
         </td>
         <td>
-          733
+          738
         </td>
         <td>
-          1012
-          -
           1015
+          -
+          1018
         </td>
         <td>
           Literal
@@ -540,15 +551,15 @@
         </td>
       </tr><tr>
         <td>
-          48
+          49
         </td>
         <td>
-          563
+          567
         </td>
         <td>
-          1028
+          1031
           -
-          1032
+          1035
         </td>
         <td>
           Literal
@@ -561,15 +572,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          50
         </td>
         <td>
-          413
+          414
         </td>
         <td>
-          1046
+          1049
           -
-          1050
+          1053
         </td>
         <td>
           Literal
@@ -582,15 +593,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          51
         </td>
         <td>
-          766
+          771
         </td>
         <td>
-          1065
+          1068
           -
-          1069
+          1072
         </td>
         <td>
           Literal
@@ -603,15 +614,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          52
         </td>
         <td>
-          604
+          608
         </td>
         <td>
-          1083
+          1086
           -
-          1087
+          1090
         </td>
         <td>
           Literal
@@ -624,15 +635,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          53
         </td>
         <td>
-          444
+          445
         </td>
         <td>
-          1109
+          1112
           -
-          1113
+          1116
         </td>
         <td>
           Literal
@@ -645,15 +656,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          66
         </td>
         <td>
-          700
+          704
         </td>
         <td>
-          1394
+          1397
           -
-          1411
+          1414
         </td>
         <td>
           Apply
@@ -666,15 +677,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          66
         </td>
         <td>
-          544
+          547
         </td>
         <td>
-          1415
+          1418
           -
-          1416
+          1419
         </td>
         <td>
           Literal
@@ -687,15 +698,15 @@
         </td>
       </tr><tr>
         <td>
-          66
+          67
         </td>
         <td>
-          470
+          472
         </td>
         <td>
-          1433
+          1436
           -
-          1451
+          1454
         </td>
         <td>
           Apply
@@ -708,15 +719,15 @@
         </td>
       </tr><tr>
         <td>
-          141
+          71
         </td>
         <td>
-          555
+          739
         </td>
         <td>
-          2814
+          1547
           -
-          2816
+          1551
         </td>
         <td>
           Literal
@@ -725,19 +736,82 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          -1
+          true
         </td>
       </tr><tr>
         <td>
-          141
+          72
         </td>
         <td>
-          734
+          558
         </td>
         <td>
-          2794
+          1568
           -
-          2810
+          1585
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.equals
+        </td>
+        <td style="background: #AEF1AE">
+          Ace.super.equals(obj)
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          415
+        </td>
+        <td>
+          1789
+          -
+          1793
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          true
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          681
+        </td>
+        <td>
+          1810
+          -
+          1827
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.equals
+        </td>
+        <td style="background: #AEF1AE">
+          OverflowAce.super.equals(obj)
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          600
+        </td>
+        <td>
+          3056
+          -
+          3072
         </td>
         <td>
           Apply
@@ -750,15 +824,36 @@
         </td>
       </tr><tr>
         <td>
-          142
+          152
         </td>
         <td>
-          414
+          425
         </td>
         <td>
-          2833
+          3076
           -
-          2851
+          3078
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          -1
+        </td>
+      </tr><tr>
+        <td>
+          153
+        </td>
+        <td>
+          705
+        </td>
+        <td>
+          3095
+          -
+          3113
         </td>
         <td>
           Apply
@@ -771,15 +866,15 @@
         </td>
       </tr><tr>
         <td>
-          153
+          164
         </td>
         <td>
-          677
+          538
         </td>
         <td>
-          3068
+          3327
           -
-          3073
+          3332
         </td>
         <td>
           Apply
@@ -792,15 +887,15 @@
         </td>
       </tr><tr>
         <td>
-          154
+          165
         </td>
         <td>
-          596
+          463
         </td>
         <td>
-          3098
+          3354
           -
-          3103
+          3359
         </td>
         <td>
           Apply
@@ -813,15 +908,15 @@
         </td>
       </tr><tr>
         <td>
-          155
+          166
         </td>
         <td>
-          424
+          731
         </td>
         <td>
-          3128
+          3383
           -
-          3135
+          3390
         </td>
         <td>
           Apply
@@ -834,15 +929,15 @@
         </td>
       </tr><tr>
         <td>
-          156
+          167
         </td>
         <td>
-          701
+          559
         </td>
         <td>
-          3160
+          3413
           -
-          3166
+          3419
         </td>
         <td>
           Apply
@@ -855,15 +950,15 @@
         </td>
       </tr><tr>
         <td>
-          157
+          168
         </td>
         <td>
-          536
+          416
         </td>
         <td>
-          3191
+          3442
           -
-          3197
+          3448
         </td>
         <td>
           Apply
@@ -876,15 +971,15 @@
         </td>
       </tr><tr>
         <td>
-          158
+          169
         </td>
         <td>
-          462
+          676
         </td>
         <td>
-          3222
+          3470
           -
-          3227
+          3475
         </td>
         <td>
           Apply
@@ -897,15 +992,15 @@
         </td>
       </tr><tr>
         <td>
-          159
+          170
         </td>
         <td>
-          726
+          593
         </td>
         <td>
-          3252
+          3499
           -
-          3259
+          3506
         </td>
         <td>
           Apply
@@ -918,15 +1013,15 @@
         </td>
       </tr><tr>
         <td>
-          160
+          171
         </td>
         <td>
-          556
+          424
         </td>
         <td>
-          3284
+          3530
           -
-          3291
+          3537
         </td>
         <td>
           Apply
@@ -939,15 +1034,15 @@
         </td>
       </tr><tr>
         <td>
-          161
+          172
         </td>
         <td>
-          415
+          700
         </td>
         <td>
-          3316
+          3560
           -
-          3322
+          3566
         </td>
         <td>
           Apply
@@ -960,15 +1055,15 @@
         </td>
       </tr><tr>
         <td>
-          162
+          173
         </td>
         <td>
-          672
+          539
         </td>
         <td>
-          3347
+          3588
           -
-          3352
+          3593
         </td>
         <td>
           Apply
@@ -981,15 +1076,15 @@
         </td>
       </tr><tr>
         <td>
-          163
+          174
         </td>
         <td>
-          589
+          454
         </td>
         <td>
-          3377
+          3616
           -
-          3383
+          3622
         </td>
         <td>
           Apply
@@ -1002,15 +1097,15 @@
         </td>
       </tr><tr>
         <td>
-          164
+          175
         </td>
         <td>
-          423
+          737
         </td>
         <td>
-          3408
+          3646
           -
-          3415
+          3653
         </td>
         <td>
           Apply
@@ -1023,15 +1118,15 @@
         </td>
       </tr><tr>
         <td>
-          165
+          176
         </td>
         <td>
-          696
+          560
         </td>
         <td>
-          3440
+          3676
           -
-          3446
+          3682
         </td>
         <td>
           Apply
@@ -1044,15 +1139,15 @@
         </td>
       </tr><tr>
         <td>
-          166
+          177
         </td>
         <td>
-          537
+          397
         </td>
         <td>
-          3477
+          3713
           -
-          3490
+          3726
         </td>
         <td>
           Apply
@@ -1065,15 +1160,15 @@
         </td>
       </tr><tr>
         <td>
-          167
+          178
         </td>
         <td>
-          453
+          677
         </td>
         <td>
-          3505
+          3741
           -
-          3551
+          3787
         </td>
         <td>
           Throw
