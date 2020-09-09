@@ -11,6 +11,7 @@ object TestCards {
    * Ace cards.
    */
   val ACE_CLUBS: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
+  val OVERFLOW_ACE_CLUBS: Card = Card(Rank.OverflowAce(), Suit.Clubs(), Color.Blue())
   val ACE_SPADES: Card = Card(Rank.Ace(), Suit.Spades(), Color.Blue())
   val ACE_DIAMONDS: Card = Card(Rank.Ace(), Suit.Diamonds(), Color.Red())
   val ACE_HEARTS: Card = Card(Rank.Ace(), Suit.Hearts(), Color.Red())
@@ -50,11 +51,18 @@ object TestCards {
    * Six cards.
    */
   val SIX_HEARTS: Card = Card(Rank.Six(), Suit.Hearts(), Color.Red())
+  val SIX_CLUBS: Card = Card(Rank.Six(), Suit.Hearts(), Color.Red())
 
   /**
    * Seven cards.
    */
   val SEVEN_HEARTS: Card = Card(Rank.Seven(), Suit.Hearts(), Color.Red())
+  val SEVEN_CLUBS: Card = Card(Rank.Seven(), Suit.Hearts(), Color.Red())
+
+  /**
+   * Eight cards.
+   */
+  val EIGHT_CLUBS: Card = Card(Rank.Eight(), Suit.Hearts(), Color.Red())
 
   /**
    * Nine cards.

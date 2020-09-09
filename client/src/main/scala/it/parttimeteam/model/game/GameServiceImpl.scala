@@ -129,7 +129,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   private def endTurnWithMoves(): Unit = {
     withState { currentState =>
-      if (this.gameInterface.validateTurn(currentState.board, currentState.hand)) {
+      if (this.gameInterface.validateMove(currentState.board, currentState.hand)) {
         remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
       } else {
         this.notifyEvent(ErrorEvent("Non valid turn play"))
