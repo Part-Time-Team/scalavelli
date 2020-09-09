@@ -1,6 +1,7 @@
 package it.parttimeteam.core
 
 import it.parttimeteam.core.TestCards._
+import it.parttimeteam.core.cards.Rank.{Ace, OverflowAce}
 import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import org.scalamock.matchers.Matchers
 import org.scalamock.scalatest.MockFactory
@@ -100,10 +101,19 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
 
       it("Play cards that are not present in the hand returns error") {
         val cards = Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS)
-        val handSeq = List(THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS)
+        val handSeq = Seq(THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS)
         val result = gameInterface.playCombination(Hand(handSeq), state.board, cards)
         assert(result.isLeft)
       }
+
+      it("Play a combination with on overflow ace") {
+        val handSeq = List(JACK_HEARTS, ACE_HEARTS, QUEEN_HEARTS, KING_HEARTS)
+        val cards = Seq(JACK_HEARTS, ACE_HEARTS, QUEEN_HEARTS, KING_HEARTS)
+        val result = gameInterface.playCombination(Hand(handSeq), state.board, cards)
+        println(result)
+        assert(result.isRight)
+      }
+
     }
 
     describe("Pick table cards") {
