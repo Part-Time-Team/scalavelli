@@ -65,7 +65,7 @@ class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
     case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
 
     case Terminated(actorRef) => {
-      log.debug(s"terminated $actorRef, connected players: $connectedPlayers")
+      log.info(s"terminated $actorRef, connected players: $connectedPlayers")
       removeClient(actorRef)
     }
 
@@ -104,13 +104,13 @@ class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
   private def removeClient(actorRef: ActorRef): Unit = {
     this.connectedPlayers.find(_._2 == actorRef) match {
       case Some((userId, _)) => {
-        log.debug(s"removing client $actorRef from lobby and connected players list")
+        log.info(s"removing client $actorRef from lobby and connected players list")
         context.unwatch(actorRef)
         this.lobbyManger.removePlayer(userId)
         this.connectedPlayers = this.connectedPlayers - userId
-        log.debug(s"removed client $actorRef from lobby and connected players list")
+        log.info(s"removed client $actorRef from lobby and connected players list")
       }
-      case None => log.warning(s"client $actorRef not found")
+      case None => log.info(s"client $actorRef not found")
     }
   }
 
