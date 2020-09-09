@@ -77,7 +77,7 @@ class PrologGame() {
 
     val optionalAceCards: Seq[Card] = conversion optionalValueCards cards
     val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(optionalAceCards)(Some(X))
-    conversion.sortedCard(prologResult)
+    conversion sortedCard prologResult
   }
 
   /**
@@ -89,9 +89,7 @@ class PrologGame() {
   def sortBySuit(cards: Seq[Card]): Seq[Card] = {
 
     val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(X))
-    val result = conversion.sortedCard(prologResult)
-    result
-    //this.completedResult(cards, prologResult)
+    conversion sortedCard prologResult
   }
 }
 
