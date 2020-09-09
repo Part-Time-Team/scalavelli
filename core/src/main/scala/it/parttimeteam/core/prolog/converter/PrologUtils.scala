@@ -47,9 +47,13 @@ object PrologUtils {
    */
   def replaceTermToString(term: Term, replace: String): String = term.toString.replace(replace, "")
 
-  // TODO da testare
-  def splitSuitColor(suitColor: String) : (String, String) = {
-    (suitColor.replace("(", "").replace(")", "") slice(0,1) , suitColor.replace("(", "").replace(")", "") slice(1,2))
+  // TODO da testare, add scalaDoc
+  def splitRankSuitColor(rankSuitColor: Array[String]): (String, String, String) = {
+
+    val rank: String = rankSuitColor(0)
+    val suitColor: (String, String) = (rankSuitColor(1).replace("(", "").replace(")", "") slice(0, 1),
+      rankSuitColor(1).replace("(", "").replace(")", "") slice(1, 2))
+    (rank, suitColor._1, suitColor._2)
   }
 
   /**

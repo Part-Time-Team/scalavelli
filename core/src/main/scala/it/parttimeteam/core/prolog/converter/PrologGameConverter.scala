@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.core.cards.Rank.{Ace, King, OverflowAce}
+import it.parttimeteam.core.cards.Rank.Ace
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 
 /**
@@ -33,12 +33,11 @@ class PrologGameConverter extends PrologConverter {
     val cardsList = PrologUtils.utils(cards)
 
     val tupleCard = cardsList map (card => {
-      val split = card.toString().split(",")
-      (split(0) , PrologUtils.splitSuitColor(split(1)))
+      PrologUtils.splitRankSuitColor(card.toString().split(","))
     })
 
     // TODO da correggere ritorno delle tuple
-    tupleCard.map(item => Card(Rank.string2rank(item._1), Suit.string2suit(item._2._1), Color.string2color(item._2._2)))
+    tupleCard.map(item => Card(Rank.string2rank(item._1), Suit.string2suit(item._2), Color.string2color(item._3)))
   }
 
   /**
