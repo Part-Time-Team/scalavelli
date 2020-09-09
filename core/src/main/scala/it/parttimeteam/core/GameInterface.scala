@@ -24,21 +24,35 @@ trait GameInterface {
   def draw(deck: Deck): (Deck, Card)
 
   /**
-   * Validate an entire board and hand.
-   *
-   * @param board Board to validate.
-   * @param hand  Hand to validate.
-   * @return True if is valid, false anywhere.
-   */
-  def validateTurn(board: Board, hand: Hand): Boolean
-
-  /**
    * Validate a card sequence.
    *
    * @param cards Card Sequence to validate.
    * @return True if is valid, false anywhere.
    */
   def validateCombination(cards: Seq[Card]): Boolean
+
+  /**
+   * Validate an entire board and hand.
+   *
+   * @param board Board to validate.
+   * @param hand  Hand to validate.
+   * @return True if is valid, false anywhere.
+   */
+  def validateMove(board: Board, hand: Hand): Boolean
+
+  /**
+   * Validate an entire turn. Checks made are:
+   * 1) Newest Board and Hand must be valid;
+   * 2) Newest Hand size must be less than the oldest one;
+   * 3) Newest Hand boardCards must be empty.
+   *
+   * @param board      Board to validate with startBoard.
+   * @param startBoard Starting Board.
+   * @param hand       Hand to validate with startHand.
+   * @param startHand  Starting Hand.
+   * @return True if is valid, false anywhere.
+   */
+  def validateTurn(board: Board, startBoard: Board, hand: Hand, startHand: Hand): Boolean
 
   /**
    * Pick cards from combinations on the board.
@@ -95,13 +109,21 @@ class GameInterfaceImpl extends GameInterface {
   /**
    * @inheritdoc
    */
-  override def validateTurn(board: Board, hand: Hand): Boolean =
+  override def validateCombination(cards: Seq[Card]): Boolean = cards.isValid
+
+  /**
+   * @inheritdoc
+   */
+  override def validateMove(board: Board, hand: Hand): Boolean =
     board.combinations.forall(c => validateCombination(c.cards)) && hand.boardCards.isEmpty
 
   /**
    * @inheritdoc
    */
-  override def validateCombination(cards: Seq[Card]): Boolean = cards.isValid
+  override def validateTurn(board: Board, startBoard: Board, hand: Hand, startHand: Hand): Boolean =
+    validateMove(board, hand) &&
+      (hand.playerCards.size < startHand.playerCards.size) &&
+      hand.boardCards.isEmpty
 
   /**
    * @inheritdoc

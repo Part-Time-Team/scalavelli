@@ -3,7 +3,6 @@ package it.parttimeteam.lobby
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
-import it.parttimeteam.lobby.LobbyManagerActor
 import it.parttimeteam.messages.LobbyMessages._
 import it.parttimeteam.messages.PrivateLobbyIdNotValidError
 import org.scalatest.BeforeAndAfterAll
@@ -54,7 +53,7 @@ class LobbyManagerActorSpec extends TestKit(ActorSystem("test", ConfigFactory.lo
       }
     }
 
-    "acccept a private lobby connection request if private lobby exists" in {
+    "accept a private lobby connection request if private lobby exists" in {
       val lobbyActor = system.actorOf(LobbyManagerActor.props())
       val client = TestProbe()
       lobbyActor ! Connect(client.ref)
