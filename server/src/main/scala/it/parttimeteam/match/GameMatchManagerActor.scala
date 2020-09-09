@@ -65,13 +65,13 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
   private def initializing(playersReady: Seq[GamePlayer]): Receive = {
     case Ready(id, ref) => {
       this.withPlayer(id) { p =>
-        log.debug(s"player ${p.username} ready")
+        log.info(s"player ${p.username} ready")
 
         players = players.map(p => if (p.id == id) p.copy(actorRef = ref) else p)
         val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
 
         if (updatedReadyPlayers.length == numberOfPlayers) {
-          log.debug("All players ready")
+          log.info("All players ready")
           this.initializeGame()
         } else {
           context.become(initializing(updatedReadyPlayers) orElse termination())
@@ -83,12 +83,12 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
   private def termination(): Receive = {
     case Terminated(ref) => this.players.find(_.actorRef == ref) match {
       case Some(player) =>
-        log.debug(s"Player ${player.username} left the game")
+        log.info(s"Player ${player.username} left the game")
         this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
         self ! PoisonPill
     }
     case LeaveGame(playerId) => withPlayer(playerId) { player =>
-      log.debug(s"Player ${player.username} left the game")
+      log.info(s"Player ${player.username} left the game")
       this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
       self ! PoisonPill
     }
@@ -101,7 +101,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
   private def initializeGame(): Unit = {
     this.players.foreach(p => context.watch(p.actorRef))
     this.turnManager = TurnManager[GamePlayer](players)
-    log.debug("initializing game..")
+    log.info("initializing game..")
     val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
     this.turnManager.getInTurn.actorRef ! PlayerTurn
@@ -110,7 +110,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
 
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
-
+      log.info(s"received action $action from ${playerInTurn.username}")
       this.gameMatchManager.determineNextState(gameState, playerInTurn, action) match {
         case Right(stateResult) =>
           this.handleStateResult(stateResult, playerInTurn)
@@ -145,7 +145,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
       context.become(inTurn(stateResult.updatedState, this.turnManager.getInTurn))
 
     } else {
-      log.debug(s"Game ended, player ${playerInTurn.username} won")
+      log.info(s"Game ended, player ${playerInTurn.username} won")
       // game ended
       playerInTurn.actorRef ! Won
       this.broadcastMessageToNonCurrentPlayers(playerInTurn.id)(Lost(playerInTurn.username))
@@ -190,7 +190,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
   private def withPlayer(playerId: PlayerId)(f: GamePlayer => Unit): Unit = {
     this.players.find(_.id == playerId) match {
       case Some(p) => f(p)
-      case None => log.debug(s"Player id $playerId not found")
+      case None => log.info(s"Player id $playerId not found")
     }
   }
 
