@@ -121,15 +121,16 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   private def endTurnDrawingACard(): Unit = remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)
 
+  /**
+   * End the turn this moves if it's valid. Anywhere, notify an error event.
+   */
   private def endTurnWithMoves(): Unit = {
     withState { currentState =>
       val startState = turnHistory.headOption
-      // if (this.gameInterface.validateMove(currentState.board, currentState.hand)) {
       if (startState.isDefined &&
         gameInterface.validateTurn(currentState.board, startState.get.board, currentState.hand, startState.get.hand)) {
         remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
-      }
-      else {
+      } else {
         this.notifyEvent(ErrorEvent("Non valid turn play"))
       }
     }
@@ -223,10 +224,14 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }
 
   private def generateClientGameState(state: PlayerGameState,
-                                      turnHistory: History[PlayerGameState]): ClientGameState = {
+                                      turnHistory: History[PlayerGameState]): ClientGameState =
     ClientGameState(
-      state, turnHistory.canPrevious, turnHistory.canNext, turnHistory.canPrevious, !turnHistory.canPrevious)
-  }
+      playerGameState = state,
+      canUndo = turnHistory.canPrevious,
+      canRedo = turnHistory.canNext,
+      canReset = turnHistory.canPrevious,
+      canDrawCard = !turnHistory.canPrevious
+    )
 
   /**
    * Execute the history method, updates the history and the resulting state
