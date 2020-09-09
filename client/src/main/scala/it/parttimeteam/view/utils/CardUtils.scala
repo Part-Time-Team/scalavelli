@@ -23,7 +23,7 @@ object CardUtils {
     }
 
     val rankPath = card.rank match {
-      case Ace() => "1"
+      case Ace() | OverflowAce() => "1"
       case Two() => "2"
       case Three() => "3"
       case Four() => "4"
