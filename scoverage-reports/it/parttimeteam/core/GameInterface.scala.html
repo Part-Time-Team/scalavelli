@@ -48,119 +48,141 @@
 </span>24 <span style=''>  def draw(deck: Deck): (Deck, Card)
 </span>25 <span style=''>
 </span>26 <span style=''>  /**
-</span>27 <span style=''>   * Validate an entire board and hand.
+</span>27 <span style=''>   * Validate a card sequence.
 </span>28 <span style=''>   *
-</span>29 <span style=''>   * @param board Board to validate.
-</span>30 <span style=''>   * @param hand  Hand to validate.
-</span>31 <span style=''>   * @return True if is valid, false anywhere.
-</span>32 <span style=''>   */
-</span>33 <span style=''>  def validateTurn(board: Board, hand: Hand): Boolean
-</span>34 <span style=''>
-</span>35 <span style=''>  /**
-</span>36 <span style=''>   * Validate a card sequence.
-</span>37 <span style=''>   *
-</span>38 <span style=''>   * @param cards Card Sequence to validate.
+</span>29 <span style=''>   * @param cards Card Sequence to validate.
+</span>30 <span style=''>   * @return True if is valid, false anywhere.
+</span>31 <span style=''>   */
+</span>32 <span style=''>  def validateCombination(cards: Seq[Card]): Boolean
+</span>33 <span style=''>
+</span>34 <span style=''>  /**
+</span>35 <span style=''>   * Validate an entire board and hand.
+</span>36 <span style=''>   *
+</span>37 <span style=''>   * @param board Board to validate.
+</span>38 <span style=''>   * @param hand  Hand to validate.
 </span>39 <span style=''>   * @return True if is valid, false anywhere.
 </span>40 <span style=''>   */
-</span>41 <span style=''>  def validateCombination(cards: Seq[Card]): Boolean
+</span>41 <span style=''>  def validateMove(board: Board, hand: Hand): Boolean
 </span>42 <span style=''>
 </span>43 <span style=''>  /**
-</span>44 <span style=''>   * Pick cards from combinations on the board.
-</span>45 <span style=''>   *
-</span>46 <span style=''>   * @param hand  Hand where put cards picked.
-</span>47 <span style=''>   * @param board Board where pick cards.
-</span>48 <span style=''>   * @param cards Cards to pick.
-</span>49 <span style=''>   * @return An Either with a possible error or the Hand and Board updated.
-</span>50 <span style=''>   */
-</span>51 <span style=''>  def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
-</span>52 <span style=''>
-</span>53 <span style=''>  /**
-</span>54 <span style=''>   * Play cards from hand to board.
-</span>55 <span style=''>   *
-</span>56 <span style=''>   * @param hand  Hand where pick cards.
-</span>57 <span style=''>   * @param board Board where put cards.
-</span>58 <span style=''>   * @param cards Cards to play.
-</span>59 <span style=''>   * @return Hand and Board updated. If there was an error, return it.
-</span>60 <span style=''>   */
-</span>61 <span style=''>  def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
-</span>62 <span style=''>
-</span>63 <span style=''>  /**
-</span>64 <span style=''>   * Update a combination in the board by his id with some cards.
-</span>65 <span style=''>   *
-</span>66 <span style=''>   * @param hand  Hand where to pick cards.
-</span>67 <span style=''>   * @param board Board with the combination to update.
-</span>68 <span style=''>   * @param id    Id of the combination to update.
-</span>69 <span style=''>   * @param cards Cards to put in the combination.
-</span>70 <span style=''>   * @return Updated Board and Hand.
-</span>71 <span style=''>   */
-</span>72 <span style=''>  def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board)
-</span>73 <span style=''>}
-</span>74 <span style=''>
-</span>75 <span style=''>class GameInterfaceImpl extends GameInterface {
-</span>76 <span style=''>  /**
-</span>77 <span style=''>   * @inheritdoc
-</span>78 <span style=''>   */
-</span>79 <span style=''>  override def create(ids: Seq[(PlayerId, PlayerName)]): GameState = {
-</span>80 <span style=''>    var deck: Deck = </span><span style='background: #AEF1AE'>Deck.shuffled</span><span style=''>
-</span>81 <span style=''>    val playerList = </span><span style='background: #AEF1AE'>ids.map(i =&gt; {
-</span>82 <span style=''></span><span style='background: #AEF1AE'>      val playerCards = deck.draw(13)
-</span>83 <span style=''></span><span style='background: #AEF1AE'>      deck = playerCards._1
-</span>84 <span style=''></span><span style='background: #AEF1AE'>      Player(i._2, i._1, Hand(playerCards._2.toList))
-</span>85 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
-</span>86 <span style=''>
-</span>87 <span style=''>    </span><span style='background: #AEF1AE'>GameState(deck, Board.empty, playerList)</span><span style=''>
-</span>88 <span style=''>  }
-</span>89 <span style=''>
+</span>44 <span style=''>   * Validate an entire turn. Checks made are:
+</span>45 <span style=''>   * 1) Newest Board and Hand must be valid;
+</span>46 <span style=''>   * 2) Newest Hand size must be less than the oldest one;
+</span>47 <span style=''>   * 3) Newest Hand boardCards must be empty.
+</span>48 <span style=''>   *
+</span>49 <span style=''>   * @param board      Board to validate with startBoard.
+</span>50 <span style=''>   * @param startBoard Starting Board.
+</span>51 <span style=''>   * @param hand       Hand to validate with startHand.
+</span>52 <span style=''>   * @param startHand  Starting Hand.
+</span>53 <span style=''>   * @return True if is valid, false anywhere.
+</span>54 <span style=''>   */
+</span>55 <span style=''>  def validateTurn(board: Board, startBoard: Board, hand: Hand, startHand: Hand): Boolean
+</span>56 <span style=''>
+</span>57 <span style=''>  /**
+</span>58 <span style=''>   * Pick cards from combinations on the board.
+</span>59 <span style=''>   *
+</span>60 <span style=''>   * @param hand  Hand where put cards picked.
+</span>61 <span style=''>   * @param board Board where pick cards.
+</span>62 <span style=''>   * @param cards Cards to pick.
+</span>63 <span style=''>   * @return An Either with a possible error or the Hand and Board updated.
+</span>64 <span style=''>   */
+</span>65 <span style=''>  def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
+</span>66 <span style=''>
+</span>67 <span style=''>  /**
+</span>68 <span style=''>   * Play cards from hand to board.
+</span>69 <span style=''>   *
+</span>70 <span style=''>   * @param hand  Hand where pick cards.
+</span>71 <span style=''>   * @param board Board where put cards.
+</span>72 <span style=''>   * @param cards Cards to play.
+</span>73 <span style=''>   * @return Hand and Board updated. If there was an error, return it.
+</span>74 <span style=''>   */
+</span>75 <span style=''>  def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
+</span>76 <span style=''>
+</span>77 <span style=''>  /**
+</span>78 <span style=''>   * Update a combination in the board by his id with some cards.
+</span>79 <span style=''>   *
+</span>80 <span style=''>   * @param hand  Hand where to pick cards.
+</span>81 <span style=''>   * @param board Board with the combination to update.
+</span>82 <span style=''>   * @param id    Id of the combination to update.
+</span>83 <span style=''>   * @param cards Cards to put in the combination.
+</span>84 <span style=''>   * @return Updated Board and Hand.
+</span>85 <span style=''>   */
+</span>86 <span style=''>  def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board)
+</span>87 <span style=''>}
+</span>88 <span style=''>
+</span>89 <span style=''>class GameInterfaceImpl extends GameInterface {
 </span>90 <span style=''>  /**
 </span>91 <span style=''>   * @inheritdoc
 </span>92 <span style=''>   */
-</span>93 <span style=''>  override def draw(deck: Deck): (Deck, Card) = </span><span style='background: #AEF1AE'>deck.draw()</span><span style=''>
-</span>94 <span style=''>
-</span>95 <span style=''>  /**
-</span>96 <span style=''>   * @inheritdoc
-</span>97 <span style=''>   */
-</span>98 <span style=''>  override def validateTurn(board: Board, hand: Hand): Boolean =
-</span>99 <span style=''>    </span><span style='background: #AEF1AE'>board.combinations.forall(c =&gt; validateCombination(c.cards)) &amp;&amp; hand.boardCards.isEmpty</span><span style=''>
+</span>93 <span style=''>  override def create(ids: Seq[(PlayerId, PlayerName)]): GameState = {
+</span>94 <span style=''>    var deck: Deck = </span><span style='background: #AEF1AE'>Deck.shuffled</span><span style=''>
+</span>95 <span style=''>    val playerList = </span><span style='background: #AEF1AE'>ids.map(i =&gt; {
+</span>96 <span style=''></span><span style='background: #AEF1AE'>      val playerCards = deck.draw(13)
+</span>97 <span style=''></span><span style='background: #AEF1AE'>      deck = playerCards._1
+</span>98 <span style=''></span><span style='background: #AEF1AE'>      Player(i._2, i._1, Hand(playerCards._2.toList))
+</span>99 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
 </span>100 <span style=''>
-</span>101 <span style=''>  /**
-</span>102 <span style=''>   * @inheritdoc
-</span>103 <span style=''>   */
-</span>104 <span style=''>  override def validateCombination(cards: Seq[Card]): Boolean = </span><span style='background: #AEF1AE'>cards.isValid</span><span style=''>
-</span>105 <span style=''>
-</span>106 <span style=''>  /**
-</span>107 <span style=''>   * @inheritdoc
-</span>108 <span style=''>   */
-</span>109 <span style=''>  override def pickBoardCards(hand: Hand,
-</span>110 <span style=''>                              board: Board,
-</span>111 <span style=''>                              cards: Seq[Card]): Either[String, (Hand, Board)] = {
-</span>112 <span style=''>    </span><span style='background: #AEF1AE'>board.pickCards(cards).map(updatedBoard =&gt; (hand.addBoardCards(cards), updatedBoard))</span><span style=''>
-</span>113 <span style=''>  }
-</span>114 <span style=''>
-</span>115 <span style=''>  /**
-</span>116 <span style=''>   * @inheritdoc
-</span>117 <span style=''>   */
-</span>118 <span style=''>  override def playCombination(hand: Hand,
-</span>119 <span style=''>                               board: Board,
-</span>120 <span style=''>                               cards: Seq[Card]): Either[String, (Hand, Board)] = {
-</span>121 <span style=''>    val orderedCards = </span><span style='background: #AEF1AE'>cards sortByRank()</span><span style=''>
-</span>122 <span style=''>    if (</span><span style='background: #AEF1AE'>this.validateCombination(orderedCards)</span><span style=''>) {
-</span>123 <span style=''>      </span><span style='background: #AEF1AE'>hand.removeCards(orderedCards).map(updateHand =&gt; (updateHand, board.putCombination(orderedCards)))</span><span style=''>
-</span>124 <span style=''>    } else {
-</span>125 <span style=''>      </span><span style='background: #F0ADAD'>Left(&quot;Combination not valid&quot;)</span><span style=''>
-</span>126 <span style=''>    }
-</span>127 <span style=''>  }
-</span>128 <span style=''>
-</span>129 <span style=''>  /**
-</span>130 <span style=''>   * @inheritdoc
-</span>131 <span style=''>   */
-</span>132 <span style=''>  override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = {
-</span>133 <span style=''>    val put = </span><span style='background: #AEF1AE'>hand.removeCards(cards)</span><span style=''>
-</span>134 <span style=''>    put match {
-</span>135 <span style=''>      case Right(value) =&gt; </span><span style='background: #AEF1AE'>(value, board.putCards(id, cards))</span><span style=''>
-</span>136 <span style=''>      case _ =&gt; </span><span style='background: #F0ADAD'>(hand, board)</span><span style=''>
-</span>137 <span style=''>    }
-</span>138 <span style=''>  }
-</span>139 <span style=''>}
+</span>101 <span style=''>    </span><span style='background: #AEF1AE'>GameState(deck, Board.empty, playerList)</span><span style=''>
+</span>102 <span style=''>  }
+</span>103 <span style=''>
+</span>104 <span style=''>  /**
+</span>105 <span style=''>   * @inheritdoc
+</span>106 <span style=''>   */
+</span>107 <span style=''>  override def draw(deck: Deck): (Deck, Card) = </span><span style='background: #AEF1AE'>deck.draw()</span><span style=''>
+</span>108 <span style=''>
+</span>109 <span style=''>  /**
+</span>110 <span style=''>   * @inheritdoc
+</span>111 <span style=''>   */
+</span>112 <span style=''>  override def validateCombination(cards: Seq[Card]): Boolean = </span><span style='background: #AEF1AE'>cards.isValid</span><span style=''>
+</span>113 <span style=''>
+</span>114 <span style=''>  /**
+</span>115 <span style=''>   * @inheritdoc
+</span>116 <span style=''>   */
+</span>117 <span style=''>  override def validateMove(board: Board, hand: Hand): Boolean =
+</span>118 <span style=''>    </span><span style='background: #AEF1AE'>board.combinations.forall(c =&gt; validateCombination(c.cards)) &amp;&amp; hand.boardCards.isEmpty</span><span style=''>
+</span>119 <span style=''>
+</span>120 <span style=''>  /**
+</span>121 <span style=''>   * @inheritdoc
+</span>122 <span style=''>   */
+</span>123 <span style=''>  override def validateTurn(board: Board, startBoard: Board, hand: Hand, startHand: Hand): Boolean =
+</span>124 <span style=''>    </span><span style='background: #AEF1AE'>validateMove(board, hand) &amp;&amp;
+</span>125 <span style=''></span><span style='background: #AEF1AE'>      (hand.playerCards.size &lt; startHand.playerCards.size) &amp;&amp;
+</span>126 <span style=''></span><span style='background: #AEF1AE'>      hand.boardCards.isEmpty</span><span style=''>
+</span>127 <span style=''>
+</span>128 <span style=''>  /**
+</span>129 <span style=''>   * @inheritdoc
+</span>130 <span style=''>   */
+</span>131 <span style=''>  override def pickBoardCards(hand: Hand,
+</span>132 <span style=''>                              board: Board,
+</span>133 <span style=''>                              cards: Seq[Card]): Either[String, (Hand, Board)] = {
+</span>134 <span style=''>    </span><span style='background: #AEF1AE'>board.pickCards(cards).map(updatedBoard =&gt; (hand.addBoardCards(cards), updatedBoard))</span><span style=''>
+</span>135 <span style=''>  }
+</span>136 <span style=''>
+</span>137 <span style=''>  /**
+</span>138 <span style=''>   * @inheritdoc
+</span>139 <span style=''>   */
+</span>140 <span style=''>  override def playCombination(hand: Hand,
+</span>141 <span style=''>                               board: Board,
+</span>142 <span style=''>                               cards: Seq[Card]): Either[String, (Hand, Board)] = {
+</span>143 <span style=''>    val orderedCards = </span><span style='background: #AEF1AE'>cards sortByRank()</span><span style=''>
+</span>144 <span style=''>    if (</span><span style='background: #AEF1AE'>this.validateCombination(orderedCards)</span><span style=''>) {
+</span>145 <span style=''>      </span><span style='background: #AEF1AE'>hand.removeCards(orderedCards).map(updateHand =&gt; (updateHand, board.putCombination(orderedCards)))</span><span style=''>
+</span>146 <span style=''>    } else {
+</span>147 <span style=''>      </span><span style='background: #F0ADAD'>Left(&quot;Combination not valid&quot;)</span><span style=''>
+</span>148 <span style=''>    }
+</span>149 <span style=''>  }
+</span>150 <span style=''>
+</span>151 <span style=''>  /**
+</span>152 <span style=''>   * @inheritdoc
+</span>153 <span style=''>   */
+</span>154 <span style=''>  override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = {
+</span>155 <span style=''>    val put = </span><span style='background: #AEF1AE'>hand.removeCards(cards)</span><span style=''>
+</span>156 <span style=''>    put match {
+</span>157 <span style=''>      case Right(value) =&gt; </span><span style='background: #AEF1AE'>(value, board.putCards(id, cards))</span><span style=''>
+</span>158 <span style=''>      case _ =&gt; </span><span style='background: #F0ADAD'>(hand, board)</span><span style=''>
+</span>159 <span style=''>    }
+</span>160 <span style=''>  }
+</span>161 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -174,15 +196,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          80
+          94
         </td>
         <td>
-          610
+          664
         </td>
         <td>
-          2345
+          2888
           -
-          2358
+          2901
         </td>
         <td>
           Select
@@ -195,15 +217,15 @@
         </td>
       </tr><tr>
         <td>
-          81
+          95
         </td>
         <td>
-          603
+          657
         </td>
         <td>
-          2387
+          2930
           -
-          2387
+          2930
         </td>
         <td>
           TypeApply
@@ -216,15 +238,15 @@
         </td>
       </tr><tr>
         <td>
-          81
+          95
         </td>
         <td>
-          449
+          494
         </td>
         <td>
-          2380
+          2923
           -
-          2521
+          3064
         </td>
         <td>
           ApplyToImplicitArgs
@@ -241,15 +263,15 @@
         </td>
       </tr><tr>
         <td>
-          82
+          96
         </td>
         <td>
-          471
+          516
         </td>
         <td>
-          2419
+          2962
           -
-          2432
+          2975
         </td>
         <td>
           Apply
@@ -262,15 +284,15 @@
         </td>
       </tr><tr>
         <td>
-          83
+          97
         </td>
         <td>
-          706
+          766
         </td>
         <td>
-          2446
+          2989
           -
-          2460
+          3003
         </td>
         <td>
           Select
@@ -283,36 +305,15 @@
         </td>
       </tr><tr>
         <td>
-          84
+          98
         </td>
         <td>
-          738
+          523
         </td>
         <td>
-          2491
+          3023
           -
-          2512
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.collection.TraversableOnce.toList
-        </td>
-        <td style="background: #AEF1AE">
-          playerCards._2.toList
-        </td>
-      </tr><tr>
-        <td>
-          84
-        </td>
-        <td>
-          478
-        </td>
-        <td>
-          2480
-          -
-          2484
+          3027
         </td>
         <td>
           Select
@@ -325,15 +326,15 @@
         </td>
       </tr><tr>
         <td>
-          84
+          98
         </td>
         <td>
-          558
+          609
         </td>
         <td>
-          2474
+          3017
           -
-          2478
+          3021
         </td>
         <td>
           Select
@@ -346,15 +347,57 @@
         </td>
       </tr><tr>
         <td>
-          84
+          98
         </td>
         <td>
-          695
+          630
         </td>
         <td>
-          2467
+          3029
           -
-          2514
+          3029
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.apply$default$2
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.core.collections.Hand.apply$default$2
+        </td>
+      </tr><tr>
+        <td>
+          98
+        </td>
+        <td>
+          800
+        </td>
+        <td>
+          3034
+          -
+          3055
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.TraversableOnce.toList
+        </td>
+        <td style="background: #AEF1AE">
+          playerCards._2.toList
+        </td>
+      </tr><tr>
+        <td>
+          98
+        </td>
+        <td>
+          755
+        </td>
+        <td>
+          3010
+          -
+          3057
         </td>
         <td>
           Apply
@@ -367,36 +410,15 @@
         </td>
       </tr><tr>
         <td>
-          84
+          98
         </td>
         <td>
-          578
+          471
         </td>
         <td>
-          2486
+          3029
           -
-          2486
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.collections.Hand.apply$default$2
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.core.collections.Hand.apply$default$2
-        </td>
-      </tr><tr>
-        <td>
-          84
-        </td>
-        <td>
-          428
-        </td>
-        <td>
-          2486
-          -
-          2513
+          3056
         </td>
         <td>
           Apply
@@ -409,15 +431,15 @@
         </td>
       </tr><tr>
         <td>
-          87
+          101
         </td>
         <td>
-          560
+          611
         </td>
         <td>
-          2527
+          3070
           -
-          2567
+          3110
         </td>
         <td>
           Apply
@@ -430,15 +452,15 @@
         </td>
       </tr><tr>
         <td>
-          87
+          101
         </td>
         <td>
-          709
+          769
         </td>
         <td>
-          2543
+          3086
           -
-          2554
+          3097
         </td>
         <td>
           Select
@@ -451,15 +473,15 @@
         </td>
       </tr><tr>
         <td>
-          93
+          107
         </td>
         <td>
-          493
+          538
         </td>
         <td>
-          2650
+          3193
           -
-          2661
+          3204
         </td>
         <td>
           Apply
@@ -472,99 +494,15 @@
         </td>
       </tr><tr>
         <td>
-          99
+          112
         </td>
         <td>
-          697
+          789
         </td>
         <td>
-          2761
+          3299
           -
-          2848
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Boolean.&amp;&amp;
-        </td>
-        <td style="background: #AEF1AE">
-          board.combinations.forall(((c: it.parttimeteam.core.collections.CardCombination) =&gt; GameInterfaceImpl.this.validateCombination(c.cards))).&amp;&amp;(hand.boardCards.isEmpty)
-        </td>
-      </tr><tr>
-        <td>
-          99
-        </td>
-        <td>
-          431
-        </td>
-        <td>
-          2825
-          -
-          2848
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.collection.SeqLike.isEmpty
-        </td>
-        <td style="background: #AEF1AE">
-          hand.boardCards.isEmpty
-        </td>
-      </tr><tr>
-        <td>
-          99
-        </td>
-        <td>
-          727
-        </td>
-        <td>
-          2812
-          -
-          2819
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.collections.CardCombination.cards
-        </td>
-        <td style="background: #AEF1AE">
-          c.cards
-        </td>
-      </tr><tr>
-        <td>
-          99
-        </td>
-        <td>
-          574
-        </td>
-        <td>
-          2792
-          -
-          2820
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.GameInterfaceImpl.validateCombination
-        </td>
-        <td style="background: #AEF1AE">
-          GameInterfaceImpl.this.validateCombination(c.cards)
-        </td>
-      </tr><tr>
-        <td>
-          104
-        </td>
-        <td>
-          622
-        </td>
-        <td>
-          2943
-          -
-          2956
+          3312
         </td>
         <td>
           Select
@@ -577,15 +515,183 @@
         </td>
       </tr><tr>
         <td>
-          112
+          118
         </td>
         <td>
-          469
+          474
         </td>
         <td>
-          3204
+          3443
           -
-          3229
+          3471
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameInterfaceImpl.validateCombination
+        </td>
+        <td style="background: #AEF1AE">
+          GameInterfaceImpl.this.validateCombination(c.cards)
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          626
+        </td>
+        <td>
+          3463
+          -
+          3470
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CardCombination.cards
+        </td>
+        <td style="background: #AEF1AE">
+          c.cards
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          757
+        </td>
+        <td>
+          3476
+          -
+          3499
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.isEmpty
+        </td>
+        <td style="background: #AEF1AE">
+          hand.boardCards.isEmpty
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          676
+        </td>
+        <td>
+          3412
+          -
+          3499
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #AEF1AE">
+          board.combinations.forall(((c: it.parttimeteam.core.collections.CardCombination) =&gt; GameInterfaceImpl.this.validateCombination(c.cards))).&amp;&amp;(hand.boardCards.isEmpty)
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          514
+        </td>
+        <td>
+          3695
+          -
+          3721
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.size
+        </td>
+        <td style="background: #AEF1AE">
+          startHand.playerCards.size
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          761
+        </td>
+        <td>
+          3671
+          -
+          3721
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Int.&lt;
+        </td>
+        <td style="background: #AEF1AE">
+          hand.playerCards.size.&lt;(startHand.playerCards.size)
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          434
+        </td>
+        <td>
+          3635
+          -
+          3755
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #AEF1AE">
+          GameInterfaceImpl.this.validateMove(board, hand).&amp;&amp;(hand.playerCards.size.&lt;(startHand.playerCards.size)).&amp;&amp;(hand.boardCards.isEmpty)
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          616
+        </td>
+        <td>
+          3732
+          -
+          3755
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.isEmpty
+        </td>
+        <td style="background: #AEF1AE">
+          hand.boardCards.isEmpty
+        </td>
+      </tr><tr>
+        <td>
+          134
+        </td>
+        <td>
+          795
+        </td>
+        <td>
+          4003
+          -
+          4028
         </td>
         <td>
           Apply
@@ -598,15 +704,15 @@
         </td>
       </tr><tr>
         <td>
-          112
+          134
         </td>
         <td>
-          701
+          650
         </td>
         <td>
-          3203
+          4002
           -
-          3244
+          4043
         </td>
         <td>
           Apply
@@ -619,15 +725,15 @@
         </td>
       </tr><tr>
         <td>
-          112
+          134
         </td>
         <td>
-          565
+          476
         </td>
         <td>
-          3160
+          3959
           -
-          3245
+          4044
         </td>
         <td>
           Apply
@@ -640,15 +746,15 @@
         </td>
       </tr><tr>
         <td>
-          121
+          143
         </td>
         <td>
-          395
+          748
         </td>
         <td>
-          3475
+          4274
           -
-          3493
+          4292
         </td>
         <td>
           Apply
@@ -661,15 +767,15 @@
         </td>
       </tr><tr>
         <td>
-          122
+          144
         </td>
         <td>
-          733
+          677
         </td>
         <td>
-          3502
+          4301
           -
-          3540
+          4339
         </td>
         <td>
           Apply
@@ -682,15 +788,57 @@
         </td>
       </tr><tr>
         <td>
-          123
+          145
         </td>
         <td>
-          433
+          454
         </td>
         <td>
-          3599
+          4349
           -
-          3647
+          4447
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          scala.util.Either.map
+        </td>
+        <td style="background: #AEF1AE">
+          hand.removeCards(orderedCards).map[(it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board)](((updateHand: it.parttimeteam.core.collections.Hand) =&gt; scala.Tuple2.apply[it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board](updateHand, board.putCombination(orderedCards))))
+        </td>
+      </tr><tr>
+        <td>
+          145
+        </td>
+        <td>
+          618
+        </td>
+        <td>
+          4349
+          -
+          4447
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.util.Either.map
+        </td>
+        <td style="background: #AEF1AE">
+          hand.removeCards(orderedCards).map[(it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board)](((updateHand: it.parttimeteam.core.collections.Hand) =&gt; scala.Tuple2.apply[it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board](updateHand, board.putCombination(orderedCards))))
+        </td>
+      </tr><tr>
+        <td>
+          145
+        </td>
+        <td>
+          782
+        </td>
+        <td>
+          4398
+          -
+          4446
         </td>
         <td>
           Apply
@@ -703,36 +851,15 @@
         </td>
       </tr><tr>
         <td>
-          123
+          145
         </td>
         <td>
-          623
+          503
         </td>
         <td>
-          3550
+          4411
           -
-          3648
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          scala.util.Either.map
-        </td>
-        <td style="background: #AEF1AE">
-          hand.removeCards(orderedCards).map[(it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board)](((updateHand: it.parttimeteam.core.collections.Hand) =&gt; scala.Tuple2.apply[it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board](updateHand, board.putCombination(orderedCards))))
-        </td>
-      </tr><tr>
-        <td>
-          123
-        </td>
-        <td>
-          596
-        </td>
-        <td>
-          3612
-          -
-          3646
+          4445
         </td>
         <td>
           Apply
@@ -745,36 +872,15 @@
         </td>
       </tr><tr>
         <td>
-          123
+          147
         </td>
         <td>
-          688
+          797
         </td>
         <td>
-          3550
+          4467
           -
-          3648
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.util.Either.map
-        </td>
-        <td style="background: #AEF1AE">
-          hand.removeCards(orderedCards).map[(it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board)](((updateHand: it.parttimeteam.core.collections.Hand) =&gt; scala.Tuple2.apply[it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board](updateHand, board.putCombination(orderedCards))))
-        </td>
-      </tr><tr>
-        <td>
-          125
-        </td>
-        <td>
-          458
-        </td>
-        <td>
-          3668
-          -
-          3697
+          4496
         </td>
         <td>
           Apply
@@ -787,15 +893,15 @@
         </td>
       </tr><tr>
         <td>
-          125
+          147
         </td>
         <td>
-          721
+          653
         </td>
         <td>
-          3668
+          4467
           -
-          3697
+          4496
         </td>
         <td>
           Block
@@ -808,15 +914,15 @@
         </td>
       </tr><tr>
         <td>
-          133
+          155
         </td>
         <td>
-          567
+          469
         </td>
         <td>
-          3864
+          4663
           -
-          3887
+          4686
         </td>
         <td>
           Apply
@@ -829,36 +935,15 @@
         </td>
       </tr><tr>
         <td>
-          135
+          157
         </td>
         <td>
-          735
+          750
         </td>
         <td>
-          3931
+          4738
           -
-          3965
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Tuple2.apply
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Tuple2.apply[it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board](value, board.putCards(id, cards))
-        </td>
-      </tr><tr>
-        <td>
-          135
-        </td>
-        <td>
-          412
-        </td>
-        <td>
-          3939
-          -
-          3964
+          4763
         </td>
         <td>
           Apply
@@ -871,15 +956,36 @@
         </td>
       </tr><tr>
         <td>
-          136
+          157
         </td>
         <td>
-          599
+          661
         </td>
         <td>
-          3982
+          4730
           -
-          3995
+          4764
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Tuple2.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Tuple2.apply[it.parttimeteam.core.collections.Hand, it.parttimeteam.core.collections.Board](value, board.putCards(id, cards))
+        </td>
+      </tr><tr>
+        <td>
+          158
+        </td>
+        <td>
+          505
+        </td>
+        <td>
+          4781
+          -
+          4794
         </td>
         <td>
           Apply
