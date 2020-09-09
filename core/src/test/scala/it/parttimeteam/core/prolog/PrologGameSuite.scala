@@ -14,8 +14,8 @@ class PrologGameSuite extends AnyFunSuite {
 
   test("Sort a sequence of cards by value") {
 
-    val seq1: Seq[Card] = Seq(QUEEN_CLUBS, KING_SPADES, ACE_CLUBS, TWO_HEARTS)
-    val resultSeq1: Seq[Card] = Seq(ACE_CLUBS, TWO_HEARTS, QUEEN_CLUBS, KING_SPADES)
+    val seq1: Seq[Card] = Seq(QUEEN_CLUBS, KING_SPADES, ACE_CLUBS_BLUE, TWO_HEARTS)
+    val resultSeq1: Seq[Card] = Seq(ACE_CLUBS_BLUE, TWO_HEARTS, QUEEN_CLUBS, KING_SPADES)
 
     assertResult(resultSeq1)(prologGame.sortByRank(seq1))
 
@@ -27,13 +27,13 @@ class PrologGameSuite extends AnyFunSuite {
 
   test("Sort a sequence of cards by suit") {
 
-    val seq1: Seq[Card] = Seq(QUEEN_CLUBS, KING_SPADES, ACE_CLUBS, TWO_HEARTS)
-    val resultSeq1: Seq[Card] = Seq(TWO_HEARTS, ACE_CLUBS, QUEEN_CLUBS, KING_SPADES)
+    val seq1: Seq[Card] = Seq(QUEEN_CLUBS, KING_SPADES, ACE_CLUBS_BLUE, TWO_HEARTS)
+    val resultSeq1: Seq[Card] = Seq(TWO_HEARTS, ACE_CLUBS_BLUE, QUEEN_CLUBS, KING_SPADES)
 
     assertResult(resultSeq1)(prologGame.sortBySuit(seq1))
 
-    val seq2: Seq[Card] = Seq(SIX_HEARTS, KING_SPADES, ACE_CLUBS, TWO_HEARTS)
-    val resultSeq2: Seq[Card] = Seq(TWO_HEARTS, SIX_HEARTS, ACE_CLUBS, KING_SPADES)
+    val seq2: Seq[Card] = Seq(SIX_HEARTS, KING_SPADES, ACE_CLUBS_BLUE, TWO_HEARTS)
+    val resultSeq2: Seq[Card] = Seq(TWO_HEARTS, SIX_HEARTS, ACE_CLUBS_BLUE, KING_SPADES)
 
     assertResult(resultSeq2)(prologGame.sortBySuit(seq2))
   }

@@ -19,7 +19,7 @@ class PrologGameEnginePropSpec extends AnyPropSpec with TableDrivenPropertyCheck
    */
   val quarterCards: TableFor1[Seq[Card]] = Table(
     "sequence cards",
-    Seq(ACE_CLUBS, ACE_DIAMONDS, ACE_SPADES),
+    Seq(ACE_CLUBS_BLUE, ACE_DIAMONDS, ACE_SPADES),
     Seq(TEN_CLUBS, TEN_HEARTS, TEN_SPADES, TEN_DIAMONDS)
   )
 
