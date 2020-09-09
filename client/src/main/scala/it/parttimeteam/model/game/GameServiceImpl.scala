@@ -126,11 +126,10 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
    */
   private def endTurnWithMoves(): Unit = {
     withState { currentState =>
-      val startState = turnHistory.headOption
-      if (startState.isDefined &&
-        gameInterface.validateTurn(currentState.board, startState.get.board, currentState.hand, startState.get.hand)) {
+      if (isTurnValid(currentState)) {
         remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
-      } else {
+      }
+      else {
         this.notifyEvent(ErrorEvent("Non valid turn play"))
       }
     }
@@ -230,7 +229,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       canUndo = turnHistory.canPrevious,
       canRedo = turnHistory.canNext,
       canReset = turnHistory.canPrevious,
-      canDrawCard = !turnHistory.canPrevious
+      canDrawCard = !isTurnValid(state)
     )
 
   /**
@@ -245,5 +244,17 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
       this.storeOpt.get.onStateChanged(optState.get)
       this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
     }
+  }
+
+  /**
+   * Return if Turn is valid or not.
+   *
+   * @param currentState Current Game State.
+   * @return True if the Turn isn't valid, false anywhere.
+   */
+  private def isTurnValid(currentState: PlayerGameState) = {
+    val startState = turnHistory.headOption
+    startState.isDefined && gameInterface.validateTurn(
+      currentState.board, startState.get.board, currentState.hand, startState.get.hand)
   }
 }
