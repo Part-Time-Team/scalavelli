@@ -11,7 +11,7 @@ object PrologUtils {
   /**
    * String pattern
    */
-  val pattern: Regex = "[0-9]+,[a-zA-Z]+".r
+  val pattern: Regex = "[0-9]+,\\([HCSD][RB]\\)".r
 
   /**
    * Clean the prolog term by converting into a List of regex
@@ -46,6 +46,11 @@ object PrologUtils {
    * @return converted string
    */
   def replaceTermToString(term: Term, replace: String): String = term.toString.replace(replace, "")
+
+  // TODO da testare
+  def splitSuitColor(suitColor: String) : (String, String) = {
+    (suitColor.replace("(", "").replace(")", "") slice(0,1) , suitColor.replace("(", "").replace(")", "") slice(1,2))
+  }
 
   /**
    * Replace specific characters in a string
