@@ -46,6 +46,7 @@ class PrologGameSuite extends AnyFunSpec {
       val resultSeq3: Seq[Card] = Seq(ACE_SPADES, TWO_SPADES, THREE_SPADES, FOUR_SPADES, FIVE_SPADES, SIX_SPADES, SEVEN_SPADES, EIGHT_SPADES, NINE_SPADES, TEN_SPADES, JACK_SPADES, QUEEN_SPADES, KING_SPADES, OVERFLOW_ACE_SPADES)
 
       assertResult(resultSeq3)(prologGame.sortByRank(seq3))
+      assert(prologGame.validateChain(resultSeq3))
     }
 
     it("Should correctly sort a ace and an overflow ace") {
@@ -53,6 +54,8 @@ class PrologGameSuite extends AnyFunSpec {
       val resultSeq4: Seq[Card] = Seq(ACE_SPADES, TWO_SPADES, THREE_SPADES, FOUR_SPADES, FIVE_SPADES, SIX_SPADES, SEVEN_SPADES, EIGHT_SPADES, NINE_SPADES, TEN_SPADES, JACK_SPADES, QUEEN_SPADES, KING_SPADES, OVERFLOW_ACE_SPADES)
 
       assertResult(resultSeq4)(prologGame.sortByRank(seq4))
+      assert(prologGame.validateChain(resultSeq4))
+
 
     }
 
@@ -61,7 +64,43 @@ class PrologGameSuite extends AnyFunSpec {
       val resultSeq5: Seq[Card] = Seq(ACE_SPADES, TWO_SPADES, THREE_SPADES, FOUR_SPADES, FIVE_SPADES, SIX_SPADES, SEVEN_SPADES, EIGHT_SPADES, NINE_SPADES, TEN_SPADES, JACK_SPADES, QUEEN_SPADES, KING_SPADES, OVERFLOW_ACE_SPADES)
 
       assertResult(resultSeq5)(prologGame.sortByRank(seq5))
+      assert(prologGame.validateChain(resultSeq5))
     }
+
+    it("Should scale from 1 to something with overflow") {
+      val input: Seq[Card] = Seq(TWO_SPADES, OVERFLOW_ACE_SPADES, THREE_SPADES)
+      val res: Seq[Card] = Seq(ACE_SPADES, TWO_SPADES, THREE_SPADES)
+
+      assertResult(res)(prologGame.sortByRank(input))
+      assert(prologGame.validateChain(res))
+    }
+
+    it("Should scale from 1 to something with simple ace") {
+      val input: Seq[Card] = Seq(TWO_SPADES, ACE_SPADES, THREE_SPADES)
+      val res: Seq[Card] = Seq(ACE_SPADES, TWO_SPADES, THREE_SPADES)
+
+      assertResult(res)(prologGame.sortByRank(input))
+      assert(prologGame.validateChain(res))
+    }
+
+    it("Should scale from q to 1 with simple ace") {
+      val input: Seq[Card] = Seq(QUEEN_SPADES, ACE_SPADES, KING_SPADES)
+      val res: Seq[Card] = Seq(QUEEN_SPADES, KING_SPADES, OVERFLOW_ACE_SPADES)
+
+      assertResult(res)(prologGame.sortByRank(input))
+      assert(prologGame.validateChain(res))
+    }
+
+
+    it("Should scale from q to 1 with overflow ace") {
+      val input: Seq[Card] = Seq(QUEEN_SPADES, OVERFLOW_ACE_SPADES, KING_SPADES)
+      val res: Seq[Card] = Seq(QUEEN_SPADES, KING_SPADES, OVERFLOW_ACE_SPADES)
+
+      assertResult(res)(prologGame.sortByRank(input))
+      assert(prologGame.validateChain(res))
+    }
+
+
   }
 }
 
