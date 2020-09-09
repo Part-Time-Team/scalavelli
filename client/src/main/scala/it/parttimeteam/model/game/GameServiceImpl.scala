@@ -72,7 +72,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   }
 
-  private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener), "client-game")
+  private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener))
 
 
   // region GameService
