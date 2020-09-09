@@ -24,7 +24,7 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.lobby
 </span>2 <span style=''>
-</span>3 <span style=''>import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
+</span>3 <span style=''>import akka.actor.{Actor, ActorRef, Props, Terminated}
 </span>4 <span style=''>import it.parttimeteam.`match`.GameMatchManagerActor
 </span>5 <span style=''>import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
 </span>6 <span style=''>import it.parttimeteam.common.{GamePlayer, IdGenerator}
@@ -38,7 +38,7 @@
 </span>14 <span style=''>
 </span>15 <span style=''>}
 </span>16 <span style=''>
-</span>17 <span style=''>class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
+</span>17 <span style=''>class LobbyManagerActor extends Actor with IdGenerator {
 </span>18 <span style=''>
 </span>19 <span style=''>  type UserName = String
 </span>20 <span style=''>  type UserId = String
@@ -89,56 +89,45 @@
 </span>65 <span style=''>    case LeaveLobby(userId) =&gt; </span><span style='background: #F0ADAD'>this.lobbyManger.removePlayer(userId)</span><span style=''>
 </span>66 <span style=''>
 </span>67 <span style=''>    case Terminated(actorRef) =&gt; {
-</span>68 <span style=''>      </span><span style='background: #F0ADAD'>log.debug(s&quot;terminated $actorRef, connected players: $connectedPlayers&quot;)</span><span style=''>
-</span>69 <span style=''>      </span><span style='background: #F0ADAD'>removeClient(actorRef)</span><span style=''>
-</span>70 <span style=''>    }
-</span>71 <span style=''>
-</span>72 <span style=''>  }
-</span>73 <span style=''>
-</span>74 <span style=''>  private def checkAndCreateGame(lobbyType: LobbyType): Unit = {
-</span>75 <span style=''>    </span><span style='background: #AEF1AE'>this.lobbyManger.attemptExtractPlayerForMatch(lobbyType)</span><span style=''> match {
-</span>76 <span style=''>      case Some(players) =&gt; </span><span style='background: #AEF1AE'>this.generateAndStartGameActor(lobbyType)(players)</span><span style=''>
-</span>77 <span style=''>      case None </span><span style='background: #AEF1AE'>=&gt;</span><span style=''>
-</span>78 <span style=''>    }
-</span>79 <span style=''>  }
-</span>80 <span style=''>
-</span>81 <span style=''>  private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
-</span>82 <span style=''>    val gameActor = </span><span style='background: #AEF1AE'>context.actorOf(GameMatchManagerActor.props(lobbyType.numberOfPlayers, new GameInterfaceImpl()))</span><span style=''>
-</span>83 <span style=''>    </span><span style='background: #AEF1AE'>players.foreach(p =&gt; {
-</span>84 <span style=''></span><span style='background: #AEF1AE'>      context.unwatch(p.actorRef)
-</span>85 <span style=''></span><span style='background: #AEF1AE'>      // remove player form lobby
-</span>86 <span style=''></span><span style='background: #AEF1AE'>      this.lobbyManger.removePlayer(p.id)
-</span>87 <span style=''></span><span style='background: #AEF1AE'>      // remove player from connected players structure
-</span>88 <span style=''></span><span style='background: #AEF1AE'>      this.connectedPlayers = this.connectedPlayers - p.id
-</span>89 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
-</span>90 <span style=''>    </span><span style='background: #AEF1AE'>gameActor ! GamePlayers(players)</span><span style=''>
-</span>91 <span style=''>  }
-</span>92 <span style=''>
-</span>93 <span style=''>  private def getClientRef(clientId: String): Option[ActorRef] = {
-</span>94 <span style=''>    </span><span style='background: #AEF1AE'>this.connectedPlayers.get(clientId)</span><span style=''>
-</span>95 <span style=''>  }
-</span>96 <span style=''>
-</span>97 <span style=''>  private def executeOnClientRefPresent(clientId: String)(action: ActorRef =&gt; Unit): Unit = {
-</span>98 <span style=''>    </span><span style='background: #AEF1AE'>this.getClientRef(clientId)</span><span style=''> match {
-</span>99 <span style=''>      case Some(ref) =&gt; </span><span style='background: #AEF1AE'>action(ref)</span><span style=''>
-</span>100 <span style=''>      case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>101 <span style=''>    }
-</span>102 <span style=''>  }
-</span>103 <span style=''>
-</span>104 <span style=''>  private def removeClient(actorRef: ActorRef): Unit = {
-</span>105 <span style=''>    </span><span style='background: #F0ADAD'>this.connectedPlayers.find(_._2 == actorRef)</span><span style=''> match {
-</span>106 <span style=''>      case Some((userId, _)) =&gt; {
-</span>107 <span style=''>        </span><span style='background: #F0ADAD'>log.debug(s&quot;removing client $actorRef from lobby and connected players list&quot;)</span><span style=''>
-</span>108 <span style=''>        </span><span style='background: #F0ADAD'>context.unwatch(actorRef)</span><span style=''>
-</span>109 <span style=''>        </span><span style='background: #F0ADAD'>this.lobbyManger.removePlayer(userId)</span><span style=''>
-</span>110 <span style=''>        </span><span style='background: #F0ADAD'>this.connectedPlayers = this.connectedPlayers - userId</span><span style=''>
-</span>111 <span style=''>        </span><span style='background: #F0ADAD'>log.debug(s&quot;removed client $actorRef from lobby and connected players list&quot;)</span><span style=''>
-</span>112 <span style=''>      }
-</span>113 <span style=''>      case None =&gt; </span><span style='background: #F0ADAD'>log.warning(s&quot;client $actorRef not found&quot;)</span><span style=''>
-</span>114 <span style=''>    }
-</span>115 <span style=''>  }
-</span>116 <span style=''>
-</span>117 <span style=''>}
+</span>68 <span style=''>      </span><span style='background: #F0ADAD'>this.connectedPlayers.find(p =&gt; p._2 == actorRef)</span><span style=''> match {
+</span>69 <span style=''>        case Some((userId, _)) =&gt; {
+</span>70 <span style=''>          </span><span style='background: #F0ADAD'>this.lobbyManger.removePlayer(userId)</span><span style=''>
+</span>71 <span style=''>          </span><span style='background: #F0ADAD'>this.connectedPlayers = this.connectedPlayers - userId</span><span style=''>
+</span>72 <span style=''>        }
+</span>73 <span style=''>      }
+</span>74 <span style=''>    }
+</span>75 <span style=''>
+</span>76 <span style=''>  }
+</span>77 <span style=''>
+</span>78 <span style=''>  private def checkAndCreateGame(lobbyType: LobbyType): Unit = {
+</span>79 <span style=''>    </span><span style='background: #AEF1AE'>this.lobbyManger.attemptExtractPlayerForMatch(lobbyType)</span><span style=''> match {
+</span>80 <span style=''>      case Some(players) =&gt; </span><span style='background: #AEF1AE'>this.generateAndStartGameActor(lobbyType)(players)</span><span style=''>
+</span>81 <span style=''>      case None </span><span style='background: #AEF1AE'>=&gt;</span><span style=''>
+</span>82 <span style=''>    }
+</span>83 <span style=''>  }
+</span>84 <span style=''>
+</span>85 <span style=''>  private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
+</span>86 <span style=''>    val gameActor = </span><span style='background: #AEF1AE'>context.actorOf(GameMatchManagerActor.props(lobbyType.numberOfPlayers, new GameInterfaceImpl()))</span><span style=''>
+</span>87 <span style=''>    </span><span style='background: #AEF1AE'>players.foreach(p =&gt; {
+</span>88 <span style=''></span><span style='background: #AEF1AE'>      // remove player form lobby
+</span>89 <span style=''></span><span style='background: #AEF1AE'>      this.lobbyManger.removePlayer(p.id)
+</span>90 <span style=''></span><span style='background: #AEF1AE'>      // remove player from connected players structure
+</span>91 <span style=''></span><span style='background: #AEF1AE'>      this.connectedPlayers = this.connectedPlayers - p.id
+</span>92 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
+</span>93 <span style=''>    </span><span style='background: #AEF1AE'>gameActor ! GamePlayers(players)</span><span style=''>
+</span>94 <span style=''>  }
+</span>95 <span style=''>
+</span>96 <span style=''>  private def getClientRef(clientId: String): Option[ActorRef] = {
+</span>97 <span style=''>    </span><span style='background: #AEF1AE'>this.connectedPlayers.get(clientId)</span><span style=''>
+</span>98 <span style=''>  }
+</span>99 <span style=''>
+</span>100 <span style=''>  private def executeOnClientRefPresent(clientId: String)(action: ActorRef =&gt; Unit): Unit = {
+</span>101 <span style=''>    </span><span style='background: #AEF1AE'>this.getClientRef(clientId)</span><span style=''> match {
+</span>102 <span style=''>      case Some(ref) =&gt; </span><span style='background: #AEF1AE'>action(ref)</span><span style=''>
+</span>103 <span style=''>    }
+</span>104 <span style=''>  }
+</span>105 <span style=''>
+</span>106 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -155,33 +144,12 @@
           13
         </td>
         <td>
-          172
+          154
         </td>
         <td>
-          473
+          465
           -
-          503
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.Props.apply
-        </td>
-        <td style="background: #AEF1AE">
-          akka.actor.Props.apply[it.parttimeteam.lobby.LobbyManagerActor](new LobbyManagerActor())((ClassTag.apply[it.parttimeteam.lobby.LobbyManagerActor](classOf[it.parttimeteam.lobby.LobbyManagerActor]): scala.reflect.ClassTag[it.parttimeteam.lobby.LobbyManagerActor]))
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          350
-        </td>
-        <td>
-          479
-          -
-          502
+          488
         </td>
         <td>
           Apply
@@ -194,15 +162,36 @@
         </td>
       </tr><tr>
         <td>
+          13
+        </td>
+        <td>
+          93
+        </td>
+        <td>
+          459
+          -
+          489
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.Props.apply
+        </td>
+        <td style="background: #AEF1AE">
+          akka.actor.Props.apply[it.parttimeteam.lobby.LobbyManagerActor](new LobbyManagerActor())((ClassTag.apply[it.parttimeteam.lobby.LobbyManagerActor](classOf[it.parttimeteam.lobby.LobbyManagerActor]): scala.reflect.ClassTag[it.parttimeteam.lobby.LobbyManagerActor]))
+        </td>
+      </tr><tr>
+        <td>
           22
         </td>
         <td>
-          40
+          328
         </td>
         <td>
-          689
+          657
           -
-          694
+          662
         </td>
         <td>
           Apply
@@ -218,12 +207,12 @@
           23
         </td>
         <td>
-          292
+          162
         </td>
         <td>
-          749
+          717
           -
-          763
+          731
         </td>
         <td>
           Apply
@@ -239,12 +228,12 @@
           25
         </td>
         <td>
-          211
+          37
         </td>
         <td>
-          822
+          790
           -
-          843
+          811
         </td>
         <td>
           Apply
@@ -260,12 +249,12 @@
           28
         </td>
         <td>
-          140
+          327
         </td>
         <td>
-          880
+          848
           -
-          880
+          848
         </td>
         <td>
           Apply
@@ -281,12 +270,12 @@
           30
         </td>
         <td>
-          70
+          276
         </td>
         <td>
-          936
+          904
           -
-          946
+          914
         </td>
         <td>
           Select
@@ -302,12 +291,33 @@
           31
         </td>
         <td>
-          166
+          286
         </td>
         <td>
-          972
+          921
           -
-          1014
+          982
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.LobbyManagerActor.connectedPlayers_=
+        </td>
+        <td style="background: #AEF1AE">
+          LobbyManagerActor.this.connectedPlayers_=(LobbyManagerActor.this.connectedPlayers.+[akka.actor.ActorRef](scala.Predef.ArrowAssoc[String](clientId).-&gt;[akka.actor.ActorRef](clientRef)))
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          65
+        </td>
+        <td>
+          940
+          -
+          982
         </td>
         <td>
           Apply
@@ -323,12 +333,12 @@
           31
         </td>
         <td>
-          306
+          197
         </td>
         <td>
-          992
+          960
           -
-          1013
+          981
         </td>
         <td>
           Apply
@@ -341,36 +351,15 @@
         </td>
       </tr><tr>
         <td>
-          31
-        </td>
-        <td>
-          78
-        </td>
-        <td>
-          953
-          -
-          1014
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.lobby.LobbyManagerActor.connectedPlayers_=
-        </td>
-        <td style="background: #AEF1AE">
-          LobbyManagerActor.this.connectedPlayers_=(LobbyManagerActor.this.connectedPlayers.+[akka.actor.ActorRef](scala.Predef.ArrowAssoc[String](clientId).-&gt;[akka.actor.ActorRef](clientRef)))
-        </td>
-      </tr><tr>
-        <td>
           32
         </td>
         <td>
-          343
+          156
         </td>
         <td>
-          1021
+          989
           -
-          1045
+          1013
         </td>
         <td>
           Apply
@@ -386,33 +375,33 @@
           33
         </td>
         <td>
-          194
+          181
         </td>
         <td>
-          1064
+          1020
           -
-          1083
+          1051
         </td>
         <td>
-          Apply
+          ApplyToImplicitArgs
         </td>
         <td>
-          it.parttimeteam.messages.LobbyMessages.Connected.apply
+          akka.actor.ScalaActorRef.!
         </td>
         <td style="background: #AEF1AE">
-          it.parttimeteam.messages.LobbyMessages.Connected.apply(clientId)
+          actor.this.`package`.actorRef2Scala(clientRef).!(it.parttimeteam.messages.LobbyMessages.Connected.apply(clientId))(LobbyManagerActor.this.self)
         </td>
       </tr><tr>
         <td>
           33
         </td>
         <td>
-          29
+          321
         </td>
         <td>
-          1062
+          1030
           -
-          1062
+          1030
         </td>
         <td>
           Select
@@ -428,33 +417,33 @@
           33
         </td>
         <td>
-          293
+          72
         </td>
         <td>
-          1052
+          1032
           -
-          1083
+          1051
         </td>
         <td>
-          ApplyToImplicitArgs
+          Apply
         </td>
         <td>
-          akka.actor.ScalaActorRef.!
+          it.parttimeteam.messages.LobbyMessages.Connected.apply
         </td>
         <td style="background: #AEF1AE">
-          actor.this.`package`.actorRef2Scala(clientRef).!(it.parttimeteam.messages.LobbyMessages.Connected.apply(clientId))(LobbyManagerActor.this.self)
+          it.parttimeteam.messages.LobbyMessages.Connected.apply(clientId)
         </td>
       </tr><tr>
         <td>
           37
         </td>
         <td>
-          30
+          313
         </td>
         <td>
-          1164
+          1132
           -
-          1439
+          1407
         </td>
         <td>
           Apply
@@ -475,12 +464,12 @@
           38
         </td>
         <td>
-          206
+          28
         </td>
         <td>
-          1238
+          1206
           -
-          1272
+          1240
         </td>
         <td>
           Apply
@@ -496,33 +485,12 @@
           39
         </td>
         <td>
-          64
+          193
         </td>
         <td>
-          1308
+          1249
           -
-          1343
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.apply
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.common.GamePlayer.apply(clientId, username, ref)
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          308
-        </td>
-        <td>
-          1281
-          -
-          1355
+          1323
         </td>
         <td>
           Apply
@@ -535,36 +503,36 @@
         </td>
       </tr><tr>
         <td>
-          40
+          39
         </td>
         <td>
-          13
+          275
         </td>
         <td>
-          1368
+          1276
           -
-          1368
+          1311
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          akka.actor.Actor.self
+          it.parttimeteam.common.GamePlayer.apply
         </td>
         <td style="background: #AEF1AE">
-          LobbyManagerActor.this.self
+          it.parttimeteam.common.GamePlayer.apply(clientId, username, ref)
         </td>
       </tr><tr>
         <td>
           40
         </td>
         <td>
-          159
+          61
         </td>
         <td>
-          1370
+          1338
           -
-          1388
+          1356
         </td>
         <td>
           Apply
@@ -580,12 +548,12 @@
           40
         </td>
         <td>
-          335
+          150
         </td>
         <td>
-          1364
+          1332
           -
-          1388
+          1356
         </td>
         <td>
           ApplyToImplicitArgs
@@ -598,15 +566,36 @@
         </td>
       </tr><tr>
         <td>
+          40
+        </td>
+        <td>
+          287
+        </td>
+        <td>
+          1336
+          -
+          1336
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #AEF1AE">
+          LobbyManagerActor.this.self
+        </td>
+      </tr><tr>
+        <td>
           41
         </td>
         <td>
-          170
+          13
         </td>
         <td>
-          1397
+          1365
           -
-          1431
+          1399
         </td>
         <td>
           Apply
@@ -622,12 +611,12 @@
           46
         </td>
         <td>
-          173
+          5
         </td>
         <td>
-          1523
+          1491
           -
-          1801
+          1769
         </td>
         <td>
           Apply
@@ -647,12 +636,12 @@
           47
         </td>
         <td>
-          277
+          160
         </td>
         <td>
-          1597
+          1565
           -
-          1657
+          1625
         </td>
         <td>
           Apply
@@ -668,12 +657,12 @@
           48
         </td>
         <td>
-          65
+          262
         </td>
         <td>
-          1666
+          1634
           -
-          1740
+          1708
         </td>
         <td>
           Apply
@@ -689,12 +678,12 @@
           48
         </td>
         <td>
-          207
+          29
         </td>
         <td>
-          1693
+          1661
           -
-          1728
+          1696
         </td>
         <td>
           Apply
@@ -710,12 +699,33 @@
           49
         </td>
         <td>
-          5
+          194
         </td>
         <td>
-          1753
+          1743
           -
-          1753
+          1760
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.lobby.PrivateLobby.lobbyId
+        </td>
+        <td style="background: #AEF1AE">
+          lobbyType.lobbyId
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          279
+        </td>
+        <td>
+          1721
+          -
+          1721
         </td>
         <td>
           Select
@@ -731,12 +741,12 @@
           49
         </td>
         <td>
-          160
+          60
         </td>
         <td>
-          1755
+          1723
           -
-          1793
+          1761
         </td>
         <td>
           Apply
@@ -752,12 +762,12 @@
           49
         </td>
         <td>
-          336
+          152
         </td>
         <td>
-          1749
+          1717
           -
-          1793
+          1761
         </td>
         <td>
           ApplyToImplicitArgs
@@ -770,36 +780,15 @@
         </td>
       </tr><tr>
         <td>
-          49
-        </td>
-        <td>
-          296
-        </td>
-        <td>
-          1775
-          -
-          1792
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.lobby.PrivateLobby.lobbyId
-        </td>
-        <td style="background: #AEF1AE">
-          lobbyType.lobbyId
-        </td>
-      </tr><tr>
-        <td>
           53
         </td>
         <td>
-          134
+          23
         </td>
         <td>
-          1874
+          1842
           -
-          2330
+          2298
         </td>
         <td>
           Apply
@@ -823,12 +812,12 @@
           54
         </td>
         <td>
-          22
+          315
         </td>
         <td>
-          1932
+          1900
           -
-          1984
+          1952
         </td>
         <td>
           Apply
@@ -844,12 +833,12 @@
           56
         </td>
         <td>
-          278
+          161
         </td>
         <td>
-          2054
+          2022
           -
-          2089
+          2057
         </td>
         <td>
           Apply
@@ -865,12 +854,12 @@
           57
         </td>
         <td>
-          201
+          21
         </td>
         <td>
-          2102
+          2070
           -
-          2147
+          2115
         </td>
         <td>
           Apply
@@ -886,12 +875,12 @@
           58
         </td>
         <td>
-          298
+          189
         </td>
         <td>
-          2164
+          2132
           -
-          2164
+          2132
         </td>
         <td>
           Select
@@ -907,33 +896,12 @@
           58
         </td>
         <td>
-          157
+          263
         </td>
         <td>
-          2160
+          2134
           -
-          2184
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!
-        </td>
-        <td style="background: #AEF1AE">
-          actor.this.`package`.actorRef2Scala(ref).!(it.parttimeteam.messages.LobbyMessages.UserAddedToLobby.apply())(LobbyManagerActor.this.self)
-        </td>
-      </tr><tr>
-        <td>
-          58
-        </td>
-        <td>
-          69
-        </td>
-        <td>
-          2166
-          -
-          2184
+          2152
         </td>
         <td>
           Apply
@@ -946,15 +914,36 @@
         </td>
       </tr><tr>
         <td>
+          58
+        </td>
+        <td>
+          66
+        </td>
+        <td>
+          2128
+          -
+          2152
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #AEF1AE">
+          actor.this.`package`.actorRef2Scala(ref).!(it.parttimeteam.messages.LobbyMessages.UserAddedToLobby.apply())(LobbyManagerActor.this.self)
+        </td>
+      </tr><tr>
+        <td>
           59
         </td>
         <td>
-          6
+          281
         </td>
         <td>
-          2197
+          2165
           -
-          2231
+          2199
         </td>
         <td>
           Apply
@@ -970,75 +959,12 @@
           61
         </td>
         <td>
-          23
+          182
         </td>
         <td>
-          2271
+          2235
           -
-          2271
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.Actor.self
-        </td>
-        <td style="background: #AEF1AE">
-          LobbyManagerActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          61
-        </td>
-        <td>
-          193
-        </td>
-        <td>
-          2273
-          -
-          2312
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.messages.LobbyMessages.LobbyError.apply
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.messages.LobbyMessages.LobbyError.apply(it.parttimeteam.messages.PrivateLobbyIdNotValidError)
-        </td>
-      </tr><tr>
-        <td>
-          61
-        </td>
-        <td>
-          337
-        </td>
-        <td>
-          2284
-          -
-          2311
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.messages.PrivateLobbyIdNotValidError
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.messages.PrivateLobbyIdNotValidError
-        </td>
-      </tr><tr>
-        <td>
-          61
-        </td>
-        <td>
-          287
-        </td>
-        <td>
-          2267
-          -
-          2312
+          2280
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1051,523 +977,36 @@
         </td>
       </tr><tr>
         <td>
-          65
+          61
         </td>
         <td>
-          71
+          149
         </td>
         <td>
-          2363
+          2252
           -
-          2400
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.lobby.LobbyManager.removePlayer
-        </td>
-        <td style="background: #F0ADAD">
-          this.lobbyManger.removePlayer(userId)
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          158
-        </td>
-        <td>
-          2475
-          -
-          2497
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;, connected players: &quot;
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          349
-        </td>
-        <td>
-          2497
-          -
-          2513
+          2279
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.lobby.LobbyManagerActor.connectedPlayers
-        </td>
-        <td style="background: #F0ADAD">
-          LobbyManagerActor.this.connectedPlayers
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          17
-        </td>
-        <td>
-          2513
-          -
-          2514
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          43
-        </td>
-        <td>
-          2443
-          -
-          2515
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.event.LoggingAdapter.debug
-        </td>
-        <td style="background: #F0ADAD">
-          LobbyManagerActor.this.log.debug(scala.StringContext.apply(&quot;terminated &quot;, &quot;, connected players: &quot;, &quot;&quot;).s(actorRef, LobbyManagerActor.this.connectedPlayers))
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          195
-        </td>
-        <td>
-          2453
-          -
-          2514
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;terminated &quot;, &quot;, connected players: &quot;, &quot;&quot;).s(actorRef, LobbyManagerActor.this.connectedPlayers)
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          317
-        </td>
-        <td>
-          2455
-          -
-          2467
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;terminated &quot;
-        </td>
-      </tr><tr>
-        <td>
-          69
-        </td>
-        <td>
-          288
-        </td>
-        <td>
-          2522
-          -
-          2544
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.lobby.LobbyManagerActor.removeClient
-        </td>
-        <td style="background: #F0ADAD">
-          LobbyManagerActor.this.removeClient(actorRef)
-        </td>
-      </tr><tr>
-        <td>
-          75
-        </td>
-        <td>
-          68
-        </td>
-        <td>
-          2626
-          -
-          2682
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.lobby.LobbyManager.attemptExtractPlayerForMatch
+          it.parttimeteam.messages.PrivateLobbyIdNotValidError
         </td>
         <td style="background: #AEF1AE">
-          this.lobbyManger.attemptExtractPlayerForMatch(lobbyType)
+          it.parttimeteam.messages.PrivateLobbyIdNotValidError
         </td>
       </tr><tr>
         <td>
-          76
+          61
         </td>
         <td>
-          318
+          316
         </td>
         <td>
-          2719
+          2239
           -
-          2769
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.lobby.LobbyManagerActor.generateAndStartGameActor
-        </td>
-        <td style="background: #AEF1AE">
-          this.generateAndStartGameActor(lobbyType)(players)
-        </td>
-      </tr><tr>
-        <td>
-          77
-        </td>
-        <td>
-          151
-        </td>
-        <td>
-          2786
-          -
-          2788
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          26
-        </td>
-        <td>
-          2918
-          -
-          3014
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.actor.ActorRefFactory.actorOf
-        </td>
-        <td style="background: #AEF1AE">
-          LobbyManagerActor.this.context.actorOf(it.parttimeteam.`match`.GameMatchManagerActor.props(lobbyType.numberOfPlayers, new it.parttimeteam.core.GameInterfaceImpl()))
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          18
-        </td>
-        <td>
-          2962
-          -
-          2987
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.lobby.LobbyType.numberOfPlayers
-        </td>
-        <td style="background: #AEF1AE">
-          lobbyType.numberOfPlayers
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          266
-        </td>
-        <td>
-          2989
-          -
-          3012
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.GameInterfaceImpl.&lt;init&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          new it.parttimeteam.core.GameInterfaceImpl()
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          188
-        </td>
-        <td>
-          2934
-          -
-          3013
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.match.GameMatchManagerActor.props
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.`match`.GameMatchManagerActor.props(lobbyType.numberOfPlayers, new it.parttimeteam.core.GameInterfaceImpl())
-        </td>
-      </tr><tr>
-        <td>
-          83
-        </td>
-        <td>
-          181
-        </td>
-        <td>
-          3019
-          -
-          3273
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.IterableLike.foreach
-        </td>
-        <td style="background: #AEF1AE">
-          players.foreach[Unit](((p: it.parttimeteam.common.GamePlayer) =&gt; {
-  LobbyManagerActor.this.context.unwatch(p.actorRef);
-  this.lobbyManger.removePlayer(p.id);
-  this.connectedPlayers_=(this.connectedPlayers.-(p.id))
-}))
-        </td>
-      </tr><tr>
-        <td>
-          84
-        </td>
-        <td>
-          289
-        </td>
-        <td>
-          3064
-          -
-          3074
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.actorRef
-        </td>
-        <td style="background: #AEF1AE">
-          p.actorRef
-        </td>
-      </tr><tr>
-        <td>
-          84
-        </td>
-        <td>
-          132
-        </td>
-        <td>
-          3048
-          -
-          3075
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.actor.ActorContext.unwatch
-        </td>
-        <td style="background: #AEF1AE">
-          LobbyManagerActor.this.context.unwatch(p.actorRef)
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          310
-        </td>
-        <td>
-          3116
-          -
-          3151
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.lobby.LobbyManager.removePlayer
-        </td>
-        <td style="background: #AEF1AE">
-          this.lobbyManger.removePlayer(p.id)
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          60
-        </td>
-        <td>
-          3146
-          -
-          3150
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.id
-        </td>
-        <td style="background: #AEF1AE">
-          p.id
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          19
-        </td>
-        <td>
-          3238
-          -
-          3266
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.MapLike.-
-        </td>
-        <td style="background: #AEF1AE">
-          this.connectedPlayers.-(p.id)
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          261
-        </td>
-        <td>
-          3214
-          -
-          3266
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.lobby.LobbyManagerActor.connectedPlayers_=
-        </td>
-        <td style="background: #AEF1AE">
-          this.connectedPlayers_=(this.connectedPlayers.-(p.id))
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          152
-        </td>
-        <td>
-          3262
-          -
-          3266
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.id
-        </td>
-        <td style="background: #AEF1AE">
-          p.id
-        </td>
-      </tr><tr>
-        <td>
-          90
-        </td>
-        <td>
-          133
-        </td>
-        <td>
-          3278
-          -
-          3310
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!
-        </td>
-        <td style="background: #AEF1AE">
-          actor.this.`package`.actorRef2Scala(gameActor).!(it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers.apply(players))(LobbyManagerActor.this.self)
-        </td>
-      </tr><tr>
-        <td>
-          90
-        </td>
-        <td>
-          285
-        </td>
-        <td>
-          3288
-          -
-          3288
+          2239
         </td>
         <td>
           Select
@@ -1580,225 +1019,36 @@
         </td>
       </tr><tr>
         <td>
-          90
+          61
         </td>
         <td>
-          25
+          6
         </td>
         <td>
-          3290
+          2241
           -
-          3310
+          2280
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.match.GameMatchManagerActor.GamePlayers.apply
+          it.parttimeteam.messages.LobbyMessages.LobbyError.apply
         </td>
         <td style="background: #AEF1AE">
-          it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers.apply(players)
+          it.parttimeteam.messages.LobbyMessages.LobbyError.apply(it.parttimeteam.messages.PrivateLobbyIdNotValidError)
         </td>
       </tr><tr>
         <td>
-          94
+          65
         </td>
         <td>
-          51
+          270
         </td>
         <td>
-          3387
+          2331
           -
-          3422
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.MapLike.get
-        </td>
-        <td style="background: #AEF1AE">
-          this.connectedPlayers.get(clientId)
-        </td>
-      </tr><tr>
-        <td>
-          98
-        </td>
-        <td>
-          316
-        </td>
-        <td>
-          3526
-          -
-          3553
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.lobby.LobbyManagerActor.getClientRef
-        </td>
-        <td style="background: #AEF1AE">
-          this.getClientRef(clientId)
-        </td>
-      </tr><tr>
-        <td>
-          99
-        </td>
-        <td>
-          153
-        </td>
-        <td>
-          3586
-          -
-          3597
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #AEF1AE">
-          action.apply(ref)
-        </td>
-      </tr><tr>
-        <td>
-          100
-        </td>
-        <td>
-          1
-        </td>
-        <td>
-          3611
-          -
-          3613
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          105
-        </td>
-        <td>
-          262
-        </td>
-        <td>
-          3713
-          -
-          3729
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.==
-        </td>
-        <td style="background: #F0ADAD">
-          x$1._2.==(actorRef)
-        </td>
-      </tr><tr>
-        <td>
-          105
-        </td>
-        <td>
-          174
-        </td>
-        <td>
-          3686
-          -
-          3730
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.IterableLike.find
-        </td>
-        <td style="background: #F0ADAD">
-          this.connectedPlayers.find(((x$1: (LobbyManagerActor.this.UserId, akka.actor.ActorRef)) =&gt; x$1._2.==(actorRef)))
-        </td>
-      </tr><tr>
-        <td>
-          107
-        </td>
-        <td>
-          286
-        </td>
-        <td>
-          3781
-          -
-          3858
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.event.LoggingAdapter.debug
-        </td>
-        <td style="background: #F0ADAD">
-          LobbyManagerActor.this.log.debug(scala.StringContext.apply(&quot;removing client &quot;, &quot; from lobby and connected players list&quot;).s(actorRef))
-        </td>
-      </tr><tr>
-        <td>
-          107
-        </td>
-        <td>
-          42
-        </td>
-        <td>
-          3791
-          -
-          3857
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;removing client &quot;, &quot; from lobby and connected players list&quot;).s(actorRef)
-        </td>
-      </tr><tr>
-        <td>
-          108
-        </td>
-        <td>
-          126
-        </td>
-        <td>
-          3867
-          -
-          3892
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.actor.ActorContext.unwatch
-        </td>
-        <td style="background: #F0ADAD">
-          LobbyManagerActor.this.context.unwatch(actorRef)
-        </td>
-      </tr><tr>
-        <td>
-          109
-        </td>
-        <td>
-          384
-        </td>
-        <td>
-          3901
-          -
-          3938
+          2368
         </td>
         <td>
           Apply
@@ -1811,15 +1061,78 @@
         </td>
       </tr><tr>
         <td>
-          110
+          68
         </td>
         <td>
-          167
+          67
         </td>
         <td>
-          3947
+          2411
           -
-          4001
+          2460
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.IterableLike.find
+        </td>
+        <td style="background: #F0ADAD">
+          this.connectedPlayers.find(((p: (LobbyManagerActor.this.UserId, akka.actor.ActorRef)) =&gt; p._2.==(actorRef)))
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          126
+        </td>
+        <td>
+          2443
+          -
+          2459
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.==
+        </td>
+        <td style="background: #F0ADAD">
+          p._2.==(actorRef)
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
+          296
+        </td>
+        <td>
+          2515
+          -
+          2552
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.LobbyManager.removePlayer
+        </td>
+        <td style="background: #F0ADAD">
+          this.lobbyManger.removePlayer(userId)
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          17
+        </td>
+        <td>
+          2563
+          -
+          2617
         </td>
         <td>
           Apply
@@ -1832,15 +1145,15 @@
         </td>
       </tr><tr>
         <td>
-          110
+          71
         </td>
         <td>
-          307
+          151
         </td>
         <td>
-          3971
+          2587
           -
-          4001
+          2617
         </td>
         <td>
           Apply
@@ -1853,87 +1166,405 @@
         </td>
       </tr><tr>
         <td>
-          111
+          79
         </td>
         <td>
-          2
+          183
         </td>
         <td>
-          4020
+          2717
           -
-          4085
+          2773
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.StringContext.s
+          it.parttimeteam.lobby.LobbyManager.attemptExtractPlayerForMatch
         </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;removed client &quot;, &quot; from lobby and connected players list&quot;).s(actorRef)
+        <td style="background: #AEF1AE">
+          this.lobbyManger.attemptExtractPlayerForMatch(lobbyType)
         </td>
       </tr><tr>
         <td>
-          111
+          80
         </td>
         <td>
-          255
+          40
         </td>
         <td>
-          4010
+          2810
           -
-          4086
+          2860
         </td>
         <td>
           Apply
         </td>
         <td>
-          akka.event.LoggingAdapter.debug
+          it.parttimeteam.lobby.LobbyManagerActor.generateAndStartGameActor
         </td>
-        <td style="background: #F0ADAD">
-          LobbyManagerActor.this.log.debug(scala.StringContext.apply(&quot;removed client &quot;, &quot; from lobby and connected players list&quot;).s(actorRef))
+        <td style="background: #AEF1AE">
+          this.generateAndStartGameActor(lobbyType)(players)
         </td>
       </tr><tr>
         <td>
-          113
+          81
         </td>
         <td>
-          44
+          271
         </td>
         <td>
-          4114
+          2877
           -
-          4156
+          2879
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          akka.event.LoggingAdapter.warning
+          &lt;nosymbol&gt;
         </td>
-        <td style="background: #F0ADAD">
-          LobbyManagerActor.this.log.warning(scala.StringContext.apply(&quot;client &quot;, &quot; not found&quot;).s(actorRef))
+        <td style="background: #AEF1AE">
+          ()
         </td>
       </tr><tr>
         <td>
-          113
+          86
         </td>
         <td>
-          187
+          298
         </td>
         <td>
-          4126
+          3025
           -
-          4155
+          3104
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.StringContext.s
+          it.parttimeteam.match.GameMatchManagerActor.props
         </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;client &quot;, &quot; not found&quot;).s(actorRef)
+        <td style="background: #AEF1AE">
+          it.parttimeteam.`match`.GameMatchManagerActor.props(lobbyType.numberOfPlayers, new it.parttimeteam.core.GameInterfaceImpl())
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          133
+        </td>
+        <td>
+          3053
+          -
+          3078
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.lobby.LobbyType.numberOfPlayers
+        </td>
+        <td style="background: #AEF1AE">
+          lobbyType.numberOfPlayers
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          64
+        </td>
+        <td>
+          3080
+          -
+          3103
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameInterfaceImpl.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new it.parttimeteam.core.GameInterfaceImpl()
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          143
+        </td>
+        <td>
+          3009
+          -
+          3105
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ActorRefFactory.actorOf
+        </td>
+        <td style="background: #AEF1AE">
+          LobbyManagerActor.this.context.actorOf(it.parttimeteam.`match`.GameMatchManagerActor.props(lobbyType.numberOfPlayers, new it.parttimeteam.core.GameInterfaceImpl()))
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          125
+        </td>
+        <td>
+          3110
+          -
+          3330
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.IterableLike.foreach
+        </td>
+        <td style="background: #AEF1AE">
+          players.foreach[Unit](((p: it.parttimeteam.common.GamePlayer) =&gt; {
+  this.lobbyManger.removePlayer(p.id);
+  this.connectedPlayers_=(this.connectedPlayers.-(p.id))
+}))
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          18
+        </td>
+        <td>
+          3203
+          -
+          3207
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.id
+        </td>
+        <td style="background: #AEF1AE">
+          p.id
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          251
+        </td>
+        <td>
+          3173
+          -
+          3208
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.LobbyManager.removePlayer
+        </td>
+        <td style="background: #AEF1AE">
+          this.lobbyManger.removePlayer(p.id)
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          175
+        </td>
+        <td>
+          3319
+          -
+          3323
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.id
+        </td>
+        <td style="background: #AEF1AE">
+          p.id
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          25
+        </td>
+        <td>
+          3295
+          -
+          3323
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.MapLike.-
+        </td>
+        <td style="background: #AEF1AE">
+          this.connectedPlayers.-(p.id)
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          272
+        </td>
+        <td>
+          3271
+          -
+          3323
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.LobbyManagerActor.connectedPlayers_=
+        </td>
+        <td style="background: #AEF1AE">
+          this.connectedPlayers_=(this.connectedPlayers.-(p.id))
+        </td>
+      </tr><tr>
+        <td>
+          93
+        </td>
+        <td>
+          56
+        </td>
+        <td>
+          3347
+          -
+          3367
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.GameMatchManagerActor.GamePlayers.apply
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers.apply(players)
+        </td>
+      </tr><tr>
+        <td>
+          93
+        </td>
+        <td>
+          289
+        </td>
+        <td>
+          3345
+          -
+          3345
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #AEF1AE">
+          LobbyManagerActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          93
+        </td>
+        <td>
+          144
+        </td>
+        <td>
+          3335
+          -
+          3367
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #AEF1AE">
+          actor.this.`package`.actorRef2Scala(gameActor).!(it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers.apply(players))(LobbyManagerActor.this.self)
+        </td>
+      </tr><tr>
+        <td>
+          97
+        </td>
+        <td>
+          19
+        </td>
+        <td>
+          3444
+          -
+          3479
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.MapLike.get
+        </td>
+        <td style="background: #AEF1AE">
+          this.connectedPlayers.get(clientId)
+        </td>
+      </tr><tr>
+        <td>
+          101
+        </td>
+        <td>
+          246
+        </td>
+        <td>
+          3583
+          -
+          3610
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.lobby.LobbyManagerActor.getClientRef
+        </td>
+        <td style="background: #AEF1AE">
+          this.getClientRef(clientId)
+        </td>
+      </tr><tr>
+        <td>
+          102
+        </td>
+        <td>
+          169
+        </td>
+        <td>
+          3643
+          -
+          3654
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #AEF1AE">
+          action.apply(ref)
         </td>
       </tr>
     </table>

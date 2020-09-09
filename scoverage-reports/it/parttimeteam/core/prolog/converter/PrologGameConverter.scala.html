@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.core.prolog.converter
 </span>2 <span style=''>
 </span>3 <span style=''>import alice.tuprolog.{Term, Var}
-</span>4 <span style=''>import it.parttimeteam.core.cards.Rank.{Ace, King, OverflowAce}
+</span>4 <span style=''>import it.parttimeteam.core.cards.Rank.{Ace, King}
 </span>5 <span style=''>import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 </span>6 <span style=''>
 </span>7 <span style=''>/**
@@ -45,7 +45,7 @@
 </span>21 <span style=''>   * @inheritdoc
 </span>22 <span style=''>   */
 </span>23 <span style=''>  override def cardsConvertToString(cards: Seq[Card])(variable: Option[Var]): String = {
-</span>24 <span style=''>    val tupleCard = </span><span style='background: #AEF1AE'>for (card &lt;- cards) yield (card.rank.value, &quot;\&quot;&quot; + card.suit.shortName + &quot;\&quot;&quot;)</span><span style=''>
+</span>24 <span style=''>    val tupleCard = </span><span style='background: #AEF1AE'>for (card &lt;- cards) yield (card.rank.value, &quot;\&quot;&quot; + card.suit.name + &quot;\&quot;&quot;)</span><span style=''>
 </span>25 <span style=''>    </span><span style='background: #AEF1AE'>this.prologList(tupleCard)(variable)</span><span style=''>
 </span>26 <span style=''>  }
 </span>27 <span style=''>
@@ -73,46 +73,29 @@
 </span>49 <span style=''>  /**
 </span>50 <span style=''>   * @inheritdoc
 </span>51 <span style=''>   */
-</span>52 <span style=''>  override def optionalValueCards(cards: Seq[Card]): Seq[Card] = {
-</span>53 <span style=''>
-</span>54 <span style=''>    val containAce: Seq[Card] = </span><span style='background: #AEF1AE'>cards.filter(card =&gt; card.rank == Rank.Ace())</span><span style=''>
-</span>55 <span style=''>    val containTwo: Boolean = </span><span style='background: #AEF1AE'>cards.exists(card =&gt; card.rank == Rank.Two())</span><span style=''>
-</span>56 <span style=''>
-</span>57 <span style=''>    (containAce.size, containTwo) match {
-</span>58 <span style=''>      // Replacing Ace with OverflowAce with an ace into sequence
-</span>59 <span style=''>      case (1, false) =&gt;
-</span>60 <span style=''>        </span><span style='background: #AEF1AE'>cards.foldLeft(Seq.empty[Card]) {
-</span>61 <span style=''></span><span style='background: #AEF1AE'>          (acc, card) =&gt;
-</span>62 <span style=''></span><span style='background: #AEF1AE'>            card.rank match {
-</span>63 <span style=''></span><span style='background: #AEF1AE'>              case Ace() =&gt; acc ++ (card.copy(rank = &quot;14&quot;) +: Nil)
-</span>64 <span style=''></span><span style='background: #AEF1AE'>              case _ =&gt; acc ++ (card +: Nil)
-</span>65 <span style=''></span><span style='background: #AEF1AE'>            }
-</span>66 <span style=''></span><span style='background: #AEF1AE'>        }</span><span style=''>
-</span>67 <span style=''>      // Replacing Ace with OverflowAce with more aces into sequence
-</span>68 <span style=''>      case (2, true) =&gt; </span><span style='background: #AEF1AE'>cards.foldLeft(Seq.empty[Card]) {
-</span>69 <span style=''></span><span style='background: #AEF1AE'>        (acc, card) =&gt;
-</span>70 <span style=''></span><span style='background: #AEF1AE'>          card.rank match {
-</span>71 <span style=''></span><span style='background: #AEF1AE'>            case Ace() if !acc.exists(_.rank == Rank.OverflowAce()) =&gt; acc ++ (card.copy(rank = &quot;14&quot;) +: Nil)
-</span>72 <span style=''></span><span style='background: #AEF1AE'>            case _ =&gt; acc ++ (card +: Nil)
-</span>73 <span style=''></span><span style='background: #AEF1AE'>          }
-</span>74 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
-</span>75 <span style=''>      case _ =&gt; cards
-</span>76 <span style=''>    }
-</span>77 <span style=''>  }
-</span>78 <span style=''>
-</span>79 <span style=''>
-</span>80 <span style=''>  /**
-</span>81 <span style=''>   * @inheritdoc
-</span>82 <span style=''>   */
-</span>83 <span style=''>  override def prologList(tupleCard: Seq[(Int, String)])(variable: Option[Var]): String = {
-</span>84 <span style=''>
-</span>85 <span style=''>    if (</span><span style='background: #AEF1AE'>variable.isDefined</span><span style=''>) {
-</span>86 <span style=''>      </span><span style='background: #AEF1AE'>startList + tupleCard.mkString(&quot;,&quot;) + &quot;],&quot; + variable.get.getName + &quot;).&quot;</span><span style=''>
-</span>87 <span style=''>    } else {
-</span>88 <span style=''>      </span><span style='background: #AEF1AE'>startList + tupleCard.mkString(&quot;,&quot;) + endList</span><span style=''>
-</span>89 <span style=''>    }
-</span>90 <span style=''>  }
-</span>91 <span style=''>}
+</span>52 <span style=''>  override def optionalValueCards(cards: Seq[Card]): Seq[Card] = </span><span style='background: #AEF1AE'>cards.foldLeft(Seq.empty[Card]) {
+</span>53 <span style=''></span><span style='background: #AEF1AE'>    (acc, card) =&gt;
+</span>54 <span style=''></span><span style='background: #AEF1AE'>      acc match {
+</span>55 <span style=''></span><span style='background: #AEF1AE'>        case Nil =&gt; card +: Nil
+</span>56 <span style=''></span><span style='background: #AEF1AE'>        case _ =&gt; (acc.last.rank, card.rank) match {
+</span>57 <span style=''></span><span style='background: #AEF1AE'>          case (King(), Ace()) =&gt;
+</span>58 <span style=''></span><span style='background: #AEF1AE'>            acc ++ (card.copy(rank = &quot;14&quot;) +: Nil)
+</span>59 <span style=''></span><span style='background: #AEF1AE'>          case _ =&gt; acc ++ (card +: Nil)
+</span>60 <span style=''></span><span style='background: #AEF1AE'>        }
+</span>61 <span style=''></span><span style='background: #AEF1AE'>      }
+</span>62 <span style=''></span><span style='background: #AEF1AE'>  }</span><span style=''>
+</span>63 <span style=''>
+</span>64 <span style=''>  /**
+</span>65 <span style=''>   * @inheritdoc
+</span>66 <span style=''>   */
+</span>67 <span style=''>  override def prologList(tupleCard: Seq[(Int, String)])(variable: Option[Var]): String =
+</span>68 <span style=''>
+</span>69 <span style=''>    if (</span><span style='background: #AEF1AE'>variable.isDefined</span><span style=''>) {
+</span>70 <span style=''>      </span><span style='background: #AEF1AE'>startList + tupleCard.mkString(&quot;,&quot;) + &quot;],&quot; + variable.get.getName + &quot;).&quot;</span><span style=''>
+</span>71 <span style=''>    } else {
+</span>72 <span style=''>      </span><span style='background: #AEF1AE'>startList + tupleCard.mkString(&quot;,&quot;) + endList</span><span style=''>
+</span>73 <span style=''>    }
+</span>74 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -129,12 +112,12 @@
           12
         </td>
         <td>
-          762
+          483
         </td>
         <td>
-          351
+          338
           -
-          355
+          342
         </td>
         <td>
           Literal
@@ -150,12 +133,12 @@
           13
         </td>
         <td>
-          609
+          742
         </td>
         <td>
-          388
+          375
           -
-          393
+          380
         </td>
         <td>
           Literal
@@ -171,12 +154,12 @@
           18
         </td>
         <td>
-          530
+          584
         </td>
         <td>
-          478
+          465
           -
-          524
+          511
         </td>
         <td>
           Apply
@@ -192,12 +175,33 @@
           24
         </td>
         <td>
-          801
+          606
         </td>
         <td>
-          674
+          677
           -
-          674
+          724
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Tuple2.apply
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Tuple2.apply[Int, String](card.rank.value, &quot;\&quot;&quot;.+(card.suit.name).+(&quot;\&quot;&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          450
+        </td>
+        <td>
+          661
+          -
+          661
         </td>
         <td>
           TypeApply
@@ -213,54 +217,12 @@
           24
         </td>
         <td>
-          615
+          435
         </td>
         <td>
-          708
+          678
           -
-          741
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.String.+
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;\&quot;&quot;.+(card.suit.shortName).+(&quot;\&quot;&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          477
-        </td>
-        <td>
-          690
-          -
-          742
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Tuple2.apply
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Tuple2.apply[Int, String](card.rank.value, &quot;\&quot;&quot;.+(card.suit.shortName).+(&quot;\&quot;&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          796
-        </td>
-        <td>
-          691
-          -
-          706
+          693
         </td>
         <td>
           Select
@@ -276,12 +238,12 @@
           24
         </td>
         <td>
-          667
+          716
         </td>
         <td>
-          664
+          651
           -
-          742
+          724
         </td>
         <td>
           ApplyToImplicitArgs
@@ -290,19 +252,40 @@
           scala.collection.TraversableLike.map
         </td>
         <td style="background: #AEF1AE">
-          cards.map[(Int, String), Seq[(Int, String)]](((card: it.parttimeteam.core.cards.Card) =&gt; scala.Tuple2.apply[Int, String](card.rank.value, &quot;\&quot;&quot;.+(card.suit.shortName).+(&quot;\&quot;&quot;))))(collection.this.Seq.canBuildFrom[(Int, String)])
+          cards.map[(Int, String), Seq[(Int, String)]](((card: it.parttimeteam.core.cards.Card) =&gt; scala.Tuple2.apply[Int, String](card.rank.value, &quot;\&quot;&quot;.+(card.suit.name).+(&quot;\&quot;&quot;))))(collection.this.Seq.canBuildFrom[(Int, String)])
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          772
+        </td>
+        <td>
+          695
+          -
+          723
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;\&quot;&quot;.+(card.suit.name).+(&quot;\&quot;&quot;)
         </td>
       </tr><tr>
         <td>
           25
         </td>
         <td>
-          505
+          571
         </td>
         <td>
-          747
+          729
           -
-          783
+          765
         </td>
         <td>
           Apply
@@ -318,12 +301,12 @@
           33
         </td>
         <td>
-          753
+          499
         </td>
         <td>
-          906
+          888
           -
-          930
+          912
         </td>
         <td>
           Apply
@@ -339,12 +322,12 @@
           35
         </td>
         <td>
-          478
+          627
         </td>
         <td>
-          962
+          944
           -
-          962
+          944
         </td>
         <td>
           TypeApply
@@ -360,12 +343,12 @@
           35
         </td>
         <td>
-          742
+          474
         </td>
         <td>
-          952
+          934
           -
-          1055
+          1037
         </td>
         <td>
           ApplyToImplicitArgs
@@ -384,12 +367,12 @@
           36
         </td>
         <td>
-          610
+          748
         </td>
         <td>
-          995
+          977
           -
-          1021
+          1003
         </td>
         <td>
           Apply
@@ -405,12 +388,12 @@
           37
         </td>
         <td>
-          510
+          577
         </td>
         <td>
-          1029
+          1011
           -
-          1037
+          1019
         </td>
         <td>
           Apply
@@ -426,12 +409,12 @@
           37
         </td>
         <td>
-          641
+          753
         </td>
         <td>
-          1028
+          1010
           -
-          1048
+          1030
         </td>
         <td>
           Apply
@@ -447,12 +430,12 @@
           37
         </td>
         <td>
-          789
+          446
         </td>
         <td>
-          1039
+          1021
           -
-          1047
+          1029
         </td>
         <td>
           Apply
@@ -468,96 +451,12 @@
           39
         </td>
         <td>
-          525
+          741
         </td>
         <td>
-          1082
+          1092
           -
-          1136
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Tuple2.apply
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Tuple2.apply[it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit](it.parttimeteam.core.cards.Rank.string2rank(item._1), it.parttimeteam.core.cards.Suit.string2suit(item._2))
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          498
-        </td>
-        <td>
-          1083
-          -
-          1108
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Rank.string2rank
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.core.cards.Rank.string2rank(item._1)
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          791
-        </td>
-        <td>
-          1073
-          -
-          1073
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.Seq.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          collection.this.Seq.canBuildFrom[(it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit)]
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          635
-        </td>
-        <td>
-          1060
-          -
-          1137
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.TraversableLike.map
-        </td>
-        <td style="background: #AEF1AE">
-          tupleCard.map[(it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit), Seq[(it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit)]](((item: (String, String)) =&gt; scala.Tuple2.apply[it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit](it.parttimeteam.core.cards.Rank.string2rank(item._1), it.parttimeteam.core.cards.Suit.string2suit(item._2))))(collection.this.Seq.canBuildFrom[(it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit)])
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          611
-        </td>
-        <td>
-          1110
-          -
-          1135
+          1117
         </td>
         <td>
           Apply
@@ -573,12 +472,96 @@
           39
         </td>
         <td>
-          760
+          696
         </td>
         <td>
-          1127
+          1042
           -
-          1134
+          1119
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.map
+        </td>
+        <td style="background: #AEF1AE">
+          tupleCard.map[(it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit), Seq[(it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit)]](((item: (String, String)) =&gt; scala.Tuple2.apply[it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit](it.parttimeteam.core.cards.Rank.string2rank(item._1), it.parttimeteam.core.cards.Suit.string2suit(item._2))))(collection.this.Seq.canBuildFrom[(it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit)])
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          447
+        </td>
+        <td>
+          1055
+          -
+          1055
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[(it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit)]
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          707
+        </td>
+        <td>
+          1082
+          -
+          1089
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._1
+        </td>
+        <td style="background: #AEF1AE">
+          item._1
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          572
+        </td>
+        <td>
+          1065
+          -
+          1090
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Rank.string2rank
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.core.cards.Rank.string2rank(item._1)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          479
+        </td>
+        <td>
+          1109
+          -
+          1116
         </td>
         <td>
           Select
@@ -594,75 +577,33 @@
           39
         </td>
         <td>
-          655
+          601
         </td>
         <td>
-          1100
+          1064
           -
-          1107
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Tuple2._1
-        </td>
-        <td style="background: #AEF1AE">
-          item._1
-        </td>
-      </tr><tr>
-        <td>
-          46
-        </td>
-        <td>
-          517
-        </td>
-        <td>
-          1246
-          -
-          1370
+          1118
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.core.cards.Card.apply
+          scala.Tuple2.apply
         </td>
         <td style="background: #AEF1AE">
-          it.parttimeteam.core.cards.Card.apply(it.parttimeteam.core.cards.Rank.string2rank(PrologGameConverter.this.toString(rank, &quot;\'&quot;)), it.parttimeteam.core.cards.Suit.string2suit(PrologGameConverter.this.toString(suit, &quot;\'&quot;)), it.parttimeteam.core.cards.Color.string2color(PrologGameConverter.this.toString(color, &quot;\'&quot;)))
+          scala.Tuple2.apply[it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Suit](it.parttimeteam.core.cards.Rank.string2rank(item._1), it.parttimeteam.core.cards.Suit.string2suit(item._2))
         </td>
       </tr><tr>
         <td>
           46
         </td>
         <td>
-          594
+          714
         </td>
         <td>
-          1329
+          1289
           -
-          1369
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Color.string2color
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.core.cards.Color.string2color(PrologGameConverter.this.toString(color, &quot;\'&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          46
-        </td>
-        <td>
-          761
-        </td>
-        <td>
-          1348
-          -
-          1368
+          1308
         </td>
         <td>
           Apply
@@ -671,40 +612,19 @@
           it.parttimeteam.core.prolog.converter.PrologGameConverter.toString
         </td>
         <td style="background: #AEF1AE">
-          PrologGameConverter.this.toString(color, &quot;\'&quot;)
+          PrologGameConverter.this.toString(suit, &quot;\'&quot;)
         </td>
       </tr><tr>
         <td>
           46
         </td>
         <td>
-          501
+          615
         </td>
         <td>
-          1290
+          1250
           -
-          1327
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Suit.string2suit
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.core.cards.Suit.string2suit(PrologGameConverter.this.toString(suit, &quot;\'&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          46
-        </td>
-        <td>
-          465
-        </td>
-        <td>
-          1268
-          -
-          1287
+          1269
         </td>
         <td>
           Apply
@@ -720,12 +640,75 @@
           46
         </td>
         <td>
-          713
+          573
         </td>
         <td>
-          1251
+          1272
           -
-          1288
+          1309
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Suit.string2suit
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.core.cards.Suit.string2suit(PrologGameConverter.this.toString(suit, &quot;\'&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          743
+        </td>
+        <td>
+          1311
+          -
+          1351
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.cards.Color.string2color
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.core.cards.Color.string2color(PrologGameConverter.this.toString(color, &quot;\'&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          494
+        </td>
+        <td>
+          1330
+          -
+          1350
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.converter.PrologGameConverter.toString
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGameConverter.this.toString(color, &quot;\'&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          467
+        </td>
+        <td>
+          1233
+          -
+          1270
         </td>
         <td>
           Apply
@@ -741,189 +724,33 @@
           46
         </td>
         <td>
-          649
+          595
         </td>
         <td>
-          1307
+          1228
           -
-          1326
+          1352
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.core.prolog.converter.PrologGameConverter.toString
+          it.parttimeteam.core.cards.Card.apply
         </td>
         <td style="background: #AEF1AE">
-          PrologGameConverter.this.toString(suit, &quot;\'&quot;)
+          it.parttimeteam.core.cards.Card.apply(it.parttimeteam.core.cards.Rank.string2rank(PrologGameConverter.this.toString(rank, &quot;\'&quot;)), it.parttimeteam.core.cards.Suit.string2suit(PrologGameConverter.this.toString(suit, &quot;\'&quot;)), it.parttimeteam.core.cards.Color.string2color(PrologGameConverter.this.toString(color, &quot;\'&quot;)))
         </td>
       </tr><tr>
         <td>
-          54
+          52
         </td>
         <td>
-          782
+          436
         </td>
         <td>
-          1539
+          1467
           -
-          1549
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Rank.Ace.apply
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.core.cards.Rank.Ace.apply()
-        </td>
-      </tr><tr>
-        <td>
-          54
-        </td>
-        <td>
-          466
-        </td>
-        <td>
-          1505
-          -
-          1550
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.TraversableLike.filter
-        </td>
-        <td style="background: #AEF1AE">
-          cards.filter(((card: it.parttimeteam.core.cards.Card) =&gt; card.rank.==(it.parttimeteam.core.cards.Rank.Ace.apply())))
-        </td>
-      </tr><tr>
-        <td>
-          54
-        </td>
-        <td>
-          637
-        </td>
-        <td>
-          1526
-          -
-          1549
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.==
-        </td>
-        <td style="background: #AEF1AE">
-          card.rank.==(it.parttimeteam.core.cards.Rank.Ace.apply())
-        </td>
-      </tr><tr>
-        <td>
-          55
-        </td>
-        <td>
-          490
-        </td>
-        <td>
-          1581
-          -
-          1626
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.IterableLike.exists
-        </td>
-        <td style="background: #AEF1AE">
-          cards.exists(((card: it.parttimeteam.core.cards.Card) =&gt; card.rank.==(it.parttimeteam.core.cards.Rank.Two.apply())))
-        </td>
-      </tr><tr>
-        <td>
-          55
-        </td>
-        <td>
-          651
-        </td>
-        <td>
-          1602
-          -
-          1625
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.==
-        </td>
-        <td style="background: #AEF1AE">
-          card.rank.==(it.parttimeteam.core.cards.Rank.Two.apply())
-        </td>
-      </tr><tr>
-        <td>
-          55
-        </td>
-        <td>
-          722
-        </td>
-        <td>
-          1615
-          -
-          1625
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Rank.Two.apply
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.core.cards.Rank.Two.apply()
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          590
-        </td>
-        <td>
-          1769
-          -
-          1993
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.TraversableOnce.foldLeft
-        </td>
-        <td style="background: #AEF1AE">
-          cards.foldLeft[Seq[it.parttimeteam.core.cards.Card]](scala.collection.Seq.empty[it.parttimeteam.core.cards.Card])(((acc: Seq[it.parttimeteam.core.cards.Card], card: it.parttimeteam.core.cards.Card) =&gt; card.rank match {
-  case ()it.parttimeteam.core.cards.Rank.Ace() =&gt; acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
-    &lt;synthetic&gt; &lt;artifact&gt; val x$1: it.parttimeteam.core.cards.Card = card.copy(cards.this.Rank.string2rank(&quot;14&quot;), card.copy$default$2, card.copy$default$3);
-    scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$1)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-  })(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
-  case _ =&gt; acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
-    &lt;synthetic&gt; &lt;artifact&gt; val x$2: it.parttimeteam.core.cards.Card = card;
-    scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$2)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-  })(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
-}))
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          751
-        </td>
-        <td>
-          1784
-          -
-          1799
+          1482
         </td>
         <td>
           TypeApply
@@ -936,36 +763,72 @@
         </td>
       </tr><tr>
         <td>
-          62
+          52
         </td>
         <td>
-          596
+          611
         </td>
         <td>
-          1840
+          1452
           -
-          1849
+          1755
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          it.parttimeteam.core.cards.Card.rank
+          scala.collection.TraversableOnce.foldLeft
         </td>
         <td style="background: #AEF1AE">
-          card.rank
+          cards.foldLeft[Seq[it.parttimeteam.core.cards.Card]](scala.collection.Seq.empty[it.parttimeteam.core.cards.Card])(((acc: Seq[it.parttimeteam.core.cards.Card], card: it.parttimeteam.core.cards.Card) =&gt; acc match {
+  case scala.collection.immutable.Nil =&gt; {
+    &lt;synthetic&gt; &lt;artifact&gt; val x$1: it.parttimeteam.core.cards.Card = card;
+    scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$1)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
+  }
+  case _ =&gt; scala.Tuple2.apply[it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Rank](acc.last.rank, card.rank) match {
+    case (_1: it.parttimeteam.core.cards.Rank, _2: it.parttimeteam.core.cards.Rank)(it.parttimeteam.core.cards.Rank, it.parttimeteam.core.cards.Rank)(()it.parttimeteam.core.cards.Rank.King(), ()it.parttimeteam.core.cards.Rank.Ace()) =&gt; acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
+      &lt;synthetic&gt; &lt;artifact&gt; val x$2: it.parttimeteam.core.cards.Card = card.copy(cards.this.Rank.string2rank(&quot;14&quot;), card.copy$default$2, card.copy$default$3);
+      scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$2)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
+    })(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+    case _ =&gt; acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
+      &lt;synthetic&gt; &lt;artifact&gt; val x$3: it.parttimeteam.core.cards.Card = card;
+      scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$3)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
+    })(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+  }
+}))
         </td>
       </tr><tr>
         <td>
-          63
+          55
         </td>
         <td>
-          447
+          609
         </td>
         <td>
-          1917
+          1548
           -
-          1917
+          1554
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.immutable.List.+:
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](x$1)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          670
+        </td>
+        <td>
+          1548
+          -
+          1548
         </td>
         <td>
           TypeApply
@@ -978,15 +841,39 @@
         </td>
       </tr><tr>
         <td>
-          63
+          58
         </td>
         <td>
-          617
+          486
         </td>
         <td>
-          1890
+          1654
           -
-          1890
+          1692
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.++
+        </td>
+        <td style="background: #AEF1AE">
+          acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
+  &lt;synthetic&gt; &lt;artifact&gt; val x$2: it.parttimeteam.core.cards.Card = card.copy(cards.this.Rank.string2rank(&quot;14&quot;), card.copy$default$2, card.copy$default$3);
+  scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$2)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
+})(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          557
+        </td>
+        <td>
+          1658
+          -
+          1658
         </td>
         <td>
           TypeApply
@@ -999,60 +886,15 @@
         </td>
       </tr><tr>
         <td>
-          63
+          58
         </td>
         <td>
-          784
+          470
         </td>
         <td>
-          1917
+          1685
           -
-          1923
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.immutable.List.+:
-        </td>
-        <td style="background: #AEF1AE">
-          scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$1)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-        </td>
-      </tr><tr>
-        <td>
-          63
-        </td>
-        <td>
-          458
-        </td>
-        <td>
-          1886
-          -
-          1924
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.TraversableLike.++
-        </td>
-        <td style="background: #AEF1AE">
-          acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
-  &lt;synthetic&gt; &lt;artifact&gt; val x$1: it.parttimeteam.core.cards.Card = card.copy(cards.this.Rank.string2rank(&quot;14&quot;), card.copy$default$2, card.copy$default$3);
-  scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$1)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-})(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
-        </td>
-      </tr><tr>
-        <td>
-          64
-        </td>
-        <td>
-          740
-        </td>
-        <td>
-          1962
-          -
-          1962
+          1685
         </td>
         <td>
           TypeApply
@@ -1065,39 +907,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          58
         </td>
         <td>
-          754
+          715
         </td>
         <td>
-          1949
+          1685
           -
-          1969
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.TraversableLike.++
-        </td>
-        <td style="background: #AEF1AE">
-          acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
-  &lt;synthetic&gt; &lt;artifact&gt; val x$2: it.parttimeteam.core.cards.Card = card;
-  scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$2)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-})(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
-        </td>
-      </tr><tr>
-        <td>
-          64
-        </td>
-        <td>
-          661
-        </td>
-        <td>
-          1962
-          -
-          1968
+          1691
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1110,129 +928,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          59
         </td>
         <td>
-          493
+          678
         </td>
         <td>
-          1953
+          1713
           -
-          1953
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.Seq.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          735
-        </td>
-        <td>
-          2087
-          -
-          2344
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.TraversableOnce.foldLeft
-        </td>
-        <td style="background: #AEF1AE">
-          cards.foldLeft[Seq[it.parttimeteam.core.cards.Card]](scala.collection.Seq.empty[it.parttimeteam.core.cards.Card])(((acc: Seq[it.parttimeteam.core.cards.Card], card: it.parttimeteam.core.cards.Card) =&gt; card.rank match {
-  case ()it.parttimeteam.core.cards.Rank.Ace() if acc.exists(((x$3: it.parttimeteam.core.cards.Card) =&gt; x$3.rank.==(it.parttimeteam.core.cards.Rank.OverflowAce.apply()))).unary_! =&gt; acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
-    &lt;synthetic&gt; &lt;artifact&gt; val x$4: it.parttimeteam.core.cards.Card = card.copy(cards.this.Rank.string2rank(&quot;14&quot;), card.copy$default$2, card.copy$default$3);
-    scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$4)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-  })(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
-  case _ =&gt; acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
-    &lt;synthetic&gt; &lt;artifact&gt; val x$5: it.parttimeteam.core.cards.Card = card;
-    scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$5)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-  })(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
-}))
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          448
-        </td>
-        <td>
-          2102
-          -
-          2117
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.generic.GenericCompanion.empty
-        </td>
-        <td style="background: #AEF1AE">
-          scala.collection.Seq.empty[it.parttimeteam.core.cards.Card]
-        </td>
-      </tr><tr>
-        <td>
-          70
-        </td>
-        <td>
-          776
-        </td>
-        <td>
-          2154
-          -
-          2163
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Card.rank
-        </td>
-        <td style="background: #AEF1AE">
-          card.rank
-        </td>
-      </tr><tr>
-        <td>
-          71
-        </td>
-        <td>
-          499
-        </td>
-        <td>
-          2274
-          -
-          2280
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.immutable.List.+:
-        </td>
-        <td style="background: #AEF1AE">
-          scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$4)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-        </td>
-      </tr><tr>
-        <td>
-          71
-        </td>
-        <td>
-          603
-        </td>
-        <td>
-          2243
-          -
-          2281
+          1733
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1242,21 +946,42 @@
         </td>
         <td style="background: #AEF1AE">
           acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
-  &lt;synthetic&gt; &lt;artifact&gt; val x$4: it.parttimeteam.core.cards.Card = card.copy(cards.this.Rank.string2rank(&quot;14&quot;), card.copy$default$2, card.copy$default$3);
-  scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$4)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
+  &lt;synthetic&gt; &lt;artifact&gt; val x$3: it.parttimeteam.core.cards.Card = card;
+  scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$3)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
 })(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
         </td>
       </tr><tr>
         <td>
-          71
+          59
         </td>
         <td>
-          579
+          597
         </td>
         <td>
-          2274
+          1726
           -
-          2274
+          1732
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.immutable.List.+:
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$3)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          734
+        </td>
+        <td>
+          1726
+          -
+          1726
         </td>
         <td>
           TypeApply
@@ -1269,15 +994,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          59
         </td>
         <td>
-          746
+          437
         </td>
         <td>
-          2247
+          1717
           -
-          2247
+          1717
         </td>
         <td>
           TypeApply
@@ -1290,165 +1015,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          69
         </td>
         <td>
-          461
+          459
         </td>
         <td>
-          2210
+          1885
           -
-          2238
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.==
-        </td>
-        <td style="background: #AEF1AE">
-          x$3.rank.==(it.parttimeteam.core.cards.Rank.OverflowAce.apply())
-        </td>
-      </tr><tr>
-        <td>
-          71
-        </td>
-        <td>
-          733
-        </td>
-        <td>
-          2198
-          -
-          2239
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Boolean.unary_!
-        </td>
-        <td style="background: #AEF1AE">
-          acc.exists(((x$3: it.parttimeteam.core.cards.Card) =&gt; x$3.rank.==(it.parttimeteam.core.cards.Rank.OverflowAce.apply()))).unary_!
-        </td>
-      </tr><tr>
-        <td>
-          71
-        </td>
-        <td>
-          613
-        </td>
-        <td>
-          2220
-          -
-          2238
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.cards.Rank.OverflowAce.apply
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.core.cards.Rank.OverflowAce.apply()
-        </td>
-      </tr><tr>
-        <td>
-          72
-        </td>
-        <td>
-          451
-        </td>
-        <td>
-          2304
-          -
-          2324
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.TraversableLike.++
-        </td>
-        <td style="background: #AEF1AE">
-          acc.++[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]]({
-  &lt;synthetic&gt; &lt;artifact&gt; val x$5: it.parttimeteam.core.cards.Card = card;
-  scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$5)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-})(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
-        </td>
-      </tr><tr>
-        <td>
-          72
-        </td>
-        <td>
-          436
-        </td>
-        <td>
-          2317
-          -
-          2317
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.immutable.List.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card]
-        </td>
-      </tr><tr>
-        <td>
-          72
-        </td>
-        <td>
-          638
-        </td>
-        <td>
-          2308
-          -
-          2308
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.Seq.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
-        </td>
-      </tr><tr>
-        <td>
-          72
-        </td>
-        <td>
-          798
-        </td>
-        <td>
-          2317
-          -
-          2323
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.immutable.List.+:
-        </td>
-        <td style="background: #AEF1AE">
-          scala.collection.immutable.Nil.+:[it.parttimeteam.core.cards.Card, List[it.parttimeteam.core.cards.Card]](x$5)(immutable.this.List.canBuildFrom[it.parttimeteam.core.cards.Card])
-        </td>
-      </tr><tr>
-        <td>
-          85
-        </td>
-        <td>
-          552
-        </td>
-        <td>
-          2509
-          -
-          2527
+          1903
         </td>
         <td>
           Select
@@ -1461,36 +1036,15 @@
         </td>
       </tr><tr>
         <td>
-          86
+          70
         </td>
         <td>
-          488
+          559
         </td>
         <td>
-          2537
+          1913
           -
-          2609
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.String.+
-        </td>
-        <td style="background: #AEF1AE">
-          PrologGameConverter.this.startList.+(tupleCard.mkString(&quot;,&quot;)).+(&quot;],&quot;).+(variable.get.getName()).+(&quot;).&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          769
-        </td>
-        <td>
-          2537
-          -
-          2609
+          1985
         </td>
         <td>
           Block
@@ -1503,57 +1057,36 @@
         </td>
       </tr><tr>
         <td>
-          88
+          70
         </td>
         <td>
-          439
+          705
         </td>
         <td>
-          2667
+          1913
           -
-          2674
+          1985
         </td>
         <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.prolog.converter.PrologGameConverter.endList
-        </td>
-        <td style="background: #AEF1AE">
-          PrologGameConverter.this.endList
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          624
-        </td>
-        <td>
-          2629
-          -
-          2674
-        </td>
-        <td>
-          Block
+          Apply
         </td>
         <td>
           java.lang.String.+
         </td>
         <td style="background: #AEF1AE">
-          PrologGameConverter.this.startList.+(tupleCard.mkString(&quot;,&quot;)).+(PrologGameConverter.this.endList)
+          PrologGameConverter.this.startList.+(tupleCard.mkString(&quot;,&quot;)).+(&quot;],&quot;).+(variable.get.getName()).+(&quot;).&quot;)
         </td>
       </tr><tr>
         <td>
-          88
+          72
         </td>
         <td>
-          785
+          579
         </td>
         <td>
-          2629
+          2005
           -
-          2674
+          2050
         </td>
         <td>
           Apply
@@ -1566,15 +1099,36 @@
         </td>
       </tr><tr>
         <td>
-          88
+          72
         </td>
         <td>
-          598
+          429
         </td>
         <td>
-          2641
+          2005
           -
-          2664
+          2050
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          java.lang.String.+
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGameConverter.this.startList.+(tupleCard.mkString(&quot;,&quot;)).+(PrologGameConverter.this.endList)
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          419
+        </td>
+        <td>
+          2017
+          -
+          2040
         </td>
         <td>
           Apply
@@ -1584,6 +1138,27 @@
         </td>
         <td style="background: #AEF1AE">
           tupleCard.mkString(&quot;,&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          736
+        </td>
+        <td>
+          2043
+          -
+          2050
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.converter.PrologGameConverter.endList
+        </td>
+        <td style="background: #AEF1AE">
+          PrologGameConverter.this.endList
         </td>
       </tr>
     </table>
