@@ -47,7 +47,7 @@ class PrologGameConverterSuite extends AnyFunSuite {
 
   test("Convert a tuple sequence into string") {
 
-    val tupleSeq: Seq[(Int, String)] = Seq(QUEEN_CLUBS, KING_CLUBS) map (card => (card.rank.value, card.suit.name))
+    val tupleSeq: Seq[(Int, String, String)] = Seq(QUEEN_CLUBS, KING_CLUBS) map (card => (card.rank.value, card.suit.shortName, card.color.shortName))
     val varX = new Var("X")
 
     assertResult("([" + tupleSeq.mkString(",") + "]).")(prologConverter.prologList(tupleSeq)(None))
