@@ -47,7 +47,12 @@ object PrologUtils {
    */
   def replaceTermToString(term: Term, replace: String): String = term.toString.replace(replace, "")
 
-  // TODO da testare, add scalaDoc
+  /**
+   * Split rank, suit and color in array of string
+   *
+   * @param rankSuitColor array of string to split
+   * @return tuple of string
+   */
   def splitRankSuitColor(rankSuitColor: Array[String]): (String, String, String) = {
 
     val rank: String = rankSuitColor(0)

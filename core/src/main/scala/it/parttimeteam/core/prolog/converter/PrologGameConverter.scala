@@ -35,8 +35,6 @@ class PrologGameConverter extends PrologConverter {
     val tupleCard = cardsList map (card => {
       PrologUtils.splitRankSuitColor(card.toString().split(","))
     })
-
-    // TODO da correggere ritorno delle tuple
     tupleCard.map(item => Card(Rank.string2rank(item._1), Suit.string2suit(item._2), Color.string2color(item._3)))
   }
 
