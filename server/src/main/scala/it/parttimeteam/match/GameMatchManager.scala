@@ -37,7 +37,7 @@ class GameMatchManager(private val gameApi: GameInterface) {
   }
 
   private def nextStateOnPlayerMove(currentState: GameState, playerInTurn: GamePlayer, updatedHand: Hand, updatedBoard: Board) = {
-    if (gameApi.validateTurn(updatedBoard, updatedHand)) {
+    if (gameApi.validateMove(updatedBoard, updatedHand)) {
       val updatedState = currentState
         .getPlayer(playerInTurn.id)
         .map(p => currentState.updatePlayer(p.copy(

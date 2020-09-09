@@ -105,29 +105,29 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     case PlayAgainEvent => playAgain()
   }
 
-  private def getMockState: PlayerGameState = {
+  private def getMockState: ClientGameState = {
     val board: Board = Board(
       List(
-        CardCombination("#1", Seq(Card("A", "♠", "B"), Card("2", "♠", "B"))),
-        CardCombination("#2", Seq(Card("3", "♠", "B"), Card("4", "♠", "B"))),
-        CardCombination("#3", Seq(Card("5", "♠", "B"), Card("6", "♠", "B"), Card("7", "♠", "B")))
+        CardCombination("#1", Seq(Card("1", "S", "B"), Card("2", "S", "B"))),
+        CardCombination("#2", Seq(Card("3", "S", "B"), Card("4", "S", "B"))),
+        CardCombination("#3", Seq(Card("5", "S", "B"), Card("6", "S", "B"), Card("7", "S", "B")))
       )
     )
 
     var hand: Hand = Hand()
     hand = hand.addPlayerCards(Seq(
-      Card("A", "♥", "B"),
-      Card("2", "♥", "B"),
-      Card("3", "♥", "B"),
-      Card("4", "♥", "B"),
-      Card("5", "♥", "B"),
-      Card("6", "♥", "B"),
-      Card("7", "♥", "B")
+      Card("1", "H", "B"),
+      Card("2", "H", "B"),
+      Card("3", "H", "B"),
+      Card("4", "H", "B"),
+      Card("5", "H", "B"),
+      Card("6", "H", "B"),
+      Card("7", "H", "B")
     ))
 
     hand = hand.addBoardCards(Seq(
-      Card("K", "♥", "B"),
-      Card("Q", "♠", "B")
+      Card("13", "H", "B"),
+      Card("12", "S", "B")
     ))
 
     val players: Seq[Opponent] = List(
@@ -136,7 +136,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       Opponent("Lorenzo", 3),
     )
 
-    PlayerGameState(board, hand, players)
+    ClientGameState(PlayerGameState(board, hand, players), true, true, true, true)
   }
 
   override def end(): Unit = {

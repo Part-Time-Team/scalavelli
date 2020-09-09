@@ -7,6 +7,7 @@ import it.parttimeteam.common.{GamePlayer, IdGenerator}
 import it.parttimeteam.core.GameInterfaceImpl
 import it.parttimeteam.messages.LobbyMessages._
 import it.parttimeteam.messages.PrivateLobbyIdNotValidError
+import it.parttimeteam.utils.CustomLogger
 
 object LobbyManagerActor {
 
@@ -27,6 +28,7 @@ class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
 
   override def receive: Receive = {
     case Connect(clientRef) => {
+      log.info(s"client $clientRef is asking for a connection")
       val clientId = generateId
       connectedPlayers = connectedPlayers + (clientId -> clientRef)
       context.watch(clientRef)
@@ -34,6 +36,7 @@ class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
     }
 
     case JoinPublicLobby(clientId, username, numberOfPlayers) => {
+      log.info(s"client $clientId wants to join a public lobby")
       this.executeOnClientRefPresent(clientId) { ref =>
         val lobbyType = PlayerNumberLobby(numberOfPlayers)
         this.lobbyManger.addPlayer(GamePlayer(clientId, username, ref), lobbyType)
@@ -62,10 +65,13 @@ class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
         }
       }
 
-    case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
+    case LeaveLobby(userId) => {
+      log.info(s"client $userId")
+      this.lobbyManger.removePlayer(userId)
+    }
 
     case Terminated(actorRef) => {
-      log.debug(s"terminated $actorRef, connected players: $connectedPlayers")
+      log.info(s"terminated $actorRef, connected players: $connectedPlayers")
       removeClient(actorRef)
     }
 
@@ -104,13 +110,13 @@ class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
   private def removeClient(actorRef: ActorRef): Unit = {
     this.connectedPlayers.find(_._2 == actorRef) match {
       case Some((userId, _)) => {
-        log.debug(s"removing client $actorRef from lobby and connected players list")
+        log.info(s"removing client $actorRef from lobby and connected players list")
         context.unwatch(actorRef)
         this.lobbyManger.removePlayer(userId)
         this.connectedPlayers = this.connectedPlayers - userId
-        log.debug(s"removed client $actorRef from lobby and connected players list")
+        log.info(s"removed client $actorRef from lobby and connected players list")
       }
-      case None => log.warning(s"client $actorRef not found")
+      case None => log.info(s"client $actorRef not found")
     }
   }
 
