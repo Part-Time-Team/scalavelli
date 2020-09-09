@@ -1,6 +1,7 @@
 package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.gamestate.Opponent
+import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.utils.MachiavelliLabel
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{HBox, TilePane, VBox}
@@ -19,6 +20,8 @@ object OtherPlayersPane {
     /** @inheritdoc*/
     override def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
       this.children.clear()
+      this.hgap = ViewConfig.TILE_GAP
+      this.vgap = ViewConfig.TILE_GAP
 
       for (player: Opponent <- otherPlayers) {
         val nameLabel = MachiavelliLabel(player.name)
