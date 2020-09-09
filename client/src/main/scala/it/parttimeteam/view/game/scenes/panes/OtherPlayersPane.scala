@@ -6,7 +6,7 @@ import it.parttimeteam.view.utils.MachiavelliLabel
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{HBox, TilePane, VBox}
 
-trait OtherPlayersPane extends TilePane {
+trait OtherPlayersPane extends VBox {
 
   def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit
 }
@@ -14,14 +14,19 @@ trait OtherPlayersPane extends TilePane {
 object OtherPlayersPane {
 
   class OtherPlayersPaneImpl extends OtherPlayersPane {
-    this.setPrefColumns(2)
+    var label = MachiavelliLabel("Other players:")
+    label.getStyleClass.add("boldText")
+    var pane: TilePane = new TilePane()
+    pane.setPrefColumns(2)
+
+    this.children.addAll(label, pane)
 
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
-      this.children.clear()
-      this.hgap = ViewConfig.TILE_GAP
-      this.vgap = ViewConfig.TILE_GAP
+      pane.children.clear()
+      pane.hgap = ViewConfig.TILE_GAP
+      pane.vgap = ViewConfig.TILE_GAP
 
       for (player: Opponent <- otherPlayers) {
         val nameLabel = MachiavelliLabel(player.name)
@@ -37,7 +42,7 @@ object OtherPlayersPane {
         cardInfoContainer.children.addAll(cardImage, cardsNumberLabel)
         playerInfoContainer.children.addAll(nameLabel, cardInfoContainer)
 
-        this.children.add(playerInfoContainer)
+        pane.children.add(playerInfoContainer)
       }
     }
   }

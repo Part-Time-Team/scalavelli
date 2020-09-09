@@ -7,8 +7,7 @@ import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 import it.parttimeteam.view.game.scenes.model.GameCardCombination
 import it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl
 import scalafx.geometry.Insets
-import scalafx.scene.control.ScrollPane
-import scalafx.scene.layout.{TilePane, VBox}
+import scalafx.scene.layout.TilePane
 
 /**
   * Pane which contains the game board.
@@ -35,7 +34,7 @@ object BoardPane {
     var selectedCards: Seq[Card] = Seq()
 
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setBoard(board: Board): Unit = {
       this.children.clear()
 
@@ -45,14 +44,14 @@ object BoardPane {
       }
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def disableActions(): Unit = {
       this.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].disableActions()
       })
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def enableActions(): Unit = {
       this.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].enableActions()
