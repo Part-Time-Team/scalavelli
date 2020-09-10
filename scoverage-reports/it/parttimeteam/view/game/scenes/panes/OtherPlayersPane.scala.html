@@ -25,53 +25,45 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game.scenes.panes
 </span>2 <span style=''>
 </span>3 <span style=''>import it.parttimeteam.gamestate.Opponent
-</span>4 <span style=''>import it.parttimeteam.view.ViewConfig
-</span>5 <span style=''>import it.parttimeteam.view.utils.MachiavelliLabel
-</span>6 <span style=''>import scalafx.scene.image.{Image, ImageView}
-</span>7 <span style=''>import scalafx.scene.layout.{HBox, TilePane, VBox}
-</span>8 <span style=''>
-</span>9 <span style=''>trait OtherPlayersPane extends VBox {
-</span>10 <span style=''>
-</span>11 <span style=''>  def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit
-</span>12 <span style=''>}
-</span>13 <span style=''>
-</span>14 <span style=''>object OtherPlayersPane {
-</span>15 <span style=''>
-</span>16 <span style=''>  class OtherPlayersPaneImpl extends OtherPlayersPane {
-</span>17 <span style=''>    var label = </span><span style='background: #F0ADAD'>MachiavelliLabel(&quot;Other players:&quot;)</span><span style=''>
-</span>18 <span style=''>    </span><span style='background: #F0ADAD'>label.getStyleClass.add(&quot;boldText&quot;)</span><span style=''>
-</span>19 <span style=''>    var pane: TilePane = </span><span style='background: #F0ADAD'>new TilePane()</span><span style=''>
-</span>20 <span style=''>    </span><span style='background: #F0ADAD'>pane.setPrefColumns(2)</span><span style=''>
-</span>21 <span style=''>
-</span>22 <span style=''>    </span><span style='background: #F0ADAD'>this.children.addAll(label, pane)</span><span style=''>
-</span>23 <span style=''>
-</span>24 <span style=''>
-</span>25 <span style=''>    /** @inheritdoc */
-</span>26 <span style=''>    override def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
-</span>27 <span style=''>      </span><span style='background: #F0ADAD'>pane.children.clear()</span><span style=''>
-</span>28 <span style=''>      </span><span style='background: #F0ADAD'>pane.hgap = ViewConfig.TILE_GAP</span><span style=''>
-</span>29 <span style=''>      </span><span style='background: #F0ADAD'>pane.vgap = ViewConfig.TILE_GAP</span><span style=''>
-</span>30 <span style=''>
-</span>31 <span style=''>      </span><span style='background: #F0ADAD'>for (player: Opponent &lt;- otherPlayers) {
-</span>32 <span style=''></span><span style='background: #F0ADAD'>        val nameLabel = MachiavelliLabel(player.name)
-</span>33 <span style=''></span><span style='background: #F0ADAD'>        val cardsNumberLabel = MachiavelliLabel(player.cardsNumber.toString)
-</span>34 <span style=''></span><span style='background: #F0ADAD'>
-</span>35 <span style=''></span><span style='background: #F0ADAD'>        val playerInfoContainer: VBox = new VBox()
-</span>36 <span style=''></span><span style='background: #F0ADAD'>        val cardInfoContainer: HBox = new HBox()
-</span>37 <span style=''></span><span style='background: #F0ADAD'>
-</span>38 <span style=''></span><span style='background: #F0ADAD'>        val cardImage: ImageView = new ImageView(new Image(&quot;images/cards/backBlue.png&quot;))
-</span>39 <span style=''></span><span style='background: #F0ADAD'>        cardImage.fitWidth = 20d
-</span>40 <span style=''></span><span style='background: #F0ADAD'>        cardImage.preserveRatio = true
-</span>41 <span style=''></span><span style='background: #F0ADAD'>
-</span>42 <span style=''></span><span style='background: #F0ADAD'>        cardInfoContainer.children.addAll(cardImage, cardsNumberLabel)
-</span>43 <span style=''></span><span style='background: #F0ADAD'>        playerInfoContainer.children.addAll(nameLabel, cardInfoContainer)
-</span>44 <span style=''></span><span style='background: #F0ADAD'>
-</span>45 <span style=''></span><span style='background: #F0ADAD'>        pane.children.add(playerInfoContainer)
-</span>46 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
-</span>47 <span style=''>    }
-</span>48 <span style=''>  }
-</span>49 <span style=''>
-</span>50 <span style=''>}
+</span>4 <span style=''>import it.parttimeteam.view.utils.MachiavelliLabel
+</span>5 <span style=''>import scalafx.scene.image.{Image, ImageView}
+</span>6 <span style=''>import scalafx.scene.layout.{HBox, TilePane, VBox}
+</span>7 <span style=''>
+</span>8 <span style=''>trait OtherPlayersPane extends TilePane {
+</span>9 <span style=''>
+</span>10 <span style=''>  def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit
+</span>11 <span style=''>}
+</span>12 <span style=''>
+</span>13 <span style=''>object OtherPlayersPane {
+</span>14 <span style=''>
+</span>15 <span style=''>  class OtherPlayersPaneImpl extends OtherPlayersPane {
+</span>16 <span style=''>    </span><span style='background: #F0ADAD'>this.setPrefColumns(2)</span><span style=''>
+</span>17 <span style=''>
+</span>18 <span style=''>
+</span>19 <span style=''>    /** @inheritdoc*/
+</span>20 <span style=''>    override def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
+</span>21 <span style=''>      </span><span style='background: #F0ADAD'>this.children.clear()</span><span style=''>
+</span>22 <span style=''>
+</span>23 <span style=''>      </span><span style='background: #F0ADAD'>for (player: Opponent &lt;- otherPlayers) {
+</span>24 <span style=''></span><span style='background: #F0ADAD'>        val nameLabel = MachiavelliLabel(player.name)
+</span>25 <span style=''></span><span style='background: #F0ADAD'>        val cardsNumberLabel = MachiavelliLabel(player.cardsNumber.toString)
+</span>26 <span style=''></span><span style='background: #F0ADAD'>
+</span>27 <span style=''></span><span style='background: #F0ADAD'>        val playerInfoContainer: VBox = new VBox()
+</span>28 <span style=''></span><span style='background: #F0ADAD'>        val cardInfoContainer: HBox = new HBox()
+</span>29 <span style=''></span><span style='background: #F0ADAD'>
+</span>30 <span style=''></span><span style='background: #F0ADAD'>        val cardImage: ImageView = new ImageView(new Image(&quot;images/cards/backBlue.png&quot;))
+</span>31 <span style=''></span><span style='background: #F0ADAD'>        cardImage.fitWidth = 20d
+</span>32 <span style=''></span><span style='background: #F0ADAD'>        cardImage.preserveRatio = true
+</span>33 <span style=''></span><span style='background: #F0ADAD'>
+</span>34 <span style=''></span><span style='background: #F0ADAD'>        cardInfoContainer.children.addAll(cardImage, cardsNumberLabel)
+</span>35 <span style=''></span><span style='background: #F0ADAD'>        playerInfoContainer.children.addAll(nameLabel, cardInfoContainer)
+</span>36 <span style=''></span><span style='background: #F0ADAD'>
+</span>37 <span style=''></span><span style='background: #F0ADAD'>        this.children.add(playerInfoContainer)
+</span>38 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>39 <span style=''>    }
+</span>40 <span style=''>  }
+</span>41 <span style=''>
+</span>42 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -85,99 +77,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          17
+          16
         </td>
         <td>
-          2049
+          1823
         </td>
         <td>
-          476
+          429
           -
-          510
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.utils.MachiavelliLabel.apply
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliLabel.apply(&quot;Other players:&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          1373
-        </td>
-        <td>
-          515
-          -
-          550
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.util.List.add
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Label.sfxLabel2jfx(OtherPlayersPaneImpl.this.label).getStyleClass().add(&quot;boldText&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          2116
-        </td>
-        <td>
-          576
-          -
-          590
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.layout.TilePane.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new scalafx.scene.layout.TilePane(layout.this.TilePane.&lt;init&gt;$default$1)
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          2378
-        </td>
-        <td>
-          576
-          -
-          576
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scalafx.scene.layout.TilePane.&lt;init&gt;$default$1
-        </td>
-        <td style="background: #F0ADAD">
-          layout.this.TilePane.&lt;init&gt;$default$1
-        </td>
-      </tr><tr>
-        <td>
-          20
-        </td>
-        <td>
-          1449
-        </td>
-        <td>
-          595
-          -
-          617
+          451
         </td>
         <td>
           Apply
@@ -186,124 +94,19 @@
           javafx.scene.layout.TilePane.setPrefColumns
         </td>
         <td style="background: #F0ADAD">
-          layout.this.TilePane.sfxTilePane2jfx(OtherPlayersPaneImpl.this.pane).setPrefColumns(2)
+          layout.this.TilePane.sfxTilePane2jfx(this).setPrefColumns(2)
         </td>
       </tr><tr>
         <td>
-          22
+          21
         </td>
         <td>
-          1999
+          1529
         </td>
         <td>
-          623
+          554
           -
-          656
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.collections.ObservableList.addAll
-        </td>
-        <td style="background: #F0ADAD">
-          this.children.addAll(control.this.Label.sfxLabel2jfx(OtherPlayersPaneImpl.this.label), layout.this.TilePane.sfxTilePane2jfx(OtherPlayersPaneImpl.this.pane))
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          1020
-        </td>
-        <td>
-          651
-          -
-          655
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.layout.TilePane.sfxTilePane2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          layout.this.TilePane.sfxTilePane2jfx(OtherPlayersPaneImpl.this.pane)
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          1322
-        </td>
-        <td>
-          651
-          -
-          655
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.OtherPlayersPane.OtherPlayersPaneImpl.pane
-        </td>
-        <td style="background: #F0ADAD">
-          OtherPlayersPaneImpl.this.pane
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          1884
-        </td>
-        <td>
-          644
-          -
-          649
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.control.Label.sfxLabel2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Label.sfxLabel2jfx(OtherPlayersPaneImpl.this.label)
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          915
-        </td>
-        <td>
-          644
-          -
-          649
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.OtherPlayersPane.OtherPlayersPaneImpl.label
-        </td>
-        <td style="background: #F0ADAD">
-          OtherPlayersPaneImpl.this.label
-        </td>
-      </tr><tr>
-        <td>
-          27
-        </td>
-        <td>
-          1428
-        </td>
-        <td>
-          760
-          -
-          781
+          575
         </td>
         <td>
           Apply
@@ -312,103 +115,19 @@
           java.util.List.clear
         </td>
         <td style="background: #F0ADAD">
-          OtherPlayersPaneImpl.this.pane.children.clear()
+          this.children.clear()
         </td>
       </tr><tr>
         <td>
-          28
+          23
         </td>
         <td>
-          2094
+          970
         </td>
         <td>
-          788
+          583
           -
-          819
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.layout.TilePane.hgap_=
-        </td>
-        <td style="background: #F0ADAD">
-          OtherPlayersPaneImpl.this.pane.hgap_=(it.parttimeteam.view.ViewConfig.TILE_GAP)
-        </td>
-      </tr><tr>
-        <td>
-          28
-        </td>
-        <td>
-          2384
-        </td>
-        <td>
-          800
-          -
-          819
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.ViewConfig.TILE_GAP
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.view.ViewConfig.TILE_GAP
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          1527
-        </td>
-        <td>
-          838
-          -
-          857
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.ViewConfig.TILE_GAP
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.view.ViewConfig.TILE_GAP
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          920
-        </td>
-        <td>
-          826
-          -
-          857
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.layout.TilePane.vgap_=
-        </td>
-        <td style="background: #F0ADAD">
-          OtherPlayersPaneImpl.this.pane.vgap_=(it.parttimeteam.view.ViewConfig.TILE_GAP)
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          1852
-        </td>
-        <td>
-          865
-          -
-          1501
+          1219
         </td>
         <td>
           Apply
@@ -430,41 +149,20 @@
   cardImage.preserveRatio_=(true);
   cardInfoContainer.children.addAll(image.this.ImageView.sfxImageView2jfx(cardImage), control.this.Label.sfxLabel2jfx(cardsNumberLabel));
   playerInfoContainer.children.addAll(control.this.Label.sfxLabel2jfx(nameLabel), layout.this.HBox.sfxHBox2jfx(cardInfoContainer));
-  OtherPlayersPaneImpl.this.pane.children.add(layout.this.VBox.sfxVBox2jfx(playerInfoContainer))
+  this.children.add(layout.this.VBox.sfxVBox2jfx(playerInfoContainer))
 }))
         </td>
       </tr><tr>
         <td>
-          32
+          24
         </td>
         <td>
-          1932
+          1891
         </td>
         <td>
-          947
+          648
           -
-          958
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.gamestate.Opponent.name
-        </td>
-        <td style="background: #F0ADAD">
-          player.name
-        </td>
-      </tr><tr>
-        <td>
-          32
-        </td>
-        <td>
-          1325
-        </td>
-        <td>
-          930
-          -
-          959
+          677
         </td>
         <td>
           Apply
@@ -477,36 +175,36 @@
         </td>
       </tr><tr>
         <td>
-          33
+          24
         </td>
         <td>
-          1974
+          907
         </td>
         <td>
-          991
+          665
           -
-          1036
+          676
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          it.parttimeteam.view.utils.MachiavelliLabel.apply
+          it.parttimeteam.gamestate.Opponent.name
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliLabel.apply(player.cardsNumber.toString())
+          player.name
         </td>
       </tr><tr>
         <td>
-          33
+          25
         </td>
         <td>
-          1026
+          1348
         </td>
         <td>
-          1008
+          726
           -
-          1035
+          753
         </td>
         <td>
           Apply
@@ -519,15 +217,36 @@
         </td>
       </tr><tr>
         <td>
-          35
+          25
         </td>
         <td>
-          1429
+          1024
         </td>
         <td>
-          1078
+          709
           -
-          1088
+          754
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.MachiavelliLabel.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.MachiavelliLabel.apply(player.cardsNumber.toString())
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          2014
+        </td>
+        <td>
+          796
+          -
+          806
         </td>
         <td>
           Apply
@@ -540,15 +259,15 @@
         </td>
       </tr><tr>
         <td>
-          36
+          28
         </td>
         <td>
-          2373
+          1396
         </td>
         <td>
-          1127
+          845
           -
-          1137
+          855
         </td>
         <td>
           Apply
@@ -561,36 +280,15 @@
         </td>
       </tr><tr>
         <td>
-          38
+          30
         </td>
         <td>
-          1823
+          1806
         </td>
         <td>
-          1188
+          892
           -
-          1226
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.image.Image.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new scalafx.scene.image.Image(&quot;images/cards/backBlue.png&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          38
-        </td>
-        <td>
-          1470
-        </td>
-        <td>
-          1174
-          -
-          1227
+          945
         </td>
         <td>
           Apply
@@ -603,15 +301,36 @@
         </td>
       </tr><tr>
         <td>
-          39
+          30
         </td>
         <td>
-          894
+          841
         </td>
         <td>
-          1236
+          906
           -
-          1260
+          944
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.image.Image.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.image.Image(&quot;images/cards/backBlue.png&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1502
+        </td>
+        <td>
+          954
+          -
+          978
         </td>
         <td>
           Apply
@@ -624,15 +343,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          32
         </td>
         <td>
-          1934
+          899
         </td>
         <td>
-          1269
+          987
           -
-          1299
+          1017
         </td>
         <td>
           Apply
@@ -645,15 +364,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          34
         </td>
         <td>
-          1979
+          2278
         </td>
         <td>
-          1309
+          1027
           -
-          1371
+          1089
         </td>
         <td>
           Apply
@@ -666,15 +385,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          34
         </td>
         <td>
-          1297
+          1895
         </td>
         <td>
-          1343
+          1061
           -
-          1352
+          1070
         </td>
         <td>
           ApplyImplicitView
@@ -687,15 +406,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          34
         </td>
         <td>
-          993
+          1310
         </td>
         <td>
-          1354
+          1072
           -
-          1370
+          1088
         </td>
         <td>
           ApplyImplicitView
@@ -708,15 +427,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          35
         </td>
         <td>
-          1778
+          846
         </td>
         <td>
-          1380
+          1098
           -
-          1445
+          1163
         </td>
         <td>
           Apply
@@ -729,36 +448,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          35
         </td>
         <td>
-          2375
+          2036
         </td>
         <td>
-          1427
+          1134
           -
-          1444
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.layout.HBox.sfxHBox2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          layout.this.HBox.sfxHBox2jfx(cardInfoContainer)
-        </td>
-      </tr><tr>
-        <td>
-          43
-        </td>
-        <td>
-          1409
-        </td>
-        <td>
-          1416
-          -
-          1425
+          1143
         </td>
         <td>
           ApplyImplicitView
@@ -771,36 +469,36 @@
         </td>
       </tr><tr>
         <td>
-          45
+          35
         </td>
         <td>
-          901
+          1376
         </td>
         <td>
-          1455
+          1145
           -
-          1493
+          1162
         </td>
         <td>
-          Apply
+          ApplyImplicitView
         </td>
         <td>
-          java.util.List.add
+          scalafx.scene.layout.HBox.sfxHBox2jfx
         </td>
         <td style="background: #F0ADAD">
-          OtherPlayersPaneImpl.this.pane.children.add(layout.this.VBox.sfxVBox2jfx(playerInfoContainer))
+          layout.this.HBox.sfxHBox2jfx(cardInfoContainer)
         </td>
       </tr><tr>
         <td>
-          45
+          37
         </td>
         <td>
-          1460
+          1808
         </td>
         <td>
-          1473
+          1191
           -
-          1492
+          1210
         </td>
         <td>
           ApplyImplicitView
@@ -810,6 +508,27 @@
         </td>
         <td style="background: #F0ADAD">
           layout.this.VBox.sfxVBox2jfx(playerInfoContainer)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1488
+        </td>
+        <td>
+          1173
+          -
+          1211
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.add
+        </td>
+        <td style="background: #F0ADAD">
+          this.children.add(layout.this.VBox.sfxVBox2jfx(playerInfoContainer))
         </td>
       </tr>
     </table>

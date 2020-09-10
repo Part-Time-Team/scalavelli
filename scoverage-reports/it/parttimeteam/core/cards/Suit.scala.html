@@ -37,45 +37,50 @@
 </span>13 <span style=''>
 </span>14 <span style=''>object Suit {
 </span>15 <span style=''>
-</span>16 <span style=''>  val HEARTS = </span><span style='background: #AEF1AE'>&quot;H&quot;</span><span style=''>
-</span>17 <span style=''>  val DIAMONDS = </span><span style='background: #AEF1AE'>&quot;D&quot;</span><span style=''>
-</span>18 <span style=''>  val SPADES = </span><span style='background: #AEF1AE'>&quot;S&quot;</span><span style=''>
-</span>19 <span style=''>  val CLUBS = </span><span style='background: #AEF1AE'>&quot;C&quot;</span><span style=''>
+</span>16 <span style=''>  val HEARTS = </span><span style='background: #AEF1AE'>&quot;Hearts&quot;</span><span style=''>
+</span>17 <span style=''>  val DIAMONDS = </span><span style='background: #AEF1AE'>&quot;Diamonds&quot;</span><span style=''>
+</span>18 <span style=''>  val SPADES = </span><span style='background: #AEF1AE'>&quot;Spades&quot;</span><span style=''>
+</span>19 <span style=''>  val CLUBS = </span><span style='background: #AEF1AE'>&quot;Clubs&quot;</span><span style=''>
 </span>20 <span style=''>
-</span>21 <span style=''>  /**
-</span>22 <span style=''>   * The heart suit.
-</span>23 <span style=''>   */
-</span>24 <span style=''>  case class Hearts() extends Suit(&quot;Hearts&quot;, &quot;H&quot;, 0)
+</span>21 <span style=''>  val HEART_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♥&quot;</span><span style=''>
+</span>22 <span style=''>  val DIAMONDS_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♦&quot;</span><span style=''>
+</span>23 <span style=''>  val SPADES_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♠&quot;</span><span style=''>
+</span>24 <span style=''>  val CLUBS_SYMBOL = </span><span style='background: #AEF1AE'>&quot;♣&quot;</span><span style=''>
 </span>25 <span style=''>
 </span>26 <span style=''>  /**
-</span>27 <span style=''>   * The diamond suit.
+</span>27 <span style=''>   * The heart suit.
 </span>28 <span style=''>   */
-</span>29 <span style=''>  case class Diamonds() extends Suit(&quot;Diamonds&quot;, &quot;D&quot;, 1)
+</span>29 <span style=''>  case class Hearts() extends Suit(&quot;Hearts&quot;, &quot;♥&quot;, 0)
 </span>30 <span style=''>
 </span>31 <span style=''>  /**
-</span>32 <span style=''>   * The Club suit.
+</span>32 <span style=''>   * The diamond suit.
 </span>33 <span style=''>   */
-</span>34 <span style=''>  case class Clubs() extends Suit(&quot;Clubs&quot;, &quot;C&quot;, 2)
+</span>34 <span style=''>  case class Diamonds() extends Suit(&quot;Diamonds&quot;, &quot;♦&quot;, 1)
 </span>35 <span style=''>
 </span>36 <span style=''>  /**
-</span>37 <span style=''>   * The spade suit.
+</span>37 <span style=''>   * The Club suit.
 </span>38 <span style=''>   */
-</span>39 <span style=''>  case class Spades() extends Suit(&quot;Spades&quot;, &quot;S&quot;, 3)
+</span>39 <span style=''>  case class Clubs() extends Suit(&quot;Clubs&quot;, &quot;♣&quot;, 2)
 </span>40 <span style=''>
 </span>41 <span style=''>  /**
-</span>42 <span style=''>   * Transform a string in the matching suit.
-</span>43 <span style=''>   *
-</span>44 <span style=''>   * @param s String to convert.
-</span>45 <span style=''>   * @return Suit converted.
-</span>46 <span style=''>   */
-</span>47 <span style=''>  implicit def string2suit(s: String): Suit = s match {
-</span>48 <span style=''>    case this.HEARTS =&gt; </span><span style='background: #AEF1AE'>Hearts()</span><span style=''>
-</span>49 <span style=''>    case this.DIAMONDS =&gt; </span><span style='background: #AEF1AE'>Diamonds()</span><span style=''>
-</span>50 <span style=''>    case this.CLUBS =&gt; </span><span style='background: #AEF1AE'>Clubs()</span><span style=''>
-</span>51 <span style=''>    case this.SPADES =&gt; </span><span style='background: #AEF1AE'>Spades()</span><span style=''>
-</span>52 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(f&quot;Unknown suit $s&quot;)</span><span style=''>
-</span>53 <span style=''>  }
-</span>54 <span style=''>}
+</span>42 <span style=''>   * The spade suit.
+</span>43 <span style=''>   */
+</span>44 <span style=''>  case class Spades() extends Suit(&quot;Spades&quot;, &quot;♠&quot;, 3)
+</span>45 <span style=''>
+</span>46 <span style=''>  /**
+</span>47 <span style=''>   * Transform a string in the matching suit.
+</span>48 <span style=''>   *
+</span>49 <span style=''>   * @param s String to convert.
+</span>50 <span style=''>   * @return Suit converted.
+</span>51 <span style=''>   */
+</span>52 <span style=''>  implicit def string2suit(s: String): Suit = s match {
+</span>53 <span style=''>    case this.HEART_SYMBOL     | this.HEARTS =&gt; </span><span style='background: #AEF1AE'>Hearts()</span><span style=''>
+</span>54 <span style=''>    case this.DIAMONDS_SYMBOL  | this.DIAMONDS =&gt; </span><span style='background: #AEF1AE'>Diamonds()</span><span style=''>
+</span>55 <span style=''>    case this.CLUBS_SYMBOL     | this.CLUBS =&gt; </span><span style='background: #AEF1AE'>Clubs()</span><span style=''>
+</span>56 <span style=''>    case this.SPADES_SYMBOL    | this.SPADES =&gt; </span><span style='background: #AEF1AE'>Spades()</span><span style=''>
+</span>57 <span style=''>    case _ =&gt; </span><span style='background: #AEF1AE'>throw new RuntimeException(f&quot;Unknown suit $s&quot;)</span><span style=''>
+</span>58 <span style=''>  }
+</span>59 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -92,7 +97,7 @@
           11
         </td>
         <td>
-          837
+          528
         </td>
         <td>
           314
@@ -113,28 +118,7 @@
           11
         </td>
         <td>
-          600
-        </td>
-        <td>
-          298
-          -
-          321
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Integer.compareTo
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Predef.int2Integer(Suit.this.order).compareTo(scala.Predef.int2Integer(t.order))
-        </td>
-      </tr><tr>
-        <td>
-          11
-        </td>
-        <td>
-          755
+          375
         </td>
         <td>
           314
@@ -155,7 +139,7 @@
           11
         </td>
         <td>
-          553
+          691
         </td>
         <td>
           298
@@ -173,15 +157,36 @@
         </td>
       </tr><tr>
         <td>
+          11
+        </td>
+        <td>
+          637
+        </td>
+        <td>
+          298
+          -
+          321
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Integer.compareTo
+        </td>
+        <td style="background: #AEF1AE">
+          scala.Predef.int2Integer(Suit.this.order).compareTo(scala.Predef.int2Integer(t.order))
+        </td>
+      </tr><tr>
+        <td>
           16
         </td>
         <td>
-          416
+          549
         </td>
         <td>
           355
           -
-          358
+          363
         </td>
         <td>
           Literal
@@ -190,19 +195,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;H&quot;
+          &quot;Hearts&quot;
         </td>
       </tr><tr>
         <td>
           17
         </td>
         <td>
-          695
+          416
         </td>
         <td>
-          376
+          381
           -
-          379
+          391
         </td>
         <td>
           Literal
@@ -211,19 +216,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;D&quot;
+          &quot;Diamonds&quot;
         </td>
       </tr><tr>
         <td>
           18
         </td>
         <td>
-          623
+          661
         </td>
         <td>
-          395
+          407
           -
-          398
+          415
         </td>
         <td>
           Literal
@@ -232,19 +237,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;S&quot;
+          &quot;Spades&quot;
         </td>
       </tr><tr>
         <td>
           19
         </td>
         <td>
-          466
+          501
         </td>
         <td>
-          413
+          430
           -
-          416
+          437
         </td>
         <td>
           Literal
@@ -253,19 +258,103 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          &quot;C&quot;
+          &quot;Clubs&quot;
         </td>
       </tr><tr>
         <td>
-          48
+          21
         </td>
         <td>
-          723
+          760
         </td>
         <td>
-          974
+          460
           -
-          982
+          463
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;♥&quot;
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          682
+        </td>
+        <td>
+          488
+          -
+          491
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;♦&quot;
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          542
+        </td>
+        <td>
+          514
+          -
+          517
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;♠&quot;
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          376
+        </td>
+        <td>
+          539
+          -
+          542
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;♣&quot;
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          630
+        </td>
+        <td>
+          1124
+          -
+          1132
         </td>
         <td>
           Apply
@@ -278,15 +367,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          54
         </td>
         <td>
-          554
+          562
         </td>
         <td>
-          1009
+          1183
           -
-          1019
+          1193
         </td>
         <td>
           Apply
@@ -299,15 +388,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          55
         </td>
         <td>
-          832
+          418
         </td>
         <td>
-          1043
+          1241
           -
-          1050
+          1248
         </td>
         <td>
           Apply
@@ -320,15 +409,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          56
         </td>
         <td>
-          757
+          658
         </td>
         <td>
-          1075
+          1297
           -
-          1083
+          1305
         </td>
         <td>
           Apply
@@ -341,15 +430,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          57
         </td>
         <td>
-          601
+          502
         </td>
         <td>
-          1098
+          1320
           -
-          1144
+          1366
         </td>
         <td>
           Throw

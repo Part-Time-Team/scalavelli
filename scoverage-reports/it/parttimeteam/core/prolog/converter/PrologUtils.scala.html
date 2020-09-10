@@ -35,7 +35,7 @@
 </span>11 <span style=''>  /**
 </span>12 <span style=''>   * String pattern
 </span>13 <span style=''>   */
-</span>14 <span style=''>  val pattern: Regex = </span><span style='background: #AEF1AE'>&quot;[0-9]+,\\([HCSD][RB]\\)&quot;.r</span><span style=''>
+</span>14 <span style=''>  val pattern: Regex = </span><span style='background: #AEF1AE'>&quot;[0-9]+,[a-zA-Z]+&quot;.r</span><span style=''>
 </span>15 <span style=''>
 </span>16 <span style=''>  /**
 </span>17 <span style=''>   * Clean the prolog term by converting into a List of regex
@@ -72,41 +72,27 @@
 </span>48 <span style=''>  def replaceTermToString(term: Term, replace: String): String = </span><span style='background: #AEF1AE'>term.toString.replace(replace, &quot;&quot;)</span><span style=''>
 </span>49 <span style=''>
 </span>50 <span style=''>  /**
-</span>51 <span style=''>   * Split rank, suit and color in array of string
+</span>51 <span style=''>   * Replace specific characters in a string
 </span>52 <span style=''>   *
-</span>53 <span style=''>   * @param rankSuitColor array of string to split
-</span>54 <span style=''>   * @return tuple of string
+</span>53 <span style=''>   * @param stringToReplace string to clean
+</span>54 <span style=''>   * @return converted string
 </span>55 <span style=''>   */
-</span>56 <span style=''>  def splitRankSuitColor(rankSuitColor: Array[String]): (String, String, String) = {
-</span>57 <span style=''>
-</span>58 <span style=''>    val rank: String = </span><span style='background: #AEF1AE'>rankSuitColor(0)</span><span style=''>
-</span>59 <span style=''>    val suitColor: (String, String) = </span><span style='background: #AEF1AE'>(rankSuitColor(1).replace(&quot;(&quot;, &quot;&quot;).replace(&quot;)&quot;, &quot;&quot;) slice(0, 1),
-</span>60 <span style=''></span><span style='background: #AEF1AE'>      rankSuitColor(1).replace(&quot;(&quot;, &quot;&quot;).replace(&quot;)&quot;, &quot;&quot;) slice(1, 2))</span><span style=''>
-</span>61 <span style=''>    </span><span style='background: #AEF1AE'>(rank, suitColor._1, suitColor._2)</span><span style=''>
-</span>62 <span style=''>  }
-</span>63 <span style=''>
-</span>64 <span style=''>  /**
-</span>65 <span style=''>   * Replace specific characters in a string
-</span>66 <span style=''>   *
-</span>67 <span style=''>   * @param stringToReplace string to clean
-</span>68 <span style=''>   * @return converted string
-</span>69 <span style=''>   */
-</span>70 <span style=''>  private def replaceString(stringToReplace: String): String = {
-</span>71 <span style=''>    </span><span style='background: #AEF1AE'>stringToReplace.replace(&quot;List&quot;, &quot;&quot;).replace(&quot;[&quot;, &quot;&quot;)
-</span>72 <span style=''></span><span style='background: #AEF1AE'>      .replace(&quot;]&quot;, &quot;&quot;).replace(&quot; &quot;, &quot;&quot;).replace(&quot;'&quot;, &quot;&quot;)</span><span style=''>
-</span>73 <span style=''>  }
-</span>74 <span style=''>
-</span>75 <span style=''>  /**
-</span>76 <span style=''>   * Determines a substring
-</span>77 <span style=''>   *
-</span>78 <span style=''>   * @param cardsString starting string
-</span>79 <span style=''>   * @param endString   termination character
-</span>80 <span style=''>   * @return substring
-</span>81 <span style=''>   */
-</span>82 <span style=''>  private def substring(cardsString: String, endString: Int): String = {
-</span>83 <span style=''>    </span><span style='background: #AEF1AE'>cardsString.substring(1, endString)</span><span style=''>
-</span>84 <span style=''>  }
-</span>85 <span style=''>}
+</span>56 <span style=''>  private def replaceString(stringToReplace: String): String = {
+</span>57 <span style=''>    </span><span style='background: #AEF1AE'>stringToReplace.replace(&quot;List&quot;, &quot;&quot;).replace(&quot;[&quot;, &quot;&quot;)
+</span>58 <span style=''></span><span style='background: #AEF1AE'>      .replace(&quot;]&quot;, &quot;&quot;).replace(&quot; &quot;, &quot;&quot;).replace(&quot;'&quot;, &quot;&quot;)</span><span style=''>
+</span>59 <span style=''>  }
+</span>60 <span style=''>
+</span>61 <span style=''>  /**
+</span>62 <span style=''>   * Determines a substring
+</span>63 <span style=''>   *
+</span>64 <span style=''>   * @param cardsString starting string
+</span>65 <span style=''>   * @param endString   termination character
+</span>66 <span style=''>   * @return substring
+</span>67 <span style=''>   */
+</span>68 <span style=''>  private def substring(cardsString: String, endString: Int): String = {
+</span>69 <span style=''>    </span><span style='background: #AEF1AE'>cardsString.substring(1, endString)</span><span style=''>
+</span>70 <span style=''>  }
+</span>71 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -123,33 +109,12 @@
           14
         </td>
         <td>
-          792
+          621
         </td>
         <td>
           228
           -
-          253
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;[0-9]+,\\([HCSD][RB]\\)&quot;
-        </td>
-      </tr><tr>
-        <td>
-          14
-        </td>
-        <td>
-          612
-        </td>
-        <td>
-          228
-          -
-          255
+          248
         </td>
         <td>
           Select
@@ -158,19 +123,40 @@
           scala.collection.immutable.StringLike.r
         </td>
         <td style="background: #AEF1AE">
-          scala.Predef.augmentString(&quot;[0-9]+,\\([HCSD][RB]\\)&quot;).r
+          scala.Predef.augmentString(&quot;[0-9]+,[a-zA-Z]+&quot;).r
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          694
+        </td>
+        <td>
+          228
+          -
+          246
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;[0-9]+,[a-zA-Z]+&quot;
         </td>
       </tr><tr>
         <td>
           24
         </td>
         <td>
-          463
+          462
         </td>
         <td>
-          488
+          481
           -
-          502
+          495
         </td>
         <td>
           Apply
@@ -186,33 +172,12 @@
           25
         </td>
         <td>
-          500
+          708
         </td>
         <td>
-          508
+          547
           -
-          585
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.collection.TraversableOnce.toList
-        </td>
-        <td style="background: #AEF1AE">
-          PrologUtils.this.pattern.findAllMatchIn(PrologUtils.this.substring(cardsString, cardsString.length().-(1))).toList
-        </td>
-      </tr><tr>
-        <td>
-          25
-        </td>
-        <td>
-          721
-        </td>
-        <td>
-          554
-          -
-          576
+          569
         </td>
         <td>
           Apply
@@ -228,12 +193,33 @@
           25
         </td>
         <td>
-          652
+          420
         </td>
         <td>
-          531
+          501
           -
-          577
+          578
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.TraversableOnce.toList
+        </td>
+        <td style="background: #AEF1AE">
+          PrologUtils.this.pattern.findAllMatchIn(PrologUtils.this.substring(cardsString, cardsString.length().-(1))).toList
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          553
+        </td>
+        <td>
+          524
+          -
+          570
         </td>
         <td>
           Apply
@@ -249,33 +235,12 @@
           31
         </td>
         <td>
-          578
+          728
         </td>
         <td>
-          701
+          708
           -
-          740
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.prolog.converter.PrologUtils.replaceString
-        </td>
-        <td style="background: #AEF1AE">
-          PrologUtils.this.replaceString(PrologUtils.this.replaceSeqToString(term))
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          745
-        </td>
-        <td>
-          715
-          -
-          739
+          732
         </td>
         <td>
           Apply
@@ -288,15 +253,36 @@
         </td>
       </tr><tr>
         <td>
+          31
+        </td>
+        <td>
+          575
+        </td>
+        <td>
+          694
+          -
+          733
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.prolog.converter.PrologUtils.replaceString
+        </td>
+        <td style="background: #AEF1AE">
+          PrologUtils.this.replaceString(PrologUtils.this.replaceSeqToString(term))
+        </td>
+      </tr><tr>
+        <td>
           39
         </td>
         <td>
-          503
+          432
         </td>
         <td>
-          940
+          933
           -
-          972
+          965
         </td>
         <td>
           Apply
@@ -312,12 +298,12 @@
           48
         </td>
         <td>
-          771
+          687
         </td>
         <td>
-          1215
+          1208
           -
-          1249
+          1242
         </td>
         <td>
           Apply
@@ -333,159 +319,12 @@
           58
         </td>
         <td>
-          615
+          544
         </td>
         <td>
-          1508
+          1449
           -
-          1524
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Array.apply
-        </td>
-        <td style="background: #AEF1AE">
-          rankSuitColor.apply(0)
-        </td>
-      </tr><tr>
-        <td>
-          59
-        </td>
-        <td>
-          442
-        </td>
-        <td>
-          1564
-          -
-          1626
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.immutable.StringOps.slice
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Predef.augmentString(rankSuitColor.apply(1).replace(&quot;(&quot;, &quot;&quot;).replace(&quot;)&quot;, &quot;&quot;)).slice(0, 1)
-        </td>
-      </tr><tr>
-        <td>
-          59
-        </td>
-        <td>
-          643
-        </td>
-        <td>
-          1563
-          -
-          1697
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Tuple2.apply
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Tuple2.apply[String, String](scala.Predef.augmentString(rankSuitColor.apply(1).replace(&quot;(&quot;, &quot;&quot;).replace(&quot;)&quot;, &quot;&quot;)).slice(0, 1), scala.Predef.augmentString(rankSuitColor.apply(1).replace(&quot;(&quot;, &quot;&quot;).replace(&quot;)&quot;, &quot;&quot;)).slice(1, 2))
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          722
-        </td>
-        <td>
-          1634
-          -
-          1696
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.immutable.StringOps.slice
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Predef.augmentString(rankSuitColor.apply(1).replace(&quot;(&quot;, &quot;&quot;).replace(&quot;)&quot;, &quot;&quot;)).slice(1, 2)
-        </td>
-      </tr><tr>
-        <td>
-          61
-        </td>
-        <td>
-          469
-        </td>
-        <td>
-          1709
-          -
-          1721
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Tuple2._1
-        </td>
-        <td style="background: #AEF1AE">
-          suitColor._1
-        </td>
-      </tr><tr>
-        <td>
-          61
-        </td>
-        <td>
-          747
-        </td>
-        <td>
-          1723
-          -
-          1735
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Tuple2._2
-        </td>
-        <td style="background: #AEF1AE">
-          suitColor._2
-        </td>
-      </tr><tr>
-        <td>
-          61
-        </td>
-        <td>
-          594
-        </td>
-        <td>
-          1702
-          -
-          1736
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Tuple3.apply
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Tuple3.apply[String, String, String](rank, suitColor._1, suitColor._2)
-        </td>
-      </tr><tr>
-        <td>
-          72
-        </td>
-        <td>
-          505
-        </td>
-        <td>
-          1947
-          -
-          2057
+          1559
         </td>
         <td>
           Apply
@@ -498,15 +337,15 @@
         </td>
       </tr><tr>
         <td>
-          83
+          69
         </td>
         <td>
-          801
+          468
         </td>
         <td>
-          2294
+          1796
           -
-          2329
+          1831
         </td>
         <td>
           Apply
