@@ -33,7 +33,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     override def gameStateUpdated(gameState: PlayerGameState): Unit = {
 
       storeOpt match {
-        case Some(store) => notifyEvent(StateUpdatedEvent(generateClientGameState(store.onStateChanged(gameState), turnHistory)))
+        case Some(store) => notifyEvent(StateUpdatedEvent(generateClientGameState(
+          store.onStateChanged(gameState), turnHistory)))
         case None =>
           // initial state, initialize the game store
           storeOpt = Some(GameStateStore(gameState))
@@ -56,12 +57,9 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     override def opponentInTurn(opponentName: String): Unit = notifyEvent(OpponentInTurnEvent(opponentName))
 
     override def turnEndedWithCartDrawn(card: Card): Unit = {
-
       turnHistory = turnHistory.clear()
-
       notifyEvent(StateUpdatedEvent(generateClientGameState(storeOpt.get.onCardDrawn(card), turnHistory)))
       notifyEvent(TurnEndedEvent)
-
     }
 
     override def gameWon(): Unit = notifyEvent(GameWonEvent)
@@ -73,7 +71,6 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }
 
   private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener))
-
 
   // region GameService
 
@@ -119,19 +116,19 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   // endregion
 
-  private def leaveGame(): Unit = {
-    this.remoteMatchGameRef ! LeaveGame(this.playerId)
-  }
+  private def leaveGame(): Unit = this.remoteMatchGameRef ! LeaveGame(this.playerId)
 
-  private def endTurnDrawingACard(): Unit = {
-    remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)
-  }
+  private def endTurnDrawingACard(): Unit = remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)
 
+  /**
+   * End the turn this moves if it's valid. Anywhere, notify an error event.
+   */
   private def endTurnWithMoves(): Unit = {
     withState { currentState =>
-      if (this.gameInterface.validateMove(currentState.board, currentState.hand)) {
+      if (isTurnValid(currentState)) {
         remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
-      } else {
+      }
+      else {
         this.notifyEvent(ErrorEvent("Non valid turn play"))
       }
     }
@@ -164,7 +161,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   private def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = {
     withState { state =>
-      val (updatedHand, updatedBoard) = this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards)
+      val (updatedHand, updatedBoard) = this.gameInterface.putCardsInCombination(
+        state.hand, state.board, combinationId, cards)
       val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
       this.updateHistoryAndNotify(updatedState)
     }
@@ -184,7 +182,8 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   private def pickCardCombination(combinationId: String): Unit = {
     withState { state =>
-      this.gameInterface.pickBoardCards(state.hand, state.board, state.board.combinations.find(_.id == combinationId).get.cards) match {
+      this.gameInterface.pickBoardCards(
+        state.hand, state.board, state.board.combinations.find(_.id == combinationId).get.cards) match {
         case Right((updatedHand, updatedBoard)) => {
           val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
           this.updateHistoryAndNotify(updatedState)
@@ -208,7 +207,6 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
-
   private def updateHistoryAndNotify(updatedState: PlayerGameState): Unit = {
     this.updateHistory(updatedState)
     this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))
@@ -223,14 +221,20 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     case _ =>
   }
 
-  private def generateClientGameState(state: PlayerGameState, turnHistory: History[PlayerGameState]): ClientGameState = {
-    ClientGameState(state, turnHistory.canPrevious, turnHistory.canNext, turnHistory.canPrevious, !turnHistory.canPrevious)
-  }
+  private def generateClientGameState(state: PlayerGameState,
+                                      turnHistory: History[PlayerGameState]): ClientGameState =
+    ClientGameState(
+      playerGameState = state,
+      canUndo = turnHistory.canPrevious,
+      canRedo = turnHistory.canNext,
+      canReset = turnHistory.canPrevious,
+      canDrawCard = !isTurnValid(state)
+    )
 
   /**
    * Execute the history method, updates the history and the resulting state
    *
-   * @param historyUpdate
+   * @param historyUpdate History method to execute.
    */
   private def updateStateThroughHistory(historyUpdate: () => (Option[PlayerGameState], History[PlayerGameState])): Unit = {
     val (optState, updatedHistory) = historyUpdate()
@@ -241,5 +245,15 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
-
+  /**
+   * Return if Turn is valid or not.
+   *
+   * @param currentState Current Game State.
+   * @return True if the Turn isn't valid, false anywhere.
+   */
+  private def isTurnValid(currentState: PlayerGameState) = {
+    val startState = turnHistory.headOption
+    startState.isDefined && gameInterface.validateTurn(
+      currentState.board, startState.get.board, currentState.hand, startState.get.hand)
+  }
 }

@@ -7,7 +7,7 @@ package it.parttimeteam.core.cards
  * @param shortName shortName of color
  */
 sealed class Color(val name: String,
-                        val shortName: String) extends Serializable
+                   val shortName: String) extends Serializable
 
 object Color {
 
