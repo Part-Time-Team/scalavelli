@@ -64,7 +64,7 @@ class PrologGame() {
    * @return true if the goal is successful, false otherwise
    */
   def validateChain(cards: Seq[Card]): Boolean = {
-    engine isSuccess validationChain + conversion.cardsConvertToString(conversion optionalValueCards cards)(None)
+    engine isSuccess validationChain + conversion.cardsConvertToString(cards)(None)
   }
 
   /**
