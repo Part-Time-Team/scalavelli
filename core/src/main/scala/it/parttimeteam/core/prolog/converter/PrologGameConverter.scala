@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.core.cards.Rank.Ace
+import it.parttimeteam.core.cards.Rank.{Ace, OverflowAce}
 import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
 
 /**
@@ -35,8 +35,6 @@ class PrologGameConverter extends PrologConverter {
     val tupleCard = cardsList map (card => {
       PrologUtils.splitRankSuitColor(card.toString().split(","))
     })
-
-    // TODO da correggere ritorno delle tuple
     tupleCard.map(item => Card(Rank.string2rank(item._1), Suit.string2suit(item._2), Color.string2color(item._3)))
   }
 
@@ -52,13 +50,16 @@ class PrologGameConverter extends PrologConverter {
    */
   override def optionalValueCards(cards: Seq[Card]): Seq[Card] = {
 
-    val containAce: Seq[Card] = cards.filter(card => card.rank == Rank.Ace())
-    val containTwo: Boolean = cards.exists(card => card.rank == Rank.Two())
+    // List where overflowaces are converted into ace
+    val convertList: Seq[Card] = cards.map(card => if (card.rank == OverflowAce()) card.copy(rank = Ace()) else card)
+
+    val containAce: Seq[Card] = convertList.filter(card => card.rank == Rank.Ace())
+    val containTwo: Boolean = convertList.exists(card => card.rank == Rank.Two())
 
     (containAce.size, containTwo) match {
       // Replacing Ace with OverflowAce with an ace into sequence
       case (1, false) =>
-        cards.foldLeft(Seq.empty[Card]) {
+        convertList.foldLeft(Seq.empty[Card]) {
           (acc, card) =>
             card.rank match {
               case Ace() => acc ++ (card.copy(rank = "14") +: Nil)
@@ -66,14 +67,14 @@ class PrologGameConverter extends PrologConverter {
             }
         }
       // Replacing Ace with OverflowAce with more aces into sequence
-      case (2, true) => cards.foldLeft(Seq.empty[Card]) {
+      case (2, true) => convertList.foldLeft(Seq.empty[Card]) {
         (acc, card) =>
           card.rank match {
             case Ace() if !acc.exists(_.rank == Rank.OverflowAce()) => acc ++ (card.copy(rank = "14") +: Nil)
             case _ => acc ++ (card +: Nil)
           }
       }
-      case _ => cards
+      case _ => convertList
     }
   }
 

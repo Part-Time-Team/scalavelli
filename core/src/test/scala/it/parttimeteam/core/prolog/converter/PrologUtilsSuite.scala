@@ -21,6 +21,14 @@ class PrologUtilsSuite extends AnyFunSuite  with TableDrivenPropertyChecks with 
     assertResult("[(1,'Clubs'),(1,'Spades')]")(PrologUtils.replaceTermToString(seq, "','"))
   }
 
+  test("Spilt rank, suit and color from an array of strings"){
+
+    val rankSuitColorToSplit: Array[String] = Array("10","(DR)")
+    val result: (String, String, String) = ("10", "D", "R")
+
+    assertResult(result)(PrologUtils.splitRankSuitColor(rankSuitColorToSplit))
+  }
+
   class PrologUtilsPropSpec extends AnyPropSpec {
 
     val prologEngine: PrologGameEngine = new PrologGameEngine
@@ -35,11 +43,12 @@ class PrologUtilsSuite extends AnyFunSuite  with TableDrivenPropertyChecks with 
       Seq(KING_CLUBS, THREE_CLUBS, JACK_HEARTS)
     )
 
-    property("Convert sequence cards into regex sequence"){
-      forAll(card){ seq =>
-        val termSeq : Seq[Term] = prologEngine goal "quicksortValue" + prologConversion.cardsConvertToString(seq)(Some(new Var("X")))
-        PrologUtils.utils(termSeq).isEmpty should be (false)
+    property("Convert sequence cards into regex sequence") {
+      forAll(card) { seq =>
+        val termSeq: Seq[Term] = prologEngine goal "quicksortValue" + prologConversion.cardsConvertToString(seq)(Some(new Var("X")))
+        PrologUtils.utils(termSeq).isEmpty should be(false)
       }
     }
   }
+
 }

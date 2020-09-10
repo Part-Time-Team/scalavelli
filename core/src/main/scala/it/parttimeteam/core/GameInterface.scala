@@ -142,7 +142,7 @@ class GameInterfaceImpl extends GameInterface {
                                cards: Seq[Card]): Either[String, (Hand, Board)] = {
     val orderedCards = cards sortByRank()
     if (this.validateCombination(orderedCards)) {
-      hand.removeCards(cards).map(updateHand => (updateHand, board.putCombination(cards)))
+      hand.removeCards(cards).map(updateHand => (updateHand, board.putCombination(orderedCards)))
     } else {
       Left("Combination not valid")
     }
