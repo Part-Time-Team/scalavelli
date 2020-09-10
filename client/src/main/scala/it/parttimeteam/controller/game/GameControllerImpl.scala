@@ -26,7 +26,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     this.gameService.playerReady()
   }
 
-  def notifyEvent(serverGameEvent: ServerGameEvent): Unit = serverGameEvent match {
+  def notifyEvent(serverGameEvent: GameEvent): Unit = serverGameEvent match {
 
     case StateUpdatedEvent(state: ClientGameState) => {
       currentState = state
