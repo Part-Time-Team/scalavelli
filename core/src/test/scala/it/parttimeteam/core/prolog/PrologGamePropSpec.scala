@@ -77,7 +77,7 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
   val validChain: TableFor1[Seq[Card]] = Table(
     "valid chain",
     Seq(ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS),
-    Seq(JACK_HEARTS, QUEEN_HEARTS, KING_HEARTS, ACE_HEARTS)
+    Seq(JACK_HEARTS, QUEEN_HEARTS, KING_HEARTS, OVERFLOW_ACE_HEARTS)
   )
 
   /**
