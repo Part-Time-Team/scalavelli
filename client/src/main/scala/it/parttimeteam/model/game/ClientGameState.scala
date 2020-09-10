@@ -8,3 +8,8 @@ case class ClientGameState(
                             canRedo: Boolean,
                             canReset: Boolean,
                             canDrawCard: Boolean)
+
+
+
+
+
