@@ -1,8 +1,6 @@
 package it.parttimeteam.core
 
 import it.parttimeteam.core.TestCards._
-import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
-import it.parttimeteam.core.cards.Rank.{Ace, OverflowAce}
 import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import org.scalamock.matchers.Matchers
 import org.scalamock.scalatest.MockFactory
