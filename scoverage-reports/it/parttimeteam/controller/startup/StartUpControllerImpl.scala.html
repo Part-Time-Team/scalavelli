@@ -28,67 +28,70 @@
 </span>4 <span style=''>import it.parttimeteam.model._
 </span>5 <span style=''>import it.parttimeteam.model.startup.{GameMatchInformations, StartupService, StartupServiceImpl}
 </span>6 <span style=''>import it.parttimeteam.view.startup._
-</span>7 <span style=''>import scalafx.application.JFXApp
+</span>7 <span style=''>import scalafx.application.{JFXApp, Platform}
 </span>8 <span style=''>
 </span>9 <span style=''>class StartUpControllerImpl extends StartUpController {
 </span>10 <span style=''>
-</span>11 <span style=''>  private val startUpStage = </span><span style='background: #F0ADAD'>MachiavelliStartUpStage(this)</span><span style=''>
+</span>11 <span style=''>  private var startUpStage: MachiavelliStartUpStage = _
 </span>12 <span style=''>  private val startUpService: StartupService = </span><span style='background: #F0ADAD'>new StartupServiceImpl(notifyEvent)</span><span style=''>
 </span>13 <span style=''>  private var startGameFunction: GameMatchInformations =&gt; Unit = _
 </span>14 <span style=''>
 </span>15 <span style=''>  override def start(app: JFXApp, startGame: GameMatchInformations =&gt; Unit): Unit = {
-</span>16 <span style=''>    </span><span style='background: #F0ADAD'>app.stage = startUpStage</span><span style=''>
-</span>17 <span style=''>    </span><span style='background: #F0ADAD'>startGameFunction = startGame</span><span style=''>
-</span>18 <span style=''>    </span><span style='background: #F0ADAD'>this.startUpService.connect(Constants.Remote.SERVER_ADDRESS, Constants.Remote.SERVER_PORT)</span><span style=''>
-</span>19 <span style=''>  }
-</span>20 <span style=''>
-</span>21 <span style=''>  override def onViewEvent(viewEvent: StartUpViewEvent): Unit = viewEvent match {
-</span>22 <span style=''>    case PublicGameSubmitViewEvent(username, playersNumber) =&gt; {
-</span>23 <span style=''>      </span><span style='background: #F0ADAD'>System.out.println(s&quot;PublicGameSubmitViewEvent $username - $playersNumber&quot;)</span><span style=''>
-</span>24 <span style=''>      </span><span style='background: #F0ADAD'>this.startUpService.joinPublicLobby(username, playersNumber)</span><span style=''>
-</span>25 <span style=''>    }
-</span>26 <span style=''>    case PrivateGameSubmitViewEvent(username, code) =&gt; {
-</span>27 <span style=''>      </span><span style='background: #F0ADAD'>System.out.println(s&quot;PrivateGameSubmitViewEvent $username - $code&quot;)</span><span style=''>
-</span>28 <span style=''>      </span><span style='background: #F0ADAD'>this.startUpService.joinPrivateLobby(username, code)</span><span style=''>
-</span>29 <span style=''>    }
-</span>30 <span style=''>    case CreatePrivateGameSubmitViewEvent(username, playersNumber) =&gt; {
-</span>31 <span style=''>      </span><span style='background: #F0ADAD'>System.out.println(s&quot;CreatePrivateGameSubmitViewEvent $username - $playersNumber&quot;)</span><span style=''>
-</span>32 <span style=''>      </span><span style='background: #F0ADAD'>this.startUpService.createPrivateLobby(username, playersNumber)</span><span style=''>
-</span>33 <span style=''>    }
-</span>34 <span style=''>    case LeaveLobbyViewEvent =&gt; {
-</span>35 <span style=''>      </span><span style='background: #F0ADAD'>this.startUpService.leaveLobby()</span><span style=''>
+</span>16 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>17 <span style=''></span><span style='background: #F0ADAD'>      startUpStage = MachiavelliStartUpStage(this)
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      app.stage = startUpStage
+</span>19 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>20 <span style=''>    </span><span style='background: #F0ADAD'>startGameFunction = startGame</span><span style=''>
+</span>21 <span style=''>    </span><span style='background: #F0ADAD'>this.startUpService.connect(Constants.Remote.SERVER_ADDRESS, Constants.Remote.SERVER_PORT)</span><span style=''>
+</span>22 <span style=''>  }
+</span>23 <span style=''>
+</span>24 <span style=''>  override def onViewEvent(viewEvent: StartUpViewEvent): Unit = viewEvent match {
+</span>25 <span style=''>    case PublicGameSubmitViewEvent(username, playersNumber) =&gt; {
+</span>26 <span style=''>      </span><span style='background: #F0ADAD'>System.out.println(s&quot;PublicGameSubmitViewEvent $username - $playersNumber&quot;)</span><span style=''>
+</span>27 <span style=''>      </span><span style='background: #F0ADAD'>this.startUpService.joinPublicLobby(username, playersNumber)</span><span style=''>
+</span>28 <span style=''>    }
+</span>29 <span style=''>    case PrivateGameSubmitViewEvent(username, code) =&gt; {
+</span>30 <span style=''>      </span><span style='background: #F0ADAD'>System.out.println(s&quot;PrivateGameSubmitViewEvent $username - $code&quot;)</span><span style=''>
+</span>31 <span style=''>      </span><span style='background: #F0ADAD'>this.startUpService.joinPrivateLobby(username, code)</span><span style=''>
+</span>32 <span style=''>    }
+</span>33 <span style=''>    case CreatePrivateGameSubmitViewEvent(username, playersNumber) =&gt; {
+</span>34 <span style=''>      </span><span style='background: #F0ADAD'>System.out.println(s&quot;CreatePrivateGameSubmitViewEvent $username - $playersNumber&quot;)</span><span style=''>
+</span>35 <span style=''>      </span><span style='background: #F0ADAD'>this.startUpService.createPrivateLobby(username, playersNumber)</span><span style=''>
 </span>36 <span style=''>    }
-</span>37 <span style=''>    case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>38 <span style=''>  }
-</span>39 <span style=''>
-</span>40 <span style=''>  def notifyEvent(gameStartUpEvent: GameStartUpEvent): Unit = gameStartUpEvent match {
-</span>41 <span style=''>
-</span>42 <span style=''>    case LobbyJoinedEvent =&gt; {
-</span>43 <span style=''>      </span><span style='background: #F0ADAD'>startUpStage.notifyLobbyJoined()</span><span style=''>
-</span>44 <span style=''>    }
-</span>45 <span style=''>
-</span>46 <span style=''>    case PrivateLobbyCreatedEvent(privateCode: String) =&gt; {
-</span>47 <span style=''>      </span><span style='background: #F0ADAD'>startUpStage.notifyPrivateCode(privateCode)</span><span style=''>
-</span>48 <span style=''>      </span><span style='background: #F0ADAD'>startUpStage.notifyLobbyJoined()</span><span style=''>
-</span>49 <span style=''>    }
-</span>50 <span style=''>
-</span>51 <span style=''>
-</span>52 <span style=''>    case LobbyJoinErrorEvent(result: String) =&gt; {
-</span>53 <span style=''>      </span><span style='background: #F0ADAD'>startUpStage.notifyError(result)</span><span style=''>
-</span>54 <span style=''>    }
-</span>55 <span style=''>
-</span>56 <span style=''>    case GameStartedEvent(gameInfo: GameMatchInformations) =&gt; {
-</span>57 <span style=''>      </span><span style='background: #F0ADAD'>startGameFunction(gameInfo)</span><span style=''>
-</span>58 <span style=''>    }
-</span>59 <span style=''>
-</span>60 <span style=''>    case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>61 <span style=''>
-</span>62 <span style=''>  }
-</span>63 <span style=''>
-</span>64 <span style=''>  override def end(): Unit = </span><span style='background: #F0ADAD'>{
-</span>65 <span style=''></span><span style='background: #F0ADAD'>
-</span>66 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
-</span>67 <span style=''>}
+</span>37 <span style=''>    case LeaveLobbyViewEvent =&gt; {
+</span>38 <span style=''>      </span><span style='background: #F0ADAD'>this.startUpService.leaveLobby()</span><span style=''>
+</span>39 <span style=''>    }
+</span>40 <span style=''>    case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>41 <span style=''>  }
+</span>42 <span style=''>
+</span>43 <span style=''>  def notifyEvent(gameStartUpEvent: GameStartUpEvent): Unit = gameStartUpEvent match {
+</span>44 <span style=''>
+</span>45 <span style=''>    case LobbyJoinedEvent =&gt; {
+</span>46 <span style=''>      </span><span style='background: #F0ADAD'>startUpStage.notifyLobbyJoined()</span><span style=''>
+</span>47 <span style=''>    }
+</span>48 <span style=''>
+</span>49 <span style=''>    case PrivateLobbyCreatedEvent(privateCode: String) =&gt; {
+</span>50 <span style=''>      </span><span style='background: #F0ADAD'>startUpStage.notifyPrivateCode(privateCode)</span><span style=''>
+</span>51 <span style=''>      </span><span style='background: #F0ADAD'>startUpStage.notifyLobbyJoined()</span><span style=''>
+</span>52 <span style=''>    }
+</span>53 <span style=''>
+</span>54 <span style=''>
+</span>55 <span style=''>    case LobbyJoinErrorEvent(result: String) =&gt; {
+</span>56 <span style=''>      </span><span style='background: #F0ADAD'>startUpStage.notifyError(result)</span><span style=''>
+</span>57 <span style=''>    }
+</span>58 <span style=''>
+</span>59 <span style=''>    case GameStartedEvent(gameInfo: GameMatchInformations) =&gt; {
+</span>60 <span style=''>      </span><span style='background: #F0ADAD'>startGameFunction(gameInfo)</span><span style=''>
+</span>61 <span style=''>    }
+</span>62 <span style=''>
+</span>63 <span style=''>    case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>64 <span style=''>
+</span>65 <span style=''>  }
+</span>66 <span style=''>
+</span>67 <span style=''>  override def end(): Unit = </span><span style='background: #F0ADAD'>{
+</span>68 <span style=''></span><span style='background: #F0ADAD'>
+</span>69 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>70 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -102,36 +105,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          11
-        </td>
-        <td>
-          2407
-        </td>
-        <td>
-          364
-          -
-          393
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.startup.MachiavelliStartUpStage.apply
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.view.startup.MachiavelliStartUpStage.apply(this)
-        </td>
-      </tr><tr>
-        <td>
           12
         </td>
         <td>
-          1452
+          2112
         </td>
         <td>
-          441
+          450
           -
-          476
+          485
         </td>
         <td>
           Apply
@@ -149,12 +131,12 @@
           12
         </td>
         <td>
-          2098
+          2422
         </td>
         <td>
-          464
+          473
           -
-          475
+          484
         </td>
         <td>
           Apply
@@ -170,33 +152,78 @@
           16
         </td>
         <td>
-          1918
+          999
         </td>
         <td>
-          635
+          644
           -
-          659
+          752
         </td>
         <td>
           Apply
         </td>
         <td>
-          scalafx.application.JFXApp.stage_=
+          scalafx.application.Platform.runLater
         </td>
         <td style="background: #F0ADAD">
-          app.stage_=(StartUpControllerImpl.this.startUpStage)
+          scalafx.application.Platform.runLater[Unit]({
+  StartUpControllerImpl.this.startUpStage_=(it.parttimeteam.view.startup.MachiavelliStartUpStage.apply(this));
+  app.stage_=(StartUpControllerImpl.this.startUpStage)
+})
         </td>
       </tr><tr>
         <td>
-          16
+          17
         </td>
         <td>
-          895
+          1465
         </td>
         <td>
-          647
+          685
           -
-          659
+          714
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.MachiavelliStartUpStage.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.startup.MachiavelliStartUpStage.apply(this)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          906
+        </td>
+        <td>
+          670
+          -
+          714
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.startup.StartUpControllerImpl.startUpStage_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartUpControllerImpl.this.startUpStage_=(it.parttimeteam.view.startup.MachiavelliStartUpStage.apply(this))
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1932
+        </td>
+        <td>
+          733
+          -
+          745
         </td>
         <td>
           Select
@@ -209,15 +236,36 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
-          1304
+          1316
         </td>
         <td>
-          664
+          721
           -
-          693
+          745
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.JFXApp.stage_=
+        </td>
+        <td style="background: #F0ADAD">
+          app.stage_=(StartUpControllerImpl.this.startUpStage)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1973
+        </td>
+        <td>
+          757
+          -
+          786
         </td>
         <td>
           Apply
@@ -230,15 +278,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          21
         </td>
         <td>
-          988
+          1423
         </td>
         <td>
-          698
+          791
           -
-          788
+          881
         </td>
         <td>
           Apply
@@ -251,15 +299,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          26
         </td>
         <td>
-          1410
+          2096
         </td>
         <td>
-          947
+          1040
           -
-          1022
+          1115
         </td>
         <td>
           Apply
@@ -272,15 +320,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          26
         </td>
         <td>
-          1959
+          2397
         </td>
         <td>
-          966
+          1059
           -
-          1021
+          1114
         </td>
         <td>
           Apply
@@ -293,15 +341,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          27
         </td>
         <td>
-          2382
+          1468
         </td>
         <td>
-          1029
+          1122
           -
-          1089
+          1182
         </td>
         <td>
           Apply
@@ -314,15 +362,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          30
         </td>
         <td>
-          1455
+          1864
         </td>
         <td>
-          1159
+          1252
           -
-          1226
+          1319
         </td>
         <td>
           Apply
@@ -335,15 +383,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          30
         </td>
         <td>
-          2082
+          876
         </td>
         <td>
-          1178
+          1271
           -
-          1225
+          1318
         </td>
         <td>
           Apply
@@ -356,15 +404,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          31
         </td>
         <td>
-          865
+          1292
         </td>
         <td>
-          1233
+          1326
           -
-          1285
+          1378
         </td>
         <td>
           Apply
@@ -377,36 +425,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          34
         </td>
         <td>
-          1850
+          1975
         </td>
         <td>
-          1389
+          1463
           -
-          1451
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;CreatePrivateGameSubmitViewEvent &quot;, &quot; - &quot;, &quot;&quot;).s(username, playersNumber)
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          1280
-        </td>
-        <td>
-          1370
-          -
-          1452
+          1545
         </td>
         <td>
           Apply
@@ -419,15 +446,36 @@
         </td>
       </tr><tr>
         <td>
-          32
+          34
         </td>
         <td>
-          971
+          982
         </td>
         <td>
-          1459
+          1482
           -
-          1522
+          1544
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;CreatePrivateGameSubmitViewEvent &quot;, &quot; - &quot;, &quot;&quot;).s(username, playersNumber)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1426
+        </td>
+        <td>
+          1552
+          -
+          1615
         </td>
         <td>
           Apply
@@ -440,15 +488,15 @@
         </td>
       </tr><tr>
         <td>
-          35
+          38
         </td>
         <td>
-          1961
+          2364
         </td>
         <td>
-          1569
+          1662
           -
-          1601
+          1694
         </td>
         <td>
           Apply
@@ -461,15 +509,15 @@
         </td>
       </tr><tr>
         <td>
-          37
+          40
         </td>
         <td>
-          1413
+          1781
         </td>
         <td>
-          1619
+          1712
           -
-          1621
+          1714
         </td>
         <td>
           Literal
@@ -482,15 +530,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          46
         </td>
         <td>
-          2349
+          1459
         </td>
         <td>
-          1752
+          1845
           -
-          1784
+          1877
         </td>
         <td>
           Apply
@@ -503,15 +551,15 @@
         </td>
       </tr><tr>
         <td>
-          47
+          50
         </td>
         <td>
-          1767
+          879
         </td>
         <td>
-          1858
+          1951
           -
-          1901
+          1994
         </td>
         <td>
           Apply
@@ -524,15 +572,15 @@
         </td>
       </tr><tr>
         <td>
-          48
+          51
         </td>
         <td>
-          1446
+          1872
         </td>
         <td>
-          1908
+          2001
           -
-          1940
+          2033
         </td>
         <td>
           Apply
@@ -545,15 +593,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          56
         </td>
         <td>
-          868
+          1269
         </td>
         <td>
-          2005
+          2098
           -
-          2037
+          2130
         </td>
         <td>
           Apply
@@ -566,15 +614,15 @@
         </td>
       </tr><tr>
         <td>
-          57
+          60
         </td>
         <td>
-          1858
+          996
         </td>
         <td>
-          2115
+          2208
           -
-          2142
+          2235
         </td>
         <td>
           Apply
@@ -587,15 +635,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          63
         </td>
         <td>
-          1257
+          1962
         </td>
         <td>
-          2161
+          2254
           -
-          2163
+          2256
         </td>
         <td>
           Literal
@@ -608,15 +656,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          67
         </td>
         <td>
-          985
+          1447
         </td>
         <td>
-          2199
+          2292
           -
-          2205
+          2298
         </td>
         <td>
           Literal
