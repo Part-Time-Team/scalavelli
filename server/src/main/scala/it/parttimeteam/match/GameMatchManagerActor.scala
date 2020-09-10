@@ -55,6 +55,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
     case GamePlayers(players) => {
       log.info(s"initial players $players")
       this.players = players
+      this.players.foreach(p => context.watch(p.actorRef))
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
       context.become(initializing(Seq.empty) orElse terminationBeforeGameStarted())
@@ -94,6 +95,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
           log.info(s"player ${player.username} terminated before the game starts")
           // become in behaviour in cui a ogni ready che mi arriva invio il messaggio di fine partita
           // dopo x secondi mi uccido
+          broadcastMessageToPlayers(GameEndedForPlayerLeft)
           context.become(gameEndedWithErrorBeforeStarts())
           context.system.scheduler.scheduleOnce(20.second) {
             log.info("Terminating game actor..")
@@ -124,8 +126,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
   }
 
   /**
-   *
-   * @return
+   * notify termination to next player if one of them terminates during the game loading 
    */
   private def gameEndedWithErrorBeforeStarts(): Receive = {
     case Ready(_, ref) => ref ! GameEndedForPlayerLeft
