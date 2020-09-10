@@ -3,10 +3,32 @@ package it.parttimeteam.model.game
 import akka.actor.{Actor, ActorLogging, Props}
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
-import it.parttimeteam.messages.GameMessage.{CardDrawn, MatchErrorOccurred, GameEndedForPlayerLeft, GameStateUpdated, Lost, OpponentInTurn, PlayerTurn, TurnEnded, Won}
+import it.parttimeteam.messages.GameMessage._
+import it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener
 
 object RemoteGameActor {
   def props(listener: MatchServerResponseListener) = Props(new RemoteGameActor(listener))
+
+  trait MatchServerResponseListener {
+
+    def gameStateUpdated(gameState: PlayerGameState)
+
+    def turnStarted()
+
+    def turnEnded()
+
+    def opponentInTurn(opponentName: String)
+
+    def turnEndedWithCartDrawn(card: Card)
+
+    def gameEndedWithErrorEvent(reason: String)
+
+    def gameWon()
+
+    def gameLost(winnerName: String)
+
+  }
+
 }
 
 class RemoteGameActor(private val listener: MatchServerResponseListener) extends Actor with ActorLogging {
@@ -40,22 +62,3 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
 }
 
 
-trait MatchServerResponseListener {
-
-  def gameStateUpdated(gameState: PlayerGameState)
-
-  def turnStarted()
-
-  def turnEnded()
-
-  def opponentInTurn(opponentName: String)
-
-  def turnEndedWithCartDrawn(card: Card)
-
-  def gameEndedWithErrorEvent(reason: String)
-
-  def gameWon()
-
-  def gameLost(winnerName: String)
-
-}
