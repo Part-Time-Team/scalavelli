@@ -74,7 +74,7 @@ class PrologGameConverter extends PrologConverter {
             case _ => acc ++ (card +: Nil)
           }
       }
-      case _ => cards
+      case _ => convertList
     }
   }
 
