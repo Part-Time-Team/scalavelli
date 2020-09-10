@@ -33,194 +33,193 @@
 </span>9 <span style=''>import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 </span>10 <span style=''>import it.parttimeteam.messages.GameMessage._
 </span>11 <span style=''>import it.parttimeteam.messages.LobbyMessages.MatchFound
-</span>12 <span style=''>import it.parttimeteam.messages.PlayerActionNotValidError
+</span>12 <span style=''>
 </span>13 <span style=''>
-</span>14 <span style=''>
-</span>15 <span style=''>object GameMatchManagerActor {
-</span>16 <span style=''>  def props(numberOfPlayers: Int, gameApi: GameInterface): Props = </span><span style='background: #AEF1AE'>Props(new GameMatchManagerActor(numberOfPlayers, gameApi: GameInterface))</span><span style=''>
+</span>14 <span style=''>object GameMatchManagerActor {
+</span>15 <span style=''>  def props(numberOfPlayers: Int, gameApi: GameInterface): Props = </span><span style='background: #AEF1AE'>Props(new GameMatchManagerActor(numberOfPlayers, gameApi: GameInterface))</span><span style=''>
+</span>16 <span style=''>
 </span>17 <span style=''>
-</span>18 <span style=''>
-</span>19 <span style=''>  case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
-</span>20 <span style=''>
-</span>21 <span style=''>  sealed class AdditionalInfo
-</span>22 <span style=''>
-</span>23 <span style=''>  case class CardDrawnInfo(card: Card) extends AdditionalInfo
-</span>24 <span style=''>
-</span>25 <span style=''>  /**
-</span>26 <span style=''>   * Sent to the gameactor to specify the players to add to the match
-</span>27 <span style=''>   *
-</span>28 <span style=''>   * @param players players to add to the match
-</span>29 <span style=''>   */
-</span>30 <span style=''>  case class GamePlayers(players: Seq[GamePlayer])
-</span>31 <span style=''>
-</span>32 <span style=''>}
-</span>33 <span style=''>
-</span>34 <span style=''>/**
-</span>35 <span style=''> * Responsible for a game match
-</span>36 <span style=''> *
-</span>37 <span style=''> * @param numberOfPlayers number of players
-</span>38 <span style=''> * @param gameApi
-</span>39 <span style=''> */
-</span>40 <span style=''>class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInterface)
-</span>41 <span style=''>  extends Actor with ActorLogging with Stash {
-</span>42 <span style=''>
-</span>43 <span style=''>  override def receive: Receive = </span><span style='background: #AEF1AE'>idle</span><span style=''>
-</span>44 <span style=''>
-</span>45 <span style=''>  private var players: Seq[GamePlayer] = _
-</span>46 <span style=''>  private var turnManager: TurnManager[GamePlayer] = _
-</span>47 <span style=''>
-</span>48 <span style=''>  // TODO spostare in costruzione a posto di gameApi
-</span>49 <span style=''>  private val gameMatchManager = </span><span style='background: #AEF1AE'>new GameMatchManager(gameApi)</span><span style=''>
-</span>50 <span style=''>
-</span>51 <span style=''>  private def idle: Receive = {
-</span>52 <span style=''>    case GamePlayers(players) =&gt; {
-</span>53 <span style=''>      </span><span style='background: #AEF1AE'>this.players = players</span><span style=''>
-</span>54 <span style=''>      </span><span style='background: #AEF1AE'>require(players.size == numberOfPlayers)</span><span style=''>
-</span>55 <span style=''>      </span><span style='background: #AEF1AE'>this.broadcastMessageToPlayers(MatchFound(self))</span><span style=''>
-</span>56 <span style=''>      </span><span style='background: #AEF1AE'>context.become(initializing(Seq.empty) orElse termination())</span><span style=''>
-</span>57 <span style=''>    }
-</span>58 <span style=''>  }
-</span>59 <span style=''>
-</span>60 <span style=''>  /**
-</span>61 <span style=''>   * Waits all players to start game
-</span>62 <span style=''>   *
-</span>63 <span style=''>   * @param playersReady players ready for the game
-</span>64 <span style=''>   */
-</span>65 <span style=''>  private def initializing(playersReady: Seq[GamePlayer]): Receive = {
-</span>66 <span style=''>    case Ready(id, ref) =&gt; {
-</span>67 <span style=''>      </span><span style='background: #AEF1AE'>this.withPlayer(id) { p =&gt;
-</span>68 <span style=''></span><span style='background: #AEF1AE'>        log.info(s&quot;player ${p.username} ready&quot;)
-</span>69 <span style=''></span><span style='background: #AEF1AE'>
-</span>70 <span style=''></span><span style='background: #AEF1AE'>        players = players.map(p =&gt; if (p.id == id) p.copy(actorRef = ref) else p)
-</span>71 <span style=''></span><span style='background: #AEF1AE'>        val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
-</span>72 <span style=''></span><span style='background: #AEF1AE'>
-</span>73 <span style=''></span><span style='background: #AEF1AE'>        if (updatedReadyPlayers.length == numberOfPlayers) {
-</span>74 <span style=''></span><span style='background: #AEF1AE'>          log.info(&quot;All players ready&quot;)
-</span>75 <span style=''></span><span style='background: #AEF1AE'>          this.initializeGame()
-</span>76 <span style=''></span><span style='background: #AEF1AE'>        } else {
-</span>77 <span style=''></span><span style='background: #AEF1AE'>          context.become(initializing(updatedReadyPlayers) orElse termination())
-</span>78 <span style=''></span><span style='background: #AEF1AE'>        }
-</span>79 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
-</span>80 <span style=''>    }
-</span>81 <span style=''>  }
-</span>82 <span style=''>
-</span>83 <span style=''>  private def termination(): Receive = {
-</span>84 <span style=''>    case Terminated(ref) =&gt; </span><span style='background: #F0ADAD'>this.players.find(_.actorRef == ref)</span><span style=''> match {
-</span>85 <span style=''>      case Some(player) =&gt;
-</span>86 <span style=''>        </span><span style='background: #F0ADAD'>log.info(s&quot;Player ${player.username} left the game&quot;)</span><span style=''>
-</span>87 <span style=''>        </span><span style='background: #F0ADAD'>this.broadcastMessageToPlayers(GameEndedForPlayerLeft)</span><span style=''>
-</span>88 <span style=''>        </span><span style='background: #F0ADAD'>self ! PoisonPill</span><span style=''>
-</span>89 <span style=''>    }
-</span>90 <span style=''>    case LeaveGame(playerId) =&gt; </span><span style='background: #F0ADAD'>withPlayer(playerId) { player =&gt;
-</span>91 <span style=''></span><span style='background: #F0ADAD'>      log.info(s&quot;Player ${player.username} left the game&quot;)
-</span>92 <span style=''></span><span style='background: #F0ADAD'>      this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
-</span>93 <span style=''></span><span style='background: #F0ADAD'>      self ! PoisonPill
-</span>94 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>95 <span style=''>  }
-</span>96 <span style=''>
-</span>97 <span style=''>  /**
-</span>98 <span style=''>   * Inizialize the game, creating the initial state, the turn manager and changing actor behaviour
-</span>99 <span style=''>   *
-</span>100 <span style=''>   */
-</span>101 <span style=''>  private def initializeGame(): Unit = {
-</span>102 <span style=''>    </span><span style='background: #AEF1AE'>this.players.foreach(p =&gt; context.watch(p.actorRef))</span><span style=''>
-</span>103 <span style=''>    </span><span style='background: #AEF1AE'>this.turnManager = TurnManager[GamePlayer](players)</span><span style=''>
-</span>104 <span style=''>    </span><span style='background: #AEF1AE'>log.info(&quot;initializing game..&quot;)</span><span style=''>
-</span>105 <span style=''>    val gameState = </span><span style='background: #AEF1AE'>this.gameMatchManager.retrieveInitialState(players.map(p =&gt; (p.id, p.username)))</span><span style=''>
-</span>106 <span style=''>    </span><span style='background: #AEF1AE'>this.broadcastGameStateToPlayers(gameState)</span><span style=''>
-</span>107 <span style=''>    val currentPlayer = </span><span style='background: #AEF1AE'>this.turnManager.getInTurn</span><span style=''>
-</span>108 <span style=''>    </span><span style='background: #AEF1AE'>currentPlayer.actorRef ! PlayerTurn</span><span style=''>
-</span>109 <span style=''>    </span><span style='background: #AEF1AE'>this.broadcastMessageToNonCurrentPlayers(currentPlayer.id)(OpponentInTurn(currentPlayer.username))</span><span style=''>
-</span>110 <span style=''>    </span><span style='background: #AEF1AE'>context.become(inTurn(gameState, currentPlayer) orElse termination())</span><span style=''>
-</span>111 <span style=''>  }
-</span>112 <span style=''>
-</span>113 <span style=''>  private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
-</span>114 <span style=''>    case PlayerActionMade(playerId, action) if </span><span style='background: #AEF1AE'>playerId == playerInTurn.id</span><span style=''> =&gt; {
-</span>115 <span style=''>      </span><span style='background: #AEF1AE'>log.info(s&quot;received action $action from ${playerInTurn.username}&quot;)</span><span style=''>
-</span>116 <span style=''>      </span><span style='background: #AEF1AE'>this.gameMatchManager.determineNextState(gameState, playerInTurn, action)</span><span style=''> match {
-</span>117 <span style=''>        case Right(stateResult) =&gt;
-</span>118 <span style=''>          </span><span style='background: #AEF1AE'>this.handleStateResult(stateResult, playerInTurn)</span><span style=''>
-</span>119 <span style=''>
-</span>120 <span style=''>        case Left(errorMessage) =&gt;
-</span>121 <span style=''>          </span><span style='background: #F0ADAD'>log.error(&quot;Error resolving player action&quot;)</span><span style=''>
-</span>122 <span style=''>          </span><span style='background: #F0ADAD'>playerInTurn.actorRef ! PlayerActionNotValidError(errorMessage)</span><span style=''>
-</span>123 <span style=''>      }
-</span>124 <span style=''>
-</span>125 <span style=''>    }
-</span>126 <span style=''>  }
-</span>127 <span style=''>
-</span>128 <span style=''>  private def handleStateResult(stateResult: StateResult, playerInTurn: GamePlayer): Unit = {
+</span>18 <span style=''>  case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
+</span>19 <span style=''>
+</span>20 <span style=''>  sealed class AdditionalInfo
+</span>21 <span style=''>
+</span>22 <span style=''>  case class CardDrawnInfo(card: Card) extends AdditionalInfo
+</span>23 <span style=''>
+</span>24 <span style=''>  /**
+</span>25 <span style=''>   * Sent to the gameactor to specify the players to add to the match
+</span>26 <span style=''>   *
+</span>27 <span style=''>   * @param players players to add to the match
+</span>28 <span style=''>   */
+</span>29 <span style=''>  case class GamePlayers(players: Seq[GamePlayer])
+</span>30 <span style=''>
+</span>31 <span style=''>}
+</span>32 <span style=''>
+</span>33 <span style=''>/**
+</span>34 <span style=''> * Responsible for a game match
+</span>35 <span style=''> *
+</span>36 <span style=''> * @param numberOfPlayers number of players
+</span>37 <span style=''> * @param gameApi
+</span>38 <span style=''> */
+</span>39 <span style=''>class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInterface)
+</span>40 <span style=''>  extends Actor with ActorLogging with Stash {
+</span>41 <span style=''>
+</span>42 <span style=''>  override def receive: Receive = </span><span style='background: #AEF1AE'>idle</span><span style=''>
+</span>43 <span style=''>
+</span>44 <span style=''>  private var players: Seq[GamePlayer] = _
+</span>45 <span style=''>  private var turnManager: TurnManager[GamePlayer] = _
+</span>46 <span style=''>
+</span>47 <span style=''>  // TODO spostare in costruzione a posto di gameApi
+</span>48 <span style=''>  private val gameMatchManager = </span><span style='background: #AEF1AE'>new GameMatchManager(gameApi)</span><span style=''>
+</span>49 <span style=''>
+</span>50 <span style=''>  private def idle: Receive = {
+</span>51 <span style=''>    case GamePlayers(players) =&gt; {
+</span>52 <span style=''>      </span><span style='background: #AEF1AE'>this.players = players</span><span style=''>
+</span>53 <span style=''>      </span><span style='background: #AEF1AE'>require(players.size == numberOfPlayers)</span><span style=''>
+</span>54 <span style=''>      </span><span style='background: #AEF1AE'>this.broadcastMessageToPlayers(MatchFound(self))</span><span style=''>
+</span>55 <span style=''>      </span><span style='background: #AEF1AE'>context.become(initializing(Seq.empty) orElse termination())</span><span style=''>
+</span>56 <span style=''>    }
+</span>57 <span style=''>  }
+</span>58 <span style=''>
+</span>59 <span style=''>  /**
+</span>60 <span style=''>   * Waits all players to start game
+</span>61 <span style=''>   *
+</span>62 <span style=''>   * @param playersReady players ready for the game
+</span>63 <span style=''>   */
+</span>64 <span style=''>  private def initializing(playersReady: Seq[GamePlayer]): Receive = {
+</span>65 <span style=''>    case Ready(id, ref) =&gt; {
+</span>66 <span style=''>      </span><span style='background: #AEF1AE'>this.withPlayer(id) { p =&gt;
+</span>67 <span style=''></span><span style='background: #AEF1AE'>        log.info(s&quot;player ${p.username} ready&quot;)
+</span>68 <span style=''></span><span style='background: #AEF1AE'>
+</span>69 <span style=''></span><span style='background: #AEF1AE'>        players = players.map(p =&gt; if (p.id == id) p.copy(actorRef = ref) else p)
+</span>70 <span style=''></span><span style='background: #AEF1AE'>        val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
+</span>71 <span style=''></span><span style='background: #AEF1AE'>
+</span>72 <span style=''></span><span style='background: #AEF1AE'>        if (updatedReadyPlayers.length == numberOfPlayers) {
+</span>73 <span style=''></span><span style='background: #AEF1AE'>          log.info(&quot;All players ready&quot;)
+</span>74 <span style=''></span><span style='background: #AEF1AE'>          this.initializeGame()
+</span>75 <span style=''></span><span style='background: #AEF1AE'>        } else {
+</span>76 <span style=''></span><span style='background: #AEF1AE'>          context.become(initializing(updatedReadyPlayers) orElse termination())
+</span>77 <span style=''></span><span style='background: #AEF1AE'>        }
+</span>78 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
+</span>79 <span style=''>    }
+</span>80 <span style=''>  }
+</span>81 <span style=''>
+</span>82 <span style=''>  private def termination(): Receive = {
+</span>83 <span style=''>    case Terminated(ref) =&gt; </span><span style='background: #F0ADAD'>this.players.find(_.actorRef == ref)</span><span style=''> match {
+</span>84 <span style=''>      case Some(player) =&gt;
+</span>85 <span style=''>        </span><span style='background: #F0ADAD'>log.info(s&quot;Player ${player.username} left the game&quot;)</span><span style=''>
+</span>86 <span style=''>        </span><span style='background: #F0ADAD'>this.broadcastMessageToPlayers(GameEndedForPlayerLeft)</span><span style=''>
+</span>87 <span style=''>        </span><span style='background: #F0ADAD'>self ! PoisonPill</span><span style=''>
+</span>88 <span style=''>    }
+</span>89 <span style=''>    case LeaveGame(playerId) =&gt; </span><span style='background: #F0ADAD'>withPlayer(playerId) { player =&gt;
+</span>90 <span style=''></span><span style='background: #F0ADAD'>      log.info(s&quot;Player ${player.username} left the game&quot;)
+</span>91 <span style=''></span><span style='background: #F0ADAD'>      this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
+</span>92 <span style=''></span><span style='background: #F0ADAD'>      self ! PoisonPill
+</span>93 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>94 <span style=''>  }
+</span>95 <span style=''>
+</span>96 <span style=''>  /**
+</span>97 <span style=''>   * Inizialize the game, creating the initial state, the turn manager and changing actor behaviour
+</span>98 <span style=''>   *
+</span>99 <span style=''>   */
+</span>100 <span style=''>  private def initializeGame(): Unit = {
+</span>101 <span style=''>    </span><span style='background: #AEF1AE'>this.players.foreach(p =&gt; context.watch(p.actorRef))</span><span style=''>
+</span>102 <span style=''>    </span><span style='background: #AEF1AE'>this.turnManager = TurnManager[GamePlayer](players)</span><span style=''>
+</span>103 <span style=''>    </span><span style='background: #AEF1AE'>log.info(&quot;initializing game..&quot;)</span><span style=''>
+</span>104 <span style=''>    val gameState = </span><span style='background: #AEF1AE'>this.gameMatchManager.retrieveInitialState(players.map(p =&gt; (p.id, p.username)))</span><span style=''>
+</span>105 <span style=''>    </span><span style='background: #AEF1AE'>this.broadcastGameStateToPlayers(gameState)</span><span style=''>
+</span>106 <span style=''>    val currentPlayer = </span><span style='background: #AEF1AE'>this.turnManager.getInTurn</span><span style=''>
+</span>107 <span style=''>    </span><span style='background: #AEF1AE'>currentPlayer.actorRef ! PlayerTurn</span><span style=''>
+</span>108 <span style=''>    </span><span style='background: #AEF1AE'>this.broadcastMessageToNonCurrentPlayers(currentPlayer.id)(OpponentInTurn(currentPlayer.username))</span><span style=''>
+</span>109 <span style=''>    </span><span style='background: #AEF1AE'>context.become(inTurn(gameState, currentPlayer) orElse termination())</span><span style=''>
+</span>110 <span style=''>  }
+</span>111 <span style=''>
+</span>112 <span style=''>  private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
+</span>113 <span style=''>    case PlayerActionMade(playerId, action) if </span><span style='background: #AEF1AE'>playerId == playerInTurn.id</span><span style=''> =&gt; {
+</span>114 <span style=''>      </span><span style='background: #AEF1AE'>log.info(s&quot;received action $action from ${playerInTurn.username}&quot;)</span><span style=''>
+</span>115 <span style=''>      </span><span style='background: #AEF1AE'>this.gameMatchManager.determineNextState(gameState, playerInTurn, action)</span><span style=''> match {
+</span>116 <span style=''>        case Right(stateResult) =&gt;
+</span>117 <span style=''>          </span><span style='background: #AEF1AE'>this.handleStateResult(stateResult, playerInTurn)</span><span style=''>
+</span>118 <span style=''>
+</span>119 <span style=''>        case Left(errorMessage) =&gt;
+</span>120 <span style=''>          </span><span style='background: #F0ADAD'>log.error(&quot;Error resolving player action&quot;)</span><span style=''>
+</span>121 <span style=''>          </span><span style='background: #F0ADAD'>playerInTurn.actorRef ! MatchError.PlayerActionNotValid</span><span style=''>
+</span>122 <span style=''>      }
+</span>123 <span style=''>
+</span>124 <span style=''>    }
+</span>125 <span style=''>  }
+</span>126 <span style=''>
+</span>127 <span style=''>  private def handleStateResult(stateResult: StateResult, playerInTurn: GamePlayer): Unit = {
+</span>128 <span style=''>
 </span>129 <span style=''>
-</span>130 <span style=''>
-</span>131 <span style=''>    // notify the state
-</span>132 <span style=''>    </span><span style='background: #AEF1AE'>this.broadcastGameStateToPlayers(stateResult.updatedState)</span><span style=''>
-</span>133 <span style=''>
-</span>134 <span style=''>    // if game not ended
-</span>135 <span style=''>    if (</span><span style='background: #AEF1AE'>!stateResult.updatedState.playerWon(playerInTurn.id)</span><span style=''>) </span><span style='background: #AEF1AE'>{
-</span>136 <span style=''></span><span style='background: #AEF1AE'>
-</span>137 <span style=''></span><span style='background: #AEF1AE'>      playerInTurn.actorRef ! TurnEnded
-</span>138 <span style=''></span><span style='background: #AEF1AE'>
-</span>139 <span style=''></span><span style='background: #AEF1AE'>      // update the turn
-</span>140 <span style=''></span><span style='background: #AEF1AE'>      this.turnManager.nextTurn
-</span>141 <span style=''></span><span style='background: #AEF1AE'>
-</span>142 <span style=''></span><span style='background: #AEF1AE'>      // notify the next player it's his turn
-</span>143 <span style=''></span><span style='background: #AEF1AE'>      this.turnManager.getInTurn.actorRef ! PlayerTurn
-</span>144 <span style=''></span><span style='background: #AEF1AE'>      this.broadcastMessageToNonCurrentPlayers(this.turnManager.getInTurn.id)(OpponentInTurn(this.turnManager.getInTurn.username))
-</span>145 <span style=''></span><span style='background: #AEF1AE'>
-</span>146 <span style=''></span><span style='background: #AEF1AE'>      //switch the actor behaviour
-</span>147 <span style=''></span><span style='background: #AEF1AE'>      context.become(inTurn(stateResult.updatedState, this.turnManager.getInTurn))
-</span>148 <span style=''></span><span style='background: #AEF1AE'>
-</span>149 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''> else </span><span style='background: #F0ADAD'>{
-</span>150 <span style=''></span><span style='background: #F0ADAD'>      log.info(s&quot;Game ended, player ${playerInTurn.username} won&quot;)
-</span>151 <span style=''></span><span style='background: #F0ADAD'>      // game ended
-</span>152 <span style=''></span><span style='background: #F0ADAD'>      playerInTurn.actorRef ! Won
-</span>153 <span style=''></span><span style='background: #F0ADAD'>      this.broadcastMessageToNonCurrentPlayers(playerInTurn.id)(Lost(playerInTurn.username))
-</span>154 <span style=''></span><span style='background: #F0ADAD'>
-</span>155 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>156 <span style=''>  }
+</span>130 <span style=''>    // notify the state
+</span>131 <span style=''>    </span><span style='background: #AEF1AE'>this.broadcastGameStateToPlayers(stateResult.updatedState)</span><span style=''>
+</span>132 <span style=''>
+</span>133 <span style=''>    // if game not ended
+</span>134 <span style=''>    if (</span><span style='background: #AEF1AE'>!stateResult.updatedState.playerWon(playerInTurn.id)</span><span style=''>) </span><span style='background: #AEF1AE'>{
+</span>135 <span style=''></span><span style='background: #AEF1AE'>
+</span>136 <span style=''></span><span style='background: #AEF1AE'>      playerInTurn.actorRef ! TurnEnded
+</span>137 <span style=''></span><span style='background: #AEF1AE'>
+</span>138 <span style=''></span><span style='background: #AEF1AE'>      // update the turn
+</span>139 <span style=''></span><span style='background: #AEF1AE'>      this.turnManager.nextTurn
+</span>140 <span style=''></span><span style='background: #AEF1AE'>
+</span>141 <span style=''></span><span style='background: #AEF1AE'>      // notify the next player it's his turn
+</span>142 <span style=''></span><span style='background: #AEF1AE'>      this.turnManager.getInTurn.actorRef ! PlayerTurn
+</span>143 <span style=''></span><span style='background: #AEF1AE'>      this.broadcastMessageToNonCurrentPlayers(this.turnManager.getInTurn.id)(OpponentInTurn(this.turnManager.getInTurn.username))
+</span>144 <span style=''></span><span style='background: #AEF1AE'>
+</span>145 <span style=''></span><span style='background: #AEF1AE'>      //switch the actor behaviour
+</span>146 <span style=''></span><span style='background: #AEF1AE'>      context.become(inTurn(stateResult.updatedState, this.turnManager.getInTurn))
+</span>147 <span style=''></span><span style='background: #AEF1AE'>
+</span>148 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''> else </span><span style='background: #F0ADAD'>{
+</span>149 <span style=''></span><span style='background: #F0ADAD'>      log.info(s&quot;Game ended, player ${playerInTurn.username} won&quot;)
+</span>150 <span style=''></span><span style='background: #F0ADAD'>      // game ended
+</span>151 <span style=''></span><span style='background: #F0ADAD'>      playerInTurn.actorRef ! Won
+</span>152 <span style=''></span><span style='background: #F0ADAD'>      this.broadcastMessageToNonCurrentPlayers(playerInTurn.id)(Lost(playerInTurn.username))
+</span>153 <span style=''></span><span style='background: #F0ADAD'>
+</span>154 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>155 <span style=''>  }
+</span>156 <span style=''>
 </span>157 <span style=''>
-</span>158 <span style=''>
-</span>159 <span style=''>  /**
-</span>160 <span style=''>   * Broadcast a generic message to all game players
-</span>161 <span style=''>   *
-</span>162 <span style=''>   * @param message a generic message
-</span>163 <span style=''>   */
-</span>164 <span style=''>  private def broadcastMessageToPlayers(message: Any): Unit = {
-</span>165 <span style=''>    </span><span style='background: #AEF1AE'>this.players.foreach(p =&gt; p.actorRef ! message)</span><span style=''>
-</span>166 <span style=''>  }
-</span>167 <span style=''>
-</span>168 <span style=''>  private def broadcastMessageToNonCurrentPlayers(currentPlayerId: String)(message: Any): Unit = {
-</span>169 <span style=''>    </span><span style='background: #AEF1AE'>this.players.filter(_.id != currentPlayerId).foreach(_.actorRef ! message)</span><span style=''>
-</span>170 <span style=''>  }
-</span>171 <span style=''>
-</span>172 <span style=''>  /**
-</span>173 <span style=''>   * Send and update message about the game state to each player
-</span>174 <span style=''>   *
-</span>175 <span style=''>   * @param gameState the global game state
-</span>176 <span style=''>   */
-</span>177 <span style=''>  private def broadcastGameStateToPlayers(gameState: GameState) {
-</span>178 <span style=''>
-</span>179 <span style=''>    </span><span style='background: #AEF1AE'>println(gameState.toString)</span><span style=''>
-</span>180 <span style=''>    </span><span style='background: #AEF1AE'>this.players.foreach(player =&gt; {
-</span>181 <span style=''></span><span style='background: #AEF1AE'>      player.actorRef ! GameStateUpdated(PlayerGameState(
-</span>182 <span style=''></span><span style='background: #AEF1AE'>        gameState.board,
-</span>183 <span style=''></span><span style='background: #AEF1AE'>        gameState.players.find(_.id == player.id).get.hand,
-</span>184 <span style=''></span><span style='background: #AEF1AE'>        gameState.players.filter(_.id != player.id).map(p =&gt; Opponent(p.name, p.hand.playerCards.size))
-</span>185 <span style=''></span><span style='background: #AEF1AE'>      ))
-</span>186 <span style=''></span><span style='background: #AEF1AE'>
-</span>187 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
-</span>188 <span style=''>    //this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))
-</span>189 <span style=''>  }
+</span>158 <span style=''>  /**
+</span>159 <span style=''>   * Broadcast a generic message to all game players
+</span>160 <span style=''>   *
+</span>161 <span style=''>   * @param message a generic message
+</span>162 <span style=''>   */
+</span>163 <span style=''>  private def broadcastMessageToPlayers(message: Any): Unit = {
+</span>164 <span style=''>    </span><span style='background: #AEF1AE'>this.players.foreach(p =&gt; p.actorRef ! message)</span><span style=''>
+</span>165 <span style=''>  }
+</span>166 <span style=''>
+</span>167 <span style=''>  private def broadcastMessageToNonCurrentPlayers(currentPlayerId: String)(message: Any): Unit = {
+</span>168 <span style=''>    </span><span style='background: #AEF1AE'>this.players.filter(_.id != currentPlayerId).foreach(_.actorRef ! message)</span><span style=''>
+</span>169 <span style=''>  }
+</span>170 <span style=''>
+</span>171 <span style=''>  /**
+</span>172 <span style=''>   * Send and update message about the game state to each player
+</span>173 <span style=''>   *
+</span>174 <span style=''>   * @param gameState the global game state
+</span>175 <span style=''>   */
+</span>176 <span style=''>  private def broadcastGameStateToPlayers(gameState: GameState) {
+</span>177 <span style=''>
+</span>178 <span style=''>    </span><span style='background: #AEF1AE'>println(gameState.toString)</span><span style=''>
+</span>179 <span style=''>    </span><span style='background: #AEF1AE'>this.players.foreach(player =&gt; {
+</span>180 <span style=''></span><span style='background: #AEF1AE'>      player.actorRef ! GameStateUpdated(PlayerGameState(
+</span>181 <span style=''></span><span style='background: #AEF1AE'>        gameState.board,
+</span>182 <span style=''></span><span style='background: #AEF1AE'>        gameState.players.find(_.id == player.id).get.hand,
+</span>183 <span style=''></span><span style='background: #AEF1AE'>        gameState.players.filter(_.id != player.id).map(p =&gt; Opponent(p.name, p.hand.playerCards.size))
+</span>184 <span style=''></span><span style='background: #AEF1AE'>      ))
+</span>185 <span style=''></span><span style='background: #AEF1AE'>
+</span>186 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
+</span>187 <span style=''>    //this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))
+</span>188 <span style=''>  }
+</span>189 <span style=''>
 </span>190 <span style=''>
-</span>191 <span style=''>
-</span>192 <span style=''>  private def withPlayer(playerId: PlayerId)(f: GamePlayer =&gt; Unit): Unit = {
-</span>193 <span style=''>    </span><span style='background: #AEF1AE'>this.players.find(_.id == playerId)</span><span style=''> match {
-</span>194 <span style=''>      case Some(p) =&gt; </span><span style='background: #AEF1AE'>f(p)</span><span style=''>
-</span>195 <span style=''>      case None =&gt; </span><span style='background: #F0ADAD'>log.info(s&quot;Player id $playerId not found&quot;)</span><span style=''>
-</span>196 <span style=''>    }
-</span>197 <span style=''>  }
-</span>198 <span style=''>
-</span>199 <span style=''>}
+</span>191 <span style=''>  private def withPlayer(playerId: PlayerId)(f: GamePlayer =&gt; Unit): Unit = {
+</span>192 <span style=''>    </span><span style='background: #AEF1AE'>this.players.find(_.id == playerId)</span><span style=''> match {
+</span>193 <span style=''>      case Some(p) =&gt; </span><span style='background: #AEF1AE'>f(p)</span><span style=''>
+</span>194 <span style=''>      case None =&gt; </span><span style='background: #F0ADAD'>log.info(s&quot;Player id $playerId not found&quot;)</span><span style=''>
+</span>195 <span style=''>    }
+</span>196 <span style=''>  }
+</span>197 <span style=''>
+</span>198 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -234,15 +233,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          16
+          15
         </td>
         <td>
           134
         </td>
         <td>
-          714
+          656
           -
-          787
+          729
         </td>
         <td>
           ApplyToImplicitArgs
@@ -255,15 +254,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          15
         </td>
         <td>
           288
         </td>
         <td>
-          720
+          662
           -
-          786
+          728
         </td>
         <td>
           Apply
@@ -276,15 +275,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          42
         </td>
         <td>
           409
         </td>
         <td>
-          1445
+          1387
           -
-          1449
+          1391
         </td>
         <td>
           Select
@@ -297,15 +296,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          48
         </td>
         <td>
           96
         </td>
         <td>
-          1636
+          1578
           -
-          1665
+          1607
         </td>
         <td>
           Apply
@@ -318,15 +317,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          48
         </td>
         <td>
           242
         </td>
         <td>
-          1657
+          1599
           -
-          1664
+          1606
         </td>
         <td>
           Select
@@ -339,15 +338,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          50
         </td>
         <td>
           129
         </td>
         <td>
-          1697
+          1639
           -
-          1697
+          1639
         </td>
         <td>
           Apply
@@ -360,15 +359,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          52
         </td>
         <td>
           4
         </td>
         <td>
-          1740
+          1682
           -
-          1762
+          1704
         </td>
         <td>
           Apply
@@ -381,15 +380,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          53
         </td>
         <td>
           271
         </td>
         <td>
-          1793
+          1735
           -
-          1808
+          1750
         </td>
         <td>
           Select
@@ -402,15 +401,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          53
         </td>
         <td>
           127
         </td>
         <td>
-          1777
+          1719
           -
-          1808
+          1750
         </td>
         <td>
           Apply
@@ -423,15 +422,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          53
         </td>
         <td>
           371
         </td>
         <td>
-          1769
+          1711
           -
-          1809
+          1751
         </td>
         <td>
           Apply
@@ -444,15 +443,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          54
         </td>
         <td>
           136
         </td>
         <td>
-          1847
+          1789
           -
-          1863
+          1805
         </td>
         <td>
           Apply
@@ -465,15 +464,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          54
         </td>
         <td>
           411
         </td>
         <td>
-          1816
+          1758
           -
-          1864
+          1806
         </td>
         <td>
           Apply
@@ -486,15 +485,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          54
         </td>
         <td>
           308
         </td>
         <td>
-          1858
+          1800
           -
-          1862
+          1804
         </td>
         <td>
           Select
@@ -507,15 +506,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          55
         </td>
         <td>
           280
         </td>
         <td>
-          1871
+          1813
           -
-          1931
+          1873
         </td>
         <td>
           Apply
@@ -528,15 +527,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          55
         </td>
         <td>
           103
         </td>
         <td>
-          1917
+          1859
           -
-          1930
+          1872
         </td>
         <td>
           Apply
@@ -549,15 +548,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          55
         </td>
         <td>
           261
         </td>
         <td>
-          1899
+          1841
           -
-          1908
+          1850
         </td>
         <td>
           TypeApply
@@ -570,15 +569,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          55
         </td>
         <td>
           21
         </td>
         <td>
-          1886
+          1828
           -
-          1930
+          1872
         </td>
         <td>
           Apply
@@ -591,15 +590,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          64
         </td>
         <td>
           150
         </td>
         <td>
-          2118
+          2060
           -
-          2118
+          2060
         </td>
         <td>
           Apply
@@ -612,15 +611,15 @@
         </td>
       </tr><tr>
         <td>
-          67
+          66
         </td>
         <td>
           231
         </td>
         <td>
-          2155
+          2097
           -
-          2635
+          2577
         </td>
         <td>
           Apply
@@ -657,15 +656,15 @@
         </td>
       </tr><tr>
         <td>
-          68
+          67
         </td>
         <td>
           406
         </td>
         <td>
-          2199
+          2141
           -
-          2228
+          2170
         </td>
         <td>
           Apply
@@ -678,15 +677,15 @@
         </td>
       </tr><tr>
         <td>
-          68
+          67
         </td>
         <td>
           149
         </td>
         <td>
-          2210
+          2152
           -
-          2220
+          2162
         </td>
         <td>
           Select
@@ -699,15 +698,15 @@
         </td>
       </tr><tr>
         <td>
-          68
+          67
         </td>
         <td>
           394
         </td>
         <td>
-          2201
+          2143
           -
-          2209
+          2151
         </td>
         <td>
           Literal
@@ -720,15 +719,15 @@
         </td>
       </tr><tr>
         <td>
-          68
+          67
         </td>
         <td>
           237
         </td>
         <td>
-          2221
+          2163
           -
-          2228
+          2170
         </td>
         <td>
           Literal
@@ -741,15 +740,15 @@
         </td>
       </tr><tr>
         <td>
-          68
+          67
         </td>
         <td>
           263
         </td>
         <td>
-          2190
+          2132
           -
-          2229
+          2171
         </td>
         <td>
           Apply
@@ -762,15 +761,15 @@
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           227
         </td>
         <td>
-          2310
+          2252
           -
-          2311
+          2253
         </td>
         <td>
           Ident
@@ -783,15 +782,15 @@
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           95
         </td>
         <td>
-          2270
+          2212
           -
-          2280
+          2222
         </td>
         <td>
           Apply
@@ -804,15 +803,15 @@
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           122
         </td>
         <td>
-          2282
+          2224
           -
-          2304
+          2246
         </td>
         <td>
           Apply
@@ -825,15 +824,15 @@
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           382
         </td>
         <td>
-          2282
+          2224
           -
-          2304
+          2246
         </td>
         <td>
           Block
@@ -851,15 +850,15 @@
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           256
         </td>
         <td>
-          2239
+          2181
           -
-          2312
+          2254
         </td>
         <td>
           Apply
@@ -880,15 +879,15 @@ else
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           16
         </td>
         <td>
-          2284
+          2226
           -
-          2284
+          2226
         </td>
         <td>
           Select
@@ -901,15 +900,15 @@ else
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           135
         </td>
         <td>
-          2260
+          2202
           -
-          2260
+          2202
         </td>
         <td>
           TypeApply
@@ -922,15 +921,15 @@ else
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           281
         </td>
         <td>
-          2284
+          2226
           -
-          2284
+          2226
         </td>
         <td>
           Select
@@ -943,15 +942,15 @@ else
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           407
         </td>
         <td>
-          2249
+          2191
           -
-          2312
+          2254
         </td>
         <td>
           ApplyToImplicitArgs
@@ -972,15 +971,15 @@ else
         </td>
       </tr><tr>
         <td>
-          71
+          70
         </td>
         <td>
           116
         </td>
         <td>
-          2360
+          2302
           -
-          2360
+          2302
         </td>
         <td>
           TypeApply
@@ -993,15 +992,15 @@ else
         </td>
       </tr><tr>
         <td>
-          71
+          70
         </td>
         <td>
           97
         </td>
         <td>
-          2365
+          2307
           -
-          2365
+          2307
         </td>
         <td>
           Select
@@ -1014,15 +1013,15 @@ else
         </td>
       </tr><tr>
         <td>
-          71
+          70
         </td>
         <td>
           270
         </td>
         <td>
-          2363
+          2305
           -
-          2385
+          2327
         </td>
         <td>
           Apply
@@ -1035,15 +1034,15 @@ else
         </td>
       </tr><tr>
         <td>
-          71
+          70
         </td>
         <td>
           12
         </td>
         <td>
-          2365
+          2307
           -
-          2365
+          2307
         </td>
         <td>
           Select
@@ -1056,15 +1055,15 @@ else
         </td>
       </tr><tr>
         <td>
-          71
+          70
         </td>
         <td>
           374
         </td>
         <td>
-          2347
+          2289
           -
-          2385
+          2327
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1082,15 +1081,15 @@ else
         </td>
       </tr><tr>
         <td>
-          73
+          72
         </td>
         <td>
           137
         </td>
         <td>
-          2399
+          2341
           -
-          2444
+          2386
         </td>
         <td>
           Apply
@@ -1103,15 +1102,15 @@ else
         </td>
       </tr><tr>
         <td>
-          73
+          72
         </td>
         <td>
           86
         </td>
         <td>
-          2446
+          2388
           -
-          2529
+          2471
         </td>
         <td>
           Block
@@ -1127,15 +1126,15 @@ else
         </td>
       </tr><tr>
         <td>
-          73
+          72
         </td>
         <td>
           229
         </td>
         <td>
-          2429
+          2371
           -
-          2444
+          2386
         </td>
         <td>
           Select
@@ -1148,15 +1147,15 @@ else
         </td>
       </tr><tr>
         <td>
-          74
+          73
         </td>
         <td>
           399
         </td>
         <td>
-          2458
+          2400
           -
-          2487
+          2429
         </td>
         <td>
           Apply
@@ -1169,15 +1168,15 @@ else
         </td>
       </tr><tr>
         <td>
-          75
+          74
         </td>
         <td>
           262
         </td>
         <td>
-          2498
+          2440
           -
-          2519
+          2461
         </td>
         <td>
           Apply
@@ -1190,15 +1189,15 @@ else
         </td>
       </tr><tr>
         <td>
-          77
+          76
         </td>
         <td>
           113
         </td>
         <td>
-          2547
+          2489
           -
-          2617
+          2559
         </td>
         <td>
           Apply
@@ -1211,15 +1210,15 @@ else
         </td>
       </tr><tr>
         <td>
-          77
+          76
         </td>
         <td>
           393
         </td>
         <td>
-          2547
+          2489
           -
-          2617
+          2559
         </td>
         <td>
           Block
@@ -1232,15 +1231,15 @@ else
         </td>
       </tr><tr>
         <td>
-          77
+          76
         </td>
         <td>
           272
         </td>
         <td>
-          2562
+          2504
           -
-          2616
+          2558
         </td>
         <td>
           Apply
@@ -1253,15 +1252,15 @@ else
         </td>
       </tr><tr>
         <td>
-          77
+          76
         </td>
         <td>
           344
         </td>
         <td>
-          2603
+          2545
           -
-          2616
+          2558
         </td>
         <td>
           Apply
@@ -1274,15 +1273,15 @@ else
         </td>
       </tr><tr>
         <td>
-          83
+          82
         </td>
         <td>
           219
         </td>
         <td>
-          2686
+          2628
           -
-          2686
+          2628
         </td>
         <td>
           Apply
@@ -1295,15 +1294,15 @@ else
         </td>
       </tr><tr>
         <td>
-          84
+          83
         </td>
         <td>
           400
         </td>
         <td>
-          2734
+          2676
           -
-          2751
+          2693
         </td>
         <td>
           Apply
@@ -1316,15 +1315,15 @@ else
         </td>
       </tr><tr>
         <td>
-          84
+          83
         </td>
         <td>
           255
         </td>
         <td>
-          2716
+          2658
           -
-          2752
+          2694
         </td>
         <td>
           Apply
@@ -1337,15 +1336,15 @@ else
         </td>
       </tr><tr>
         <td>
-          86
+          85
         </td>
         <td>
           107
         </td>
         <td>
-          2807
+          2749
           -
-          2815
+          2757
         </td>
         <td>
           Literal
@@ -1358,15 +1357,15 @@ else
         </td>
       </tr><tr>
         <td>
-          86
+          85
         </td>
         <td>
           388
         </td>
         <td>
-          2796
+          2738
           -
-          2848
+          2790
         </td>
         <td>
           Apply
@@ -1379,15 +1378,15 @@ else
         </td>
       </tr><tr>
         <td>
-          86
+          85
         </td>
         <td>
           345
         </td>
         <td>
-          2832
+          2774
           -
-          2847
+          2789
         </td>
         <td>
           Literal
@@ -1400,15 +1399,15 @@ else
         </td>
       </tr><tr>
         <td>
-          86
+          85
         </td>
         <td>
           123
         </td>
         <td>
-          2805
+          2747
           -
-          2847
+          2789
         </td>
         <td>
           Apply
@@ -1421,15 +1420,15 @@ else
         </td>
       </tr><tr>
         <td>
-          86
+          85
         </td>
         <td>
           284
         </td>
         <td>
-          2816
+          2758
           -
-          2831
+          2773
         </td>
         <td>
           Select
@@ -1442,15 +1441,15 @@ else
         </td>
       </tr><tr>
         <td>
-          87
+          86
         </td>
         <td>
           131
         </td>
         <td>
-          2857
+          2799
           -
-          2911
+          2853
         </td>
         <td>
           Apply
@@ -1463,15 +1462,15 @@ else
         </td>
       </tr><tr>
         <td>
-          87
+          86
         </td>
         <td>
           228
         </td>
         <td>
-          2888
+          2830
           -
-          2910
+          2852
         </td>
         <td>
           Select
@@ -1484,15 +1483,15 @@ else
         </td>
       </tr><tr>
         <td>
-          88
+          87
         </td>
         <td>
           360
         </td>
         <td>
-          2920
+          2862
           -
-          2937
+          2879
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1505,15 +1504,15 @@ else
         </td>
       </tr><tr>
         <td>
-          88
+          87
         </td>
         <td>
           413
         </td>
         <td>
-          2920
+          2862
           -
-          2924
+          2866
         </td>
         <td>
           Select
@@ -1526,15 +1525,15 @@ else
         </td>
       </tr><tr>
         <td>
-          88
+          87
         </td>
         <td>
           108
         </td>
         <td>
-          2925
+          2867
           -
-          2925
+          2867
         </td>
         <td>
           Select
@@ -1547,15 +1546,15 @@ else
         </td>
       </tr><tr>
         <td>
-          88
+          87
         </td>
         <td>
           257
         </td>
         <td>
-          2927
+          2869
           -
-          2937
+          2879
         </td>
         <td>
           Select
@@ -1568,15 +1567,15 @@ else
         </td>
       </tr><tr>
         <td>
-          90
+          89
         </td>
         <td>
           391
         </td>
         <td>
-          2976
+          2918
           -
-          3158
+          3100
         </td>
         <td>
           Apply
@@ -1593,15 +1592,15 @@ else
         </td>
       </tr><tr>
         <td>
-          91
+          90
         </td>
         <td>
           119
         </td>
         <td>
-          3051
+          2993
           -
-          3066
+          3008
         </td>
         <td>
           Literal
@@ -1614,15 +1613,15 @@ else
         </td>
       </tr><tr>
         <td>
-          91
+          90
         </td>
         <td>
           265
         </td>
         <td>
-          3026
+          2968
           -
-          3034
+          2976
         </td>
         <td>
           Literal
@@ -1635,15 +1634,15 @@ else
         </td>
       </tr><tr>
         <td>
-          91
+          90
         </td>
         <td>
           70
         </td>
         <td>
-          3015
+          2957
           -
-          3067
+          3009
         </td>
         <td>
           Apply
@@ -1656,15 +1655,15 @@ else
         </td>
       </tr><tr>
         <td>
-          91
+          90
         </td>
         <td>
           389
         </td>
         <td>
-          3035
+          2977
           -
-          3050
+          2992
         </td>
         <td>
           Select
@@ -1677,15 +1676,15 @@ else
         </td>
       </tr><tr>
         <td>
-          91
+          90
         </td>
         <td>
           230
         </td>
         <td>
-          3024
+          2966
           -
-          3066
+          3008
         </td>
         <td>
           Apply
@@ -1698,15 +1697,15 @@ else
         </td>
       </tr><tr>
         <td>
-          92
+          91
         </td>
         <td>
           404
         </td>
         <td>
-          3105
+          3047
           -
-          3127
+          3069
         </td>
         <td>
           Select
@@ -1719,15 +1718,15 @@ else
         </td>
       </tr><tr>
         <td>
-          92
+          91
         </td>
         <td>
           251
         </td>
         <td>
-          3074
+          3016
           -
-          3128
+          3070
         </td>
         <td>
           Apply
@@ -1740,15 +1739,15 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          92
         </td>
         <td>
           104
         </td>
         <td>
-          3135
+          3077
           -
-          3139
+          3081
         </td>
         <td>
           Select
@@ -1761,15 +1760,15 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          92
         </td>
         <td>
           361
         </td>
         <td>
-          3142
+          3084
           -
-          3152
+          3094
         </td>
         <td>
           Select
@@ -1782,15 +1781,15 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          92
         </td>
         <td>
           277
         </td>
         <td>
-          3140
+          3082
           -
-          3140
+          3082
         </td>
         <td>
           Select
@@ -1803,15 +1802,15 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          92
         </td>
         <td>
           120
         </td>
         <td>
-          3135
+          3077
           -
-          3152
+          3094
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1824,15 +1823,15 @@ else
         </td>
       </tr><tr>
         <td>
-          102
+          101
         </td>
         <td>
           412
         </td>
         <td>
-          3352
+          3294
           -
-          3377
+          3319
         </td>
         <td>
           Apply
@@ -1845,15 +1844,15 @@ else
         </td>
       </tr><tr>
         <td>
-          102
+          101
         </td>
         <td>
           71
         </td>
         <td>
-          3366
+          3308
           -
-          3376
+          3318
         </td>
         <td>
           Select
@@ -1866,15 +1865,15 @@ else
         </td>
       </tr><tr>
         <td>
-          102
+          101
         </td>
         <td>
           253
         </td>
         <td>
-          3326
+          3268
           -
-          3378
+          3320
         </td>
         <td>
           Apply
@@ -1887,15 +1886,15 @@ else
         </td>
       </tr><tr>
         <td>
-          103
+          102
         </td>
         <td>
           185
         </td>
         <td>
-          3383
+          3325
           -
-          3434
+          3376
         </td>
         <td>
           Apply
@@ -1908,15 +1907,15 @@ else
         </td>
       </tr><tr>
         <td>
-          103
+          102
         </td>
         <td>
           354
         </td>
         <td>
-          3402
+          3344
           -
-          3434
+          3376
         </td>
         <td>
           Apply
@@ -1929,15 +1928,15 @@ else
         </td>
       </tr><tr>
         <td>
-          103
+          102
         </td>
         <td>
           87
         </td>
         <td>
-          3426
+          3368
           -
-          3433
+          3375
         </td>
         <td>
           Select
@@ -1950,15 +1949,15 @@ else
         </td>
       </tr><tr>
         <td>
-          104
+          103
         </td>
         <td>
           114
         </td>
         <td>
-          3439
+          3381
           -
-          3470
+          3412
         </td>
         <td>
           Apply
@@ -1971,15 +1970,15 @@ else
         </td>
       </tr><tr>
         <td>
-          105
+          104
         </td>
         <td>
           65
         </td>
         <td>
-          3551
+          3493
           -
-          3569
+          3511
         </td>
         <td>
           Apply
@@ -1992,15 +1991,15 @@ else
         </td>
       </tr><tr>
         <td>
-          105
+          104
         </td>
         <td>
           220
         </td>
         <td>
-          3558
+          3500
           -
-          3568
+          3510
         </td>
         <td>
           Select
@@ -2013,15 +2012,15 @@ else
         </td>
       </tr><tr>
         <td>
-          105
+          104
         </td>
         <td>
           414
         </td>
         <td>
-          3545
+          3487
           -
-          3545
+          3487
         </td>
         <td>
           TypeApply
@@ -2034,15 +2033,15 @@ else
         </td>
       </tr><tr>
         <td>
-          105
+          104
         </td>
         <td>
           384
         </td>
         <td>
-          3552
+          3494
           -
-          3556
+          3498
         </td>
         <td>
           Select
@@ -2055,15 +2054,15 @@ else
         </td>
       </tr><tr>
         <td>
-          105
+          104
         </td>
         <td>
           243
         </td>
         <td>
-          3534
+          3476
           -
-          3570
+          3512
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2076,15 +2075,15 @@ else
         </td>
       </tr><tr>
         <td>
-          105
+          104
         </td>
         <td>
           81
         </td>
         <td>
-          3491
+          3433
           -
-          3571
+          3513
         </td>
         <td>
           Apply
@@ -2097,15 +2096,15 @@ else
         </td>
       </tr><tr>
         <td>
-          106
+          105
         </td>
         <td>
           357
         </td>
         <td>
-          3576
+          3518
           -
-          3619
+          3561
         </td>
         <td>
           Apply
@@ -2118,15 +2117,15 @@ else
         </td>
       </tr><tr>
         <td>
-          107
+          106
         </td>
         <td>
           206
         </td>
         <td>
-          3644
+          3586
           -
-          3670
+          3612
         </td>
         <td>
           Select
@@ -2139,15 +2138,15 @@ else
         </td>
       </tr><tr>
         <td>
-          108
+          107
         </td>
         <td>
           77
         </td>
         <td>
-          3675
+          3617
           -
-          3710
+          3652
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2160,15 +2159,15 @@ else
         </td>
       </tr><tr>
         <td>
-          108
+          107
         </td>
         <td>
           390
         </td>
         <td>
-          3700
+          3642
           -
-          3710
+          3652
         </td>
         <td>
           Select
@@ -2181,15 +2180,15 @@ else
         </td>
       </tr><tr>
         <td>
-          108
+          107
         </td>
         <td>
           130
         </td>
         <td>
-          3675
+          3617
           -
-          3697
+          3639
         </td>
         <td>
           Select
@@ -2202,15 +2201,15 @@ else
         </td>
       </tr><tr>
         <td>
-          108
+          107
         </td>
         <td>
           212
         </td>
         <td>
-          3698
+          3640
           -
-          3698
+          3640
         </td>
         <td>
           Select
@@ -2223,15 +2222,15 @@ else
         </td>
       </tr><tr>
         <td>
-          109
+          108
         </td>
         <td>
           348
         </td>
         <td>
-          3715
+          3657
           -
-          3813
+          3755
         </td>
         <td>
           Apply
@@ -2244,15 +2243,15 @@ else
         </td>
       </tr><tr>
         <td>
-          109
+          108
         </td>
         <td>
           264
         </td>
         <td>
-          3789
+          3731
           -
-          3811
+          3753
         </td>
         <td>
           Select
@@ -2265,15 +2264,15 @@ else
         </td>
       </tr><tr>
         <td>
-          109
+          108
         </td>
         <td>
           105
         </td>
         <td>
-          3774
+          3716
           -
-          3812
+          3754
         </td>
         <td>
           Apply
@@ -2286,15 +2285,15 @@ else
         </td>
       </tr><tr>
         <td>
-          109
+          108
         </td>
         <td>
           395
         </td>
         <td>
-          3756
+          3698
           -
-          3772
+          3714
         </td>
         <td>
           Select
@@ -2307,15 +2306,15 @@ else
         </td>
       </tr><tr>
         <td>
-          110
+          109
         </td>
         <td>
           110
         </td>
         <td>
-          3833
+          3775
           -
-          3886
+          3828
         </td>
         <td>
           Apply
@@ -2328,15 +2327,15 @@ else
         </td>
       </tr><tr>
         <td>
-          110
+          109
         </td>
         <td>
           207
         </td>
         <td>
-          3873
+          3815
           -
-          3886
+          3828
         </td>
         <td>
           Apply
@@ -2349,15 +2348,15 @@ else
         </td>
       </tr><tr>
         <td>
-          110
+          109
         </td>
         <td>
           383
         </td>
         <td>
-          3818
+          3760
           -
-          3887
+          3829
         </td>
         <td>
           Apply
@@ -2370,15 +2369,15 @@ else
         </td>
       </tr><tr>
         <td>
-          113
+          112
         </td>
         <td>
           192
         </td>
         <td>
-          3973
+          3915
           -
-          3973
+          3915
         </td>
         <td>
           Apply
@@ -2391,15 +2390,15 @@ else
         </td>
       </tr><tr>
         <td>
-          114
+          113
         </td>
         <td>
           238
         </td>
         <td>
-          4034
+          3976
           -
-          4049
+          3991
         </td>
         <td>
           Select
@@ -2412,15 +2411,15 @@ else
         </td>
       </tr><tr>
         <td>
-          114
+          113
         </td>
         <td>
           78
         </td>
         <td>
-          4022
+          3964
           -
-          4049
+          3991
         </td>
         <td>
           Apply
@@ -2433,15 +2432,15 @@ else
         </td>
       </tr><tr>
         <td>
-          115
+          114
         </td>
         <td>
           355
         </td>
         <td>
-          4103
+          4045
           -
-          4124
+          4066
         </td>
         <td>
           Select
@@ -2454,15 +2453,15 @@ else
         </td>
       </tr><tr>
         <td>
-          115
+          114
         </td>
         <td>
           125
         </td>
         <td>
-          4061
+          4003
           -
-          4127
+          4069
         </td>
         <td>
           Apply
@@ -2475,15 +2474,15 @@ else
         </td>
       </tr><tr>
         <td>
-          115
+          114
         </td>
         <td>
           98
         </td>
         <td>
-          4125
+          4067
           -
-          4126
+          4068
         </td>
         <td>
           Literal
@@ -2496,15 +2495,15 @@ else
         </td>
       </tr><tr>
         <td>
-          115
+          114
         </td>
         <td>
           337
         </td>
         <td>
-          4072
+          4014
           -
-          4089
+          4031
         </td>
         <td>
           Literal
@@ -2517,15 +2516,15 @@ else
         </td>
       </tr><tr>
         <td>
-          115
+          114
         </td>
         <td>
           208
         </td>
         <td>
-          4070
+          4012
           -
-          4126
+          4068
         </td>
         <td>
           Apply
@@ -2538,15 +2537,15 @@ else
         </td>
       </tr><tr>
         <td>
-          115
+          114
         </td>
         <td>
           252
         </td>
         <td>
-          4095
+          4037
           -
-          4102
+          4044
         </td>
         <td>
           Literal
@@ -2559,15 +2558,15 @@ else
         </td>
       </tr><tr>
         <td>
-          116
+          115
         </td>
         <td>
           385
         </td>
         <td>
-          4134
+          4076
           -
-          4207
+          4149
         </td>
         <td>
           Apply
@@ -2580,15 +2579,15 @@ else
         </td>
       </tr><tr>
         <td>
-          118
+          117
         </td>
         <td>
           232
         </td>
         <td>
-          4261
+          4203
           -
-          4310
+          4252
         </td>
         <td>
           Apply
@@ -2601,15 +2600,15 @@ else
         </td>
       </tr><tr>
         <td>
-          121
+          120
         </td>
         <td>
           66
         </td>
         <td>
-          4357
+          4299
           -
-          4399
+          4341
         </td>
         <td>
           Apply
@@ -2622,15 +2621,15 @@ else
         </td>
       </tr><tr>
         <td>
-          122
+          121
         </td>
         <td>
           101
         </td>
         <td>
-          4432
+          4374
           -
-          4432
+          4374
         </td>
         <td>
           Select
@@ -2643,15 +2642,15 @@ else
         </td>
       </tr><tr>
         <td>
-          122
+          121
         </td>
         <td>
           309
         </td>
         <td>
-          4410
+          4352
           -
-          4431
+          4373
         </td>
         <td>
           Select
@@ -2664,36 +2663,36 @@ else
         </td>
       </tr><tr>
         <td>
-          122
+          121
         </td>
         <td>
           246
         </td>
         <td>
-          4434
+          4376
           -
-          4473
+          4407
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          it.parttimeteam.messages.PlayerActionNotValidError.apply
+          it.parttimeteam.messages.GameMessage.MatchError.PlayerActionNotValid
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.messages.PlayerActionNotValidError.apply(errorMessage)
+          it.parttimeteam.messages.GameMessage.MatchError.PlayerActionNotValid
         </td>
       </tr><tr>
         <td>
-          122
+          121
         </td>
         <td>
           356
         </td>
         <td>
-          4410
+          4352
           -
-          4473
+          4407
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2702,19 +2701,19 @@ else
           akka.actor.ScalaActorRef.!
         </td>
         <td style="background: #F0ADAD">
-          actor.this.`package`.actorRef2Scala(playerInTurn.actorRef).!(it.parttimeteam.messages.PlayerActionNotValidError.apply(errorMessage))(GameMatchManagerActor.this.self)
+          actor.this.`package`.actorRef2Scala(playerInTurn.actorRef).!(it.parttimeteam.messages.GameMessage.MatchError.PlayerActionNotValid)(GameMatchManagerActor.this.self)
         </td>
       </tr><tr>
         <td>
-          132
+          131
         </td>
         <td>
           376
         </td>
         <td>
-          4618
+          4552
           -
-          4676
+          4610
         </td>
         <td>
           Apply
@@ -2727,15 +2726,15 @@ else
         </td>
       </tr><tr>
         <td>
-          132
+          131
         </td>
         <td>
           117
         </td>
         <td>
-          4651
+          4585
           -
-          4675
+          4609
         </td>
         <td>
           Select
@@ -2748,15 +2747,15 @@ else
         </td>
       </tr><tr>
         <td>
-          135
+          134
         </td>
         <td>
           62
         </td>
         <td>
-          4765
+          4699
           -
-          5224
+          5158
         </td>
         <td>
           Block
@@ -2775,15 +2774,15 @@ else
         </td>
       </tr><tr>
         <td>
-          135
+          134
         </td>
         <td>
           67
         </td>
         <td>
-          4711
+          4645
           -
-          4763
+          4697
         </td>
         <td>
           Select
@@ -2796,15 +2795,15 @@ else
         </td>
       </tr><tr>
         <td>
-          135
+          134
         </td>
         <td>
           234
         </td>
         <td>
-          4747
+          4681
           -
-          4762
+          4696
         </td>
         <td>
           Select
@@ -2817,15 +2816,15 @@ else
         </td>
       </tr><tr>
         <td>
-          137
+          136
         </td>
         <td>
           346
         </td>
         <td>
-          4774
+          4708
           -
-          4807
+          4741
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2838,15 +2837,15 @@ else
         </td>
       </tr><tr>
         <td>
-          137
+          136
         </td>
         <td>
           318
         </td>
         <td>
-          4774
+          4708
           -
-          4795
+          4729
         </td>
         <td>
           Select
@@ -2859,15 +2858,15 @@ else
         </td>
       </tr><tr>
         <td>
-          137
+          136
         </td>
         <td>
           90
         </td>
         <td>
-          4796
+          4730
           -
-          4796
+          4730
         </td>
         <td>
           Select
@@ -2880,15 +2879,15 @@ else
         </td>
       </tr><tr>
         <td>
-          137
+          136
         </td>
         <td>
           248
         </td>
         <td>
-          4798
+          4732
           -
-          4807
+          4741
         </td>
         <td>
           Select
@@ -2901,15 +2900,15 @@ else
         </td>
       </tr><tr>
         <td>
-          140
+          139
         </td>
         <td>
           194
         </td>
         <td>
-          4840
+          4774
           -
-          4865
+          4799
         </td>
         <td>
           Select
@@ -2922,15 +2921,15 @@ else
         </td>
       </tr><tr>
         <td>
-          143
+          142
         </td>
         <td>
           59
         </td>
         <td>
-          4919
+          4853
           -
-          4967
+          4901
         </td>
         <td>
           ApplyToImplicitArgs
@@ -2943,15 +2942,15 @@ else
         </td>
       </tr><tr>
         <td>
-          143
+          142
         </td>
         <td>
           214
         </td>
         <td>
-          4955
+          4889
           -
-          4955
+          4889
         </td>
         <td>
           Select
@@ -2964,15 +2963,15 @@ else
         </td>
       </tr><tr>
         <td>
-          143
+          142
         </td>
         <td>
           378
         </td>
         <td>
-          4957
+          4891
           -
-          4967
+          4901
         </td>
         <td>
           Select
@@ -2985,15 +2984,15 @@ else
         </td>
       </tr><tr>
         <td>
-          143
+          142
         </td>
         <td>
           48
         </td>
         <td>
-          4919
+          4853
           -
-          4954
+          4888
         </td>
         <td>
           Select
@@ -3006,15 +3005,15 @@ else
         </td>
       </tr><tr>
         <td>
-          144
+          143
         </td>
         <td>
           349
         </td>
         <td>
-          4974
+          4908
           -
-          5098
+          5032
         </td>
         <td>
           Apply
@@ -3027,15 +3026,15 @@ else
         </td>
       </tr><tr>
         <td>
-          144
+          143
         </td>
         <td>
           258
         </td>
         <td>
-          5061
+          4995
           -
-          5096
+          5030
         </td>
         <td>
           Select
@@ -3048,15 +3047,15 @@ else
         </td>
       </tr><tr>
         <td>
-          144
+          143
         </td>
         <td>
           93
         </td>
         <td>
-          5046
+          4980
           -
-          5097
+          5031
         </td>
         <td>
           Apply
@@ -3069,15 +3068,15 @@ else
         </td>
       </tr><tr>
         <td>
-          144
+          143
         </td>
         <td>
           335
         </td>
         <td>
-          5015
+          4949
           -
-          5044
+          4978
         </td>
         <td>
           Select
@@ -3090,15 +3089,15 @@ else
         </td>
       </tr><tr>
         <td>
-          147
+          146
         </td>
         <td>
           370
         </td>
         <td>
-          5156
+          5090
           -
-          5216
+          5150
         </td>
         <td>
           Apply
@@ -3111,15 +3110,15 @@ else
         </td>
       </tr><tr>
         <td>
-          147
+          146
         </td>
         <td>
           49
         </td>
         <td>
-          5189
+          5123
           -
-          5215
+          5149
         </td>
         <td>
           Select
@@ -3132,15 +3131,15 @@ else
         </td>
       </tr><tr>
         <td>
-          147
+          146
         </td>
         <td>
           210
         </td>
         <td>
-          5141
+          5075
           -
-          5217
+          5151
         </td>
         <td>
           Apply
@@ -3153,15 +3152,15 @@ else
         </td>
       </tr><tr>
         <td>
-          147
+          146
         </td>
         <td>
           188
         </td>
         <td>
-          5163
+          5097
           -
-          5187
+          5121
         </td>
         <td>
           Select
@@ -3174,15 +3173,15 @@ else
         </td>
       </tr><tr>
         <td>
-          149
+          148
         </td>
         <td>
           196
         </td>
         <td>
-          5230
+          5164
           -
-          5452
+          5386
         </td>
         <td>
           Block
@@ -3199,15 +3198,15 @@ else
         </td>
       </tr><tr>
         <td>
-          150
+          149
         </td>
         <td>
           328
         </td>
         <td>
-          5249
+          5183
           -
-          5269
+          5203
         </td>
         <td>
           Literal
@@ -3220,15 +3219,15 @@ else
         </td>
       </tr><tr>
         <td>
-          150
+          149
         </td>
         <td>
           201
         </td>
         <td>
-          5238
+          5172
           -
-          5298
+          5232
         </td>
         <td>
           Apply
@@ -3241,15 +3240,15 @@ else
         </td>
       </tr><tr>
         <td>
-          150
+          149
         </td>
         <td>
           177
         </td>
         <td>
-          5292
+          5226
           -
-          5297
+          5231
         </td>
         <td>
           Literal
@@ -3262,15 +3261,15 @@ else
         </td>
       </tr><tr>
         <td>
-          150
+          149
         </td>
         <td>
           99
         </td>
         <td>
-          5270
+          5204
           -
-          5291
+          5225
         </td>
         <td>
           Select
@@ -3283,15 +3282,15 @@ else
         </td>
       </tr><tr>
         <td>
-          150
+          149
         </td>
         <td>
           341
         </td>
         <td>
-          5247
+          5181
           -
-          5297
+          5231
         </td>
         <td>
           Apply
@@ -3304,15 +3303,15 @@ else
         </td>
       </tr><tr>
         <td>
-          152
+          151
         </td>
         <td>
           235
         </td>
         <td>
-          5347
+          5281
           -
-          5347
+          5281
         </td>
         <td>
           Select
@@ -3325,15 +3324,15 @@ else
         </td>
       </tr><tr>
         <td>
-          152
+          151
         </td>
         <td>
           52
         </td>
         <td>
-          5325
+          5259
           -
-          5352
+          5286
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3346,15 +3345,15 @@ else
         </td>
       </tr><tr>
         <td>
-          152
+          151
         </td>
         <td>
           37
         </td>
         <td>
-          5325
+          5259
           -
-          5346
+          5280
         </td>
         <td>
           Select
@@ -3367,15 +3366,15 @@ else
         </td>
       </tr><tr>
         <td>
-          152
+          151
         </td>
         <td>
           392
         </td>
         <td>
-          5349
+          5283
           -
-          5352
+          5286
         </td>
         <td>
           Select
@@ -3388,15 +3387,15 @@ else
         </td>
       </tr><tr>
         <td>
-          153
+          152
         </td>
         <td>
           151
         </td>
         <td>
-          5422
+          5356
           -
-          5443
+          5377
         </td>
         <td>
           Select
@@ -3409,15 +3408,15 @@ else
         </td>
       </tr><tr>
         <td>
-          153
+          152
         </td>
         <td>
           363
         </td>
         <td>
-          5359
+          5293
           -
-          5445
+          5379
         </td>
         <td>
           Apply
@@ -3430,15 +3429,15 @@ else
         </td>
       </tr><tr>
         <td>
-          153
+          152
         </td>
         <td>
           88
         </td>
         <td>
-          5417
+          5351
           -
-          5444
+          5378
         </td>
         <td>
           Apply
@@ -3451,15 +3450,15 @@ else
         </td>
       </tr><tr>
         <td>
-          153
+          152
         </td>
         <td>
           330
         </td>
         <td>
-          5400
+          5334
           -
-          5415
+          5349
         </td>
         <td>
           Select
@@ -3472,15 +3471,15 @@ else
         </td>
       </tr><tr>
         <td>
-          165
+          164
         </td>
         <td>
           379
         </td>
         <td>
-          5672
+          5606
           -
-          5672
+          5606
         </td>
         <td>
           Select
@@ -3493,15 +3492,15 @@ else
         </td>
       </tr><tr>
         <td>
-          165
+          164
         </td>
         <td>
           40
         </td>
         <td>
-          5661
+          5595
           -
-          5671
+          5605
         </td>
         <td>
           Select
@@ -3514,15 +3513,15 @@ else
         </td>
       </tr><tr>
         <td>
-          165
+          164
         </td>
         <td>
           57
         </td>
         <td>
-          5635
+          5569
           -
-          5682
+          5616
         </td>
         <td>
           Apply
@@ -3535,15 +3534,15 @@ else
         </td>
       </tr><tr>
         <td>
-          165
+          164
         </td>
         <td>
           221
         </td>
         <td>
-          5661
+          5595
           -
-          5681
+          5615
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3556,15 +3555,15 @@ else
         </td>
       </tr><tr>
         <td>
-          169
+          168
         </td>
         <td>
           92
         </td>
         <td>
-          5855
+          5789
           -
-          5855
+          5789
         </td>
         <td>
           Select
@@ -3577,15 +3576,15 @@ else
         </td>
       </tr><tr>
         <td>
-          169
+          168
         </td>
         <td>
           173
         </td>
         <td>
-          5844
+          5778
           -
-          5854
+          5788
         </td>
         <td>
           Select
@@ -3598,15 +3597,15 @@ else
         </td>
       </tr><tr>
         <td>
-          169
+          168
         </td>
         <td>
           358
         </td>
         <td>
-          5844
+          5778
           -
-          5864
+          5798
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3619,15 +3618,15 @@ else
         </td>
       </tr><tr>
         <td>
-          169
+          168
         </td>
         <td>
           186
         </td>
         <td>
-          5791
+          5725
           -
-          5865
+          5799
         </td>
         <td>
           Apply
@@ -3640,15 +3639,15 @@ else
         </td>
       </tr><tr>
         <td>
-          169
+          168
         </td>
         <td>
           320
         </td>
         <td>
-          5811
+          5745
           -
-          5834
+          5768
         </td>
         <td>
           Apply
@@ -3661,15 +3660,15 @@ else
         </td>
       </tr><tr>
         <td>
-          179
+          178
         </td>
         <td>
           44
         </td>
         <td>
-          6076
+          6010
           -
-          6094
+          6028
         </td>
         <td>
           Apply
@@ -3682,15 +3681,15 @@ else
         </td>
       </tr><tr>
         <td>
-          179
+          178
         </td>
         <td>
           293
         </td>
         <td>
-          6068
+          6002
           -
-          6095
+          6029
         </td>
         <td>
           Apply
@@ -3703,15 +3702,15 @@ else
         </td>
       </tr><tr>
         <td>
-          180
+          179
         </td>
         <td>
           38
         </td>
         <td>
-          6100
+          6034
           -
-          6396
+          6330
         </td>
         <td>
           Apply
@@ -3724,15 +3723,15 @@ else
         </td>
       </tr><tr>
         <td>
-          181
+          180
         </td>
         <td>
           169
         </td>
         <td>
-          6174
+          6108
           -
-          6387
+          6321
         </td>
         <td>
           Apply
@@ -3745,15 +3744,15 @@ else
         </td>
       </tr><tr>
         <td>
-          181
+          180
         </td>
         <td>
           178
         </td>
         <td>
-          6139
+          6073
           -
-          6388
+          6322
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3766,15 +3765,15 @@ else
         </td>
       </tr><tr>
         <td>
-          181
+          180
         </td>
         <td>
           366
         </td>
         <td>
-          6155
+          6089
           -
-          6155
+          6089
         </td>
         <td>
           Select
@@ -3787,15 +3786,15 @@ else
         </td>
       </tr><tr>
         <td>
-          181
+          180
         </td>
         <td>
           84
         </td>
         <td>
-          6157
+          6091
           -
-          6388
+          6322
         </td>
         <td>
           Apply
@@ -3808,15 +3807,15 @@ else
         </td>
       </tr><tr>
         <td>
-          181
+          180
         </td>
         <td>
           224
         </td>
         <td>
-          6139
+          6073
           -
-          6154
+          6088
         </td>
         <td>
           Select
@@ -3829,15 +3828,15 @@ else
         </td>
       </tr><tr>
         <td>
-          182
+          181
         </td>
         <td>
           79
         </td>
         <td>
-          6199
+          6133
           -
-          6214
+          6148
         </td>
         <td>
           Select
@@ -3850,15 +3849,15 @@ else
         </td>
       </tr><tr>
         <td>
-          183
+          182
         </td>
         <td>
           155
         </td>
         <td>
-          6247
+          6181
           -
-          6264
+          6198
         </td>
         <td>
           Apply
@@ -3871,15 +3870,15 @@ else
         </td>
       </tr><tr>
         <td>
-          183
+          182
         </td>
         <td>
           82
         </td>
         <td>
-          6224
+          6158
           -
-          6274
+          6208
         </td>
         <td>
           Select
@@ -3892,15 +3891,15 @@ else
         </td>
       </tr><tr>
         <td>
-          183
+          182
         </td>
         <td>
           314
         </td>
         <td>
-          6255
+          6189
           -
-          6264
+          6198
         </td>
         <td>
           Select
@@ -3913,15 +3912,15 @@ else
         </td>
       </tr><tr>
         <td>
-          184
+          183
         </td>
         <td>
           50
         </td>
         <td>
-          6331
+          6265
           -
-          6331
+          6265
         </td>
         <td>
           TypeApply
@@ -3934,15 +3933,15 @@ else
         </td>
       </tr><tr>
         <td>
-          184
+          183
         </td>
         <td>
           316
         </td>
         <td>
-          6284
+          6218
           -
-          6379
+          6313
         </td>
         <td>
           ApplyToImplicitArgs
@@ -3955,15 +3954,15 @@ else
         </td>
       </tr><tr>
         <td>
-          184
+          183
         </td>
         <td>
           294
         </td>
         <td>
-          6354
+          6288
           -
-          6377
+          6311
         </td>
         <td>
           Select
@@ -3976,15 +3975,15 @@ else
         </td>
       </tr><tr>
         <td>
-          184
+          183
         </td>
         <td>
           25
         </td>
         <td>
-          6346
+          6280
           -
-          6352
+          6286
         </td>
         <td>
           Select
@@ -3997,15 +3996,15 @@ else
         </td>
       </tr><tr>
         <td>
-          184
+          183
         </td>
         <td>
           339
         </td>
         <td>
-          6317
+          6251
           -
-          6326
+          6260
         </td>
         <td>
           Select
@@ -4018,15 +4017,15 @@ else
         </td>
       </tr><tr>
         <td>
-          184
+          183
         </td>
         <td>
           189
         </td>
         <td>
-          6309
+          6243
           -
-          6326
+          6260
         </td>
         <td>
           Apply
@@ -4039,15 +4038,15 @@ else
         </td>
       </tr><tr>
         <td>
-          184
+          183
         </td>
         <td>
           215
         </td>
         <td>
-          6337
+          6271
           -
-          6378
+          6312
         </td>
         <td>
           Apply
@@ -4060,15 +4059,15 @@ else
         </td>
       </tr><tr>
         <td>
-          193
+          192
         </td>
         <td>
           304
         </td>
         <td>
-          6585
+          6519
           -
-          6601
+          6535
         </td>
         <td>
           Apply
@@ -4081,15 +4080,15 @@ else
         </td>
       </tr><tr>
         <td>
-          193
+          192
         </td>
         <td>
           217
         </td>
         <td>
-          6567
+          6501
           -
-          6602
+          6536
         </td>
         <td>
           Apply
@@ -4102,15 +4101,15 @@ else
         </td>
       </tr><tr>
         <td>
-          194
+          193
         </td>
         <td>
           53
         </td>
         <td>
-          6633
+          6567
           -
-          6637
+          6571
         </td>
         <td>
           Apply
@@ -4123,15 +4122,15 @@ else
         </td>
       </tr><tr>
         <td>
-          195
+          194
         </td>
         <td>
           310
         </td>
         <td>
-          6666
+          6600
           -
-          6698
+          6632
         </td>
         <td>
           Apply
@@ -4144,15 +4143,15 @@ else
         </td>
       </tr><tr>
         <td>
-          195
+          194
         </td>
         <td>
           171
         </td>
         <td>
-          6657
+          6591
           -
-          6699
+          6633
         </td>
         <td>
           Apply

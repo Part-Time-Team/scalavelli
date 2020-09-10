@@ -29,122 +29,121 @@
 </span>5 <span style=''>import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
 </span>6 <span style=''>import it.parttimeteam.common.{GamePlayer, IdGenerator}
 </span>7 <span style=''>import it.parttimeteam.core.GameInterfaceImpl
-</span>8 <span style=''>import it.parttimeteam.messages.LobbyMessages._
-</span>9 <span style=''>import it.parttimeteam.messages.PrivateLobbyIdNotValidError
-</span>10 <span style=''>import it.parttimeteam.utils.CustomLogger
-</span>11 <span style=''>
-</span>12 <span style=''>object LobbyManagerActor {
-</span>13 <span style=''>
-</span>14 <span style=''>  def props() = </span><span style='background: #AEF1AE'>Props(new LobbyManagerActor())</span><span style=''>
-</span>15 <span style=''>
-</span>16 <span style=''>}
-</span>17 <span style=''>
-</span>18 <span style=''>class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
-</span>19 <span style=''>
-</span>20 <span style=''>  type UserName = String
-</span>21 <span style=''>  type UserId = String
-</span>22 <span style=''>
-</span>23 <span style=''>  private var connectedPlayers: Map[UserId, ActorRef] = </span><span style='background: #AEF1AE'>Map()</span><span style=''>
-</span>24 <span style=''>  private val lobbyManger: LobbyManager[GamePlayer] = </span><span style='background: #AEF1AE'>LobbyManager()</span><span style=''>
-</span>25 <span style=''>
-</span>26 <span style=''>  private val privateLobbyService: PrivateLobbyService = </span><span style='background: #AEF1AE'>PrivateLobbyService()</span><span style=''>
+</span>8 <span style=''>import it.parttimeteam.messages.LobbyMessages.LobbyError.PrivateLobbyIdNotValid
+</span>9 <span style=''>import it.parttimeteam.messages.LobbyMessages._
+</span>10 <span style=''>
+</span>11 <span style=''>object LobbyManagerActor {
+</span>12 <span style=''>
+</span>13 <span style=''>  def props() = </span><span style='background: #AEF1AE'>Props(new LobbyManagerActor())</span><span style=''>
+</span>14 <span style=''>
+</span>15 <span style=''>}
+</span>16 <span style=''>
+</span>17 <span style=''>class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
+</span>18 <span style=''>
+</span>19 <span style=''>  type UserName = String
+</span>20 <span style=''>  type UserId = String
+</span>21 <span style=''>
+</span>22 <span style=''>  private var connectedPlayers: Map[UserId, ActorRef] = </span><span style='background: #AEF1AE'>Map()</span><span style=''>
+</span>23 <span style=''>  private val lobbyManger: LobbyManager[GamePlayer] = </span><span style='background: #AEF1AE'>LobbyManager()</span><span style=''>
+</span>24 <span style=''>
+</span>25 <span style=''>  private val privateLobbyService: PrivateLobbyService = </span><span style='background: #AEF1AE'>PrivateLobbyService()</span><span style=''>
+</span>26 <span style=''>
 </span>27 <span style=''>
-</span>28 <span style=''>
-</span>29 <span style=''>  override def receive: Receive = {
-</span>30 <span style=''>    case Connect(clientRef) =&gt; {
-</span>31 <span style=''>      </span><span style='background: #AEF1AE'>log.info(s&quot;client $clientRef is asking for a connection&quot;)</span><span style=''>
-</span>32 <span style=''>      val clientId = </span><span style='background: #AEF1AE'>generateId</span><span style=''>
-</span>33 <span style=''>      </span><span style='background: #AEF1AE'>connectedPlayers = connectedPlayers + (clientId -&gt; clientRef)</span><span style=''>
-</span>34 <span style=''>      </span><span style='background: #AEF1AE'>context.watch(clientRef)</span><span style=''>
-</span>35 <span style=''>      </span><span style='background: #AEF1AE'>clientRef ! Connected(clientId)</span><span style=''>
-</span>36 <span style=''>    }
-</span>37 <span style=''>
-</span>38 <span style=''>    case JoinPublicLobby(clientId, username, numberOfPlayers) =&gt; {
-</span>39 <span style=''>      </span><span style='background: #AEF1AE'>log.info(s&quot;client $clientId wants to join a public lobby&quot;)</span><span style=''>
-</span>40 <span style=''>      </span><span style='background: #AEF1AE'>this.executeOnClientRefPresent(clientId) { ref =&gt;
-</span>41 <span style=''></span><span style='background: #AEF1AE'>        val lobbyType = PlayerNumberLobby(numberOfPlayers)
-</span>42 <span style=''></span><span style='background: #AEF1AE'>        this.lobbyManger.addPlayer(GamePlayer(clientId, username, ref), lobbyType)
-</span>43 <span style=''></span><span style='background: #AEF1AE'>        ref ! UserAddedToLobby()
-</span>44 <span style=''></span><span style='background: #AEF1AE'>        this.checkAndCreateGame(lobbyType)
-</span>45 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
-</span>46 <span style=''>
-</span>47 <span style=''>    }
-</span>48 <span style=''>    case CreatePrivateLobby(clientId, username, numberOfPlayers) =&gt; {
-</span>49 <span style=''>      </span><span style='background: #AEF1AE'>this.executeOnClientRefPresent(clientId) { ref =&gt;
-</span>50 <span style=''></span><span style='background: #AEF1AE'>        val lobbyType = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
-</span>51 <span style=''></span><span style='background: #AEF1AE'>        this.lobbyManger.addPlayer(GamePlayer(clientId, username, ref), lobbyType)
-</span>52 <span style=''></span><span style='background: #AEF1AE'>        ref ! PrivateLobbyCreated(lobbyType.lobbyId)
-</span>53 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
-</span>54 <span style=''>    }
-</span>55 <span style=''>    case JoinPrivateLobby(clientId, username, lobbyCode) =&gt;
-</span>56 <span style=''>      </span><span style='background: #AEF1AE'>this.executeOnClientRefPresent(clientId) { ref =&gt;
-</span>57 <span style=''></span><span style='background: #AEF1AE'>        privateLobbyService.retrieveExistingLobby(lobbyCode) match {
-</span>58 <span style=''></span><span style='background: #AEF1AE'>          case Some(lobbyType) =&gt; {
-</span>59 <span style=''></span><span style='background: #AEF1AE'>            val player = GamePlayer(clientId, username, ref)
-</span>60 <span style=''></span><span style='background: #AEF1AE'>            this.lobbyManger.addPlayer(player, lobbyType)
-</span>61 <span style=''></span><span style='background: #AEF1AE'>            ref ! UserAddedToLobby()
-</span>62 <span style=''></span><span style='background: #AEF1AE'>            this.checkAndCreateGame(lobbyType)
-</span>63 <span style=''></span><span style='background: #AEF1AE'>          }
-</span>64 <span style=''></span><span style='background: #AEF1AE'>          case None =&gt; ref ! LobbyError(PrivateLobbyIdNotValidError)
-</span>65 <span style=''></span><span style='background: #AEF1AE'>        }
-</span>66 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
-</span>67 <span style=''>
-</span>68 <span style=''>    case LeaveLobby(userId) =&gt; {
-</span>69 <span style=''>      </span><span style='background: #F0ADAD'>log.info(s&quot;client $userId&quot;)</span><span style=''>
-</span>70 <span style=''>      </span><span style='background: #F0ADAD'>this.lobbyManger.removePlayer(userId)</span><span style=''>
-</span>71 <span style=''>    }
-</span>72 <span style=''>
-</span>73 <span style=''>    case Terminated(actorRef) =&gt; {
-</span>74 <span style=''>      </span><span style='background: #F0ADAD'>log.info(s&quot;terminated $actorRef, connected players: $connectedPlayers&quot;)</span><span style=''>
-</span>75 <span style=''>      </span><span style='background: #F0ADAD'>removeClient(actorRef)</span><span style=''>
-</span>76 <span style=''>    }
-</span>77 <span style=''>
-</span>78 <span style=''>  }
-</span>79 <span style=''>
-</span>80 <span style=''>  private def checkAndCreateGame(lobbyType: LobbyType): Unit = {
-</span>81 <span style=''>    </span><span style='background: #AEF1AE'>this.lobbyManger.attemptExtractPlayerForMatch(lobbyType)</span><span style=''> match {
-</span>82 <span style=''>      case Some(players) =&gt; </span><span style='background: #AEF1AE'>this.generateAndStartGameActor(lobbyType)(players)</span><span style=''>
-</span>83 <span style=''>      case None </span><span style='background: #AEF1AE'>=&gt;</span><span style=''>
-</span>84 <span style=''>    }
-</span>85 <span style=''>  }
-</span>86 <span style=''>
-</span>87 <span style=''>  private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
-</span>88 <span style=''>    val gameActor = </span><span style='background: #AEF1AE'>context.actorOf(GameMatchManagerActor.props(lobbyType.numberOfPlayers, new GameInterfaceImpl()))</span><span style=''>
-</span>89 <span style=''>    </span><span style='background: #AEF1AE'>players.foreach(p =&gt; {
-</span>90 <span style=''></span><span style='background: #AEF1AE'>      context.unwatch(p.actorRef)
-</span>91 <span style=''></span><span style='background: #AEF1AE'>      // remove player form lobby
-</span>92 <span style=''></span><span style='background: #AEF1AE'>      this.lobbyManger.removePlayer(p.id)
-</span>93 <span style=''></span><span style='background: #AEF1AE'>      // remove player from connected players structure
-</span>94 <span style=''></span><span style='background: #AEF1AE'>      this.connectedPlayers = this.connectedPlayers - p.id
-</span>95 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
-</span>96 <span style=''>    </span><span style='background: #AEF1AE'>gameActor ! GamePlayers(players)</span><span style=''>
-</span>97 <span style=''>  }
-</span>98 <span style=''>
-</span>99 <span style=''>  private def getClientRef(clientId: String): Option[ActorRef] = {
-</span>100 <span style=''>    </span><span style='background: #AEF1AE'>this.connectedPlayers.get(clientId)</span><span style=''>
-</span>101 <span style=''>  }
-</span>102 <span style=''>
-</span>103 <span style=''>  private def executeOnClientRefPresent(clientId: String)(action: ActorRef =&gt; Unit): Unit = {
-</span>104 <span style=''>    </span><span style='background: #AEF1AE'>this.getClientRef(clientId)</span><span style=''> match {
-</span>105 <span style=''>      case Some(ref) =&gt; </span><span style='background: #AEF1AE'>action(ref)</span><span style=''>
-</span>106 <span style=''>      case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>107 <span style=''>    }
-</span>108 <span style=''>  }
-</span>109 <span style=''>
-</span>110 <span style=''>  private def removeClient(actorRef: ActorRef): Unit = {
-</span>111 <span style=''>    </span><span style='background: #F0ADAD'>this.connectedPlayers.find(_._2 == actorRef)</span><span style=''> match {
-</span>112 <span style=''>      case Some((userId, _)) =&gt; {
-</span>113 <span style=''>        </span><span style='background: #F0ADAD'>log.info(s&quot;removing client $actorRef from lobby and connected players list&quot;)</span><span style=''>
-</span>114 <span style=''>        </span><span style='background: #F0ADAD'>context.unwatch(actorRef)</span><span style=''>
-</span>115 <span style=''>        </span><span style='background: #F0ADAD'>this.lobbyManger.removePlayer(userId)</span><span style=''>
-</span>116 <span style=''>        </span><span style='background: #F0ADAD'>this.connectedPlayers = this.connectedPlayers - userId</span><span style=''>
-</span>117 <span style=''>        </span><span style='background: #F0ADAD'>log.info(s&quot;removed client $actorRef from lobby and connected players list&quot;)</span><span style=''>
-</span>118 <span style=''>      }
-</span>119 <span style=''>      case None =&gt; </span><span style='background: #F0ADAD'>log.info(s&quot;client $actorRef not found&quot;)</span><span style=''>
-</span>120 <span style=''>    }
-</span>121 <span style=''>  }
-</span>122 <span style=''>
-</span>123 <span style=''>}
+</span>28 <span style=''>  override def receive: Receive = {
+</span>29 <span style=''>    case Connect(clientRef) =&gt; {
+</span>30 <span style=''>      </span><span style='background: #AEF1AE'>log.info(s&quot;client $clientRef is asking for a connection&quot;)</span><span style=''>
+</span>31 <span style=''>      val clientId = </span><span style='background: #AEF1AE'>generateId</span><span style=''>
+</span>32 <span style=''>      </span><span style='background: #AEF1AE'>connectedPlayers = connectedPlayers + (clientId -&gt; clientRef)</span><span style=''>
+</span>33 <span style=''>      </span><span style='background: #AEF1AE'>context.watch(clientRef)</span><span style=''>
+</span>34 <span style=''>      </span><span style='background: #AEF1AE'>clientRef ! Connected(clientId)</span><span style=''>
+</span>35 <span style=''>    }
+</span>36 <span style=''>
+</span>37 <span style=''>    case JoinPublicLobby(clientId, username, numberOfPlayers) =&gt; {
+</span>38 <span style=''>      </span><span style='background: #AEF1AE'>log.info(s&quot;client $clientId wants to join a public lobby&quot;)</span><span style=''>
+</span>39 <span style=''>      </span><span style='background: #AEF1AE'>this.executeOnClientRefPresent(clientId) { ref =&gt;
+</span>40 <span style=''></span><span style='background: #AEF1AE'>        val lobbyType = PlayerNumberLobby(numberOfPlayers)
+</span>41 <span style=''></span><span style='background: #AEF1AE'>        this.lobbyManger.addPlayer(GamePlayer(clientId, username, ref), lobbyType)
+</span>42 <span style=''></span><span style='background: #AEF1AE'>        ref ! UserAddedToLobby()
+</span>43 <span style=''></span><span style='background: #AEF1AE'>        this.checkAndCreateGame(lobbyType)
+</span>44 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
+</span>45 <span style=''>
+</span>46 <span style=''>    }
+</span>47 <span style=''>    case CreatePrivateLobby(clientId, username, numberOfPlayers) =&gt; {
+</span>48 <span style=''>      </span><span style='background: #AEF1AE'>this.executeOnClientRefPresent(clientId) { ref =&gt;
+</span>49 <span style=''></span><span style='background: #AEF1AE'>        val lobbyType = privateLobbyService.generateNewPrivateLobby(numberOfPlayers)
+</span>50 <span style=''></span><span style='background: #AEF1AE'>        this.lobbyManger.addPlayer(GamePlayer(clientId, username, ref), lobbyType)
+</span>51 <span style=''></span><span style='background: #AEF1AE'>        ref ! PrivateLobbyCreated(lobbyType.lobbyId)
+</span>52 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
+</span>53 <span style=''>    }
+</span>54 <span style=''>    case JoinPrivateLobby(clientId, username, lobbyCode) =&gt;
+</span>55 <span style=''>      </span><span style='background: #AEF1AE'>this.executeOnClientRefPresent(clientId) { ref =&gt;
+</span>56 <span style=''></span><span style='background: #AEF1AE'>        privateLobbyService.retrieveExistingLobby(lobbyCode) match {
+</span>57 <span style=''></span><span style='background: #AEF1AE'>          case Some(lobbyType) =&gt; {
+</span>58 <span style=''></span><span style='background: #AEF1AE'>            val player = GamePlayer(clientId, username, ref)
+</span>59 <span style=''></span><span style='background: #AEF1AE'>            this.lobbyManger.addPlayer(player, lobbyType)
+</span>60 <span style=''></span><span style='background: #AEF1AE'>            ref ! UserAddedToLobby()
+</span>61 <span style=''></span><span style='background: #AEF1AE'>            this.checkAndCreateGame(lobbyType)
+</span>62 <span style=''></span><span style='background: #AEF1AE'>          }
+</span>63 <span style=''></span><span style='background: #AEF1AE'>          case None =&gt; ref ! LobbyErrorOccurred(PrivateLobbyIdNotValid)
+</span>64 <span style=''></span><span style='background: #AEF1AE'>        }
+</span>65 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
+</span>66 <span style=''>
+</span>67 <span style=''>    case LeaveLobby(userId) =&gt; {
+</span>68 <span style=''>      </span><span style='background: #F0ADAD'>log.info(s&quot;client $userId&quot;)</span><span style=''>
+</span>69 <span style=''>      </span><span style='background: #F0ADAD'>this.lobbyManger.removePlayer(userId)</span><span style=''>
+</span>70 <span style=''>    }
+</span>71 <span style=''>
+</span>72 <span style=''>    case Terminated(actorRef) =&gt; {
+</span>73 <span style=''>      </span><span style='background: #F0ADAD'>log.info(s&quot;terminated $actorRef, connected players: $connectedPlayers&quot;)</span><span style=''>
+</span>74 <span style=''>      </span><span style='background: #F0ADAD'>removeClient(actorRef)</span><span style=''>
+</span>75 <span style=''>    }
+</span>76 <span style=''>
+</span>77 <span style=''>  }
+</span>78 <span style=''>
+</span>79 <span style=''>  private def checkAndCreateGame(lobbyType: LobbyType): Unit = {
+</span>80 <span style=''>    </span><span style='background: #AEF1AE'>this.lobbyManger.attemptExtractPlayerForMatch(lobbyType)</span><span style=''> match {
+</span>81 <span style=''>      case Some(players) =&gt; </span><span style='background: #AEF1AE'>this.generateAndStartGameActor(lobbyType)(players)</span><span style=''>
+</span>82 <span style=''>      case None </span><span style='background: #AEF1AE'>=&gt;</span><span style=''>
+</span>83 <span style=''>    }
+</span>84 <span style=''>  }
+</span>85 <span style=''>
+</span>86 <span style=''>  private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
+</span>87 <span style=''>    val gameActor = </span><span style='background: #AEF1AE'>context.actorOf(GameMatchManagerActor.props(lobbyType.numberOfPlayers, new GameInterfaceImpl()))</span><span style=''>
+</span>88 <span style=''>    </span><span style='background: #AEF1AE'>players.foreach(p =&gt; {
+</span>89 <span style=''></span><span style='background: #AEF1AE'>      context.unwatch(p.actorRef)
+</span>90 <span style=''></span><span style='background: #AEF1AE'>      // remove player form lobby
+</span>91 <span style=''></span><span style='background: #AEF1AE'>      this.lobbyManger.removePlayer(p.id)
+</span>92 <span style=''></span><span style='background: #AEF1AE'>      // remove player from connected players structure
+</span>93 <span style=''></span><span style='background: #AEF1AE'>      this.connectedPlayers = this.connectedPlayers - p.id
+</span>94 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
+</span>95 <span style=''>    </span><span style='background: #AEF1AE'>gameActor ! GamePlayers(players)</span><span style=''>
+</span>96 <span style=''>  }
+</span>97 <span style=''>
+</span>98 <span style=''>  private def getClientRef(clientId: String): Option[ActorRef] = {
+</span>99 <span style=''>    </span><span style='background: #AEF1AE'>this.connectedPlayers.get(clientId)</span><span style=''>
+</span>100 <span style=''>  }
+</span>101 <span style=''>
+</span>102 <span style=''>  private def executeOnClientRefPresent(clientId: String)(action: ActorRef =&gt; Unit): Unit = {
+</span>103 <span style=''>    </span><span style='background: #AEF1AE'>this.getClientRef(clientId)</span><span style=''> match {
+</span>104 <span style=''>      case Some(ref) =&gt; </span><span style='background: #AEF1AE'>action(ref)</span><span style=''>
+</span>105 <span style=''>      case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>106 <span style=''>    }
+</span>107 <span style=''>  }
+</span>108 <span style=''>
+</span>109 <span style=''>  private def removeClient(actorRef: ActorRef): Unit = {
+</span>110 <span style=''>    </span><span style='background: #F0ADAD'>this.connectedPlayers.find(_._2 == actorRef)</span><span style=''> match {
+</span>111 <span style=''>      case Some((userId, _)) =&gt; {
+</span>112 <span style=''>        </span><span style='background: #F0ADAD'>log.info(s&quot;removing client $actorRef from lobby and connected players list&quot;)</span><span style=''>
+</span>113 <span style=''>        </span><span style='background: #F0ADAD'>context.unwatch(actorRef)</span><span style=''>
+</span>114 <span style=''>        </span><span style='background: #F0ADAD'>this.lobbyManger.removePlayer(userId)</span><span style=''>
+</span>115 <span style=''>        </span><span style='background: #F0ADAD'>this.connectedPlayers = this.connectedPlayers - userId</span><span style=''>
+</span>116 <span style=''>        </span><span style='background: #F0ADAD'>log.info(s&quot;removed client $actorRef from lobby and connected players list&quot;)</span><span style=''>
+</span>117 <span style=''>      }
+</span>118 <span style=''>      case None =&gt; </span><span style='background: #F0ADAD'>log.info(s&quot;client $actorRef not found&quot;)</span><span style=''>
+</span>119 <span style=''>    }
+</span>120 <span style=''>  }
+</span>121 <span style=''>
+</span>122 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -158,15 +157,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          14
+          13
         </td>
         <td>
           43
         </td>
         <td>
-          521
+          499
           -
-          544
+          522
         </td>
         <td>
           Apply
@@ -179,15 +178,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          13
         </td>
         <td>
           306
         </td>
         <td>
-          515
+          493
           -
-          545
+          523
         </td>
         <td>
           ApplyToImplicitArgs
@@ -200,15 +199,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           223
         </td>
         <td>
-          731
+          709
           -
-          736
+          714
         </td>
         <td>
           Apply
@@ -221,15 +220,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           75
         </td>
         <td>
-          791
+          769
           -
-          805
+          783
         </td>
         <td>
           Apply
@@ -242,15 +241,15 @@
         </td>
       </tr><tr>
         <td>
-          26
+          25
         </td>
         <td>
           322
         </td>
         <td>
-          864
+          842
           -
-          885
+          863
         </td>
         <td>
           Apply
@@ -263,15 +262,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          28
         </td>
         <td>
           301
         </td>
         <td>
-          922
+          900
           -
-          922
+          900
         </td>
         <td>
           Apply
@@ -284,15 +283,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
           83
         </td>
         <td>
-          963
+          941
           -
-          1020
+          998
         </td>
         <td>
           Apply
@@ -305,15 +304,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
           174
         </td>
         <td>
-          972
+          950
           -
-          1019
+          997
         </td>
         <td>
           Apply
@@ -326,15 +325,15 @@
         </td>
       </tr><tr>
         <td>
-          32
+          31
         </td>
         <td>
           359
         </td>
         <td>
-          1042
+          1020
           -
-          1052
+          1030
         </td>
         <td>
           Select
@@ -347,15 +346,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           307
         </td>
         <td>
-          1059
+          1037
           -
-          1120
+          1098
         </td>
         <td>
           Apply
@@ -368,15 +367,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           31
         </td>
         <td>
-          1078
+          1056
           -
-          1120
+          1098
         </td>
         <td>
           Apply
@@ -389,15 +388,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           204
         </td>
         <td>
-          1098
+          1076
           -
-          1119
+          1097
         </td>
         <td>
           Apply
@@ -410,15 +409,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          33
         </td>
         <td>
           216
         </td>
         <td>
-          1127
+          1105
           -
-          1151
+          1129
         </td>
         <td>
           Apply
@@ -431,15 +430,15 @@
         </td>
       </tr><tr>
         <td>
-          35
+          34
         </td>
         <td>
           68
         </td>
         <td>
-          1170
+          1148
           -
-          1189
+          1167
         </td>
         <td>
           Apply
@@ -452,15 +451,15 @@
         </td>
       </tr><tr>
         <td>
-          35
+          34
         </td>
         <td>
           166
         </td>
         <td>
-          1158
+          1136
           -
-          1189
+          1167
         </td>
         <td>
           ApplyToImplicitArgs
@@ -473,15 +472,15 @@
         </td>
       </tr><tr>
         <td>
-          35
+          34
         </td>
         <td>
           324
         </td>
         <td>
-          1168
+          1146
           -
-          1168
+          1146
         </td>
         <td>
           Select
@@ -494,15 +493,15 @@
         </td>
       </tr><tr>
         <td>
-          39
+          38
         </td>
         <td>
           13
         </td>
         <td>
-          1279
+          1257
           -
-          1327
+          1305
         </td>
         <td>
           Apply
@@ -515,15 +514,15 @@
         </td>
       </tr><tr>
         <td>
-          39
+          38
         </td>
         <td>
           351
         </td>
         <td>
-          1270
+          1248
           -
-          1328
+          1306
         </td>
         <td>
           Apply
@@ -536,15 +535,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          39
         </td>
         <td>
           5
         </td>
         <td>
-          1335
+          1313
           -
-          1610
+          1588
         </td>
         <td>
           Apply
@@ -562,15 +561,15 @@
         </td>
       </tr><tr>
         <td>
-          41
+          40
         </td>
         <td>
           179
         </td>
         <td>
-          1409
+          1387
           -
-          1443
+          1421
         </td>
         <td>
           Apply
@@ -583,15 +582,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          41
         </td>
         <td>
           32
         </td>
         <td>
-          1479
+          1457
           -
-          1514
+          1492
         </td>
         <td>
           Apply
@@ -604,15 +603,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          41
         </td>
         <td>
           289
         </td>
         <td>
-          1452
+          1430
           -
-          1526
+          1504
         </td>
         <td>
           Apply
@@ -625,15 +624,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          42
         </td>
         <td>
           218
         </td>
         <td>
-          1541
+          1519
           -
-          1559
+          1537
         </td>
         <td>
           Apply
@@ -646,15 +645,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          42
         </td>
         <td>
           69
         </td>
         <td>
-          1539
+          1517
           -
-          1539
+          1517
         </td>
         <td>
           Select
@@ -667,15 +666,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          42
         </td>
         <td>
           311
         </td>
         <td>
-          1535
+          1513
           -
-          1559
+          1537
         </td>
         <td>
           ApplyToImplicitArgs
@@ -688,15 +687,15 @@
         </td>
       </tr><tr>
         <td>
-          44
+          43
         </td>
         <td>
           167
         </td>
         <td>
-          1568
+          1546
           -
-          1602
+          1580
         </td>
         <td>
           Apply
@@ -709,15 +708,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          48
         </td>
         <td>
           164
         </td>
         <td>
-          1694
+          1672
           -
-          1972
+          1950
         </td>
         <td>
           Apply
@@ -734,15 +733,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          49
         </td>
         <td>
           352
         </td>
         <td>
-          1768
+          1746
           -
-          1828
+          1806
         </td>
         <td>
           Apply
@@ -755,15 +754,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          50
         </td>
         <td>
           23
         </td>
         <td>
-          1837
+          1815
           -
-          1911
+          1889
         </td>
         <td>
           Apply
@@ -776,15 +775,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          50
         </td>
         <td>
           183
         </td>
         <td>
-          1864
+          1842
           -
-          1899
+          1877
         </td>
         <td>
           Apply
@@ -797,15 +796,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          51
         </td>
         <td>
           313
         </td>
         <td>
-          1920
+          1898
           -
-          1964
+          1942
         </td>
         <td>
           ApplyToImplicitArgs
@@ -818,15 +817,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          51
         </td>
         <td>
           74
         </td>
         <td>
-          1924
+          1902
           -
-          1924
+          1902
         </td>
         <td>
           Select
@@ -839,15 +838,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          51
         </td>
         <td>
           211
         </td>
         <td>
-          1926
+          1904
           -
-          1964
+          1942
         </td>
         <td>
           Apply
@@ -860,15 +859,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          51
         </td>
         <td>
           290
         </td>
         <td>
-          1946
+          1924
           -
-          1963
+          1941
         </td>
         <td>
           Select
@@ -881,15 +880,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          55
         </td>
         <td>
           205
         </td>
         <td>
-          2045
+          2023
           -
-          2501
+          2482
         </td>
         <td>
           Apply
@@ -905,20 +904,20 @@
     actor.this.`package`.actorRef2Scala(ref).!(it.parttimeteam.messages.LobbyMessages.UserAddedToLobby.apply())(LobbyManagerActor.this.self);
     this.checkAndCreateGame(lobbyType)
   }
-  case scala.None =&gt; actor.this.`package`.actorRef2Scala(ref).!(it.parttimeteam.messages.LobbyMessages.LobbyError.apply(it.parttimeteam.messages.PrivateLobbyIdNotValidError))(LobbyManagerActor.this.self)
+  case scala.None =&gt; actor.this.`package`.actorRef2Scala(ref).!(it.parttimeteam.messages.LobbyMessages.LobbyErrorOccurred.apply(it.parttimeteam.messages.LobbyMessages.LobbyError.PrivateLobbyIdNotValid))(LobbyManagerActor.this.self)
 }))
         </td>
       </tr><tr>
         <td>
-          57
+          56
         </td>
         <td>
           6
         </td>
         <td>
-          2103
+          2081
           -
-          2155
+          2133
         </td>
         <td>
           Apply
@@ -931,15 +930,15 @@
         </td>
       </tr><tr>
         <td>
-          59
+          58
         </td>
         <td>
           353
         </td>
         <td>
-          2225
+          2203
           -
-          2260
+          2238
         </td>
         <td>
           Apply
@@ -952,15 +951,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          59
         </td>
         <td>
           203
         </td>
         <td>
-          2273
+          2251
           -
-          2318
+          2296
         </td>
         <td>
           Apply
@@ -973,15 +972,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          60
         </td>
         <td>
           140
         </td>
         <td>
-          2331
+          2309
           -
-          2355
+          2333
         </td>
         <td>
           ApplyToImplicitArgs
@@ -994,15 +993,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          60
         </td>
         <td>
           299
         </td>
         <td>
-          2335
+          2313
           -
-          2335
+          2313
         </td>
         <td>
           Select
@@ -1015,15 +1014,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          60
         </td>
         <td>
           24
         </td>
         <td>
-          2337
+          2315
           -
-          2355
+          2333
         </td>
         <td>
           Apply
@@ -1036,15 +1035,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          61
         </td>
         <td>
           76
         </td>
         <td>
-          2368
+          2346
           -
-          2402
+          2380
         </td>
         <td>
           Apply
@@ -1057,15 +1056,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          63
         </td>
         <td>
           17
         </td>
         <td>
-          2442
+          2420
           -
-          2442
+          2420
         </td>
         <td>
           Select
@@ -1078,57 +1077,57 @@
         </td>
       </tr><tr>
         <td>
-          64
+          63
         </td>
         <td>
           333
         </td>
         <td>
-          2455
+          2441
           -
-          2482
+          2463
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.messages.PrivateLobbyIdNotValidError
+          it.parttimeteam.messages.LobbyMessages.LobbyError.PrivateLobbyIdNotValid
         </td>
         <td style="background: #AEF1AE">
-          it.parttimeteam.messages.PrivateLobbyIdNotValidError
+          it.parttimeteam.messages.LobbyMessages.LobbyError.PrivateLobbyIdNotValid
         </td>
       </tr><tr>
         <td>
-          64
+          63
         </td>
         <td>
           165
         </td>
         <td>
-          2444
+          2422
           -
-          2483
+          2464
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.messages.LobbyMessages.LobbyError.apply
+          it.parttimeteam.messages.LobbyMessages.LobbyErrorOccurred.apply
         </td>
         <td style="background: #AEF1AE">
-          it.parttimeteam.messages.LobbyMessages.LobbyError.apply(it.parttimeteam.messages.PrivateLobbyIdNotValidError)
+          it.parttimeteam.messages.LobbyMessages.LobbyErrorOccurred.apply(it.parttimeteam.messages.LobbyMessages.LobbyError.PrivateLobbyIdNotValid)
         </td>
       </tr><tr>
         <td>
-          64
+          63
         </td>
         <td>
           365
         </td>
         <td>
-          2438
+          2416
           -
-          2483
+          2464
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1137,19 +1136,19 @@
           akka.actor.ScalaActorRef.!
         </td>
         <td style="background: #AEF1AE">
-          actor.this.`package`.actorRef2Scala(ref).!(it.parttimeteam.messages.LobbyMessages.LobbyError.apply(it.parttimeteam.messages.PrivateLobbyIdNotValidError))(LobbyManagerActor.this.self)
+          actor.this.`package`.actorRef2Scala(ref).!(it.parttimeteam.messages.LobbyMessages.LobbyErrorOccurred.apply(it.parttimeteam.messages.LobbyMessages.LobbyError.PrivateLobbyIdNotValid))(LobbyManagerActor.this.self)
         </td>
       </tr><tr>
         <td>
-          69
+          68
         </td>
         <td>
           46
         </td>
         <td>
-          2551
+          2532
           -
-          2568
+          2549
         </td>
         <td>
           Apply
@@ -1162,15 +1161,15 @@
         </td>
       </tr><tr>
         <td>
-          69
+          68
         </td>
         <td>
           300
         </td>
         <td>
-          2542
+          2523
           -
-          2569
+          2550
         </td>
         <td>
           Apply
@@ -1183,15 +1182,15 @@
         </td>
       </tr><tr>
         <td>
-          70
+          69
         </td>
         <td>
           146
         </td>
         <td>
-          2576
+          2557
           -
-          2613
+          2594
         </td>
         <td>
           Apply
@@ -1204,15 +1203,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          73
         </td>
         <td>
           334
         </td>
         <td>
-          2693
+          2674
           -
-          2715
+          2696
         </td>
         <td>
           Literal
@@ -1225,15 +1224,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          73
         </td>
         <td>
           157
         </td>
         <td>
-          2731
+          2712
           -
-          2732
+          2713
         </td>
         <td>
           Literal
@@ -1246,15 +1245,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          73
         </td>
         <td>
           198
         </td>
         <td>
-          2662
+          2643
           -
-          2733
+          2714
         </td>
         <td>
           Apply
@@ -1267,15 +1266,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          73
         </td>
         <td>
           72
         </td>
         <td>
-          2673
+          2654
           -
-          2685
+          2666
         </td>
         <td>
           Literal
@@ -1288,15 +1287,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          73
         </td>
         <td>
           18
         </td>
         <td>
-          2715
+          2696
           -
-          2731
+          2712
         </td>
         <td>
           Select
@@ -1309,15 +1308,15 @@
         </td>
       </tr><tr>
         <td>
-          74
+          73
         </td>
         <td>
           278
         </td>
         <td>
-          2671
+          2652
           -
-          2732
+          2713
         </td>
         <td>
           Apply
@@ -1330,15 +1329,15 @@
         </td>
       </tr><tr>
         <td>
-          75
+          74
         </td>
         <td>
           27
         </td>
         <td>
-          2740
+          2721
           -
-          2762
+          2743
         </td>
         <td>
           Apply
@@ -1351,15 +1350,15 @@
         </td>
       </tr><tr>
         <td>
-          81
+          80
         </td>
         <td>
           138
         </td>
         <td>
-          2844
+          2825
           -
-          2900
+          2881
         </td>
         <td>
           Apply
@@ -1372,15 +1371,15 @@
         </td>
       </tr><tr>
         <td>
-          82
+          81
         </td>
         <td>
           64
         </td>
         <td>
-          2937
+          2918
           -
-          2987
+          2968
         </td>
         <td>
           Apply
@@ -1393,15 +1392,15 @@
         </td>
       </tr><tr>
         <td>
-          83
+          82
         </td>
         <td>
           326
         </td>
         <td>
-          3004
+          2985
           -
-          3006
+          2987
         </td>
         <td>
           Literal
@@ -1414,15 +1413,15 @@
         </td>
       </tr><tr>
         <td>
-          88
+          87
         </td>
         <td>
           191
         </td>
         <td>
-          3136
+          3117
           -
-          3232
+          3213
         </td>
         <td>
           Apply
@@ -1435,15 +1434,15 @@
         </td>
       </tr><tr>
         <td>
-          88
+          87
         </td>
         <td>
           158
         </td>
         <td>
-          3180
+          3161
           -
-          3205
+          3186
         </td>
         <td>
           Select
@@ -1456,15 +1455,15 @@
         </td>
       </tr><tr>
         <td>
-          88
+          87
         </td>
         <td>
           19
         </td>
         <td>
-          3207
+          3188
           -
-          3230
+          3211
         </td>
         <td>
           Apply
@@ -1477,15 +1476,15 @@
         </td>
       </tr><tr>
         <td>
-          88
+          87
         </td>
         <td>
           273
         </td>
         <td>
-          3152
+          3133
           -
-          3231
+          3212
         </td>
         <td>
           Apply
@@ -1498,15 +1497,15 @@
         </td>
       </tr><tr>
         <td>
-          89
+          88
         </td>
         <td>
           274
         </td>
         <td>
-          3237
+          3218
           -
-          3491
+          3472
         </td>
         <td>
           Apply
@@ -1523,15 +1522,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          89
         </td>
         <td>
           26
         </td>
         <td>
-          3282
+          3263
           -
-          3292
+          3273
         </td>
         <td>
           Select
@@ -1544,15 +1543,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          89
         </td>
         <td>
           297
         </td>
         <td>
-          3266
+          3247
           -
-          3293
+          3274
         </td>
         <td>
           Apply
@@ -1565,15 +1564,15 @@
         </td>
       </tr><tr>
         <td>
-          92
+          91
         </td>
         <td>
           55
         </td>
         <td>
-          3334
+          3315
           -
-          3369
+          3350
         </td>
         <td>
           Apply
@@ -1586,15 +1585,15 @@
         </td>
       </tr><tr>
         <td>
-          92
+          91
         </td>
         <td>
           139
         </td>
         <td>
-          3364
+          3345
           -
-          3368
+          3349
         </td>
         <td>
           Select
@@ -1607,15 +1606,15 @@
         </td>
       </tr><tr>
         <td>
-          94
+          93
         </td>
         <td>
           1
         </td>
         <td>
-          3432
+          3413
           -
-          3484
+          3465
         </td>
         <td>
           Apply
@@ -1628,15 +1627,15 @@
         </td>
       </tr><tr>
         <td>
-          94
+          93
         </td>
         <td>
           159
         </td>
         <td>
-          3456
+          3437
           -
-          3484
+          3465
         </td>
         <td>
           Apply
@@ -1649,15 +1648,15 @@
         </td>
       </tr><tr>
         <td>
-          94
+          93
         </td>
         <td>
           332
         </td>
         <td>
-          3480
+          3461
           -
-          3484
+          3465
         </td>
         <td>
           Select
@@ -1670,15 +1669,15 @@
         </td>
       </tr><tr>
         <td>
-          96
+          95
         </td>
         <td>
           298
         </td>
         <td>
-          3496
+          3477
           -
-          3528
+          3509
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1691,15 +1690,15 @@
         </td>
       </tr><tr>
         <td>
-          96
+          95
         </td>
         <td>
           184
         </td>
         <td>
-          3508
+          3489
           -
-          3528
+          3509
         </td>
         <td>
           Apply
@@ -1712,15 +1711,15 @@
         </td>
       </tr><tr>
         <td>
-          96
+          95
         </td>
         <td>
           45
         </td>
         <td>
-          3506
+          3487
           -
-          3506
+          3487
         </td>
         <td>
           Select
@@ -1733,15 +1732,15 @@
         </td>
       </tr><tr>
         <td>
-          100
+          99
         </td>
         <td>
           132
         </td>
         <td>
-          3605
+          3586
           -
-          3640
+          3621
         </td>
         <td>
           Apply
@@ -1754,15 +1753,15 @@
         </td>
       </tr><tr>
         <td>
-          104
+          103
         </td>
         <td>
           402
         </td>
         <td>
-          3744
+          3725
           -
-          3771
+          3752
         </td>
         <td>
           Apply
@@ -1775,15 +1774,15 @@
         </td>
       </tr><tr>
         <td>
-          105
+          104
         </td>
         <td>
           323
         </td>
         <td>
-          3804
+          3785
           -
-          3815
+          3796
         </td>
         <td>
           Apply
@@ -1796,15 +1795,15 @@
         </td>
       </tr><tr>
         <td>
-          106
+          105
         </td>
         <td>
           175
         </td>
         <td>
-          3829
+          3810
           -
-          3831
+          3812
         </td>
         <td>
           Literal
@@ -1817,15 +1816,15 @@
         </td>
       </tr><tr>
         <td>
-          111
+          110
         </td>
         <td>
           2
         </td>
         <td>
-          3931
+          3912
           -
-          3947
+          3928
         </td>
         <td>
           Apply
@@ -1838,15 +1837,15 @@
         </td>
       </tr><tr>
         <td>
-          111
+          110
         </td>
         <td>
           267
         </td>
         <td>
-          3904
+          3885
           -
-          3948
+          3929
         </td>
         <td>
           Apply
@@ -1859,15 +1858,15 @@
         </td>
       </tr><tr>
         <td>
-          113
+          112
         </td>
         <td>
           47
         </td>
         <td>
-          3999
+          3980
           -
-          4075
+          4056
         </td>
         <td>
           Apply
@@ -1880,15 +1879,15 @@
         </td>
       </tr><tr>
         <td>
-          113
+          112
         </td>
         <td>
           197
         </td>
         <td>
-          4008
+          3989
           -
-          4074
+          4055
         </td>
         <td>
           Apply
@@ -1901,15 +1900,15 @@
         </td>
       </tr><tr>
         <td>
-          114
+          113
         </td>
         <td>
           295
         </td>
         <td>
-          4084
+          4065
           -
-          4109
+          4090
         </td>
         <td>
           Apply
@@ -1922,15 +1921,15 @@
         </td>
       </tr><tr>
         <td>
-          115
+          114
         </td>
         <td>
           133
         </td>
         <td>
-          4118
+          4099
           -
-          4155
+          4136
         </td>
         <td>
           Apply
@@ -1943,15 +1942,15 @@
         </td>
       </tr><tr>
         <td>
-          116
+          115
         </td>
         <td>
           397
         </td>
         <td>
-          4188
+          4169
           -
-          4218
+          4199
         </td>
         <td>
           Apply
@@ -1964,15 +1963,15 @@
         </td>
       </tr><tr>
         <td>
-          116
+          115
         </td>
         <td>
           325
         </td>
         <td>
-          4164
+          4145
           -
-          4218
+          4199
         </td>
         <td>
           Apply
@@ -1985,15 +1984,15 @@
         </td>
       </tr><tr>
         <td>
-          117
+          116
         </td>
         <td>
           176
         </td>
         <td>
-          4236
+          4217
           -
-          4301
+          4282
         </td>
         <td>
           Apply
@@ -2006,15 +2005,15 @@
         </td>
       </tr><tr>
         <td>
-          117
+          116
         </td>
         <td>
           14
         </td>
         <td>
-          4227
+          4208
           -
-          4302
+          4283
         </td>
         <td>
           Apply
@@ -2027,15 +2026,15 @@
         </td>
       </tr><tr>
         <td>
-          119
+          118
         </td>
         <td>
           199
         </td>
         <td>
-          4330
+          4311
           -
-          4369
+          4350
         </td>
         <td>
           Apply
@@ -2048,15 +2047,15 @@
         </td>
       </tr><tr>
         <td>
-          119
+          118
         </td>
         <td>
           269
         </td>
         <td>
-          4339
+          4320
           -
-          4368
+          4349
         </td>
         <td>
           Apply
