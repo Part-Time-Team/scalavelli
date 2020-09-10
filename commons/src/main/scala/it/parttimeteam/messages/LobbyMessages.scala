@@ -60,7 +60,7 @@ object LobbyMessages {
    *
    * @param error
    */
-  case class LobbyError(error: ErrorMessage)
+  case class LobbyErrorOccurred(error: LobbyError)
 
   /**
    * Message sent by the server after private lobby creation
@@ -76,6 +76,20 @@ object LobbyMessages {
    * @param gameRoom actorRef of the game room to join
    */
   case class MatchFound(gameRoom: ActorRef)
+
+
+  /**
+   * Error occurred in the lobby phase
+   */
+  sealed class LobbyError
+
+  object LobbyError {
+
+    case object PrivateLobbyIdNotValid extends LobbyError
+
+    case object InvalidUserId extends LobbyError
+
+  }
 
 
 }
