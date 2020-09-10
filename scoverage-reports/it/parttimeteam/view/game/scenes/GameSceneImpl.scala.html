@@ -39,71 +39,71 @@
 </span>15 <span style=''>import scalafx.application.Platform
 </span>16 <span style=''>import scalafx.scene.layout.{BorderPane, VBox}
 </span>17 <span style=''>
-</span>18 <span style=''>/** @inheritdoc*/
+</span>18 <span style=''>/** @inheritdoc */
 </span>19 <span style=''>class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
 </span>20 <span style=''>  var inTurn = </span><span style='background: #F0ADAD'>false</span><span style=''>
 </span>21 <span style=''>
-</span>22 <span style=''>  val handSelectionManager: SelectionManager[GameCard] = </span><span style='background: #F0ADAD'>SelectionManager()</span><span style=''>
-</span>23 <span style=''>  val boardSelectionManager: SelectionManager[GameCard] = </span><span style='background: #F0ADAD'>SelectionManager()</span><span style=''>
-</span>24 <span style=''>  val combinationSelectionManager: SelectionManager[GameCardCombination] = </span><span style='background: #F0ADAD'>SelectionManager()</span><span style=''>
+</span>22 <span style=''>  val handSelectionManager: SelectionManager[GameCard] = </span><span style='background: #F0ADAD'>SelectionManager(allowOnlyOne = false)</span><span style=''>
+</span>23 <span style=''>  val boardSelectionManager: SelectionManager[GameCard] = </span><span style='background: #F0ADAD'>SelectionManager(allowOnlyOne = false)</span><span style=''>
+</span>24 <span style=''>  val combinationSelectionManager: SelectionManager[GameCardCombination] = </span><span style='background: #F0ADAD'>SelectionManager(allowOnlyOne = true)</span><span style=''>
 </span>25 <span style=''>  val initMatchDialog = </span><span style='background: #F0ADAD'>new InitMatchDialogImpl(parentStage)</span><span style=''>
 </span>26 <span style=''>
 </span>27 <span style=''>  val sceneListener: GameSceneListener = </span><span style='background: #F0ADAD'>new</span><span style=''> GameSceneListener {
 </span>28 <span style=''>
-</span>29 <span style=''>    /** @inheritdoc*/
+</span>29 <span style=''>    /** @inheritdoc */
 </span>30 <span style=''>    override def pickCombination(combinationId: String): Unit = {
 </span>31 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.pickCombination(combinationId)</span><span style=''>
 </span>32 <span style=''>    }
 </span>33 <span style=''>
-</span>34 <span style=''>    /** @inheritdoc*/
+</span>34 <span style=''>    /** @inheritdoc */
 </span>35 <span style=''>    override def makeCombination(): Unit = {
 </span>36 <span style=''>      val cards: Seq[Card] = </span><span style='background: #F0ADAD'>handSelectionManager.getSelectedItems.map(p =&gt; p.getCard)</span><span style=''>
 </span>37 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.makeCombination(cards)</span><span style=''>
 </span>38 <span style=''>    }
 </span>39 <span style=''>
-</span>40 <span style=''>    /** @inheritdoc*/
+</span>40 <span style=''>    /** @inheritdoc */
 </span>41 <span style=''>    override def pickCards(): Unit = {
 </span>42 <span style=''>      val cards: Seq[Card] = </span><span style='background: #F0ADAD'>boardSelectionManager.getSelectedItems.map(p =&gt; p.getCard)</span><span style=''>
 </span>43 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.pickCards(cards)</span><span style=''>
 </span>44 <span style=''>    }
 </span>45 <span style=''>
-</span>46 <span style=''>    /** @inheritdoc*/
+</span>46 <span style=''>    /** @inheritdoc */
 </span>47 <span style=''>    override def sortHandBySuit(): Unit = {
 </span>48 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.sortHandBySuit()</span><span style=''>
 </span>49 <span style=''>    }
 </span>50 <span style=''>
-</span>51 <span style=''>    /** @inheritdoc*/
+</span>51 <span style=''>    /** @inheritdoc */
 </span>52 <span style=''>    override def sortHandByRank(): Unit = {
 </span>53 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.sortHandByRank()</span><span style=''>
 </span>54 <span style=''>    }
 </span>55 <span style=''>
-</span>56 <span style=''>    /** @inheritdoc*/
+</span>56 <span style=''>    /** @inheritdoc */
 </span>57 <span style=''>    override def endTurn(): Unit = {
 </span>58 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.endTurn()</span><span style=''>
 </span>59 <span style=''>    }
 </span>60 <span style=''>
-</span>61 <span style=''>    /** @inheritdoc*/
+</span>61 <span style=''>    /** @inheritdoc */
 </span>62 <span style=''>    override def nextState(): Unit = {
 </span>63 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.nextState()</span><span style=''>
 </span>64 <span style=''>    }
 </span>65 <span style=''>
-</span>66 <span style=''>    /** @inheritdoc*/
+</span>66 <span style=''>    /** @inheritdoc */
 </span>67 <span style=''>    override def previousState(): Unit = {
 </span>68 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.previousState()</span><span style=''>
 </span>69 <span style=''>    }
 </span>70 <span style=''>
-</span>71 <span style=''>    /** @inheritdoc*/
+</span>71 <span style=''>    /** @inheritdoc */
 </span>72 <span style=''>    override def resetState(): Unit = {
 </span>73 <span style=''>      </span><span style='background: #F0ADAD'>parentStage.resetHistory()</span><span style=''>
 </span>74 <span style=''>    }
 </span>75 <span style=''>
-</span>76 <span style=''>    /** @inheritdoc*/
+</span>76 <span style=''>    /** @inheritdoc */
 </span>77 <span style=''>    override def clearHandSelection(): Unit = {
 </span>78 <span style=''>      </span><span style='background: #F0ADAD'>handSelectionManager.clearSelection()</span><span style=''>
 </span>79 <span style=''>      </span><span style='background: #F0ADAD'>updateActionBarButtons()</span><span style=''>
 </span>80 <span style=''>    }
 </span>81 <span style=''>
-</span>82 <span style=''>    /** @inheritdoc*/
+</span>82 <span style=''>    /** @inheritdoc */
 </span>83 <span style=''>    override def updateCombination(): Unit = {
 </span>84 <span style=''>      val combination = </span><span style='background: #F0ADAD'>combinationSelectionManager.getSelectedItems.head</span><span style=''>
 </span>85 <span style=''>      val selectedCards = </span><span style='background: #F0ADAD'>handSelectionManager.getSelectedItems</span><span style=''>
@@ -132,19 +132,19 @@
 </span>108 <span style=''>
 </span>109 <span style=''>  val centerPane: BoardPane = </span><span style='background: #F0ADAD'>new BoardPaneImpl(new BoardListener {
 </span>110 <span style=''></span><span style='background: #F0ADAD'>
-</span>111 <span style=''></span><span style='background: #F0ADAD'>    /** @inheritdoc*/
+</span>111 <span style=''></span><span style='background: #F0ADAD'>    /** @inheritdoc */
 </span>112 <span style=''></span><span style='background: #F0ADAD'>    override def onCombinationClicked(cardCombination: GameCardCombination): Unit = {
 </span>113 <span style=''></span><span style='background: #F0ADAD'>      combinationSelectionManager.onItemSelected(cardCombination)
 </span>114 <span style=''></span><span style='background: #F0ADAD'>      updateActionBarButtons()
 </span>115 <span style=''></span><span style='background: #F0ADAD'>    }
 </span>116 <span style=''></span><span style='background: #F0ADAD'>
-</span>117 <span style=''></span><span style='background: #F0ADAD'>    /** @inheritdoc*/
+</span>117 <span style=''></span><span style='background: #F0ADAD'>    /** @inheritdoc */
 </span>118 <span style=''></span><span style='background: #F0ADAD'>    override def onCardClicked(card: GameCard): Unit = {
 </span>119 <span style=''></span><span style='background: #F0ADAD'>      boardSelectionManager.onItemSelected(card)
 </span>120 <span style=''></span><span style='background: #F0ADAD'>      updateActionBarButtons()
 </span>121 <span style=''></span><span style='background: #F0ADAD'>    }
 </span>122 <span style=''></span><span style='background: #F0ADAD'>
-</span>123 <span style=''></span><span style='background: #F0ADAD'>    /** @inheritdoc*/
+</span>123 <span style=''></span><span style='background: #F0ADAD'>    /** @inheritdoc */
 </span>124 <span style=''></span><span style='background: #F0ADAD'>    override def onPickCombinationClick(cardCombination: GameCardCombination): Unit = {
 </span>125 <span style=''></span><span style='background: #F0ADAD'>      parentStage.pickCombination(cardCombination.getCombination.id)
 </span>126 <span style=''></span><span style='background: #F0ADAD'>    }
@@ -160,7 +160,7 @@
 </span>136 <span style=''>
 </span>137 <span style=''>  </span><span style='background: #F0ADAD'>root = borderPane</span><span style=''>
 </span>138 <span style=''>
-</span>139 <span style=''>  /** @inheritdoc*/
+</span>139 <span style=''>  /** @inheritdoc */
 </span>140 <span style=''>  override def setState(clientGameState: ClientGameState): Unit = {
 </span>141 <span style=''>    </span><span style='background: #F0ADAD'>this.handSelectionManager.clearSelection()</span><span style=''>
 </span>142 <span style=''>    </span><span style='background: #F0ADAD'>this.boardSelectionManager.clearSelection()</span><span style=''>
@@ -177,42 +177,42 @@
 </span>153 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
 </span>154 <span style=''>  }
 </span>155 <span style=''>
-</span>156 <span style=''>  /** @inheritdoc*/
+</span>156 <span style=''>  /** @inheritdoc */
 </span>157 <span style=''>  override def showInitMatch(): Unit = {
 </span>158 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
 </span>159 <span style=''></span><span style='background: #F0ADAD'>      initMatchDialog.showDialog()
 </span>160 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
 </span>161 <span style=''>  }
 </span>162 <span style=''>
-</span>163 <span style=''>  /** @inheritdoc*/
+</span>163 <span style=''>  /** @inheritdoc */
 </span>164 <span style=''>  override def hideInitMatch(): Unit = {
 </span>165 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
 </span>166 <span style=''></span><span style='background: #F0ADAD'>      initMatchDialog.hideDialog()
 </span>167 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
 </span>168 <span style=''>  }
 </span>169 <span style=''>
-</span>170 <span style=''>  /** @inheritdoc*/
+</span>170 <span style=''>  /** @inheritdoc */
 </span>171 <span style=''>  override def setMessage(message: String): Unit = {
 </span>172 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
 </span>173 <span style=''></span><span style='background: #F0ADAD'>      rightBar.setMessage(message)
 </span>174 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
 </span>175 <span style=''>  }
 </span>176 <span style=''>
-</span>177 <span style=''>  /** @inheritdoc*/
+</span>177 <span style=''>  /** @inheritdoc */
 </span>178 <span style=''>  override def showTimer(): Unit = {
 </span>179 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
 </span>180 <span style=''></span><span style='background: #F0ADAD'>      rightBar.showTimer()
 </span>181 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
 </span>182 <span style=''>  }
 </span>183 <span style=''>
-</span>184 <span style=''>  /** @inheritdoc*/
+</span>184 <span style=''>  /** @inheritdoc */
 </span>185 <span style=''>  override def setInTurn(inTurn: Boolean): Unit = {
 </span>186 <span style=''>    </span><span style='background: #F0ADAD'>this.inTurn = inTurn</span><span style=''>
 </span>187 <span style=''>    </span><span style='background: #F0ADAD'>updateActionBarButtons()</span><span style=''>
 </span>188 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.setNextEnabled(inTurn)</span><span style=''>
 </span>189 <span style=''>  }
 </span>190 <span style=''>
-</span>191 <span style=''>  /** @inheritdoc*/
+</span>191 <span style=''>  /** @inheritdoc */
 </span>192 <span style=''>  private def updateActionBarButtons(): Unit = {
 </span>193 <span style=''>    </span><span style='background: #F0ADAD'>actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty &amp;&amp; inTurn)</span><span style=''>
 </span>194 <span style=''>    </span><span style='background: #F0ADAD'>actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty)</span><span style=''>
@@ -220,12 +220,12 @@
 </span>196 <span style=''>    </span><span style='background: #F0ADAD'>actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty &amp;&amp; inTurn)</span><span style=''>
 </span>197 <span style=''>  }
 </span>198 <span style=''>
-</span>199 <span style=''>  /** @inheritdoc*/
+</span>199 <span style=''>  /** @inheritdoc */
 </span>200 <span style=''>  override def hideTimer(): Unit = {
 </span>201 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.hideTimer()</span><span style=''>
 </span>202 <span style=''>  }
 </span>203 <span style=''>
-</span>204 <span style=''>  /** @inheritdoc*/
+</span>204 <span style=''>  /** @inheritdoc */
 </span>205 <span style=''>  override def disableActions(): Unit = {
 </span>206 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.disableActions()</span><span style=''>
 </span>207 <span style=''>    </span><span style='background: #F0ADAD'>centerPane.disableActions()</span><span style=''>
@@ -233,7 +233,7 @@
 </span>209 <span style=''>    </span><span style='background: #F0ADAD'>bottomBar.disableActions()</span><span style=''>
 </span>210 <span style=''>  }
 </span>211 <span style=''>
-</span>212 <span style=''>  /** @inheritdoc*/
+</span>212 <span style=''>  /** @inheritdoc */
 </span>213 <span style=''>  override def enableActions(): Unit = {
 </span>214 <span style=''>    </span><span style='background: #F0ADAD'>rightBar.enableActions()</span><span style=''>
 </span>215 <span style=''>    </span><span style='background: #F0ADAD'>centerPane.enableActions()</span><span style=''>
@@ -257,12 +257,12 @@
           20
         </td>
         <td>
-          1225
+          2193
         </td>
         <td>
-          1057
+          1058
           -
-          1062
+          1063
         </td>
         <td>
           Literal
@@ -278,12 +278,12 @@
           22
         </td>
         <td>
-          2168
+          1636
         </td>
         <td>
-          1121
+          1122
           -
-          1139
+          1160
         </td>
         <td>
           Apply
@@ -292,19 +292,19 @@
           it.parttimeteam.view.game.SelectionManager.apply
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.game.SelectionManager.apply[it.parttimeteam.view.game.scenes.model.GameCard]()
+          it.parttimeteam.view.game.SelectionManager.apply[it.parttimeteam.view.game.scenes.model.GameCard](false)
         </td>
       </tr><tr>
         <td>
           23
         </td>
         <td>
-          1641
+          1347
         </td>
         <td>
-          1198
+          1219
           -
-          1216
+          1257
         </td>
         <td>
           Apply
@@ -313,19 +313,19 @@
           it.parttimeteam.view.game.SelectionManager.apply
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.game.SelectionManager.apply[it.parttimeteam.view.game.scenes.model.GameCard]()
+          it.parttimeteam.view.game.SelectionManager.apply[it.parttimeteam.view.game.scenes.model.GameCard](false)
         </td>
       </tr><tr>
         <td>
           24
         </td>
         <td>
-          1035
+          2279
         </td>
         <td>
-          1292
+          1333
           -
-          1310
+          1370
         </td>
         <td>
           Apply
@@ -334,40 +334,19 @@
           it.parttimeteam.view.game.SelectionManager.apply
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.game.SelectionManager.apply[it.parttimeteam.view.game.scenes.model.GameCardCombination]()
+          it.parttimeteam.view.game.SelectionManager.apply[it.parttimeteam.view.game.scenes.model.GameCardCombination](true)
         </td>
       </tr><tr>
         <td>
           25
         </td>
         <td>
-          1737
+          1659
         </td>
         <td>
-          1335
+          1419
           -
-          1371
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl(GameSceneImpl.this.parentStage)
-        </td>
-      </tr><tr>
-        <td>
-          25
-        </td>
-        <td>
-          2289
-        </td>
-        <td>
-          1359
-          -
-          1370
+          1430
         </td>
         <td>
           Select
@@ -380,15 +359,36 @@
         </td>
       </tr><tr>
         <td>
+          25
+        </td>
+        <td>
+          1102
+        </td>
+        <td>
+          1395
+          -
+          1431
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl(GameSceneImpl.this.parentStage)
+        </td>
+      </tr><tr>
+        <td>
           27
         </td>
         <td>
-          2271
+          1715
         </td>
         <td>
-          1414
+          1474
           -
-          1417
+          1477
         </td>
         <td>
           Apply
@@ -404,12 +404,12 @@
           31
         </td>
         <td>
-          1126
+          2134
         </td>
         <td>
-          1533
+          1594
           -
-          1575
+          1636
         </td>
         <td>
           Apply
@@ -425,12 +425,12 @@
           36
         </td>
         <td>
-          1777
+          1228
         </td>
         <td>
-          1720
+          1782
           -
-          1720
+          1782
         </td>
         <td>
           TypeApply
@@ -446,33 +446,12 @@
           36
         </td>
         <td>
-          2142
+          2166
         </td>
         <td>
-          1726
+          1741
           -
-          1735
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.model.GameCard.getCard
-        </td>
-        <td style="background: #F0ADAD">
-          p.getCard
-        </td>
-      </tr><tr>
-        <td>
-          36
-        </td>
-        <td>
-          1199
-        </td>
-        <td>
-          1679
-          -
-          1736
+          1798
         </td>
         <td>
           ApplyToImplicitArgs
@@ -485,15 +464,36 @@
         </td>
       </tr><tr>
         <td>
+          36
+        </td>
+        <td>
+          1848
+        </td>
+        <td>
+          1788
+          -
+          1797
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.model.GameCard.getCard
+        </td>
+        <td style="background: #F0ADAD">
+          p.getCard
+        </td>
+      </tr><tr>
+        <td>
           37
         </td>
         <td>
-          2235
+          1642
         </td>
         <td>
-          1743
+          1805
           -
-          1777
+          1839
         </td>
         <td>
           Apply
@@ -509,33 +509,12 @@
           42
         </td>
         <td>
-          2293
+          1039
         </td>
         <td>
-          1875
+          1986
           -
-          1933
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.TraversableLike.map
-        </td>
-        <td style="background: #F0ADAD">
-          GameSceneImpl.this.boardSelectionManager.getSelectedItems.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((p: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; p.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
-        </td>
-      </tr><tr>
-        <td>
-          42
-        </td>
-        <td>
-          1616
-        </td>
-        <td>
-          1923
-          -
-          1932
+          1995
         </td>
         <td>
           Select
@@ -551,12 +530,12 @@
           42
         </td>
         <td>
-          1038
+          2286
         </td>
         <td>
-          1917
+          1980
           -
-          1917
+          1980
         </td>
         <td>
           TypeApply
@@ -569,15 +548,36 @@
         </td>
       </tr><tr>
         <td>
+          42
+        </td>
+        <td>
+          1738
+        </td>
+        <td>
+          1938
+          -
+          1996
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.map
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.boardSelectionManager.getSelectedItems.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((p: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; p.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
           43
         </td>
         <td>
-          1711
+          1129
         </td>
         <td>
-          1940
+          2003
           -
-          1968
+          2031
         </td>
         <td>
           Apply
@@ -593,12 +593,12 @@
           48
         </td>
         <td>
-          1089
+          2140
         </td>
         <td>
-          2048
+          2112
           -
-          2076
+          2140
         </td>
         <td>
           Apply
@@ -614,12 +614,12 @@
           53
         </td>
         <td>
-          2113
+          1777
         </td>
         <td>
-          2156
+          2221
           -
-          2184
+          2249
         </td>
         <td>
           Apply
@@ -635,12 +635,12 @@
           58
         </td>
         <td>
-          1778
+          1202
         </td>
         <td>
-          2257
+          2323
           -
-          2278
+          2344
         </td>
         <td>
           Apply
@@ -656,12 +656,12 @@
           63
         </td>
         <td>
-          1204
+          2232
         </td>
         <td>
-          2353
+          2420
           -
-          2376
+          2443
         </td>
         <td>
           Apply
@@ -677,12 +677,12 @@
           68
         </td>
         <td>
-          2160
+          1617
         </td>
         <td>
-          2455
+          2523
           -
-          2482
+          2550
         </td>
         <td>
           Apply
@@ -698,12 +698,12 @@
           73
         </td>
         <td>
-          1590
+          1042
         </td>
         <td>
-          2558
+          2627
           -
-          2584
+          2653
         </td>
         <td>
           Apply
@@ -719,12 +719,12 @@
           78
         </td>
         <td>
-          947
+          2290
         </td>
         <td>
-          2668
+          2738
           -
-          2705
+          2775
         </td>
         <td>
           Apply
@@ -740,12 +740,12 @@
           79
         </td>
         <td>
-          2268
+          1712
         </td>
         <td>
-          2712
+          2782
           -
-          2736
+          2806
         </td>
         <td>
           Apply
@@ -761,12 +761,12 @@
           84
         </td>
         <td>
-          1714
+          1093
         </td>
         <td>
-          2837
+          2908
           -
-          2886
+          2957
         </td>
         <td>
           Select
@@ -782,12 +782,12 @@
           85
         </td>
         <td>
-          1064
+          2111
         </td>
         <td>
-          2913
+          2984
           -
-          2950
+          3021
         </td>
         <td>
           Select
@@ -803,54 +803,12 @@
           86
         </td>
         <td>
-          2165
+          2158
         </td>
         <td>
-          3022
+          3110
           -
-          3055
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.TraversableLike.map
-        </td>
-        <td style="background: #F0ADAD">
-          selectedCards.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((c: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; c.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          1483
-        </td>
-        <td>
-          3045
-          -
-          3054
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.model.GameCard.getCard
-        </td>
-        <td style="background: #F0ADAD">
-          c.getCard
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          1171
-        </td>
-        <td>
-          3039
-          -
-          3039
+          3110
         </td>
         <td>
           TypeApply
@@ -866,33 +824,33 @@
           86
         </td>
         <td>
-          1568
+          1207
         </td>
         <td>
-          2957
+          3116
           -
-          3056
+          3125
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          it.parttimeteam.view.game.listeners.GameStageListener.updateCardCombination
+          it.parttimeteam.view.game.scenes.model.GameCard.getCard
         </td>
         <td style="background: #F0ADAD">
-          GameSceneImpl.this.parentStage.updateCardCombination(combination.getCombination.id, selectedCards.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((c: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; c.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]))
+          c.getCard
         </td>
       </tr><tr>
         <td>
           86
         </td>
         <td>
-          2082
+          1778
         </td>
         <td>
-          2991
+          3062
           -
-          3020
+          3091
         </td>
         <td>
           Select
@@ -905,15 +863,57 @@
         </td>
       </tr><tr>
         <td>
+          86
+        </td>
+        <td>
+          1592
+        </td>
+        <td>
+          3093
+          -
+          3126
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.TraversableLike.map
+        </td>
+        <td style="background: #F0ADAD">
+          selectedCards.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((c: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; c.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card])
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          951
+        </td>
+        <td>
+          3028
+          -
+          3127
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.listeners.GameStageListener.updateCardCombination
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.parentStage.updateCardCombination(combination.getCombination.id, selectedCards.map[it.parttimeteam.core.cards.Card, Seq[it.parttimeteam.core.cards.Card]](((c: it.parttimeteam.view.game.scenes.model.GameCard) =&gt; c.getCard))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]))
+        </td>
+      </tr><tr>
+        <td>
           93
         </td>
         <td>
-          1032
+          2265
         </td>
         <td>
-          3162
+          3233
           -
-          3185
+          3256
         </td>
         <td>
           Apply
@@ -929,12 +929,12 @@
           97
         </td>
         <td>
-          1067
+          2080
         </td>
         <td>
-          3227
+          3298
           -
-          3261
+          3332
         </td>
         <td>
           Apply
@@ -950,12 +950,12 @@
           97
         </td>
         <td>
-          1749
+          1068
         </td>
         <td>
-          3247
+          3318
           -
-          3260
+          3331
         </td>
         <td>
           Select
@@ -971,12 +971,12 @@
           99
         </td>
         <td>
-          2085
+          1485
         </td>
         <td>
-          3278
+          3349
           -
-          3288
+          3359
         </td>
         <td>
           Apply
@@ -992,12 +992,12 @@
           100
         </td>
         <td>
-          1537
+          1174
         </td>
         <td>
-          3336
+          3407
           -
-          3349
+          3420
         </td>
         <td>
           Select
@@ -1013,12 +1013,12 @@
           100
         </td>
         <td>
-          1175
+          2163
         </td>
         <td>
-          3318
+          3389
           -
-          3350
+          3421
         </td>
         <td>
           Apply
@@ -1034,12 +1034,12 @@
           102
         </td>
         <td>
-          1036
+          2268
         </td>
         <td>
-          3379
+          3450
           -
-          3496
+          3567
         </td>
         <td>
           Apply
@@ -1058,12 +1058,12 @@
           103
         </td>
         <td>
-          2248
+          1570
         </td>
         <td>
-          3421
+          3492
           -
-          3462
+          3533
         </td>
         <td>
           Apply
@@ -1079,12 +1079,12 @@
           104
         </td>
         <td>
-          1574
+          1036
         </td>
         <td>
-          3467
+          3538
           -
-          3491
+          3562
         </td>
         <td>
           Apply
@@ -1100,33 +1100,33 @@
           107
         </td>
         <td>
-          1075
+          1178
         </td>
         <td>
-          3534
+          3571
           -
-          3543
+          3615
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          it.parttimeteam.view.game.scenes.GameSceneImpl.bottomBar
+          javafx.collections.ObservableList.addAll
         </td>
         <td style="background: #F0ADAD">
-          GameSceneImpl.this.bottomBar
+          GameSceneImpl.this.bottom.children.addAll(layout.this.HBox.sfxHBox2jfx(GameSceneImpl.this.actionBar), control.this.ScrollPane.sfxScrollPane2jfx(GameSceneImpl.this.bottomBar))
         </td>
       </tr><tr>
         <td>
           107
         </td>
         <td>
-          2110
+          1539
         </td>
         <td>
-          3534
+          3605
           -
-          3543
+          3614
         </td>
         <td>
           ApplyImplicitView
@@ -1142,12 +1142,33 @@
           107
         </td>
         <td>
-          1649
+          2083
         </td>
         <td>
-          3523
+          3605
           -
-          3532
+          3614
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.bottomBar
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.bottomBar
+        </td>
+      </tr><tr>
+        <td>
+          107
+        </td>
+        <td>
+          1071
+        </td>
+        <td>
+          3594
+          -
+          3603
         </td>
         <td>
           ApplyImplicitView
@@ -1163,12 +1184,12 @@
           107
         </td>
         <td>
-          2046
+          1749
         </td>
         <td>
-          3523
+          3594
           -
-          3532
+          3603
         </td>
         <td>
           Select
@@ -1181,57 +1202,15 @@
         </td>
       </tr><tr>
         <td>
-          107
-        </td>
-        <td>
-          1540
-        </td>
-        <td>
-          3500
-          -
-          3544
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.collections.ObservableList.addAll
-        </td>
-        <td style="background: #F0ADAD">
-          GameSceneImpl.this.bottom.children.addAll(layout.this.HBox.sfxHBox2jfx(GameSceneImpl.this.actionBar), control.this.ScrollPane.sfxScrollPane2jfx(GameSceneImpl.this.bottomBar))
-        </td>
-      </tr><tr>
-        <td>
           109
         </td>
         <td>
-          1049
+          1542
         </td>
         <td>
-          3594
+          3647
           -
-          3597
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.GameSceneImpl.$anon.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new $anon()
-        </td>
-      </tr><tr>
-        <td>
-          109
-        </td>
-        <td>
-          2115
-        </td>
-        <td>
-          3576
-          -
-          4182
+          4256
         </td>
         <td>
           Apply
@@ -1261,15 +1240,36 @@
         </td>
       </tr><tr>
         <td>
+          109
+        </td>
+        <td>
+          2108
+        </td>
+        <td>
+          3665
+          -
+          3668
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
           113
         </td>
         <td>
-          1165
+          2245
         </td>
         <td>
-          3729
+          3801
           -
-          3788
+          3860
         </td>
         <td>
           Apply
@@ -1285,12 +1285,12 @@
           114
         </td>
         <td>
-          2151
+          1576
         </td>
         <td>
-          3795
+          3867
           -
-          3819
+          3891
         </td>
         <td>
           Apply
@@ -1306,12 +1306,12 @@
           119
         </td>
         <td>
-          1577
+          1040
         </td>
         <td>
-          3912
+          3985
           -
-          3954
+          4027
         </td>
         <td>
           Apply
@@ -1327,12 +1327,12 @@
           120
         </td>
         <td>
-          1001
+          2045
         </td>
         <td>
-          3961
+          4034
           -
-          3985
+          4058
         </td>
         <td>
           Apply
@@ -1348,12 +1348,12 @@
           125
         </td>
         <td>
-          1677
+          1079
         </td>
         <td>
-          4109
+          4183
           -
-          4171
+          4245
         </td>
         <td>
           Apply
@@ -1369,12 +1369,12 @@
           125
         </td>
         <td>
-          2047
+          1650
         </td>
         <td>
-          4137
+          4211
           -
-          4170
+          4244
         </td>
         <td>
           Select
@@ -1390,12 +1390,12 @@
           129
         </td>
         <td>
-          1513
+          1168
         </td>
         <td>
-          4186
+          4260
           -
-          4226
+          4300
         </td>
         <td>
           Apply
@@ -1411,33 +1411,12 @@
           131
         </td>
         <td>
-          2221
+          2149
         </td>
         <td>
-          4259
+          4333
           -
-          4275
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.layout.BorderPane.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new scalafx.scene.layout.BorderPane(layout.this.BorderPane.&lt;init&gt;$default$1)
-        </td>
-      </tr><tr>
-        <td>
-          131
-        </td>
-        <td>
-          1168
-        </td>
-        <td>
-          4259
-          -
-          4259
+          4333
         </td>
         <td>
           Select
@@ -1450,15 +1429,36 @@
         </td>
       </tr><tr>
         <td>
+          131
+        </td>
+        <td>
+          1579
+        </td>
+        <td>
+          4333
+          -
+          4349
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.BorderPane(layout.this.BorderPane.&lt;init&gt;$default$1)
+        </td>
+      </tr><tr>
+        <td>
           133
         </td>
         <td>
-          1006
+          2046
         </td>
         <td>
-          4279
+          4353
           -
-          4305
+          4379
         </td>
         <td>
           Apply
@@ -1474,12 +1474,12 @@
           133
         </td>
         <td>
-          1604
+          1005
         </td>
         <td>
-          4299
+          4373
           -
-          4305
+          4379
         </td>
         <td>
           Select
@@ -1495,33 +1495,12 @@
           134
         </td>
         <td>
-          1682
+          1678
         </td>
         <td>
-          4308
+          4401
           -
-          4335
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.layout.BorderPane.right_=
-        </td>
-        <td style="background: #F0ADAD">
-          GameSceneImpl.this.borderPane.right_=(GameSceneImpl.this.rightBar)
-        </td>
-      </tr><tr>
-        <td>
-          134
-        </td>
-        <td>
-          1971
-        </td>
-        <td>
-          4327
-          -
-          4335
+          4409
         </td>
         <td>
           Select
@@ -1534,15 +1513,36 @@
         </td>
       </tr><tr>
         <td>
+          134
+        </td>
+        <td>
+          1053
+        </td>
+        <td>
+          4382
+          -
+          4409
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.right_=
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.borderPane.right_=(GameSceneImpl.this.rightBar)
+        </td>
+      </tr><tr>
+        <td>
           135
         </td>
         <td>
-          1116
+          2113
         </td>
         <td>
-          4358
+          4432
           -
-          4368
+          4442
         </td>
         <td>
           Select
@@ -1558,12 +1558,12 @@
           135
         </td>
         <td>
-          2094
+          1515
         </td>
         <td>
-          4338
+          4412
           -
-          4368
+          4442
         </td>
         <td>
           Apply
@@ -1579,33 +1579,12 @@
           137
         </td>
         <td>
-          1519
+          2218
         </td>
         <td>
-          4379
+          4446
           -
-          4389
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.GameSceneImpl.borderPane
-        </td>
-        <td style="background: #F0ADAD">
-          GameSceneImpl.this.borderPane
-        </td>
-      </tr><tr>
-        <td>
-          137
-        </td>
-        <td>
-          881
-        </td>
-        <td>
-          4372
-          -
-          4389
+          4463
         </td>
         <td>
           Apply
@@ -1618,15 +1597,36 @@
         </td>
       </tr><tr>
         <td>
+          137
+        </td>
+        <td>
+          1171
+        </td>
+        <td>
+          4453
+          -
+          4463
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.borderPane
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.borderPane
+        </td>
+      </tr><tr>
+        <td>
           141
         </td>
         <td>
-          2198
+          1606
         </td>
         <td>
-          4483
+          4558
           -
-          4525
+          4600
         </td>
         <td>
           Apply
@@ -1642,12 +1642,12 @@
           142
         </td>
         <td>
-          1571
+          1010
         </td>
         <td>
-          4530
+          4605
           -
-          4573
+          4648
         </td>
         <td>
           Apply
@@ -1663,12 +1663,12 @@
           143
         </td>
         <td>
-          982
+          1970
         </td>
         <td>
-          4578
+          4653
           -
-          4627
+          4702
         </td>
         <td>
           Apply
@@ -1684,12 +1684,12 @@
           144
         </td>
         <td>
-          935
+          2235
         </td>
         <td>
-          4632
+          4707
           -
-          5184
+          5259
         </td>
         <td>
           Apply
@@ -1717,12 +1717,12 @@
           145
         </td>
         <td>
-          1973
+          1683
         </td>
         <td>
-          4678
+          4753
           -
-          4715
+          4790
         </td>
         <td>
           Select
@@ -1738,12 +1738,12 @@
           145
         </td>
         <td>
-          1686
+          1120
         </td>
         <td>
-          4658
+          4733
           -
-          4716
+          4791
         </td>
         <td>
           Apply
@@ -1759,33 +1759,12 @@
           146
         </td>
         <td>
-          1141
+          1521
         </td>
         <td>
-          4741
+          4798
           -
-          4777
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.gamestate.PlayerGameState.hand
-        </td>
-        <td style="background: #F0ADAD">
-          clientGameState.playerGameState.hand
-        </td>
-      </tr><tr>
-        <td>
-          146
-        </td>
-        <td>
-          2074
-        </td>
-        <td>
-          4723
-          -
-          4778
+          4853
         </td>
         <td>
           Apply
@@ -1798,36 +1777,36 @@
         </td>
       </tr><tr>
         <td>
-          147
+          146
         </td>
         <td>
-          1490
+          2092
         </td>
         <td>
-          4810
+          4816
           -
-          4854
+          4852
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.gamestate.PlayerGameState.otherPlayers
+          it.parttimeteam.gamestate.PlayerGameState.hand
         </td>
         <td style="background: #F0ADAD">
-          clientGameState.playerGameState.otherPlayers
+          clientGameState.playerGameState.hand
         </td>
       </tr><tr>
         <td>
           147
         </td>
         <td>
-          885
+          2196
         </td>
         <td>
-          4785
+          4860
           -
-          4855
+          4930
         </td>
         <td>
           Apply
@@ -1840,36 +1819,36 @@
         </td>
       </tr><tr>
         <td>
-          148
+          147
         </td>
         <td>
-          965
+          885
         </td>
         <td>
-          4862
+          4885
           -
-          4920
+          4929
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setUndoEnabled
+          it.parttimeteam.gamestate.PlayerGameState.otherPlayers
         </td>
         <td style="background: #F0ADAD">
-          GameSceneImpl.this.rightBar.setUndoEnabled(GameSceneImpl.this.inTurn.&amp;&amp;(clientGameState.canUndo))
+          clientGameState.playerGameState.otherPlayers
         </td>
       </tr><tr>
         <td>
           148
         </td>
         <td>
-          1646
+          986
         </td>
         <td>
-          4886
+          4961
           -
-          4919
+          4994
         </td>
         <td>
           Apply
@@ -1885,12 +1864,33 @@
           148
         </td>
         <td>
-          2201
+          1972
         </td>
         <td>
-          4896
+          4937
           -
-          4919
+          4995
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setUndoEnabled
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.rightBar.setUndoEnabled(GameSceneImpl.this.inTurn.&amp;&amp;(clientGameState.canUndo))
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          1573
+        </td>
+        <td>
+          4971
+          -
+          4994
         </td>
         <td>
           Select
@@ -1906,33 +1906,12 @@
           149
         </td>
         <td>
-          1047
+          1144
         </td>
         <td>
-          4927
+          5026
           -
-          4985
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setRedoEnabled
-        </td>
-        <td style="background: #F0ADAD">
-          GameSceneImpl.this.rightBar.setRedoEnabled(GameSceneImpl.this.inTurn.&amp;&amp;(clientGameState.canRedo))
-        </td>
-      </tr><tr>
-        <td>
-          149
-        </td>
-        <td>
-          1663
-        </td>
-        <td>
-          4951
-          -
-          4984
+          5059
         </td>
         <td>
           Apply
@@ -1948,12 +1927,12 @@
           149
         </td>
         <td>
-          1977
+          1687
         </td>
         <td>
-          4961
+          5036
           -
-          4984
+          5059
         </td>
         <td>
           Select
@@ -1966,36 +1945,36 @@
         </td>
       </tr><tr>
         <td>
-          150
+          149
         </td>
         <td>
-          1509
+          2072
         </td>
         <td>
-          5017
+          5002
           -
-          5051
+          5060
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Boolean.&amp;&amp;
+          it.parttimeteam.view.game.scenes.panes.GameInfoBar.setRedoEnabled
         </td>
         <td style="background: #F0ADAD">
-          GameSceneImpl.this.inTurn.&amp;&amp;(clientGameState.canReset)
+          GameSceneImpl.this.rightBar.setRedoEnabled(GameSceneImpl.this.inTurn.&amp;&amp;(clientGameState.canRedo))
         </td>
       </tr><tr>
         <td>
           150
         </td>
         <td>
-          2148
+          1492
         </td>
         <td>
-          5027
+          5102
           -
-          5051
+          5126
         </td>
         <td>
           Select
@@ -2011,12 +1990,12 @@
           150
         </td>
         <td>
-          888
+          2199
         </td>
         <td>
-          4992
+          5067
           -
-          5052
+          5127
         </td>
         <td>
           Apply
@@ -2029,15 +2008,36 @@
         </td>
       </tr><tr>
         <td>
+          150
+        </td>
+        <td>
+          889
+        </td>
+        <td>
+          5092
+          -
+          5126
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.inTurn.&amp;&amp;(clientGameState.canReset)
+        </td>
+      </tr><tr>
+        <td>
           151
         </td>
         <td>
-          2238
+          1647
         </td>
         <td>
-          5083
+          5158
           -
-          5089
+          5164
         </td>
         <td>
           Select
@@ -2053,12 +2053,12 @@
           151
         </td>
         <td>
-          1549
+          969
         </td>
         <td>
-          5059
+          5134
           -
-          5090
+          5165
         </td>
         <td>
           Apply
@@ -2074,75 +2074,12 @@
           152
         </td>
         <td>
-          1129
+          1976
         </td>
         <td>
-          5170
+          5197
           -
-          5176
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Pass&quot;
-        </td>
-      </tr><tr>
-        <td>
-          152
-        </td>
-        <td>
-          1410
-        </td>
-        <td>
-          5151
-          -
-          5164
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Pass &amp; Draw&quot;
-        </td>
-      </tr><tr>
-        <td>
-          152
-        </td>
-        <td>
-          2056
-        </td>
-        <td>
-          5170
-          -
-          5176
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Pass&quot;
-        </td>
-      </tr><tr>
-        <td>
-          152
-        </td>
-        <td>
-          946
-        </td>
-        <td>
-          5122
-          -
-          5149
+          5224
         </td>
         <td>
           Select
@@ -2158,12 +2095,54 @@
           152
         </td>
         <td>
-          2028
+          2146
         </td>
         <td>
-          5151
+          5245
           -
-          5164
+          5251
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Pass&quot;
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          1051
+        </td>
+        <td>
+          5226
+          -
+          5239
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Pass &amp; Draw&quot;
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          1664
+        </td>
+        <td>
+          5226
+          -
+          5239
         </td>
         <td>
           Literal
@@ -2179,12 +2158,12 @@
           152
         </td>
         <td>
-          1516
+          892
         </td>
         <td>
-          5097
+          5172
           -
-          5177
+          5252
         </td>
         <td>
           Apply
@@ -2200,15 +2179,36 @@ else
         </td>
       </tr><tr>
         <td>
+          152
+        </td>
+        <td>
+          1511
+        </td>
+        <td>
+          5245
+          -
+          5251
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Pass&quot;
+        </td>
+      </tr><tr>
+        <td>
           158
         </td>
         <td>
-          1624
+          950
         </td>
         <td>
-          5255
+          5331
           -
-          5316
+          5392
         </td>
         <td>
           Apply
@@ -2224,12 +2224,12 @@ else
           159
         </td>
         <td>
-          2240
+          1551
         </td>
         <td>
-          5281
+          5357
           -
-          5309
+          5385
         </td>
         <td>
           Apply
@@ -2245,12 +2245,12 @@ else
           165
         </td>
         <td>
-          2032
+          1412
         </td>
         <td>
-          5387
+          5464
           -
-          5448
+          5525
         </td>
         <td>
           Apply
@@ -2266,12 +2266,12 @@ else
           166
         </td>
         <td>
-          981
+          2027
         </td>
         <td>
-          5413
+          5490
           -
-          5441
+          5518
         </td>
         <td>
           Apply
@@ -2287,12 +2287,12 @@ else
           172
         </td>
         <td>
-          1131
+          2055
         </td>
         <td>
-          5531
+          5609
           -
-          5592
+          5670
         </td>
         <td>
           Apply
@@ -2308,12 +2308,12 @@ else
           173
         </td>
         <td>
-          1396
+          1132
         </td>
         <td>
-          5557
+          5635
           -
-          5585
+          5663
         </td>
         <td>
           Apply
@@ -2329,12 +2329,12 @@ else
           179
         </td>
         <td>
-          1487
+          939
         </td>
         <td>
-          5659
+          5738
           -
-          5712
+          5791
         </td>
         <td>
           Apply
@@ -2350,12 +2350,12 @@ else
           180
         </td>
         <td>
-          2124
+          1518
         </td>
         <td>
-          5685
+          5764
           -
-          5705
+          5784
         </td>
         <td>
           Apply
@@ -2371,12 +2371,12 @@ else
           186
         </td>
         <td>
-          937
+          2237
         </td>
         <td>
-          5794
+          5874
           -
-          5814
+          5894
         </td>
         <td>
           Apply
@@ -2392,12 +2392,12 @@ else
           187
         </td>
         <td>
-          1913
+          1625
         </td>
         <td>
-          5819
+          5899
           -
-          5843
+          5923
         </td>
         <td>
           Apply
@@ -2413,12 +2413,12 @@ else
           188
         </td>
         <td>
-          1627
+          985
         </td>
         <td>
-          5848
+          5928
           -
-          5879
+          5959
         </td>
         <td>
           Apply
@@ -2434,12 +2434,12 @@ else
           193
         </td>
         <td>
-          2005
+          1398
         </td>
         <td>
-          5990
+          6071
           -
-          6038
+          6119
         </td>
         <td>
           Apply
@@ -2455,12 +2455,12 @@ else
           193
         </td>
         <td>
-          1400
+          1134
         </td>
         <td>
-          5958
-          -
           6039
+          -
+          6120
         </td>
         <td>
           Apply
@@ -2476,12 +2476,12 @@ else
           193
         </td>
         <td>
-          984
+          2031
         </td>
         <td>
-          6032
+          6113
           -
-          6038
+          6119
         </td>
         <td>
           Select
@@ -2497,33 +2497,12 @@ else
           194
         </td>
         <td>
-          2087
+          2122
         </td>
         <td>
-          6044
+          6160
           -
-          6118
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.enableClearHandSelection
-        </td>
-        <td style="background: #F0ADAD">
-          GameSceneImpl.this.actionBar.enableClearHandSelection(GameSceneImpl.this.handSelectionManager.isSelectionEmpty.unary_!)
-        </td>
-      </tr><tr>
-        <td>
-          194
-        </td>
-        <td>
-          1074
-        </td>
-        <td>
-          6079
-          -
-          6117
+          6198
         </td>
         <td>
           Select
@@ -2536,36 +2515,36 @@ else
         </td>
       </tr><tr>
         <td>
-          195
+          194
         </td>
         <td>
-          1042
+          1489
         </td>
         <td>
-          6123
+          6125
           -
-          6277
+          6199
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.enableUpdateCardCombination
+          it.parttimeteam.view.game.scenes.panes.ActionBar.enableClearHandSelection
         </td>
         <td style="background: #F0ADAD">
-          GameSceneImpl.this.actionBar.enableUpdateCardCombination(GameSceneImpl.this.combinationSelectionManager.getSelectedItems.size.==(1).&amp;&amp;(GameSceneImpl.this.handSelectionManager.getSelectedItems.size.==(1)).&amp;&amp;(GameSceneImpl.this.inTurn))
+          GameSceneImpl.this.actionBar.enableClearHandSelection(GameSceneImpl.this.handSelectionManager.isSelectionEmpty.unary_!)
         </td>
       </tr><tr>
         <td>
           195
         </td>
         <td>
-          1493
+          941
         </td>
         <td>
-          6214
+          6295
           -
-          6215
+          6296
         </td>
         <td>
           Literal
@@ -2581,70 +2560,7 @@ else
           195
         </td>
         <td>
-          856
-        </td>
-        <td>
-          6219
-          -
-          6266
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Int.==
-        </td>
-        <td style="background: #F0ADAD">
-          GameSceneImpl.this.handSelectionManager.getSelectedItems.size.==(1)
-        </td>
-      </tr><tr>
-        <td>
-          195
-        </td>
-        <td>
-          1597
-        </td>
-        <td>
-          6161
-          -
-          6276
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Boolean.&amp;&amp;
-        </td>
-        <td style="background: #F0ADAD">
-          GameSceneImpl.this.combinationSelectionManager.getSelectedItems.size.==(1).&amp;&amp;(GameSceneImpl.this.handSelectionManager.getSelectedItems.size.==(1)).&amp;&amp;(GameSceneImpl.this.inTurn)
-        </td>
-      </tr><tr>
-        <td>
-          195
-        </td>
-        <td>
-          1917
-        </td>
-        <td>
-          6270
-          -
-          6276
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.GameSceneImpl.inTurn
-        </td>
-        <td style="background: #F0ADAD">
-          GameSceneImpl.this.inTurn
-        </td>
-      </tr><tr>
-        <td>
-          196
-        </td>
-        <td>
-          2012
+          1628
         </td>
         <td>
           6351
@@ -2662,13 +2578,55 @@ else
         </td>
       </tr><tr>
         <td>
-          196
+          195
         </td>
         <td>
-          1079
+          1912
         </td>
         <td>
-          6282
+          6300
+          -
+          6347
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Int.==
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.handSelectionManager.getSelectedItems.size.==(1)
+        </td>
+      </tr><tr>
+        <td>
+          195
+        </td>
+        <td>
+          988
+        </td>
+        <td>
+          6242
+          -
+          6357
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.combinationSelectionManager.getSelectedItems.size.==(1).&amp;&amp;(GameSceneImpl.this.handSelectionManager.getSelectedItems.size.==(1)).&amp;&amp;(GameSceneImpl.this.inTurn)
+        </td>
+      </tr><tr>
+        <td>
+          195
+        </td>
+        <td>
+          2004
+        </td>
+        <td>
+          6204
           -
           6358
         </td>
@@ -2676,22 +2634,43 @@ else
           Apply
         </td>
         <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.enablePickCards
+          it.parttimeteam.view.game.scenes.panes.ActionBar.enableUpdateCardCombination
         </td>
         <td style="background: #F0ADAD">
-          GameSceneImpl.this.actionBar.enablePickCards(GameSceneImpl.this.boardSelectionManager.isSelectionEmpty.unary_!.&amp;&amp;(GameSceneImpl.this.inTurn))
+          GameSceneImpl.this.actionBar.enableUpdateCardCombination(GameSceneImpl.this.combinationSelectionManager.getSelectedItems.size.==(1).&amp;&amp;(GameSceneImpl.this.handSelectionManager.getSelectedItems.size.==(1)).&amp;&amp;(GameSceneImpl.this.inTurn))
         </td>
       </tr><tr>
         <td>
           196
         </td>
         <td>
-          1370
+          1402
         </td>
         <td>
-          6308
+          6432
           -
-          6357
+          6438
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.inTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.inTurn
+        </td>
+      </tr><tr>
+        <td>
+          196
+        </td>
+        <td>
+          1078
+        </td>
+        <td>
+          6389
+          -
+          6438
         </td>
         <td>
           Apply
@@ -2704,15 +2683,36 @@ else
         </td>
       </tr><tr>
         <td>
+          196
+        </td>
+        <td>
+          2085
+        </td>
+        <td>
+          6363
+          -
+          6439
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.enablePickCards
+        </td>
+        <td style="background: #F0ADAD">
+          GameSceneImpl.this.actionBar.enablePickCards(GameSceneImpl.this.boardSelectionManager.isSelectionEmpty.unary_!.&amp;&amp;(GameSceneImpl.this.inTurn))
+        </td>
+      </tr><tr>
+        <td>
           201
         </td>
         <td>
-          2053
+          1495
         </td>
         <td>
-          6425
+          6507
           -
-          6445
+          6527
         </td>
         <td>
           Apply
@@ -2728,12 +2728,12 @@ else
           206
         </td>
         <td>
-          1546
+          860
         </td>
         <td>
-          6517
+          6600
           -
-          6542
+          6625
         </td>
         <td>
           Apply
@@ -2749,12 +2749,12 @@ else
           207
         </td>
         <td>
-          858
+          1916
         </td>
         <td>
-          6547
+          6630
           -
-          6574
+          6657
         </td>
         <td>
           Apply
@@ -2770,12 +2770,12 @@ else
           208
         </td>
         <td>
-          1883
+          1599
         </td>
         <td>
-          6579
+          6662
           -
-          6605
+          6688
         </td>
         <td>
           Apply
@@ -2791,12 +2791,12 @@ else
           209
         </td>
         <td>
-          1620
+          1046
         </td>
         <td>
-          6610
+          6693
           -
-          6636
+          6719
         </td>
         <td>
           Apply
@@ -2812,12 +2812,12 @@ else
           214
         </td>
         <td>
-          949
+          2011
         </td>
         <td>
-          6707
+          6791
           -
-          6731
+          6815
         </td>
         <td>
           Apply
@@ -2833,12 +2833,12 @@ else
           215
         </td>
         <td>
-          1997
+          1372
         </td>
         <td>
-          6736
+          6820
           -
-          6762
+          6846
         </td>
         <td>
           Apply
@@ -2854,12 +2854,12 @@ else
           216
         </td>
         <td>
-          1375
+          1083
         </td>
         <td>
-          6767
+          6851
           -
-          6792
+          6876
         </td>
         <td>
           Apply
@@ -2875,12 +2875,12 @@ else
           217
         </td>
         <td>
-          2410
+          2052
         </td>
         <td>
-          6797
+          6881
           -
-          6822
+          6906
         </td>
         <td>
           Apply
