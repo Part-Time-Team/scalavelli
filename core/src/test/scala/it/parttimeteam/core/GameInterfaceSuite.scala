@@ -162,7 +162,7 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
         assert(board.isRight)
 
         val res = gameInterface.putCardsInCombination(hand, board.right.get, "#1", Seq(THREE_CLUBS, FOUR_CLUBS))
-        assertResult(Board(Seq(comb)))(res._2)
+        assertResult(Board(Seq(comb)))(res.right.get._2)
       }
     }
   }
