@@ -26,27 +26,18 @@ class LobbyAndMatchStartFlowSpec extends TestKit(ActorSystem("test", ConfigFacto
 
       lobbyActor ! Connect(client1.ref)
 
-      client1.expectMsgPF() {
-        case Connected(client1Id) => {
-          lobbyActor ! Connect(client2.ref)
+      val client1Id = client1.expectMsgPF() { case Connected(client1Id) => client1Id }
+      lobbyActor ! Connect(client2.ref)
 
-          client2.expectMsgPF() {
-            case Connected(client2Id) => {
-              lobbyActor ! JoinPublicLobby(client1Id, "me", NUMBER_OF_PLAYERS)
-              lobbyActor ! JoinPublicLobby(client2Id, "me2", NUMBER_OF_PLAYERS)
+      val client2Id = client2.expectMsgPF() { case Connected(client2Id) => client2Id }
+      lobbyActor ! JoinPublicLobby(client1Id, "me", NUMBER_OF_PLAYERS)
+      lobbyActor ! JoinPublicLobby(client2Id, "me2", NUMBER_OF_PLAYERS)
 
-              client1.expectMsgType[UserAddedToLobby]
-              client2.expectMsgType[UserAddedToLobby]
+      client1.expectMsgType[UserAddedToLobby]
+      client2.expectMsgType[UserAddedToLobby]
 
-              client1.expectMsgType[MatchFound]
-              client2.expectMsgType[MatchFound]
-
-            }
-          }
-
-        }
-      }
-
+      client1.expectMsgType[MatchFound]
+      client2.expectMsgType[MatchFound]
 
     }
 
