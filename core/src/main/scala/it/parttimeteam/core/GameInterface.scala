@@ -83,7 +83,7 @@ trait GameInterface {
    * @param cards Cards to put in the combination.
    * @return Updated Board and Hand.
    */
-  def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board)
+  def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): Either[String, (Hand, Board)]
 }
 
 class GameInterfaceImpl extends GameInterface {
@@ -151,19 +151,21 @@ class GameInterfaceImpl extends GameInterface {
   /**
    * @inheritdoc
    */
-  override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = {
+  override def putCardsInCombination(hand: Hand,
+                                     board: Board,
+                                     id: String,
+                                     cards: Seq[Card]): Either[String, (Hand, Board)] = {
 
     val combBoard: CardCombination = board.combinations.filter(_.id == id).head
 
     if (combBoard.putCards(cards).isValid) {
       val put = hand.removeCards(cards)
       put match {
-        case Right(value) => (value, board.putCards(id, cards))
-        case _ => (hand, board)
+        case Right(value) => Right(value, board.putCards(id, cards))
+        case Left(error) => Left(error)
       }
     } else {
-      // TODO aggiungere errore
-      (hand, board)
+      Left("Combination not valid")
     }
   }
 }
