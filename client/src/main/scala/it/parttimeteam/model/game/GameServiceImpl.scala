@@ -1,6 +1,5 @@
 package it.parttimeteam.model.game
 
-import it.parttimeteam.controller.game._
 import it.parttimeteam.core.GameInterface
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
@@ -12,13 +11,13 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 
 /**
- *
- * @param gameInformation information user to participate to a game match
- * @param notifyEvent     function used to notify the external component about game updates
- * @param gameInterface   the game core api
- */
+  *
+  * @param gameInformation information user to participate to a game match
+  * @param notifyEvent     function used to notify the external component about game updates
+  * @param gameInterface   the game core api
+  */
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
-                      private val notifyEvent: ServerGameEvent => Unit,
+                      private val notifyEvent: GameEvent => Unit,
                       private val gameInterface: GameInterface) extends GameService {
 
   private var turnHistory: History[PlayerGameState] = History[PlayerGameState]()
@@ -81,49 +80,11 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
-  override def notifyUserAction(action: UserGameAction): Unit = {
+  override def leaveGame(): Unit = this.remoteMatchGameRef ! LeaveGame(this.playerId)
 
-    action match {
+  override def endTurnDrawingACard(): Unit = remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)
 
-      case EndTurnAndDrawAction => this.endTurnDrawingACard()
-
-      case EndTurnAction => this.endTurnWithMoves()
-
-      case MakeCombinationAction(cards) => this.makeCombination(cards)
-
-      case PickCardsAction(cards) => this.pickCardsFromBoard(cards)
-
-      case UpdateCardCombinationAction(combinationId, cards) => this.updateCardCombination(combinationId, cards)
-
-      case UndoAction => this.undoTurnAction()
-
-      case RedoAction => this.redoTurnAction()
-
-      case ResetAction => this.resetTurnState()
-
-      case LeaveGameAction => this.leaveGame()
-
-      case SortHandByRankAction => this.sortHandByRank()
-
-      case SortHandBySuitAction => this.sortHandBySuit()
-
-      case PickCardCombinationAction(combinationId: String) => this.pickCardCombination(combinationId)
-
-      case _ =>
-
-    }
-  }
-
-  // endregion
-
-  private def leaveGame(): Unit = this.remoteMatchGameRef ! LeaveGame(this.playerId)
-
-  private def endTurnDrawingACard(): Unit = remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)
-
-  /**
-   * End the turn this moves if it's valid. Anywhere, notify an error event.
-   */
-  private def endTurnWithMoves(): Unit = {
+  override def endTurnWithMoves(): Unit = {
     withState { currentState =>
       if (isTurnValid(currentState)) {
         remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
@@ -134,7 +95,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
-  private def makeCombination(cards: Seq[Card]): Unit = {
+  override def makeCombination(cards: Seq[Card]): Unit = {
     withState { state =>
       this.gameInterface.playCombination(state.hand, state.board, cards) match {
         case Right((updatedHand, updatedBoard)) =>
@@ -147,7 +108,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
-  private def pickCardsFromBoard(cards: Seq[Card]): Unit = {
+  override def pickCardsFromBoard(cards: Seq[Card]): Unit = {
     withState { currentState =>
       gameInterface.pickBoardCards(currentState.hand, currentState.board, cards) match {
         case Right((hand, board)) => {
@@ -159,7 +120,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
-  private def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = {
+  override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = {
     withState { state =>
       this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards) match {
         case Right((updatedHand, updatedBoard)) => {
@@ -171,19 +132,19 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
-  private def undoTurnAction(): Unit = {
+  override def undoTurn(): Unit = {
     this.updateStateThroughHistory(turnHistory.previous)
   }
 
-  private def redoTurnAction(): Unit = {
+  override def redoTurn(): Unit = {
     this.updateStateThroughHistory(turnHistory.next)
   }
 
-  private def resetTurnState(): Unit = {
+  override def resetTurnState(): Unit = {
     this.updateStateThroughHistory(turnHistory.reset)
   }
 
-  private def pickCardCombination(combinationId: String): Unit = {
+  override def pickCardCombination(combinationId: String): Unit = {
     withState { state =>
       this.gameInterface.pickBoardCards(
         state.hand, state.board, state.board.combinations.find(_.id == combinationId).get.cards) match {
@@ -196,19 +157,21 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     }
   }
 
-  private def sortHandByRank(): Unit = {
+  override def sortHandByRank(): Unit = {
     withState { state =>
       val updatedState = this.storeOpt.get.onLocalTurnStateChanged(state.hand.sortByRank(), state.board)
       this.updateHistoryAndNotify(updatedState)
     }
   }
 
-  private def sortHandBySuit(): Unit = {
+  override def sortHandBySuit(): Unit = {
     withState { state =>
       val updatedState = this.storeOpt.get.onLocalTurnStateChanged(state.hand.sortBySuit(), state.board)
       this.updateHistoryAndNotify(updatedState)
     }
   }
+
+  // endregion
 
   private def updateHistoryAndNotify(updatedState: PlayerGameState): Unit = {
     this.updateHistory(updatedState)
@@ -235,10 +198,10 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     )
 
   /**
-   * Execute the history method, updates the history and the resulting state
-   *
-   * @param historyUpdate History method to execute.
-   */
+    * Execute the history method, updates the history and the resulting state
+    *
+    * @param historyUpdate History method to execute.
+    */
   private def updateStateThroughHistory(historyUpdate: () => (Option[PlayerGameState], History[PlayerGameState])): Unit = {
     val (optState, updatedHistory) = historyUpdate()
     this.turnHistory = updatedHistory
@@ -249,11 +212,11 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }
 
   /**
-   * Return if Turn is valid or not.
-   *
-   * @param currentState Current Game State.
-   * @return True if the Turn isn't valid, false anywhere.
-   */
+    * Return if Turn is valid or not.
+    *
+    * @param currentState Current Game State.
+    * @return True if the Turn isn't valid, false anywhere.
+    */
   private def isTurnValid(currentState: PlayerGameState) = {
     val startState = turnHistory.headOption
     startState.isDefined && gameInterface.validateTurn(
