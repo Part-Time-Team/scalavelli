@@ -1,8 +1,6 @@
 package it.parttimeteam.core
 
 import it.parttimeteam.core.TestCards._
-import it.parttimeteam.core.cards.{Card, Color, Rank, Suit}
-import it.parttimeteam.core.cards.Rank.{Ace, OverflowAce}
 import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import org.scalamock.matchers.Matchers
 import org.scalamock.scalatest.MockFactory
@@ -164,7 +162,7 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
         assert(board.isRight)
 
         val res = gameInterface.putCardsInCombination(hand, board.right.get, "#1", Seq(THREE_CLUBS, FOUR_CLUBS))
-        assertResult(Board(Seq(comb)))(res._2)
+        assertResult(Board(Seq(comb)))(res.right.get._2)
       }
     }
   }

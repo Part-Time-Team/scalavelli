@@ -69,8 +69,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   }
 
-  private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(
-    RemoteGameActor.props(this.matchServerResponseListener), "client-game")
+  private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener))
 
   // region GameService
 
@@ -123,10 +122,13 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = {
     withState { state =>
-      val (updatedHand, updatedBoard) = this.gameInterface.putCardsInCombination(
-        state.hand, state.board, combinationId, cards)
-      val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-      this.updateHistoryAndNotify(updatedState)
+      this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards) match {
+        case Right((updatedHand, updatedBoard)) => {
+          val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+          this.updateHistoryAndNotify(updatedState)
+        }
+        case Left(error) => this.notifyEvent(ErrorEvent(error))
+      }
     }
   }
 

@@ -104,8 +104,10 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
     log.info("initializing game..")
     val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
-    this.turnManager.getInTurn.actorRef ! PlayerTurn
-    context.become(inTurn(gameState, this.turnManager.getInTurn) orElse termination())
+    val currentPlayer = this.turnManager.getInTurn
+    currentPlayer.actorRef ! PlayerTurn
+    this.broadcastMessageToNonCurrentPlayers(currentPlayer.id)(OpponentInTurn(currentPlayer.username))
+    context.become(inTurn(gameState, currentPlayer) orElse termination())
   }
 
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {

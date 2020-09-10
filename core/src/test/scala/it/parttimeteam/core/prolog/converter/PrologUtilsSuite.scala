@@ -21,7 +21,7 @@ class PrologUtilsSuite extends AnyFunSuite  with TableDrivenPropertyChecks with 
     assertResult("[(1,'Clubs'),(1,'Spades')]")(PrologUtils.replaceTermToString(seq, "','"))
   }
 
-  test("Spilt rank, suit and color from an array of strings"){
+  test("Split rank, suit and color from an array of strings"){
 
     val rankSuitColorToSplit: Array[String] = Array("10","(DR)")
     val result: (String, String, String) = ("10", "D", "R")
