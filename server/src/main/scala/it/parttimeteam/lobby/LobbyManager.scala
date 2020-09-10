@@ -71,7 +71,9 @@ class LobbyManagerImpl[T <: Player] extends LobbyManager[T] with CustomLogger {
     playersToLobby.get(playerId) match {
       case Some(lobbyType) => {
         lobbies.get(lobbyType) match {
-          case Some(lobby) => lobby.removePlayer(playerId)
+          case Some(lobby) => {
+            lobbies = lobbies + (lobbyType -> lobby.removePlayer(playerId))
+          }
           case _ => log(s"lobby of type $lobbyType corresponding to player $playerId  not found")
         }
         playersToLobby = playersToLobby - playerId
