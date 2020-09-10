@@ -2,7 +2,7 @@ package it.parttimeteam.controller.startup
 
 import it.parttimeteam.Constants
 import it.parttimeteam.model._
-import it.parttimeteam.model.startup.{GameMatchInformations, StartupService, StartupServiceImpl}
+import it.parttimeteam.model.startup.{GameMatchInformations, GameStartUpEvent, GameStartedEvent, LobbyJoinErrorEvent, LobbyJoinedEvent, PrivateLobbyCreatedEvent, StartupService, StartupServiceImpl}
 import it.parttimeteam.view.startup._
 import scalafx.application.{JFXApp, Platform}
 

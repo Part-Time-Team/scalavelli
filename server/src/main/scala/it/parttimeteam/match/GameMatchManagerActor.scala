@@ -9,7 +9,6 @@ import it.parttimeteam.core.{GameInterface, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
-import it.parttimeteam.messages.PlayerActionNotValidError
 
 
 object GameMatchManagerActor {
@@ -119,7 +118,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
 
         case Left(errorMessage) =>
           log.error("Error resolving player action")
-          playerInTurn.actorRef ! PlayerActionNotValidError(errorMessage)
+          playerInTurn.actorRef ! MatchError.PlayerActionNotValid
       }
 
     }

@@ -4,6 +4,7 @@ import it.parttimeteam.core.GameInterface
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{LeaveGame, PlayerActionMade, Ready}
+import it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener
 import it.parttimeteam.model.startup.GameMatchInformations
 import it.parttimeteam.{ActorSystemManager, DrawCard, PlayedMove}
 
@@ -11,11 +12,11 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 
 /**
-  *
-  * @param gameInformation information user to participate to a game match
-  * @param notifyEvent     function used to notify the external component about game updates
-  * @param gameInterface   the game core api
-  */
+ *
+ * @param gameInformation information user to participate to a game match
+ * @param notifyEvent     function used to notify the external component about game updates
+ * @param gameInterface   the game core api
+ */
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
                       private val notifyEvent: GameEvent => Unit,
                       private val gameInterface: GameInterface) extends GameService {
@@ -29,6 +30,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   private val playerId = gameInformation.playerId
 
   private val matchServerResponseListener = new MatchServerResponseListener {
+
     override def gameStateUpdated(gameState: PlayerGameState): Unit = {
 
       storeOpt match {
@@ -198,10 +200,10 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     )
 
   /**
-    * Execute the history method, updates the history and the resulting state
-    *
-    * @param historyUpdate History method to execute.
-    */
+   * Execute the history method, updates the history and the resulting state
+   *
+   * @param historyUpdate History method to execute.
+   */
   private def updateStateThroughHistory(historyUpdate: () => (Option[PlayerGameState], History[PlayerGameState])): Unit = {
     val (optState, updatedHistory) = historyUpdate()
     this.turnHistory = updatedHistory
@@ -212,11 +214,11 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }
 
   /**
-    * Return if Turn is valid or not.
-    *
-    * @param currentState Current Game State.
-    * @return True if the Turn isn't valid, false anywhere.
-    */
+   * Return if Turn is valid or not.
+   *
+   * @param currentState Current Game State.
+   * @return True if the Turn isn't valid, false anywhere.
+   */
   private def isTurnValid(currentState: PlayerGameState) = {
     val startState = turnHistory.headOption
     startState.isDefined && gameInterface.validateTurn(

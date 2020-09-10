@@ -2,7 +2,6 @@ package it.parttimeteam.model.startup
 
 import akka.actor.ActorRef
 import it.parttimeteam.messages.LobbyMessages.{JoinPublicLobby, _}
-import it.parttimeteam.model.{GameStartUpEvent, GameStartedEvent, LobbyJoinErrorEvent, LobbyJoinedEvent, PrivateLobbyCreatedEvent}
 import it.parttimeteam.{ActorSystemManager, Constants}
 
 import scala.concurrent.ExecutionContext.Implicits.global
