@@ -162,10 +162,13 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
   private def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = {
     withState { state =>
-      val (updatedHand, updatedBoard) = this.gameInterface.putCardsInCombination(
-        state.hand, state.board, combinationId, cards)
-      val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-      this.updateHistoryAndNotify(updatedState)
+      this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards) match {
+        case Right((updatedHand, updatedBoard)) => {
+          val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+          this.updateHistoryAndNotify(updatedState)
+        }
+        case Left(error) => this.notifyEvent(ErrorEvent(error))
+      }
     }
   }
 
