@@ -26,6 +26,7 @@ trait HandBar extends ScrollPane with ActionGamePane {
 object HandBar {
 
   class HandBarImpl(handListener: HandListener) extends HandBar {
+    this.getStyleClass.add("transparent")
 
     val handCardsContainer = new HBox()
     handCardsContainer.spacing = 5d

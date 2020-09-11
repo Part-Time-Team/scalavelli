@@ -106,6 +106,7 @@ class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
   })
 
   bottom.children.addAll(actionBar, handBar)
+  bottom.getStyleClass.add("woodBack")
 
   val centerPane: BoardPane = new BoardPaneImpl(new BoardListener {
 

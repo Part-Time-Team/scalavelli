@@ -31,13 +31,15 @@ object BoardPane {
     tilePane.prefWidth <= this.getWidth
     tilePane.vgap = 20d
     tilePane.hgap = 20d
-    tilePane.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
 
+    tilePane.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
     content = tilePane
     this.setFitToWidth(true)
 
+    this.getStyleClass.add("greenBack")
 
-    /** @inheritdoc*/
+
+    /** @inheritdoc */
     override def setBoard(board: Board): Unit = {
       tilePane.children.clear()
 
@@ -47,14 +49,14 @@ object BoardPane {
       }
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def disableActions(): Unit = {
       tilePane.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].disableActions()
       })
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def enableActions(): Unit = {
       tilePane.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].enableActions()
