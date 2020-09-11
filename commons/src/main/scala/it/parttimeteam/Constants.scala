@@ -4,7 +4,7 @@ object Constants {
 
   object Client {
     final val GAME_NAME = "Machiavelli"
-    final val TURN_TIMER_DURATION = 120
+    final val TURN_TIMER_DURATION = 30
   }
 
   object Remote {

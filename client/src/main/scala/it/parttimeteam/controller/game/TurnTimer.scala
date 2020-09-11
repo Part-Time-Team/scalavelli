@@ -23,21 +23,24 @@ object TurnTimer {
     var timer: Timer = new Timer()
     var timeRemaining: Long = duration * 1000
 
-    var tickTask: TimerTask = new TimerTask {
-      override def run(): Unit = {
-        timeRemaining = timeRemaining - 1000
-        listener.onTick(timeRemaining)
-      }
-    }
-
-    var endTask: TimerTask = new TimerTask {
-      override def run(): Unit = {
-        end()
-        listener.onEnd()
-      }
-    }
+    var tickTask: TimerTask = _
+    var endTask: TimerTask = _
 
     override def start(): Unit = {
+      tickTask = new TimerTask {
+        override def run(): Unit = {
+          timeRemaining = timeRemaining - 1000
+          listener.onTick(timeRemaining)
+        }
+      }
+
+      endTask = new TimerTask {
+        override def run(): Unit = {
+          end()
+          listener.onEnd()
+        }
+      }
+
       timer.schedule(tickTask, 1000, 1000)
       timer.schedule(endTask, duration * 1000)
       listener.onStart()
@@ -47,7 +50,7 @@ object TurnTimer {
       tickTask.cancel()
       endTask.cancel()
       timer.purge()
-      timeRemaining = duration
+      timeRemaining = duration * 1000
     }
   }
 

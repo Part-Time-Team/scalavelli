@@ -4,9 +4,14 @@ import it.parttimeteam.view.utils.MachiavelliLabel
 import scalafx.scene.layout.VBox
 
 trait TimerPane extends VBox {
-  def hide(): Unit
 
-  def show(): Unit
+  def displayMessage(message: String): Unit
+
+  def set(minutes: Long, seconds: Long): Unit
+
+  def show(startingMinutes: Long, startingSeconds: Long): Unit
+
+  def hide(): Unit
 
   def setTime(time: String): Unit
 }
@@ -15,20 +20,38 @@ object TimerPane {
 
   class TimerPaneImpl extends TimerPane {
     val timerLabel = MachiavelliLabel("Timer")
-    val countdownLabel = MachiavelliLabel("03:00")
+    timerLabel.getStyleClass.add("boldText")
+
+    val countdownLabel = MachiavelliLabel()
+
+    this.children.addAll(timerLabel, countdownLabel)
 
     override def hide(): Unit = {
       visible = false
     }
 
-    override def show(): Unit = {
-      visible = true
-    }
 
     override def setTime(time: String): Unit = {
       countdownLabel.setText(time)
     }
+
+    override def displayMessage(message: String): Unit = {
+      setText(message)
+    }
+
+    override def set(minutes: Long, seconds: Long): Unit = setText(timeToLabel(minutes, seconds))
+
+    override def show(startingMinutes: Long, startingSeconds: Long): Unit = {
+      visible = true
+      setText(timeToLabel(startingMinutes, startingSeconds))
+    }
+
+    private def setText(message: String): Unit = countdownLabel.text = message
+
+    private def timeToLabel(minutes: Long, seconds: Long): String = s"$minutes:$seconds"
+
   }
+
 }
 
 
