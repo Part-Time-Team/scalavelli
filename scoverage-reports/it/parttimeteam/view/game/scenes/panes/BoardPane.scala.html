@@ -24,19 +24,19 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game.scenes.panes
 </span>2 <span style=''>
-</span>3 <span style=''>import it.parttimeteam.core.cards.Card
-</span>4 <span style=''>import it.parttimeteam.core.collections.{Board, CardCombination}
-</span>5 <span style=''>import it.parttimeteam.view.ViewConfig
-</span>6 <span style=''>import it.parttimeteam.view.game.scenes.GameScene.BoardListener
-</span>7 <span style=''>import it.parttimeteam.view.game.scenes.model.GameCardCombination
-</span>8 <span style=''>import it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl
-</span>9 <span style=''>import scalafx.geometry.Insets
+</span>3 <span style=''>import it.parttimeteam.core.collections.{Board, CardCombination}
+</span>4 <span style=''>import it.parttimeteam.view.ViewConfig
+</span>5 <span style=''>import it.parttimeteam.view.game.scenes.GameScene.BoardListener
+</span>6 <span style=''>import it.parttimeteam.view.game.scenes.model.GameCardCombination
+</span>7 <span style=''>import it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl
+</span>8 <span style=''>import scalafx.geometry.Insets
+</span>9 <span style=''>import scalafx.scene.control.ScrollPane
 </span>10 <span style=''>import scalafx.scene.layout.TilePane
 </span>11 <span style=''>
 </span>12 <span style=''>/**
 </span>13 <span style=''>  * Pane which contains the game board.
 </span>14 <span style=''>  */
-</span>15 <span style=''>trait BoardPane extends TilePane with ActionGamePane {
+</span>15 <span style=''>trait BoardPane extends ScrollPane with ActionGamePane {
 </span>16 <span style=''>
 </span>17 <span style=''>  /**
 </span>18 <span style=''>    * Sets the game board inside a ScrollPane.
@@ -49,41 +49,46 @@
 </span>25 <span style=''>object BoardPane {
 </span>26 <span style=''>
 </span>27 <span style=''>  class BoardPaneImpl(boardListener: BoardListener) extends BoardPane {
-</span>28 <span style=''>    </span><span style='background: #F0ADAD'>this.prefColumns = 2</span><span style=''>
-</span>29 <span style=''>    </span><span style='background: #F0ADAD'>this.prefWidth &lt;= this.getWidth</span><span style=''>
-</span>30 <span style=''>    </span><span style='background: #F0ADAD'>this.vgap = 20d</span><span style=''>
-</span>31 <span style=''>    </span><span style='background: #F0ADAD'>this.hgap = 20d</span><span style=''>
-</span>32 <span style=''>    </span><span style='background: #F0ADAD'>this.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)</span><span style=''>
-</span>33 <span style=''>
-</span>34 <span style=''>    var selectedCards: Seq[Card] = </span><span style='background: #F0ADAD'>Seq()</span><span style=''>
-</span>35 <span style=''>
-</span>36 <span style=''>
-</span>37 <span style=''>    /** @inheritdoc */
-</span>38 <span style=''>    override def setBoard(board: Board): Unit = {
-</span>39 <span style=''>      </span><span style='background: #F0ADAD'>this.children.clear()</span><span style=''>
+</span>28 <span style=''>
+</span>29 <span style=''>    var tilePane: TilePane = </span><span style='background: #F0ADAD'>new TilePane()</span><span style=''>
+</span>30 <span style=''>    </span><span style='background: #F0ADAD'>tilePane.prefColumns = 2</span><span style=''>
+</span>31 <span style=''>    </span><span style='background: #F0ADAD'>tilePane.prefWidth &lt;= this.getWidth</span><span style=''>
+</span>32 <span style=''>    </span><span style='background: #F0ADAD'>tilePane.vgap = 20d</span><span style=''>
+</span>33 <span style=''>    </span><span style='background: #F0ADAD'>tilePane.hgap = 20d</span><span style=''>
+</span>34 <span style=''>
+</span>35 <span style=''>    </span><span style='background: #F0ADAD'>tilePane.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)</span><span style=''>
+</span>36 <span style=''>    </span><span style='background: #F0ADAD'>content = tilePane</span><span style=''>
+</span>37 <span style=''>    </span><span style='background: #F0ADAD'>this.setFitToWidth(true)</span><span style=''>
+</span>38 <span style=''>
+</span>39 <span style=''>    </span><span style='background: #F0ADAD'>this.getStyleClass.add(&quot;greenBack&quot;)</span><span style=''>
 </span>40 <span style=''>
-</span>41 <span style=''>      </span><span style='background: #F0ADAD'>for (combination: CardCombination &lt;- board.combinations) {
-</span>42 <span style=''></span><span style='background: #F0ADAD'>        val playerCombination: GameCardCombination = new GameCardCombinationImpl(combination, boardListener)
-</span>43 <span style=''></span><span style='background: #F0ADAD'>        this.children.add(playerCombination)
-</span>44 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
-</span>45 <span style=''>    }
-</span>46 <span style=''>
-</span>47 <span style=''>    /** @inheritdoc */
-</span>48 <span style=''>    override def disableActions(): Unit = {
-</span>49 <span style=''>      </span><span style='background: #F0ADAD'>this.children.forEach(playerCombination =&gt; {
-</span>50 <span style=''></span><span style='background: #F0ADAD'>        playerCombination.asInstanceOf[GameCardCombination].disableActions()
-</span>51 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
-</span>52 <span style=''>    }
-</span>53 <span style=''>
-</span>54 <span style=''>    /** @inheritdoc */
-</span>55 <span style=''>    override def enableActions(): Unit = {
-</span>56 <span style=''>      </span><span style='background: #F0ADAD'>this.children.forEach(playerCombination =&gt; {
-</span>57 <span style=''></span><span style='background: #F0ADAD'>        playerCombination.asInstanceOf[GameCardCombination].enableActions()
-</span>58 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
-</span>59 <span style=''>    }
-</span>60 <span style=''>  }
-</span>61 <span style=''>
-</span>62 <span style=''>}
+</span>41 <span style=''>
+</span>42 <span style=''>    /** @inheritdoc */
+</span>43 <span style=''>    override def setBoard(board: Board): Unit = {
+</span>44 <span style=''>      </span><span style='background: #F0ADAD'>tilePane.children.clear()</span><span style=''>
+</span>45 <span style=''>
+</span>46 <span style=''>      </span><span style='background: #F0ADAD'>for (combination: CardCombination &lt;- board.combinations) {
+</span>47 <span style=''></span><span style='background: #F0ADAD'>        val playerCombination: GameCardCombination = new GameCardCombinationImpl(combination, boardListener)
+</span>48 <span style=''></span><span style='background: #F0ADAD'>        tilePane.children.add(playerCombination)
+</span>49 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>50 <span style=''>    }
+</span>51 <span style=''>
+</span>52 <span style=''>    /** @inheritdoc */
+</span>53 <span style=''>    override def disableActions(): Unit = {
+</span>54 <span style=''>      </span><span style='background: #F0ADAD'>tilePane.children.forEach(playerCombination =&gt; {
+</span>55 <span style=''></span><span style='background: #F0ADAD'>        playerCombination.asInstanceOf[GameCardCombination].disableActions()
+</span>56 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>57 <span style=''>    }
+</span>58 <span style=''>
+</span>59 <span style=''>    /** @inheritdoc */
+</span>60 <span style=''>    override def enableActions(): Unit = {
+</span>61 <span style=''>      </span><span style='background: #F0ADAD'>tilePane.children.forEach(playerCombination =&gt; {
+</span>62 <span style=''></span><span style='background: #F0ADAD'>        playerCombination.asInstanceOf[GameCardCombination].enableActions()
+</span>63 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>64 <span style=''>    }
+</span>65 <span style=''>  }
+</span>66 <span style=''>
+</span>67 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -97,15 +102,57 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          28
+          29
         </td>
         <td>
-          1849
+          1910
         </td>
         <td>
-          826
+          855
           -
-          846
+          855
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.TilePane.&lt;init&gt;$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.TilePane.&lt;init&gt;$default$1
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1361
+        </td>
+        <td>
+          855
+          -
+          869
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.TilePane.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.TilePane(layout.this.TilePane.&lt;init&gt;$default$1)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          2366
+        </td>
+        <td>
+          874
+          -
+          898
         </td>
         <td>
           Apply
@@ -114,19 +161,19 @@
           scalafx.scene.layout.TilePane.prefColumns_=
         </td>
         <td style="background: #F0ADAD">
-          this.prefColumns_=(2)
+          BoardPaneImpl.this.tilePane.prefColumns_=(2)
         </td>
       </tr><tr>
         <td>
-          29
+          31
         </td>
         <td>
-          1227
+          1743
         </td>
         <td>
-          869
+          925
           -
-          882
+          938
         </td>
         <td>
           Apply
@@ -135,19 +182,19 @@
           javafx.scene.layout.Region.getWidth
         </td>
         <td style="background: #F0ADAD">
-          layout.this.TilePane.sfxTilePane2jfx(this).getWidth()
+          control.this.ScrollPane.sfxScrollPane2jfx(this).getWidth()
         </td>
       </tr><tr>
         <td>
-          29
+          31
         </td>
         <td>
-          2240
+          1166
         </td>
         <td>
-          851
+          903
           -
-          882
+          938
         </td>
         <td>
           Apply
@@ -156,19 +203,19 @@
           scalafx.beans.binding.NumberExpression.&lt;=
         </td>
         <td style="background: #F0ADAD">
-          this.prefWidth.&lt;=(layout.this.TilePane.sfxTilePane2jfx(this).getWidth())
+          BoardPaneImpl.this.tilePane.prefWidth.&lt;=(control.this.ScrollPane.sfxScrollPane2jfx(this).getWidth())
         </td>
       </tr><tr>
         <td>
-          30
+          32
         </td>
         <td>
-          1899
+          2415
         </td>
         <td>
-          887
+          943
           -
-          902
+          962
         </td>
         <td>
           Apply
@@ -177,19 +224,19 @@
           scalafx.scene.layout.TilePane.vgap_=
         </td>
         <td style="background: #F0ADAD">
-          this.vgap_=(20.0)
+          BoardPaneImpl.this.tilePane.vgap_=(20.0)
         </td>
       </tr><tr>
         <td>
-          31
+          33
         </td>
         <td>
-          1355
+          1863
         </td>
         <td>
-          907
+          967
           -
-          922
+          986
         </td>
         <td>
           Apply
@@ -198,19 +245,40 @@
           scalafx.scene.layout.TilePane.hgap_=
         </td>
         <td style="background: #F0ADAD">
-          this.hgap_=(20.0)
+          BoardPaneImpl.this.tilePane.hgap_=(20.0)
         </td>
       </tr><tr>
         <td>
-          32
+          35
         </td>
         <td>
-          2398
+          1716
         </td>
         <td>
-          1032
+          992
           -
-          1056
+          1126
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.Region.padding_=
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.tilePane.padding_=(scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION, it.parttimeteam.view.ViewConfig.screenPadding, it.parttimeteam.view.ViewConfig.screenPadding, it.parttimeteam.view.ViewConfig.screenPadding))
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          2260
+        </td>
+        <td>
+          1049
+          -
+          1073
         </td>
         <td>
           Select
@@ -223,15 +291,15 @@
         </td>
       </tr><tr>
         <td>
-          32
+          35
         </td>
         <td>
-          2350
+          1204
         </td>
         <td>
-          949
+          1018
           -
-          978
+          1047
         </td>
         <td>
           Select
@@ -244,15 +312,15 @@
         </td>
       </tr><tr>
         <td>
-          32
+          35
         </td>
         <td>
-          1852
+          2313
         </td>
         <td>
-          942
+          1011
           -
-          1057
+          1126
         </td>
         <td>
           Apply
@@ -265,15 +333,15 @@
         </td>
       </tr><tr>
         <td>
-          32
+          35
         </td>
         <td>
-          1735
+          1313
         </td>
         <td>
-          980
+          1101
           -
-          1004
+          1125
         </td>
         <td>
           Select
@@ -286,78 +354,120 @@
         </td>
       </tr><tr>
         <td>
-          32
+          35
         </td>
         <td>
-          1164
+          1630
         </td>
         <td>
-          1006
-          -
-          1030
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.ViewConfig.screenPadding
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.view.ViewConfig.screenPadding
-        </td>
-      </tr><tr>
-        <td>
-          32
-        </td>
-        <td>
-          1202
-        </td>
-        <td>
-          927
-          -
-          1057
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.layout.Region.padding_=
-        </td>
-        <td style="background: #F0ADAD">
-          this.padding_=(scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION, it.parttimeteam.view.ViewConfig.screenPadding, it.parttimeteam.view.ViewConfig.screenPadding, it.parttimeteam.view.ViewConfig.screenPadding))
-        </td>
-      </tr><tr>
-        <td>
-          34
-        </td>
-        <td>
-          2245
-        </td>
-        <td>
-          1094
+          1075
           -
           1099
         </td>
         <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          2421
+        </td>
+        <td>
+          1131
+          -
+          1149
+        </td>
+        <td>
           Apply
         </td>
         <td>
-          scala.collection.generic.GenericCompanion.apply
+          scalafx.scene.control.ScrollPane.content_=
         </td>
         <td style="background: #F0ADAD">
-          scala.collection.Seq.apply[Nothing]()
+          BoardPaneImpl.this.content_=(BoardPaneImpl.this.tilePane)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1098
+        </td>
+        <td>
+          1141
+          -
+          1149
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.BoardPane.BoardPaneImpl.tilePane
+        </td>
+        <td style="background: #F0ADAD">
+          BoardPaneImpl.this.tilePane
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1811
+        </td>
+        <td>
+          1154
+          -
+          1178
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.ScrollPane.setFitToWidth
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ScrollPane.sfxScrollPane2jfx(this).setFitToWidth(true)
         </td>
       </tr><tr>
         <td>
           39
         </td>
         <td>
-          1624
+          1205
         </td>
         <td>
-          1181
+          1184
           -
-          1202
+          1219
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.add
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ScrollPane.sfxScrollPane2jfx(this).getStyleClass().add(&quot;greenBack&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          2262
+        </td>
+        <td>
+          1301
+          -
+          1326
         </td>
         <td>
           Apply
@@ -366,19 +476,19 @@
           java.util.List.clear
         </td>
         <td style="background: #F0ADAD">
-          this.children.clear()
+          BoardPaneImpl.this.tilePane.children.clear()
         </td>
       </tr><tr>
         <td>
-          41
+          46
         </td>
         <td>
-          2404
+          1103
         </td>
         <td>
-          1210
+          1334
           -
-          1430
+          1558
         </td>
         <td>
           Apply
@@ -392,20 +502,20 @@
   case _ =&gt; false
 })).foreach[Boolean](((combination: it.parttimeteam.core.collections.CardCombination) =&gt; {
   val playerCombination: it.parttimeteam.view.game.scenes.model.GameCardCombination = new it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl(combination, BoardPaneImpl.this.boardListener);
-  this.children.add(layout.this.BorderPane.sfxBorderPane2jfx(playerCombination))
+  BoardPaneImpl.this.tilePane.children.add(layout.this.BorderPane.sfxBorderPane2jfx(playerCombination))
 }))
         </td>
       </tr><tr>
         <td>
-          42
+          47
         </td>
         <td>
-          1309
+          1605
         </td>
         <td>
-          1363
+          1487
           -
-          1376
+          1500
         </td>
         <td>
           Select
@@ -418,15 +528,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          47
         </td>
         <td>
-          2298
+          1316
         </td>
         <td>
-          1322
+          1446
           -
-          1377
+          1501
         </td>
         <td>
           Apply
@@ -439,15 +549,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          48
         </td>
         <td>
-          1709
+          2356
         </td>
         <td>
-          1404
+          1532
           -
-          1421
+          1549
         </td>
         <td>
           ApplyImplicitView
@@ -460,15 +570,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          48
         </td>
         <td>
-          1098
+          1721
         </td>
         <td>
-          1386
+          1510
           -
-          1422
+          1550
         </td>
         <td>
           Apply
@@ -477,19 +587,19 @@
           java.util.List.add
         </td>
         <td style="background: #F0ADAD">
-          this.children.add(layout.this.BorderPane.sfxBorderPane2jfx(playerCombination))
+          BoardPaneImpl.this.tilePane.children.add(layout.this.BorderPane.sfxBorderPane2jfx(playerCombination))
         </td>
       </tr><tr>
         <td>
-          49
+          54
         </td>
         <td>
-          1203
+          1855
         </td>
         <td>
-          1511
+          1639
           -
-          1641
+          1773
         </td>
         <td>
           Apply
@@ -498,19 +608,19 @@
           java.lang.Iterable.forEach
         </td>
         <td style="background: #F0ADAD">
-          this.children.forEach(((playerCombination: javafx.scene.Node) =&gt; playerCombination.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCardCombination].disableActions()))
+          BoardPaneImpl.this.tilePane.children.forEach(((playerCombination: javafx.scene.Node) =&gt; playerCombination.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCardCombination].disableActions()))
         </td>
       </tr><tr>
         <td>
-          50
+          55
         </td>
         <td>
-          1802
+          2490
         </td>
         <td>
-          1564
+          1696
           -
-          1632
+          1764
         </td>
         <td>
           Apply
@@ -523,15 +633,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          61
         </td>
         <td>
-          1599
+          2239
         </td>
         <td>
-          1721
+          1853
           -
-          1850
+          1986
         </td>
         <td>
           Apply
@@ -540,19 +650,19 @@
           java.lang.Iterable.forEach
         </td>
         <td style="background: #F0ADAD">
-          this.children.forEach(((playerCombination: javafx.scene.Node) =&gt; playerCombination.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCardCombination].enableActions()))
+          BoardPaneImpl.this.tilePane.children.forEach(((playerCombination: javafx.scene.Node) =&gt; playerCombination.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCardCombination].enableActions()))
         </td>
       </tr><tr>
         <td>
-          57
+          62
         </td>
         <td>
-          2247
+          1264
         </td>
         <td>
-          1774
+          1910
           -
-          1841
+          1977
         </td>
         <td>
           Apply

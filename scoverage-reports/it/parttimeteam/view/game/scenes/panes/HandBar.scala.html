@@ -50,51 +50,54 @@
 </span>26 <span style=''>object HandBar {
 </span>27 <span style=''>
 </span>28 <span style=''>  class HandBarImpl(handListener: HandListener) extends HandBar {
-</span>29 <span style=''>
-</span>30 <span style=''>    val handCardsContainer = </span><span style='background: #F0ADAD'>new HBox()</span><span style=''>
-</span>31 <span style=''>    </span><span style='background: #F0ADAD'>handCardsContainer.spacing = 5d</span><span style=''>
-</span>32 <span style=''>    </span><span style='background: #F0ADAD'>handCardsContainer.padding = Insets(ViewConfig.CARD_Y_TRANSLATION + 5d, 5d, 5d, 5d)</span><span style=''>
-</span>33 <span style=''>
-</span>34 <span style=''>    </span><span style='background: #F0ADAD'>this.setContent(handCardsContainer)</span><span style=''>
-</span>35 <span style=''>
-</span>36 <span style=''>    /** @inheritdoc */
-</span>37 <span style=''>    override def setHand(hand: Hand): Unit = {
-</span>38 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.children.clear()</span><span style=''>
-</span>39 <span style=''>
-</span>40 <span style=''>      </span><span style='background: #F0ADAD'>for (card &lt;- hand.playerCards) {
-</span>41 <span style=''></span><span style='background: #F0ADAD'>        addHandCard(card, isBoardCard = false)</span><span style=''>
-</span>42 <span style=''>      }
-</span>43 <span style=''>
-</span>44 <span style=''>      </span><span style='background: #F0ADAD'>for (card &lt;- hand.boardCards) {
-</span>45 <span style=''></span><span style='background: #F0ADAD'>        addHandCard(card, isBoardCard = true)</span><span style=''>
-</span>46 <span style=''>      }
-</span>47 <span style=''>    }
-</span>48 <span style=''>
-</span>49 <span style=''>    /** @inheritdoc */
-</span>50 <span style=''>    override def disableActions(): Unit = {
-</span>51 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.children.forEach(playerCard =&gt; {
-</span>52 <span style=''></span><span style='background: #F0ADAD'>        playerCard.asInstanceOf[GameCard].disableActions()
-</span>53 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
-</span>54 <span style=''>    }
-</span>55 <span style=''>
-</span>56 <span style=''>    /** @inheritdoc */
-</span>57 <span style=''>    override def enableActions(): Unit = {
-</span>58 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.children.forEach(playerCard =&gt; {
-</span>59 <span style=''></span><span style='background: #F0ADAD'>        playerCard.asInstanceOf[GameCard].enableActions()
-</span>60 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
-</span>61 <span style=''>    }
-</span>62 <span style=''>
-</span>63 <span style=''>    private def addHandCard(card: Card, isBoardCard: Boolean): Unit = {
-</span>64 <span style=''>      val playerCard: GameCard = </span><span style='background: #F0ADAD'>GameCard(card, handListener)</span><span style=''>
-</span>65 <span style=''>      if (isBoardCard) {
-</span>66 <span style=''>        </span><span style='background: #F0ADAD'>playerCard.setAsBoardCard()</span><span style=''>
-</span>67 <span style=''>      }
-</span>68 <span style=''>
-</span>69 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.children.add(playerCard.asInstanceOf[GameCard])</span><span style=''>
-</span>70 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.alignment = BottomCenter</span><span style=''>
-</span>71 <span style=''>    }
-</span>72 <span style=''>  }
-</span>73 <span style=''>}
+</span>29 <span style=''>    </span><span style='background: #F0ADAD'>this.getStyleClass.add(&quot;transparent&quot;)</span><span style=''>
+</span>30 <span style=''>
+</span>31 <span style=''>    val handCardsContainer = </span><span style='background: #F0ADAD'>new HBox()</span><span style=''>
+</span>32 <span style=''>    </span><span style='background: #F0ADAD'>handCardsContainer.spacing = 5d</span><span style=''>
+</span>33 <span style=''>    </span><span style='background: #F0ADAD'>handCardsContainer.padding = Insets(ViewConfig.CARD_Y_TRANSLATION + ViewConfig.HAND_CARD_PADDING, ViewConfig.HAND_CARD_PADDING, ViewConfig.HAND_CARD_PADDING, ViewConfig.HAND_CARD_PADDING)</span><span style=''>
+</span>34 <span style=''>
+</span>35 <span style=''>    </span><span style='background: #F0ADAD'>this.setMinHeight(ViewConfig.HAND_CARD_HEIGHT + ViewConfig.CARD_Y_TRANSLATION + ViewConfig.HAND_PADDING)</span><span style=''>
+</span>36 <span style=''>
+</span>37 <span style=''>    </span><span style='background: #F0ADAD'>this.setContent(handCardsContainer)</span><span style=''>
+</span>38 <span style=''>
+</span>39 <span style=''>    /** @inheritdoc*/
+</span>40 <span style=''>    override def setHand(hand: Hand): Unit = {
+</span>41 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.children.clear()</span><span style=''>
+</span>42 <span style=''>
+</span>43 <span style=''>      </span><span style='background: #F0ADAD'>for (card &lt;- hand.playerCards) {
+</span>44 <span style=''></span><span style='background: #F0ADAD'>        addHandCard(card, isBoardCard = false)</span><span style=''>
+</span>45 <span style=''>      }
+</span>46 <span style=''>
+</span>47 <span style=''>      </span><span style='background: #F0ADAD'>for (card &lt;- hand.boardCards) {
+</span>48 <span style=''></span><span style='background: #F0ADAD'>        addHandCard(card, isBoardCard = true)</span><span style=''>
+</span>49 <span style=''>      }
+</span>50 <span style=''>    }
+</span>51 <span style=''>
+</span>52 <span style=''>    /** @inheritdoc*/
+</span>53 <span style=''>    override def disableActions(): Unit = {
+</span>54 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.children.forEach(playerCard =&gt; {
+</span>55 <span style=''></span><span style='background: #F0ADAD'>        playerCard.asInstanceOf[GameCard].disableActions()
+</span>56 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>57 <span style=''>    }
+</span>58 <span style=''>
+</span>59 <span style=''>    /** @inheritdoc*/
+</span>60 <span style=''>    override def enableActions(): Unit = {
+</span>61 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.children.forEach(playerCard =&gt; {
+</span>62 <span style=''></span><span style='background: #F0ADAD'>        playerCard.asInstanceOf[GameCard].enableActions()
+</span>63 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>64 <span style=''>    }
+</span>65 <span style=''>
+</span>66 <span style=''>    private def addHandCard(card: Card, isBoardCard: Boolean): Unit = {
+</span>67 <span style=''>      val playerCard: GameCard = </span><span style='background: #F0ADAD'>GameCard(card, handListener)</span><span style=''>
+</span>68 <span style=''>      if (isBoardCard) {
+</span>69 <span style=''>        </span><span style='background: #F0ADAD'>playerCard.setAsBoardCard()</span><span style=''>
+</span>70 <span style=''>      }
+</span>71 <span style=''>
+</span>72 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.children.add(playerCard.asInstanceOf[GameCard])</span><span style=''>
+</span>73 <span style=''>      </span><span style='background: #F0ADAD'>handCardsContainer.alignment = BottomCenter</span><span style=''>
+</span>74 <span style=''>    }
+</span>75 <span style=''>  }
+</span>76 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -108,15 +111,36 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          30
+          29
         </td>
         <td>
-          2147
+          2131
         </td>
         <td>
-          797
+          771
           -
-          807
+          808
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.add
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ScrollPane.sfxScrollPane2jfx(this).getStyleClass().add(&quot;transparent&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1578
+        </td>
+        <td>
+          839
+          -
+          849
         </td>
         <td>
           Apply
@@ -129,15 +153,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          32
         </td>
         <td>
-          1518
+          1213
         </td>
         <td>
-          812
+          854
           -
-          843
+          885
         </td>
         <td>
           Apply
@@ -150,57 +174,78 @@
         </td>
       </tr><tr>
         <td>
-          32
+          33
         </td>
         <td>
-          1046
+          2212
         </td>
         <td>
-          928
+          958
           -
-          930
+          986
         </td>
         <td>
-          Literal
+          Select
         </td>
         <td>
-          &lt;nosymbol&gt;
+          it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING
         </td>
         <td style="background: #F0ADAD">
-          5.0
+          it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING
         </td>
       </tr><tr>
         <td>
-          32
+          33
         </td>
         <td>
-          2254
+          1730
         </td>
         <td>
-          920
+          1048
           -
-          922
+          1076
         </td>
         <td>
-          Literal
+          Select
         </td>
         <td>
-          &lt;nosymbol&gt;
+          it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING
         </td>
         <td style="background: #F0ADAD">
-          5.0
+          it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING
         </td>
       </tr><tr>
         <td>
-          32
+          33
         </td>
         <td>
-          1754
+          1072
         </td>
         <td>
-          848
+          988
           -
-          931
+          1016
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          2118
+        </td>
+        <td>
+          890
+          -
+          1077
         </td>
         <td>
           Apply
@@ -209,19 +254,19 @@
           scalafx.scene.layout.Region.padding_=
         </td>
         <td style="background: #F0ADAD">
-          HandBarImpl.this.handCardsContainer.padding_=(scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION.+(5.0), 5.0, 5.0, 5.0))
+          HandBarImpl.this.handCardsContainer.padding_=(scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION.+(it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING), it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING, it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING, it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING))
         </td>
       </tr><tr>
         <td>
-          32
+          33
         </td>
         <td>
-          1207
+          1612
         </td>
         <td>
-          884
+          926
           -
-          918
+          986
         </td>
         <td>
           Apply
@@ -230,19 +275,40 @@
           scala.Double.+
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION.+(5.0)
+          it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION.+(it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING)
         </td>
       </tr><tr>
         <td>
-          32
+          33
         </td>
         <td>
-          2032
+          2090
         </td>
         <td>
-          877
+          1018
           -
-          931
+          1046
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          1112
+        </td>
+        <td>
+          919
+          -
+          1077
         </td>
         <td>
           Apply
@@ -251,40 +317,103 @@
           scalafx.geometry.Insets.apply
         </td>
         <td style="background: #F0ADAD">
-          scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION.+(5.0), 5.0, 5.0, 5.0)
+          scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION.+(it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING), it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING, it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING, it.parttimeteam.view.ViewConfig.HAND_CARD_PADDING)
         </td>
       </tr><tr>
         <td>
-          32
+          35
         </td>
         <td>
-          1628
+          2296
         </td>
         <td>
-          924
+          1101
           -
-          926
+          1186
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          scala.Double.+
         </td>
         <td style="background: #F0ADAD">
-          5.0
+          it.parttimeteam.view.ViewConfig.HAND_CARD_HEIGHT.+(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION).+(it.parttimeteam.view.ViewConfig.HAND_PADDING)
         </td>
       </tr><tr>
         <td>
-          34
+          35
         </td>
         <td>
-          1572
+          1580
         </td>
         <td>
-          937
+          1131
           -
-          972
+          1160
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1618
+        </td>
+        <td>
+          1083
+          -
+          1187
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.layout.Region.setMinHeight
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ScrollPane.sfxScrollPane2jfx(this).setMinHeight(it.parttimeteam.view.ViewConfig.HAND_CARD_HEIGHT.+(it.parttimeteam.view.ViewConfig.CARD_Y_TRANSLATION).+(it.parttimeteam.view.ViewConfig.HAND_PADDING))
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1289
+        </td>
+        <td>
+          1163
+          -
+          1186
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.HAND_PADDING
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.HAND_PADDING
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1754
+        </td>
+        <td>
+          1193
+          -
+          1228
         </td>
         <td>
           Apply
@@ -297,36 +426,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          37
         </td>
         <td>
-          1105
+          2092
         </td>
         <td>
-          953
+          1209
           -
-          971
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.HandBar.HandBarImpl.handCardsContainer
-        </td>
-        <td style="background: #F0ADAD">
-          HandBarImpl.this.handCardsContainer
-        </td>
-      </tr><tr>
-        <td>
-          34
-        </td>
-        <td>
-          2118
-        </td>
-        <td>
-          953
-          -
-          971
+          1227
         </td>
         <td>
           ApplyImplicitView
@@ -339,15 +447,36 @@
         </td>
       </tr><tr>
         <td>
-          38
+          37
         </td>
         <td>
-          1211
+          1039
         </td>
         <td>
-          1050
+          1209
           -
-          1085
+          1227
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.HandBar.HandBarImpl.handCardsContainer
+        </td>
+        <td style="background: #F0ADAD">
+          HandBarImpl.this.handCardsContainer
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1185
+        </td>
+        <td>
+          1305
+          -
+          1340
         </td>
         <td>
           Apply
@@ -360,15 +489,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          43
         </td>
         <td>
-          1606
+          1551
         </td>
         <td>
-          1093
+          1348
           -
-          1172
+          1427
         </td>
         <td>
           Apply
@@ -381,15 +510,15 @@
         </td>
       </tr><tr>
         <td>
-          41
+          44
         </td>
         <td>
-          2199
+          2157
         </td>
         <td>
-          1134
+          1389
           -
-          1172
+          1427
         </td>
         <td>
           Apply
@@ -402,15 +531,15 @@
         </td>
       </tr><tr>
         <td>
-          44
+          47
         </td>
         <td>
-          2079
+          2267
         </td>
         <td>
-          1188
+          1443
           -
-          1265
+          1520
         </td>
         <td>
           Apply
@@ -423,15 +552,15 @@
         </td>
       </tr><tr>
         <td>
-          45
+          48
         </td>
         <td>
-          1072
+          986
         </td>
         <td>
-          1228
+          1483
           -
-          1265
+          1520
         </td>
         <td>
           Apply
@@ -444,15 +573,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          54
         </td>
         <td>
-          1112
+          1042
         </td>
         <td>
-          1354
+          1608
           -
-          1473
+          1727
         </td>
         <td>
           Apply
@@ -465,15 +594,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          55
         </td>
         <td>
-          1723
+          1693
         </td>
         <td>
-          1414
+          1668
           -
-          1464
+          1718
         </td>
         <td>
           Apply
@@ -486,15 +615,15 @@
         </td>
       </tr><tr>
         <td>
-          58
+          61
         </td>
         <td>
-          1574
+          1724
         </td>
         <td>
-          1553
+          1806
           -
-          1671
+          1924
         </td>
         <td>
           Apply
@@ -507,15 +636,15 @@
         </td>
       </tr><tr>
         <td>
-          59
+          62
         </td>
         <td>
-          2106
+          2095
         </td>
         <td>
-          1613
+          1866
           -
-          1662
+          1915
         </td>
         <td>
           Apply
@@ -528,15 +657,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          67
         </td>
         <td>
-          2281
+          2140
         </td>
         <td>
-          1784
+          2037
           -
-          1812
+          2065
         </td>
         <td>
           Apply
@@ -549,15 +678,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          67
         </td>
         <td>
-          1285
+          1158
         </td>
         <td>
-          1799
+          2052
           -
-          1811
+          2064
         </td>
         <td>
           Select
@@ -570,36 +699,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          68
         </td>
         <td>
-          1746
+          2242
         </td>
         <td>
-          1819
+          2072
           -
-          1819
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          65
-        </td>
-        <td>
-          2081
-        </td>
-        <td>
-          1819
-          -
-          1819
+          2072
         </td>
         <td>
           Literal
@@ -612,15 +720,36 @@
         </td>
       </tr><tr>
         <td>
-          66
+          68
         </td>
         <td>
-          1039
+          1610
         </td>
         <td>
-          1846
+          2072
           -
-          1873
+          2072
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          950
+        </td>
+        <td>
+          2099
+          -
+          2126
         </td>
         <td>
           Block
@@ -633,15 +762,15 @@
         </td>
       </tr><tr>
         <td>
-          66
+          69
         </td>
         <td>
-          1612
+          1557
         </td>
         <td>
-          1846
+          2099
           -
-          1873
+          2126
         </td>
         <td>
           Apply
@@ -654,57 +783,15 @@
         </td>
       </tr><tr>
         <td>
-          69
+          72
         </td>
         <td>
-          1545
+          2078
         </td>
         <td>
-          1889
+          2174
           -
-          1955
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.util.List.add
-        </td>
-        <td style="background: #F0ADAD">
-          HandBarImpl.this.handCardsContainer.children.add(layout.this.StackPane.sfxStackPane2jfx(playerCard.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCard]))
-        </td>
-      </tr><tr>
-        <td>
-          69
-        </td>
-        <td>
-          1183
-        </td>
-        <td>
-          1921
-          -
-          1954
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.Any.asInstanceOf
-        </td>
-        <td style="background: #F0ADAD">
-          playerCard.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCard]
-        </td>
-      </tr><tr>
-        <td>
-          69
-        </td>
-        <td>
-          2144
-        </td>
-        <td>
-          1921
-          -
-          1954
+          2207
         </td>
         <td>
           ApplyImplicitView
@@ -717,15 +804,57 @@
         </td>
       </tr><tr>
         <td>
-          70
+          72
         </td>
         <td>
-          986
+          1470
         </td>
         <td>
-          1993
+          2142
           -
-          2005
+          2208
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.add
+        </td>
+        <td style="background: #F0ADAD">
+          HandBarImpl.this.handCardsContainer.children.add(layout.this.StackPane.sfxStackPane2jfx(playerCard.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCard]))
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          1051
+        </td>
+        <td>
+          2174
+          -
+          2207
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.Any.asInstanceOf
+        </td>
+        <td style="background: #F0ADAD">
+          playerCard.asInstanceOf[it.parttimeteam.view.game.scenes.model.GameCard]
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          1139
+        </td>
+        <td>
+          2246
+          -
+          2258
         </td>
         <td>
           Select
@@ -738,15 +867,15 @@
         </td>
       </tr><tr>
         <td>
-          70
+          73
         </td>
         <td>
-          2252
+          2117
         </td>
         <td>
-          1962
+          2215
           -
-          2005
+          2258
         </td>
         <td>
           Apply
