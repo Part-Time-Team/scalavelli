@@ -87,6 +87,8 @@ object GameInfoBar {
   class GameInfoBarImpl(val listener: GameSceneListener) extends GameInfoBar {
     padding = Insets(10d)
 
+    this.getStyleClass.add("woodBack")
+
     val otherPlayersPane: OtherPlayersPane = new OtherPlayersPaneImpl()
     val timerPane: TimerPane = new TimerPaneImpl()
 
