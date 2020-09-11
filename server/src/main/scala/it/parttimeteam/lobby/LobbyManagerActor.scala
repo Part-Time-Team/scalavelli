@@ -5,9 +5,8 @@ import it.parttimeteam.`match`.GameMatchManagerActor
 import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
 import it.parttimeteam.common.{GamePlayer, IdGenerator}
 import it.parttimeteam.core.GameInterfaceImpl
+import it.parttimeteam.messages.LobbyMessages.LobbyError.PrivateLobbyIdNotValid
 import it.parttimeteam.messages.LobbyMessages._
-import it.parttimeteam.messages.PrivateLobbyIdNotValidError
-import it.parttimeteam.utils.CustomLogger
 
 object LobbyManagerActor {
 
@@ -61,7 +60,7 @@ class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
             ref ! UserAddedToLobby()
             this.checkAndCreateGame(lobbyType)
           }
-          case None => ref ! LobbyError(PrivateLobbyIdNotValidError)
+          case None => ref ! LobbyErrorOccurred(PrivateLobbyIdNotValid)
         }
       }
 

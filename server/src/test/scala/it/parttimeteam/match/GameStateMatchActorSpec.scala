@@ -9,6 +9,7 @@ import it.parttimeteam.core.collections.{Board, Deck, Hand}
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
 import it.parttimeteam.core.{GameInterface, GameState}
+import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 import it.parttimeteam.{DrawCard, common, core}
@@ -45,9 +46,10 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       player1.expectMsg(PlayerTurn)
       player1.send(gameActor, PlayerActionMade("id1", DrawCard))
       player1.expectMsgType[GameStateUpdated]
-      player2.expectMsgType[GameStateUpdated]
+      player2.expectMsgType[OpponentInTurn]
       player1.expectMsg(TurnEnded)
-      player2.expectMsg(PlayerTurn)
+      player2.expectMsg(GameStateUpdated(PlayerGameState(Board(List()),Hand(List(),List()),List(Opponent("player1",1))))
+      )
     }
 
   }
