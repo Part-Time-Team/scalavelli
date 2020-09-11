@@ -10,7 +10,7 @@ package it.parttimeteam.core.cards
 sealed class Rank(val value: Int,
                   val name: String,
                   val shortName: String)
-    extends Comparable[Rank] with Serializable {
+  extends Comparable[Rank] with Serializable {
 
   /**
    * Base compare between two ranks.
@@ -22,6 +22,7 @@ sealed class Rank(val value: Int,
 
   /**
    * Check if value of rank is the same of another rank.
+   *
    * @param obj Object to compare.
    * @return True if have the same value. false anywhere.
    */
@@ -71,7 +72,7 @@ object Rank {
    * The optional OverflowAce with value 14
    */
   case class OverflowAce() extends Rank(14, "Ace", "14")
-
+  
   /**
    * The second rank.
    */
@@ -150,19 +151,19 @@ object Rank {
    * @return Rank converted.
    */
   implicit def string2rank(s: String): Rank = s match {
-    case this.ACE    => Ace()
-    case this.TWO    => Two()
-    case this.THREE  => Three()
-    case this.FOUR   => Four()
-    case this.FIVE   => Five()
-    case this.SIX    => Six()
-    case this.SEVEN  => Seven()
-    case this.EIGHT  => Eight()
-    case this.NINE   => Nine()
-    case this.TEN    => Ten()
-    case this.JACK   => Jack()
-    case this.QUEEN  => Queen()
-    case this.KING   => King()
+    case this.ACE => Ace()
+    case this.TWO => Two()
+    case this.THREE => Three()
+    case this.FOUR => Four()
+    case this.FIVE => Five()
+    case this.SIX => Six()
+    case this.SEVEN => Seven()
+    case this.EIGHT => Eight()
+    case this.NINE => Nine()
+    case this.TEN => Ten()
+    case this.JACK => Jack()
+    case this.QUEEN => Queen()
+    case this.KING => King()
     case this.OVERFLOW_ACE => OverflowAce()
     case _ => throw new RuntimeException(f"Unknown rank $s")
   }

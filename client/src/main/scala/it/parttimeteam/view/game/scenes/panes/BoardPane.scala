@@ -7,13 +7,12 @@ import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 import it.parttimeteam.view.game.scenes.model.GameCardCombination
 import it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl
 import scalafx.geometry.Insets
-import scalafx.scene.control.ScrollPane
-import scalafx.scene.layout.VBox
+import scalafx.scene.layout.TilePane
 
 /**
   * Pane which contains the game board.
   */
-trait BoardPane extends ScrollPane with ActionGamePane {
+trait BoardPane extends TilePane with ActionGamePane {
 
   /**
     * Sets the game board inside a ScrollPane.
@@ -26,34 +25,35 @@ trait BoardPane extends ScrollPane with ActionGamePane {
 object BoardPane {
 
   class BoardPaneImpl(boardListener: BoardListener) extends BoardPane {
-    val tableCombinations = new VBox()
-    tableCombinations.spacing = 10d
-    tableCombinations.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
+    this.prefColumns = 2
+    this.prefWidth <= this.getWidth
+    this.vgap = 20d
+    this.hgap = 20d
+    this.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
 
     var selectedCards: Seq[Card] = Seq()
 
-    this.setContent(tableCombinations)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setBoard(board: Board): Unit = {
-      tableCombinations.children.clear()
+      this.children.clear()
 
       for (combination: CardCombination <- board.combinations) {
         val playerCombination: GameCardCombination = new GameCardCombinationImpl(combination, boardListener)
-        tableCombinations.children.add(playerCombination)
+        this.children.add(playerCombination)
       }
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def disableActions(): Unit = {
-      tableCombinations.children.forEach(playerCombination => {
+      this.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].disableActions()
       })
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def enableActions(): Unit = {
-      tableCombinations.children.forEach(playerCombination => {
+      this.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].enableActions()
       })
     }

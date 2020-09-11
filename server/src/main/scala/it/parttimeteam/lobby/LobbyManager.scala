@@ -1,6 +1,7 @@
 package it.parttimeteam.lobby
 
 import it.parttimeteam.common.{GamePlayer, Player}
+import it.parttimeteam.utils.CustomLogger
 
 object LobbyManager {
   def apply(): LobbyManager[GamePlayer] = new LobbyManagerImpl[GamePlayer]()
@@ -47,7 +48,7 @@ trait LobbyManager[T <: Player] {
 }
 
 
-class LobbyManagerImpl[T <: Player] extends LobbyManager[T] {
+class LobbyManagerImpl[T <: Player] extends LobbyManager[T] with CustomLogger {
 
   private var playersToLobby: Map[String, LobbyType] = Map.empty
   private var lobbies: Map[LobbyType, Lobby[T]] = Map.empty
@@ -70,12 +71,14 @@ class LobbyManagerImpl[T <: Player] extends LobbyManager[T] {
     playersToLobby.get(playerId) match {
       case Some(lobbyType) => {
         lobbies.get(lobbyType) match {
-          case Some(lobby) => lobby.removePlayer(playerId)
-          case _ =>
+          case Some(lobby) => {
+            lobbies = lobbies + (lobbyType -> lobby.removePlayer(playerId))
+          }
+          case _ => log(s"lobby of type $lobbyType corresponding to player $playerId  not found")
         }
         playersToLobby = playersToLobby - playerId
       }
-      case _ =>
+      case None => log(s"player $playerId to remove not found")
     }
 
   }

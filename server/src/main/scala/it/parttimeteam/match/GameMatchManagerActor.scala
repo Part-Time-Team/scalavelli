@@ -9,7 +9,8 @@ import it.parttimeteam.core.{GameInterface, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
-import it.parttimeteam.messages.PlayerActionNotValidError
+
+import scala.concurrent.duration.DurationInt
 
 
 object GameMatchManagerActor {
@@ -42,6 +43,8 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
 
   override def receive: Receive = idle
 
+  import context.dispatcher
+
   private var players: Seq[GamePlayer] = _
   private var turnManager: TurnManager[GamePlayer] = _
 
@@ -50,11 +53,12 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
 
   private def idle: Receive = {
     case GamePlayers(players) => {
+      log.info(s"initial players $players")
       this.players = players
+      this.players.foreach(p => context.watch(p.actorRef))
       require(players.size == numberOfPlayers)
       this.broadcastMessageToPlayers(MatchFound(self))
-      this.players.foreach(p => context.watch(p.actorRef))
-      context.become(initializing(Seq.empty) orElse termination())
+      context.become(initializing(Seq.empty) orElse terminationBeforeGameStarted())
     }
   }
 
@@ -66,58 +70,104 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
   private def initializing(playersReady: Seq[GamePlayer]): Receive = {
     case Ready(id, ref) => {
       this.withPlayer(id) { p =>
-        log.debug(s"player ${p.username} ready")
+        log.info(s"player ${p.username} ready")
 
-        players = players.map(p => if (p.id == id) p.copy(actorRef = ref) else p)
         val updatedReadyPlayers = playersReady :+ p.copy(actorRef = ref)
 
         if (updatedReadyPlayers.length == numberOfPlayers) {
-          log.debug("All players ready")
-          this.initializeGame()
+          log.info("All players ready")
+          this.initializeGame(updatedReadyPlayers)
         } else {
-          context.become(initializing(updatedReadyPlayers) orElse termination())
+          context.become(initializing(updatedReadyPlayers) orElse terminationBeforeGameStarted())
         }
       }
     }
   }
 
-  private def termination(): Receive = {
+  /**
+   * Listen for termination messages before the match start:
+   * before all the players sent the Ready message
+   */
+  private def terminationBeforeGameStarted(): Receive = {
+    case Terminated(ref) => {
+      this.players.find(_.actorRef == ref) match {
+        case Some(player) => {
+          log.info(s"player ${player.username} terminated before the game starts")
+          // become in behaviour in cui a ogni ready che mi arriva invio il messaggio di fine partita
+          // dopo x secondi mi uccido
+          broadcastMessageToPlayers(GameEndedForPlayerLeft)
+          context.become(gameEndedWithErrorBeforeStarts())
+          context.system.scheduler.scheduleOnce(20.second) {
+            log.info("Terminating game actor..")
+            self ! PoisonPill
+          }
+        }
+        case None => log.error(s"client with ref $ref not found")
+      }
+    }
+  }
+
+
+  /**
+   * Listen for termination messages after the match start
+   */
+  private def terminationAfterGameStarted(): Receive = {
     case Terminated(ref) => this.players.find(_.actorRef == ref) match {
       case Some(player) =>
-        log.debug(s"Player ${player.username} left the game")
+        log.info(s"Player ${player.username} left the game")
         this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
         self ! PoisonPill
     }
     case LeaveGame(playerId) => withPlayer(playerId) { player =>
-      log.debug(s"Player ${player.username} left the game")
+      log.info(s"Player ${player.username} left the game")
       this.broadcastMessageToPlayers(GameEndedForPlayerLeft)
       self ! PoisonPill
     }
   }
 
   /**
+   * notify termination to next player if one of them terminates during the game loading 
+   */
+  private def gameEndedWithErrorBeforeStarts(): Receive = {
+    case Ready(_, ref) => ref ! GameEndedForPlayerLeft
+  }
+
+  /**
    * Inizialize the game, creating the initial state, the turn manager and changing actor behaviour
    *
+   * @param playersReady all the players ready
    */
-  private def initializeGame(): Unit = {
+  private def initializeGame(playersReady: Seq[GamePlayer]): Unit = {
+    // unwatch the player with the old actor ref
+    this.players.foreach(p => context.unwatch(p.actorRef))
+
+    this.players = playersReady
+    log.debug(s"ready players $playersReady")
+    log.debug(s"updated players $players")
+
+    // watch the players with the new actor ref
+    this.players.foreach(p => context.watch(p.actorRef))
+
     this.turnManager = TurnManager[GamePlayer](players)
-    log.debug("initializing game..")
+    log.info("initializing game..")
     val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
-    this.turnManager.getInTurn.actorRef ! PlayerTurn
-    context.become(inTurn(gameState, this.turnManager.getInTurn) orElse termination())
+    val currentPlayer = this.turnManager.getInTurn
+    currentPlayer.actorRef ! PlayerTurn
+    this.broadcastMessageToNonCurrentPlayers(currentPlayer.id)(OpponentInTurn(currentPlayer.username))
+    context.become(inTurn(gameState, currentPlayer) orElse terminationAfterGameStarted())
   }
 
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
-
+      log.info(s"received action $action from ${playerInTurn.username}")
       this.gameMatchManager.determineNextState(gameState, playerInTurn, action) match {
         case Right(stateResult) =>
           this.handleStateResult(stateResult, playerInTurn)
 
         case Left(errorMessage) =>
           log.error("Error resolving player action")
-          playerInTurn.actorRef ! PlayerActionNotValidError(errorMessage)
+          playerInTurn.actorRef ! MatchError.PlayerActionNotValid
       }
 
     }
@@ -145,7 +195,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
       context.become(inTurn(stateResult.updatedState, this.turnManager.getInTurn))
 
     } else {
-      log.debug(s"Game ended, player ${playerInTurn.username} won")
+      log.info(s"Game ended, player ${playerInTurn.username} won")
       // game ended
       playerInTurn.actorRef ! Won
       this.broadcastMessageToNonCurrentPlayers(playerInTurn.id)(Lost(playerInTurn.username))
@@ -190,7 +240,7 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
   private def withPlayer(playerId: PlayerId)(f: GamePlayer => Unit): Unit = {
     this.players.find(_.id == playerId) match {
       case Some(p) => f(p)
-      case None => log.debug(s"Player id $playerId not found")
+      case None => log.info(s"Player id $playerId not found")
     }
   }
 

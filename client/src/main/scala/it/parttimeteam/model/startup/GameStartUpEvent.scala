@@ -1,6 +1,4 @@
-package it.parttimeteam.model
-
-import it.parttimeteam.model.startup.GameMatchInformations
+package it.parttimeteam.model.startup
 
 sealed class GameStartUpEvent
 

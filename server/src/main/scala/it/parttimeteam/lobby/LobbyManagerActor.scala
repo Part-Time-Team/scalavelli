@@ -1,12 +1,12 @@
 package it.parttimeteam.lobby
 
-import akka.actor.{Actor, ActorRef, Props, Terminated}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import it.parttimeteam.`match`.GameMatchManagerActor
 import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
 import it.parttimeteam.common.{GamePlayer, IdGenerator}
 import it.parttimeteam.core.GameInterfaceImpl
+import it.parttimeteam.messages.LobbyMessages.LobbyError.PrivateLobbyIdNotValid
 import it.parttimeteam.messages.LobbyMessages._
-import it.parttimeteam.messages.PrivateLobbyIdNotValidError
 
 object LobbyManagerActor {
 
@@ -14,7 +14,7 @@ object LobbyManagerActor {
 
 }
 
-class LobbyManagerActor extends Actor with IdGenerator {
+class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
 
   type UserName = String
   type UserId = String
@@ -27,6 +27,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
 
   override def receive: Receive = {
     case Connect(clientRef) => {
+      log.info(s"client $clientRef is asking for a connection")
       val clientId = generateId
       connectedPlayers = connectedPlayers + (clientId -> clientRef)
       context.watch(clientRef)
@@ -34,6 +35,7 @@ class LobbyManagerActor extends Actor with IdGenerator {
     }
 
     case JoinPublicLobby(clientId, username, numberOfPlayers) => {
+      log.info(s"client $clientId wants to join a public lobby")
       this.executeOnClientRefPresent(clientId) { ref =>
         val lobbyType = PlayerNumberLobby(numberOfPlayers)
         this.lobbyManger.addPlayer(GamePlayer(clientId, username, ref), lobbyType)
@@ -58,20 +60,18 @@ class LobbyManagerActor extends Actor with IdGenerator {
             ref ! UserAddedToLobby()
             this.checkAndCreateGame(lobbyType)
           }
-          case None => ref ! LobbyError(PrivateLobbyIdNotValidError)
+          case None => ref ! LobbyErrorOccurred(PrivateLobbyIdNotValid)
         }
       }
 
-    case LeaveLobby(userId) => this.lobbyManger.removePlayer(userId)
+    case LeaveLobby(userId) => {
+      log.info(s"client $userId")
+      this.lobbyManger.removePlayer(userId)
+    }
 
     case Terminated(actorRef) => {
-      this.connectedPlayers.find(p => p._2 == actorRef) match {
-        case Some((userId, _)) => {
-          context.unwatch(actorRef)
-          this.lobbyManger.removePlayer(userId)
-          this.connectedPlayers = this.connectedPlayers - userId
-        }
-      }
+      log.info(s"terminated $actorRef, connected players: $connectedPlayers")
+      removeClient(actorRef)
     }
 
   }
@@ -103,6 +103,19 @@ class LobbyManagerActor extends Actor with IdGenerator {
     this.getClientRef(clientId) match {
       case Some(ref) => action(ref)
       case _ =>
+    }
+  }
+
+  private def removeClient(actorRef: ActorRef): Unit = {
+    this.connectedPlayers.find(_._2 == actorRef) match {
+      case Some((userId, _)) => {
+        log.info(s"removing client $actorRef from lobby and connected players list")
+        context.unwatch(actorRef)
+        this.lobbyManger.removePlayer(userId)
+        this.connectedPlayers = this.connectedPlayers - userId
+        log.info(s"removed client $actorRef from lobby and connected players list")
+      }
+      case None => log.info(s"client $actorRef not found")
     }
   }
 

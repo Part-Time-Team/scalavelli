@@ -6,6 +6,7 @@ import com.typesafe.config.ConfigFactory
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage._
+import it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike

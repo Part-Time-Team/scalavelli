@@ -1,7 +1,6 @@
 package it.parttimeteam.lobby
 
 import it.parttimeteam.common.GamePlayer
-import it.parttimeteam.lobby.{LobbyManager, LobbyManagerImpl, PlayerNumberLobby}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -51,6 +50,23 @@ class LobbyManagerSpec extends AnyWordSpecLike with MockFactory {
       lobbyManager.addPlayer(mock[GamePlayer], lobbyType)
       assert(lobbyManager.attemptExtractPlayerForMatch(lobbyType).isDefined)
       assert(lobbyManager.attemptExtractPlayerForMatch(lobbyType).isEmpty)
+    }
+
+
+    "remove from lobby" in {
+      val lobbyManager = LobbyManager()
+      val lobbyType = PlayerNumberLobby(2)
+      val p1 = GamePlayer("1", "pippo", null)
+      val p2 = GamePlayer("2", "pluto", null)
+      lobbyManager.addPlayer(p1, lobbyType)
+      lobbyManager.removePlayer(p1.id)
+      lobbyManager.addPlayer(p1, lobbyType)
+
+      assert(lobbyManager.attemptExtractPlayerForMatch(lobbyType).isEmpty)
+
+      lobbyManager.addPlayer(p2, lobbyType)
+      assert(lobbyManager.attemptExtractPlayerForMatch(lobbyType).isDefined)
+
     }
 
 
