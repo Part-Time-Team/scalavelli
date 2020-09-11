@@ -1,5 +1,7 @@
 package it.parttimeteam.controller.game
 
+import it.parttimeteam.Constants
+import it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl
 import it.parttimeteam.core.GameInterfaceImpl
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
@@ -14,7 +16,21 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
   private var gameStage: MachiavelliGameStage = _
   private var gameService: GameService = _
   private var currentState: ClientGameState = _
-  private var turnTimer: TurnTimer = _
+
+  private val turnTimer: TurnTimer = new TurnTimerImpl(Constants.Client.TURN_TIMER_DURATION, new TurnTimerListener {
+    override def onStart(): Unit = {
+      //gameStage.showTimer(Constants.Client.TURN_TIMER_DURATION)
+      println(s"TIMER -> Timer started: ${Constants.Client.TURN_TIMER_DURATION}")
+    }
+
+    override def onEnd(): Unit = {
+      println(s"TIMER -> Timer ended")
+    }
+
+    override def onTick(millis: Long): Unit = {
+      println(s"TIMER -> Timer tick: $millis")
+    }
+  })
 
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
@@ -104,6 +120,8 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     case UpdateCardCombinationEvent(combinationId: String, cards: Seq[Card]) => gameService.updateCardCombination(combinationId, cards)
 
     case PlayAgainEvent => playAgain()
+
+    case TurnStartedEvent => turnTimer.start()
   }
 
   private def getMockState: ClientGameState = {

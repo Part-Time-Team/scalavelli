@@ -126,14 +126,29 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   /** @inheritdoc */
   override def setInTurn(): Unit = {
     gameScene.setInTurn(true)
-    notifyInfo("It's your turn")
-    setMessage("Your turn")
+    Platform.runLater({
+      val alert = MachiavelliAlert("", "It's your turn", AlertType.Information)
+      alert.showAndWait match {
+        case Some(b) =>
+          if (b == ButtonType.OK) {
+            gameListener.onViewEvent(TurnStartedEvent)
+          } else {
+            System.exit(0)
+          }
+
+        case None =>
+      }
+
+      setMessage("Your turn")
+    })
   }
 
   /** @inheritdoc */
   override def setTurnEnded(): Unit = {
     gameScene.setInTurn(false)
-    setMessage("")
+    Platform.runLater({
+      setMessage("")
+    })
   }
 
   // view actions
