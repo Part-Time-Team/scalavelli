@@ -26,7 +26,7 @@ trait MachiavelliStartUpStage extends BaseStage with PrimaryStageListener {
   *
   * @param gameStartUpListener enables to call actions exposed by controller
   */
-class MachiavelliStartUpPrimaryStageImpl(gameStartUpListener: GameStartUpListener) extends MachiavelliStartUpStage {
+class MachiavelliStartUpStageImpl(gameStartUpListener: GameStartUpListener) extends MachiavelliStartUpStage {
   private val mainScene = new SelectScene(this, new SelectSceneListener {
 
     override def onSelectedPublicGame(): Unit = setCurrentScene(publicGameScene)
@@ -92,9 +92,9 @@ object MachiavelliStartUpStage {
   val windowWidth: Double = ViewConfig.screenWidth
   val windowHeight: Double = ViewConfig.screenHeight
 
-  def apply(listener: GameStartUpListener): MachiavelliStartUpStage = new MachiavelliStartUpPrimaryStageImpl(listener)
+  def apply(listener: GameStartUpListener): MachiavelliStartUpStage = new MachiavelliStartUpStageImpl(listener)
 
-  def apply(): MachiavelliStartUpStage = new MachiavelliStartUpPrimaryStageImpl(null)
+  def apply(): MachiavelliStartUpStage = new MachiavelliStartUpStageImpl(null)
 }
 
 trait PrimaryStageListener extends StartUpSceneListener

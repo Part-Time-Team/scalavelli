@@ -21,5 +21,9 @@ object ViewConfig {
   // Cards
   val CARD_Y_TRANSLATION: Double = 20d
   val HAND_CARD_HEIGHT: Double = 100d
+
+  // TilePane
+  val TILE_GAP: Double = 10d
+
 }
 

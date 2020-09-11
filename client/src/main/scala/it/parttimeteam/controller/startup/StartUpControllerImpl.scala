@@ -2,18 +2,21 @@ package it.parttimeteam.controller.startup
 
 import it.parttimeteam.Constants
 import it.parttimeteam.model._
-import it.parttimeteam.model.startup.{GameMatchInformations, StartupService, StartupServiceImpl}
+import it.parttimeteam.model.startup.{GameMatchInformations, GameStartUpEvent, GameStartedEvent, LobbyJoinErrorEvent, LobbyJoinedEvent, PrivateLobbyCreatedEvent, StartupService, StartupServiceImpl}
 import it.parttimeteam.view.startup._
-import scalafx.application.JFXApp
+import scalafx.application.{JFXApp, Platform}
 
 class StartUpControllerImpl extends StartUpController {
 
-  private val startUpStage = MachiavelliStartUpStage(this)
+  private var startUpStage: MachiavelliStartUpStage = _
   private val startUpService: StartupService = new StartupServiceImpl(notifyEvent)
   private var startGameFunction: GameMatchInformations => Unit = _
 
   override def start(app: JFXApp, startGame: GameMatchInformations => Unit): Unit = {
-    app.stage = startUpStage
+    Platform.runLater({
+      startUpStage = MachiavelliStartUpStage(this)
+      app.stage = startUpStage
+    })
     startGameFunction = startGame
     this.startUpService.connect(Constants.Remote.SERVER_ADDRESS, Constants.Remote.SERVER_PORT)
   }

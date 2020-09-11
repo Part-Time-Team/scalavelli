@@ -66,23 +66,13 @@ object Rank {
       case t if t.value equals 13 => 1
       case _ => super.compareTo(t)
     }
-
-    override def equals(obj: Any): Boolean = obj match {
-      case OverflowAce() => true
-      case _ => super.equals(obj)
-    }
   }
 
   /**
    * The optional OverflowAce with value 14
    */
-  case class OverflowAce() extends Rank(14, "Ace", "14") {
-    override def equals(obj: Any): Boolean = obj match {
-      case Ace() => true
-      case _ => super.equals(obj)
-    }
-  }
-
+  case class OverflowAce() extends Rank(14, "Ace", "14")
+  
   /**
    * The second rank.
    */

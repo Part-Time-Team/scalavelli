@@ -1,7 +1,6 @@
 package it.parttimeteam.core
 
 import it.parttimeteam.core.TestCards._
-import it.parttimeteam.core.cards.Rank.{Ace, OverflowAce}
 import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import org.scalamock.matchers.Matchers
 import org.scalamock.scalatest.MockFactory
@@ -110,10 +109,16 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
         val handSeq = List(JACK_HEARTS, ACE_HEARTS, QUEEN_HEARTS, KING_HEARTS)
         val cards = Seq(JACK_HEARTS, ACE_HEARTS, QUEEN_HEARTS, KING_HEARTS)
         val result = gameInterface.playCombination(Hand(handSeq), state.board, cards)
-        println(result)
         assert(result.isRight)
       }
 
+      it("Play a combination with a royal flush") {
+
+        val handSeq = Seq(ACE_CLUBS_RED, TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS, SIX_CLUBS, SEVEN_CLUBS, EIGHT_CLUBS, NINE_CLUBS, TEN_CLUBS, JACK_CLUBS, ACE_CLUBS_BLUE, QUEEN_CLUBS, KING_CLUBS)
+        val cards =   Seq(ACE_CLUBS_RED, TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS, SIX_CLUBS, SEVEN_CLUBS, EIGHT_CLUBS, NINE_CLUBS, TEN_CLUBS, JACK_CLUBS, ACE_CLUBS_BLUE, QUEEN_CLUBS, KING_CLUBS)
+        val result = gameInterface.playCombination(Hand(handSeq), state.board, cards)
+        assert(result.isRight)
+      }
     }
 
     describe("Pick table cards") {
@@ -157,7 +162,7 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
         assert(board.isRight)
 
         val res = gameInterface.putCardsInCombination(hand, board.right.get, "#1", Seq(THREE_CLUBS, FOUR_CLUBS))
-        assertResult(Board(Seq(comb)))(res._2)
+        assertResult(Board(Seq(comb)))(res.right.get._2)
       }
     }
   }

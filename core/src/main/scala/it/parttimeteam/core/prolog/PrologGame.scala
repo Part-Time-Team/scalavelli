@@ -64,7 +64,7 @@ class PrologGame() {
    * @return true if the goal is successful, false otherwise
    */
   def validateChain(cards: Seq[Card]): Boolean = {
-    engine isSuccess validationChain + conversion.cardsConvertToString(conversion optionalValueCards cards)(None)
+    engine isSuccess validationChain + conversion.cardsConvertToString(cards)(None)
   }
 
   /**
@@ -75,8 +75,9 @@ class PrologGame() {
    */
   def sortByRank(cards: Seq[Card]): Seq[Card] = {
 
-    val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(conversion optionalValueCards cards)(Some(X))
-    this.completedResult(cards, prologResult)
+    val optionalAceCards: Seq[Card] = conversion optionalValueCards cards
+    val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(optionalAceCards)(Some(X))
+    conversion sortedCard prologResult
   }
 
   /**
@@ -86,25 +87,9 @@ class PrologGame() {
    * @return ordered card sequence.
    */
   def sortBySuit(cards: Seq[Card]): Seq[Card] = {
+
     val prologResult: Seq[Term] = engine goal orderBySuit + conversion.cardsConvertToString(cards)(Some(X))
-    this.completedResult(cards, prologResult)
-  }
-
-  /**
-   * Add color to ordered cards.
-   *
-   * @param inputCards  input cards.
-   * @param sortedCards ordered cards.
-   * @return ordered cards with color.
-   */
-  private def completedResult(inputCards: Seq[Card], sortedCards: Seq[Term]): Seq[Card] = {
-    var tmpInputCards: Seq[Card] = inputCards
-    conversion.sortedCard(sortedCards).map(tuple => {
-      val foundCard: Card = tmpInputCards.find(card => card.rank == tuple._1 && card.suit == tuple._2).get
-
-      tmpInputCards = tmpInputCards.filter(_ != foundCard)
-      foundCard
-    })
+    conversion sortedCard prologResult
   }
 }
 
