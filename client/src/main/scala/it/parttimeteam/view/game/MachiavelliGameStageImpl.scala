@@ -1,6 +1,7 @@
 package it.parttimeteam.view.game
 
 import it.parttimeteam.controller.game.GameListener
+import it.parttimeteam.core.GameError
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
@@ -108,7 +109,7 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   }
 
   /** @inheritdoc */
-  override def notifyError(result: String): Unit = {
+  override def notifyError(result: GameError): Unit = {
     Platform.runLater({
       val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
       alert.showAndWait()

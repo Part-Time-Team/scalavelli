@@ -1,6 +1,6 @@
 package it.parttimeteam.model.game
 
-import it.parttimeteam.core.GameInterface
+import it.parttimeteam.core.{GameError, GameInterface}
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{LeaveGame, PlayerActionMade, Ready}
@@ -92,7 +92,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
         remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
       }
       else {
-        this.notifyEvent(ErrorEvent("Non valid turn play"))
+        this.notifyEvent(ErrorEvent(GameError.NoValidTurnPlay))
       }
     }
   }

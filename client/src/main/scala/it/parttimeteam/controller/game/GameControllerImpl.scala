@@ -1,6 +1,6 @@
 package it.parttimeteam.controller.game
 
-import it.parttimeteam.core.GameInterfaceImpl
+import it.parttimeteam.core.{GameError, GameInterfaceImpl}
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
@@ -49,7 +49,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       gameStage.notifyInfo(message)
     }
 
-    case ErrorEvent(reason: String) => {
+    case ErrorEvent(reason: GameError) => {
       gameStage.notifyError(reason)
     }
 
