@@ -12,8 +12,6 @@ trait TimerPane extends VBox {
   def show(startingMinutes: Long, startingSeconds: Long): Unit
 
   def hide(): Unit
-
-  def setTime(time: String): Unit
 }
 
 object TimerPane {
@@ -30,11 +28,6 @@ object TimerPane {
       visible = false
     }
 
-
-    override def setTime(time: String): Unit = {
-      countdownLabel.setText(time)
-    }
-
     override def displayMessage(message: String): Unit = {
       setText(message)
     }
@@ -48,8 +41,7 @@ object TimerPane {
 
     private def setText(message: String): Unit = countdownLabel.text = message
 
-    private def timeToLabel(minutes: Long, seconds: Long): String = s"$minutes:$seconds"
-
+    private def timeToLabel(minutes: Long, seconds: Long): String = s"${f"$minutes%02d"}:${f"$seconds%02d"}"
   }
 
 }
