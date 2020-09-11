@@ -27,58 +27,63 @@
 </span>3 <span style=''>import akka.actor.{Actor, ActorLogging, Props}
 </span>4 <span style=''>import it.parttimeteam.core.cards.Card
 </span>5 <span style=''>import it.parttimeteam.gamestate.PlayerGameState
-</span>6 <span style=''>import it.parttimeteam.messages.GameMessage.{CardDrawn, Error, GameStateUpdated, Lost, OpponentInTurn, PlayerTurn, TurnEnded, Won}
-</span>7 <span style=''>
-</span>8 <span style=''>object RemoteGameActor {
-</span>9 <span style=''>  def props(listener: MatchServerResponseListener) = </span><span style='background: #AEF1AE'>Props(new RemoteGameActor(listener))</span><span style=''>
-</span>10 <span style=''>}
+</span>6 <span style=''>import it.parttimeteam.messages.GameMessage._
+</span>7 <span style=''>import it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener
+</span>8 <span style=''>
+</span>9 <span style=''>object RemoteGameActor {
+</span>10 <span style=''>  def props(listener: MatchServerResponseListener) = </span><span style='background: #AEF1AE'>Props(new RemoteGameActor(listener))</span><span style=''>
 </span>11 <span style=''>
-</span>12 <span style=''>class RemoteGameActor(private val listener: MatchServerResponseListener) extends Actor with ActorLogging {
+</span>12 <span style=''>  trait MatchServerResponseListener {
 </span>13 <span style=''>
-</span>14 <span style=''>  override def receive: Receive = {
+</span>14 <span style=''>    def gameStateUpdated(gameState: PlayerGameState)
 </span>15 <span style=''>
-</span>16 <span style=''>    case GameStateUpdated(gameState) =&gt; {
-</span>17 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(s&quot;Received game state $gameState&quot;)</span><span style=''>
-</span>18 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.gameStateUpdated(gameState)</span><span style=''>
-</span>19 <span style=''>    }
-</span>20 <span style=''>
-</span>21 <span style=''>    case PlayerTurn =&gt; {
-</span>22 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(&quot;Its my turn&quot;)</span><span style=''>
-</span>23 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.turnStarted()</span><span style=''>
-</span>24 <span style=''>    }
+</span>16 <span style=''>    def turnStarted()
+</span>17 <span style=''>
+</span>18 <span style=''>    def turnEnded()
+</span>19 <span style=''>
+</span>20 <span style=''>    def opponentInTurn(opponentName: String)
+</span>21 <span style=''>
+</span>22 <span style=''>    def turnEndedWithCartDrawn(card: Card)
+</span>23 <span style=''>
+</span>24 <span style=''>    def gameEndedWithErrorEvent(reason: String)
 </span>25 <span style=''>
-</span>26 <span style=''>    case OpponentInTurn(name) =&gt; </span><span style='background: #AEF1AE'>this.listener.opponentInTurn(name)</span><span style=''>
+</span>26 <span style=''>    def gameWon()
 </span>27 <span style=''>
-</span>28 <span style=''>    case CardDrawn(card) =&gt; </span><span style='background: #AEF1AE'>this.listener.turnEndedWithCartDrawn(card)</span><span style=''>
+</span>28 <span style=''>    def gameLost(winnerName: String)
 </span>29 <span style=''>
-</span>30 <span style=''>    case TurnEnded =&gt; </span><span style='background: #AEF1AE'>this.listener.turnEnded()</span><span style=''>
+</span>30 <span style=''>  }
 </span>31 <span style=''>
-</span>32 <span style=''>    case Won =&gt; </span><span style='background: #AEF1AE'>this.listener.gameWon()</span><span style=''>
+</span>32 <span style=''>}
 </span>33 <span style=''>
-</span>34 <span style=''>    case Lost(winnerName) =&gt; </span><span style='background: #AEF1AE'>this.listener.gameLost(winnerName)</span><span style=''>
+</span>34 <span style=''>class RemoteGameActor(private val listener: MatchServerResponseListener) extends Actor with ActorLogging {
 </span>35 <span style=''>
-</span>36 <span style=''>    case Error(_) </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>37 <span style=''>  }
-</span>38 <span style=''>}
-</span>39 <span style=''>
-</span>40 <span style=''>
-</span>41 <span style=''>trait MatchServerResponseListener {
+</span>36 <span style=''>  override def receive: Receive = {
+</span>37 <span style=''>
+</span>38 <span style=''>    case GameStateUpdated(gameState) =&gt; {
+</span>39 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(s&quot;Received game state $gameState&quot;)</span><span style=''>
+</span>40 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.gameStateUpdated(gameState)</span><span style=''>
+</span>41 <span style=''>    }
 </span>42 <span style=''>
-</span>43 <span style=''>  def gameStateUpdated(gameState: PlayerGameState)
-</span>44 <span style=''>
-</span>45 <span style=''>  def turnStarted()
-</span>46 <span style=''>
-</span>47 <span style=''>  def turnEnded()
-</span>48 <span style=''>
-</span>49 <span style=''>  def opponentInTurn(opponentName: String)
-</span>50 <span style=''>
-</span>51 <span style=''>  def turnEndedWithCartDrawn(card: Card)
-</span>52 <span style=''>
-</span>53 <span style=''>  def gameWon()
-</span>54 <span style=''>
-</span>55 <span style=''>  def gameLost(winnerName: String)
-</span>56 <span style=''>
-</span>57 <span style=''>}
+</span>43 <span style=''>    case PlayerTurn =&gt; {
+</span>44 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(&quot;Its my turn&quot;)</span><span style=''>
+</span>45 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.turnStarted()</span><span style=''>
+</span>46 <span style=''>    }
+</span>47 <span style=''>
+</span>48 <span style=''>    case OpponentInTurn(name) =&gt; </span><span style='background: #AEF1AE'>this.listener.opponentInTurn(name)</span><span style=''>
+</span>49 <span style=''>
+</span>50 <span style=''>    case CardDrawn(card) =&gt; </span><span style='background: #AEF1AE'>this.listener.turnEndedWithCartDrawn(card)</span><span style=''>
+</span>51 <span style=''>
+</span>52 <span style=''>    case TurnEnded =&gt; </span><span style='background: #AEF1AE'>this.listener.turnEnded()</span><span style=''>
+</span>53 <span style=''>
+</span>54 <span style=''>    case Won =&gt; </span><span style='background: #AEF1AE'>this.listener.gameWon()</span><span style=''>
+</span>55 <span style=''>
+</span>56 <span style=''>    case Lost(winnerName) =&gt; </span><span style='background: #AEF1AE'>this.listener.gameLost(winnerName)</span><span style=''>
+</span>57 <span style=''>
+</span>58 <span style=''>    case GameEndedForPlayerLeft =&gt; </span><span style='background: #F0ADAD'>this.listener.gameEndedWithErrorEvent(&quot;a player left the game&quot;)</span><span style=''>
+</span>59 <span style=''>
+</span>60 <span style=''>    case MatchErrorOccurred(_) </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>61 <span style=''>  }
+</span>62 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -92,36 +97,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
-          2066
+          1996
         </td>
         <td>
-          387
+          374
           -
-          416
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.RemoteGameActor.&lt;init&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          new RemoteGameActor(listener)
-        </td>
-      </tr><tr>
-        <td>
-          9
-        </td>
-        <td>
-          1457
-        </td>
-        <td>
-          381
-          -
-          417
+          410
         </td>
         <td>
           ApplyToImplicitArgs
@@ -134,15 +118,36 @@
         </td>
       </tr><tr>
         <td>
-          14
+          10
         </td>
         <td>
-          1284
+          993
         </td>
         <td>
-          563
+          380
           -
-          563
+          409
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.RemoteGameActor.&lt;init&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          new RemoteGameActor(listener)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1530
+        </td>
+        <td>
+          895
+          -
+          895
         </td>
         <td>
           Apply
@@ -155,36 +160,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          39
         </td>
         <td>
-          900
+          1171
         </td>
         <td>
-          624
+          946
           -
-          657
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #AEF1AE">
-          scala.StringContext.apply(&quot;Received game state &quot;, &quot;&quot;).s(gameState)
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          1905
-        </td>
-        <td>
-          614
-          -
-          658
+          990
         </td>
         <td>
           Apply
@@ -197,36 +181,57 @@
         </td>
       </tr><tr>
         <td>
-          18
+          39
         </td>
         <td>
-          1317
+          1412
         </td>
         <td>
-          665
+          956
           -
-          706
+          989
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.model.game.MatchServerResponseListener.gameStateUpdated
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;Received game state &quot;, &quot;&quot;).s(gameState)
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          2157
+        </td>
+        <td>
+          997
+          -
+          1038
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener.gameStateUpdated
         </td>
         <td style="background: #AEF1AE">
           this.listener.gameStateUpdated(gameState)
         </td>
       </tr><tr>
         <td>
-          22
+          44
         </td>
         <td>
-          1006
+          1488
         </td>
         <td>
-          745
+          1077
           -
-          769
+          1101
         </td>
         <td>
           Apply
@@ -239,141 +244,162 @@
         </td>
       </tr><tr>
         <td>
-          23
+          45
         </td>
         <td>
-          1946
+          907
         </td>
         <td>
-          776
+          1108
           -
-          803
+          1135
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.model.game.MatchServerResponseListener.turnStarted
+          it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener.turnStarted
         </td>
         <td style="background: #AEF1AE">
           this.listener.turnStarted()
         </td>
       </tr><tr>
         <td>
-          26
+          48
         </td>
         <td>
-          1382
+          1928
         </td>
         <td>
-          844
+          1176
           -
-          878
+          1210
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.model.game.MatchServerResponseListener.opponentInTurn
+          it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener.opponentInTurn
         </td>
         <td style="background: #AEF1AE">
           this.listener.opponentInTurn(name)
         </td>
       </tr><tr>
         <td>
-          28
+          50
         </td>
         <td>
-          786
+          1666
         </td>
         <td>
-          908
+          1240
           -
-          950
+          1282
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.model.game.MatchServerResponseListener.turnEndedWithCartDrawn
+          it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener.turnEndedWithCartDrawn
         </td>
         <td style="background: #AEF1AE">
           this.listener.turnEndedWithCartDrawn(card)
         </td>
       </tr><tr>
         <td>
-          30
+          52
         </td>
         <td>
-          2068
+          995
         </td>
         <td>
-          974
+          1306
           -
-          999
+          1331
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.model.game.MatchServerResponseListener.turnEnded
+          it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener.turnEnded
         </td>
         <td style="background: #AEF1AE">
           this.listener.turnEnded()
         </td>
       </tr><tr>
         <td>
-          32
+          54
         </td>
         <td>
-          1528
+          2042
         </td>
         <td>
-          1017
+          1349
           -
-          1040
+          1372
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.model.game.MatchServerResponseListener.gameWon
+          it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener.gameWon
         </td>
         <td style="background: #AEF1AE">
           this.listener.gameWon()
         </td>
       </tr><tr>
         <td>
-          34
+          56
         </td>
         <td>
-          878
+          1422
         </td>
         <td>
-          1071
+          1403
           -
-          1105
+          1437
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.model.game.MatchServerResponseListener.gameLost
+          it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener.gameLost
         </td>
         <td style="background: #AEF1AE">
           this.listener.gameLost(winnerName)
         </td>
       </tr><tr>
         <td>
-          36
+          58
         </td>
         <td>
-          1852
+          1162
         </td>
         <td>
-          1125
+          1474
           -
-          1127
+          1537
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener.gameEndedWithErrorEvent
+        </td>
+        <td style="background: #F0ADAD">
+          this.listener.gameEndedWithErrorEvent(&quot;a player left the game&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          2162
+        </td>
+        <td>
+          1570
+          -
+          1572
         </td>
         <td>
           Literal
