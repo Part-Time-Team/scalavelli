@@ -1,0 +1,647 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/controller/game/TurnTimer.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.controller.game
+</span>2 <span style=''>
+</span>3 <span style=''>
+</span>4 <span style=''>import java.util.{Timer, TimerTask}
+</span>5 <span style=''>
+</span>6 <span style=''>trait TurnTimer {
+</span>7 <span style=''>  def start()
+</span>8 <span style=''>
+</span>9 <span style=''>  def end()
+</span>10 <span style=''>}
+</span>11 <span style=''>
+</span>12 <span style=''>trait TurnTimerListener {
+</span>13 <span style=''>  def onStart()
+</span>14 <span style=''>
+</span>15 <span style=''>  def onEnd()
+</span>16 <span style=''>
+</span>17 <span style=''>  def onTick(millis: Long)
+</span>18 <span style=''>}
+</span>19 <span style=''>
+</span>20 <span style=''>object TurnTimer {
+</span>21 <span style=''>
+</span>22 <span style=''>  class TurnTimerImpl(duration: Long, listener: TurnTimerListener) extends TurnTimer {
+</span>23 <span style=''>    var timer: Timer = </span><span style='background: #F0ADAD'>new Timer()</span><span style=''>
+</span>24 <span style=''>    var timeRemaining: Long = </span><span style='background: #F0ADAD'>duration * 1000</span><span style=''>
+</span>25 <span style=''>
+</span>26 <span style=''>    var tickTask: TimerTask = _
+</span>27 <span style=''>    var endTask: TimerTask = _
+</span>28 <span style=''>
+</span>29 <span style=''>    override def start(): Unit = {
+</span>30 <span style=''>      </span><span style='background: #F0ADAD'>tickTask = new TimerTask {
+</span>31 <span style=''></span><span style='background: #F0ADAD'>        override def run(): Unit = {
+</span>32 <span style=''></span><span style='background: #F0ADAD'>          timeRemaining = timeRemaining - 1000
+</span>33 <span style=''></span><span style='background: #F0ADAD'>          listener.onTick(timeRemaining)
+</span>34 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>35 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>36 <span style=''>
+</span>37 <span style=''>      </span><span style='background: #F0ADAD'>endTask = new TimerTask {
+</span>38 <span style=''></span><span style='background: #F0ADAD'>        override def run(): Unit = {
+</span>39 <span style=''></span><span style='background: #F0ADAD'>          end()
+</span>40 <span style=''></span><span style='background: #F0ADAD'>          listener.onEnd()
+</span>41 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>42 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>43 <span style=''>
+</span>44 <span style=''>      </span><span style='background: #F0ADAD'>timer.schedule(tickTask, 1000, 1000)</span><span style=''>
+</span>45 <span style=''>      </span><span style='background: #F0ADAD'>timer.schedule(endTask, duration * 1000)</span><span style=''>
+</span>46 <span style=''>      </span><span style='background: #F0ADAD'>listener.onStart()</span><span style=''>
+</span>47 <span style=''>    }
+</span>48 <span style=''>
+</span>49 <span style=''>    override def end(): Unit = {
+</span>50 <span style=''>      </span><span style='background: #F0ADAD'>tickTask.cancel()</span><span style=''>
+</span>51 <span style=''>      </span><span style='background: #F0ADAD'>endTask.cancel()</span><span style=''>
+</span>52 <span style=''>      </span><span style='background: #F0ADAD'>timer.purge()</span><span style=''>
+</span>53 <span style=''>      </span><span style='background: #F0ADAD'>timeRemaining = duration * 1000</span><span style=''>
+</span>54 <span style=''>    }
+</span>55 <span style=''>  }
+</span>56 <span style=''>
+</span>57 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          919
+        </td>
+        <td>
+          345
+          -
+          356
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.Timer.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new java.util.Timer()
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          2057
+        </td>
+        <td>
+          387
+          -
+          402
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Long.*
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.duration.*(1000)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          2582
+        </td>
+        <td>
+          520
+          -
+          523
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1917
+        </td>
+        <td>
+          509
+          -
+          678
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.tickTask_=
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.tickTask_=({
+  final class $anon extends java.util.TimerTask {
+    def &lt;init&gt;(): &lt;$anon: java.util.TimerTask&gt; = {
+      $anon.super.&lt;init&gt;();
+      ()
+    };
+    override def run(): Unit = {
+      TurnTimerImpl.this.timeRemaining_=(TurnTimerImpl.this.timeRemaining.-(1000));
+      TurnTimerImpl.this.listener.onTick(TurnTimerImpl.this.timeRemaining)
+    }
+  };
+  new $anon()
+})
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1027
+        </td>
+        <td>
+          583
+          -
+          619
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.timeRemaining_=
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.timeRemaining_=(TurnTimerImpl.this.timeRemaining.-(1000))
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1346
+        </td>
+        <td>
+          599
+          -
+          619
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Long.-
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.timeRemaining.-(1000)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          2136
+        </td>
+        <td>
+          646
+          -
+          659
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.timeRemaining
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.timeRemaining
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          1522
+        </td>
+        <td>
+          630
+          -
+          660
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimerListener.onTick
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.listener.onTick(TurnTimerImpl.this.timeRemaining)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          2059
+        </td>
+        <td>
+          696
+          -
+          699
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1418
+        </td>
+        <td>
+          686
+          -
+          809
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.endTask_=
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.endTask_=({
+  final class $anon extends java.util.TimerTask {
+    def &lt;init&gt;(): &lt;$anon: java.util.TimerTask&gt; = {
+      $anon.super.&lt;init&gt;();
+      ()
+    };
+    override def run(): Unit = {
+      TurnTimerImpl.this.end();
+      TurnTimerImpl.this.listener.onEnd()
+    }
+  };
+  new $anon()
+})
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1559
+        </td>
+        <td>
+          759
+          -
+          764
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.end
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.end()
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          911
+        </td>
+        <td>
+          775
+          -
+          791
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimerListener.onEnd
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.listener.onEnd()
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          2138
+        </td>
+        <td>
+          842
+          -
+          846
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          1000L
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1468
+        </td>
+        <td>
+          848
+          -
+          852
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          1000L
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          2587
+        </td>
+        <td>
+          817
+          -
+          853
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.Timer.schedule
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.timer.schedule(TurnTimerImpl.this.tickTask, 1000L, 1000L)
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          2455
+        </td>
+        <td>
+          832
+          -
+          840
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.tickTask
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.tickTask
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          1895
+        </td>
+        <td>
+          875
+          -
+          882
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.endTask
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.endTask
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          1561
+        </td>
+        <td>
+          884
+          -
+          899
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Long.*
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.duration.*(1000)
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          915
+        </td>
+        <td>
+          860
+          -
+          900
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.Timer.schedule
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.timer.schedule(TurnTimerImpl.this.endTask, TurnTimerImpl.this.duration.*(1000))
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          2018
+        </td>
+        <td>
+          907
+          -
+          925
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimerListener.onStart
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.listener.onStart()
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1377
+        </td>
+        <td>
+          972
+          -
+          989
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.TimerTask.cancel
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.tickTask.cancel()
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          2460
+        </td>
+        <td>
+          996
+          -
+          1012
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.TimerTask.cancel
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.endTask.cancel()
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          2069
+        </td>
+        <td>
+          1019
+          -
+          1032
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.Timer.purge
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.timer.purge()
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          1470
+        </td>
+        <td>
+          1055
+          -
+          1070
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Long.*
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.duration.*(1000)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          2545
+        </td>
+        <td>
+          1039
+          -
+          1070
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl.timeRemaining_=
+        </td>
+        <td style="background: #F0ADAD">
+          TurnTimerImpl.this.timeRemaining_=(TurnTimerImpl.this.duration.*(1000))
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

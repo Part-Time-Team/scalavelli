@@ -25,89 +25,128 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game.scenes.panes
 </span>2 <span style=''>
 </span>3 <span style=''>import it.parttimeteam.view.ViewConfig
-</span>4 <span style=''>import it.parttimeteam.view.game.listeners.GameSceneListener
-</span>5 <span style=''>import it.parttimeteam.view.utils.MachiavelliButton
-</span>6 <span style=''>import scalafx.geometry.Insets
-</span>7 <span style=''>import scalafx.scene.layout.HBox
-</span>8 <span style=''>
-</span>9 <span style=''>/**
-</span>10 <span style=''>  * Pane which contains buttons which allows to play/pick cards during the player turn.
-</span>11 <span style=''>  */
-</span>12 <span style=''>trait ActionBar extends HBox with ActionGamePane {
-</span>13 <span style=''>  /**
-</span>14 <span style=''>    * Enable/Disable the action for updating a CardCombination.
-</span>15 <span style=''>    *
-</span>16 <span style=''>    * @param enable if the action should be enabled or not
-</span>17 <span style=''>    */
-</span>18 <span style=''>  def enableUpdateCardCombination(enable: Boolean): Unit
-</span>19 <span style=''>
-</span>20 <span style=''>  /**
-</span>21 <span style=''>    * Enable/Disable the action for playing a CardCombination.
-</span>22 <span style=''>    *
-</span>23 <span style=''>    * @param enable if the action should be enabled or not
-</span>24 <span style=''>    */
-</span>25 <span style=''>  def enableMakeCombination(enable: Boolean): Unit
-</span>26 <span style=''>
-</span>27 <span style=''>  /**
-</span>28 <span style=''>    * Enable/Disable the action for picking Cards from the game board.
-</span>29 <span style=''>    *
-</span>30 <span style=''>    * @param enable if the action should be enabled or not
-</span>31 <span style=''>    */
-</span>32 <span style=''>  def enablePickCards(enable: Boolean): Unit
-</span>33 <span style=''>
-</span>34 <span style=''>  /**
-</span>35 <span style=''>    * Enable/Disable the action for clear the selection made by player.
-</span>36 <span style=''>    *
-</span>37 <span style=''>    * @param enable if the action should be enabled or not
-</span>38 <span style=''>    */
-</span>39 <span style=''>  def enableClearHandSelection(enable: Boolean): Unit
-</span>40 <span style=''>}
-</span>41 <span style=''>
-</span>42 <span style=''>object ActionBar {
-</span>43 <span style=''>
-</span>44 <span style=''>  class ActionBarImpl(listener: GameSceneListener) extends ActionBar {
-</span>45 <span style=''>    </span><span style='background: #F0ADAD'>this.spacing = ViewConfig.formSpacing</span><span style=''>
-</span>46 <span style=''>    </span><span style='background: #F0ADAD'>this.padding = Insets(5)</span><span style=''>
+</span>4 <span style=''>import it.parttimeteam.view.utils.MachiavelliButton
+</span>5 <span style=''>import scalafx.geometry.Insets
+</span>6 <span style=''>import scalafx.scene.layout.HBox
+</span>7 <span style=''>
+</span>8 <span style=''>/**
+</span>9 <span style=''>  * Pane which contains buttons which allows to play/pick cards during the player turn.
+</span>10 <span style=''>  */
+</span>11 <span style=''>trait ActionBar extends HBox with ActionGamePane {
+</span>12 <span style=''>  /**
+</span>13 <span style=''>    * Enable/Disable the action for updating a CardCombination.
+</span>14 <span style=''>    *
+</span>15 <span style=''>    * @param enable if the action should be enabled or not
+</span>16 <span style=''>    */
+</span>17 <span style=''>  def enableUpdateCardCombination(enable: Boolean): Unit
+</span>18 <span style=''>
+</span>19 <span style=''>  /**
+</span>20 <span style=''>    * Enable/Disable the action for playing a CardCombination.
+</span>21 <span style=''>    *
+</span>22 <span style=''>    * @param enable if the action should be enabled or not
+</span>23 <span style=''>    */
+</span>24 <span style=''>  def enableMakeCombination(enable: Boolean): Unit
+</span>25 <span style=''>
+</span>26 <span style=''>  /**
+</span>27 <span style=''>    * Enable/Disable the action for picking Cards from the game board.
+</span>28 <span style=''>    *
+</span>29 <span style=''>    * @param enable if the action should be enabled or not
+</span>30 <span style=''>    */
+</span>31 <span style=''>  def enablePickCards(enable: Boolean): Unit
+</span>32 <span style=''>
+</span>33 <span style=''>  /**
+</span>34 <span style=''>    * Enable/Disable the action for clear the selection made by player.
+</span>35 <span style=''>    *
+</span>36 <span style=''>    * @param enable if the action should be enabled or not
+</span>37 <span style=''>    */
+</span>38 <span style=''>  def enableClearHandSelection(enable: Boolean): Unit
+</span>39 <span style=''>}
+</span>40 <span style=''>
+</span>41 <span style=''>trait ActionBarListener {
+</span>42 <span style=''>
+</span>43 <span style=''>  /**
+</span>44 <span style=''>    * Clear selected cards
+</span>45 <span style=''>    */
+</span>46 <span style=''>  def clearHandSelection(): Unit
 </span>47 <span style=''>
-</span>48 <span style=''>    val combinationBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Make Combination&quot;, () =&gt; listener.makeCombination())</span><span style=''>
-</span>49 <span style=''>    val clearHandSelectionBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Clear Selection&quot;, () =&gt; listener.clearHandSelection())</span><span style=''>
-</span>50 <span style=''>    val pickCardsBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Pick Cards&quot;, () =&gt; listener.pickCards())</span><span style=''>
-</span>51 <span style=''>    val updateCombinationBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Update Combination&quot;, () =&gt; listener.updateCombination())</span><span style=''>
-</span>52 <span style=''>    val sortBySuitBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Sort Suit&quot;, () =&gt; listener.sortHandBySuit())</span><span style=''>
-</span>53 <span style=''>    val sortByRankBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Sort Rank&quot;, () =&gt; listener.sortHandByRank())</span><span style=''>
+</span>48 <span style=''>  /**
+</span>49 <span style=''>    * The player pick a combination from the game board.
+</span>50 <span style=''>    *
+</span>51 <span style=''>    * @param combinationId the CardCombination identifier picked by player
+</span>52 <span style=''>    */
+</span>53 <span style=''>  def pickCombination(combinationId: String): Unit
 </span>54 <span style=''>
-</span>55 <span style=''>    </span><span style='background: #F0ADAD'>combinationBtn.setDisable(true)</span><span style=''>
-</span>56 <span style=''>    </span><span style='background: #F0ADAD'>clearHandSelectionBtn.setDisable(true)</span><span style=''>
-</span>57 <span style=''>    </span><span style='background: #F0ADAD'>pickCardsBtn.setDisable(true)</span><span style=''>
-</span>58 <span style=''>    </span><span style='background: #F0ADAD'>updateCombinationBtn.setDisable(true)</span><span style=''>
+</span>55 <span style=''>  /**
+</span>56 <span style=''>    * The player clicked the make combination button.
+</span>57 <span style=''>    */
+</span>58 <span style=''>  def makeCombination(): Unit
 </span>59 <span style=''>
-</span>60 <span style=''>    </span><span style='background: #F0ADAD'>this.children.addAll(sortBySuitBtn, sortByRankBtn, combinationBtn, clearHandSelectionBtn, pickCardsBtn, updateCombinationBtn)</span><span style=''>
-</span>61 <span style=''>
-</span>62 <span style=''>    /** @inheritdoc */
-</span>63 <span style=''>    override def enableMakeCombination(enable: Boolean): Unit = </span><span style='background: #F0ADAD'>combinationBtn.setDisable(!enable)</span><span style=''>
+</span>60 <span style=''>  /**
+</span>61 <span style=''>    * The player clicked the pick cards button.
+</span>62 <span style=''>    */
+</span>63 <span style=''>  def pickCards(): Unit
 </span>64 <span style=''>
-</span>65 <span style=''>    /** @inheritdoc */
-</span>66 <span style=''>    override def enablePickCards(enable: Boolean): Unit = </span><span style='background: #F0ADAD'>pickCardsBtn.setDisable(!enable)</span><span style=''>
-</span>67 <span style=''>
-</span>68 <span style=''>    /** @inheritdoc */
-</span>69 <span style=''>    override def enableClearHandSelection(enable: Boolean): Unit = </span><span style='background: #F0ADAD'>clearHandSelectionBtn.setDisable(!enable)</span><span style=''>
-</span>70 <span style=''>
-</span>71 <span style=''>    /** @inheritdoc */
-</span>72 <span style=''>    override def enableUpdateCardCombination(enable: Boolean): Unit = </span><span style='background: #F0ADAD'>updateCombinationBtn.setDisable(!enable)</span><span style=''>
-</span>73 <span style=''>
-</span>74 <span style=''>    /** @inheritdoc */
-</span>75 <span style=''>    override def disableActions(): Unit = {
-</span>76 <span style=''>      </span><span style='background: #F0ADAD'>combinationBtn.setDisable(true)</span><span style=''>
-</span>77 <span style=''>      </span><span style='background: #F0ADAD'>clearHandSelectionBtn.setDisable(true)</span><span style=''>
-</span>78 <span style=''>      </span><span style='background: #F0ADAD'>pickCardsBtn.setDisable(true)</span><span style=''>
-</span>79 <span style=''>      </span><span style='background: #F0ADAD'>updateCombinationBtn.setDisable(true)</span><span style=''>
-</span>80 <span style=''>    }
-</span>81 <span style=''>
-</span>82 <span style=''>    /** @inheritdoc */
-</span>83 <span style=''>    override def enableActions(): Unit = </span><span style='background: #F0ADAD'>{}</span><span style=''>
-</span>84 <span style=''>  }
-</span>85 <span style=''>
-</span>86 <span style=''>}
+</span>65 <span style=''>  /**
+</span>66 <span style=''>    * The player clicked the update combination button.
+</span>67 <span style=''>    */
+</span>68 <span style=''>  def updateCombination(): Unit
+</span>69 <span style=''>
+</span>70 <span style=''>  /**
+</span>71 <span style=''>    * The player sorts his hand cards by suit.
+</span>72 <span style=''>    */
+</span>73 <span style=''>  def sortHandBySuit(): Unit
+</span>74 <span style=''>
+</span>75 <span style=''>  /**
+</span>76 <span style=''>    * The player sorts his hand cards by rank.
+</span>77 <span style=''>    */
+</span>78 <span style=''>  def sortHandByRank(): Unit
+</span>79 <span style=''>}
+</span>80 <span style=''>
+</span>81 <span style=''>object ActionBar {
+</span>82 <span style=''>
+</span>83 <span style=''>  class ActionBarImpl(listener: ActionBarListener) extends ActionBar {
+</span>84 <span style=''>    </span><span style='background: #F0ADAD'>this.spacing = ViewConfig.formSpacing</span><span style=''>
+</span>85 <span style=''>    </span><span style='background: #F0ADAD'>this.padding = Insets(5)</span><span style=''>
+</span>86 <span style=''>
+</span>87 <span style=''>    val combinationBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Make Combination&quot;, () =&gt; listener.makeCombination())</span><span style=''>
+</span>88 <span style=''>    val clearHandSelectionBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Clear Selection&quot;, () =&gt; listener.clearHandSelection())</span><span style=''>
+</span>89 <span style=''>    val pickCardsBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Pick Cards&quot;, () =&gt; listener.pickCards())</span><span style=''>
+</span>90 <span style=''>    val updateCombinationBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Update Combination&quot;, () =&gt; listener.updateCombination())</span><span style=''>
+</span>91 <span style=''>    val sortBySuitBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Sort Suit&quot;, () =&gt; listener.sortHandBySuit())</span><span style=''>
+</span>92 <span style=''>    val sortByRankBtn = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Sort Rank&quot;, () =&gt; listener.sortHandByRank())</span><span style=''>
+</span>93 <span style=''>
+</span>94 <span style=''>    </span><span style='background: #F0ADAD'>combinationBtn.setDisable(true)</span><span style=''>
+</span>95 <span style=''>    </span><span style='background: #F0ADAD'>clearHandSelectionBtn.setDisable(true)</span><span style=''>
+</span>96 <span style=''>    </span><span style='background: #F0ADAD'>pickCardsBtn.setDisable(true)</span><span style=''>
+</span>97 <span style=''>    </span><span style='background: #F0ADAD'>updateCombinationBtn.setDisable(true)</span><span style=''>
+</span>98 <span style=''>
+</span>99 <span style=''>    </span><span style='background: #F0ADAD'>this.children.addAll(sortBySuitBtn, sortByRankBtn, combinationBtn, clearHandSelectionBtn, pickCardsBtn, updateCombinationBtn)</span><span style=''>
+</span>100 <span style=''>
+</span>101 <span style=''>    /** @inheritdoc */
+</span>102 <span style=''>    override def enableMakeCombination(enable: Boolean): Unit = </span><span style='background: #F0ADAD'>combinationBtn.setDisable(!enable)</span><span style=''>
+</span>103 <span style=''>
+</span>104 <span style=''>    /** @inheritdoc */
+</span>105 <span style=''>    override def enablePickCards(enable: Boolean): Unit = </span><span style='background: #F0ADAD'>pickCardsBtn.setDisable(!enable)</span><span style=''>
+</span>106 <span style=''>
+</span>107 <span style=''>    /** @inheritdoc */
+</span>108 <span style=''>    override def enableClearHandSelection(enable: Boolean): Unit = </span><span style='background: #F0ADAD'>clearHandSelectionBtn.setDisable(!enable)</span><span style=''>
+</span>109 <span style=''>
+</span>110 <span style=''>    /** @inheritdoc */
+</span>111 <span style=''>    override def enableUpdateCardCombination(enable: Boolean): Unit = </span><span style='background: #F0ADAD'>updateCombinationBtn.setDisable(!enable)</span><span style=''>
+</span>112 <span style=''>
+</span>113 <span style=''>    /** @inheritdoc */
+</span>114 <span style=''>    override def disableActions(): Unit = {
+</span>115 <span style=''>      </span><span style='background: #F0ADAD'>combinationBtn.setDisable(true)</span><span style=''>
+</span>116 <span style=''>      </span><span style='background: #F0ADAD'>clearHandSelectionBtn.setDisable(true)</span><span style=''>
+</span>117 <span style=''>      </span><span style='background: #F0ADAD'>pickCardsBtn.setDisable(true)</span><span style=''>
+</span>118 <span style=''>      </span><span style='background: #F0ADAD'>updateCombinationBtn.setDisable(true)</span><span style=''>
+</span>119 <span style=''>    }
+</span>120 <span style=''>
+</span>121 <span style=''>    /** @inheritdoc */
+</span>122 <span style=''>    override def enableActions(): Unit = </span><span style='background: #F0ADAD'>{}</span><span style=''>
+</span>123 <span style=''>  }
+</span>124 <span style=''>
+</span>125 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -121,36 +160,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          45
+          84
         </td>
         <td>
-          1252
+          1919
         </td>
         <td>
-          1318
+          2014
           -
-          1340
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.ViewConfig.formSpacing
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.view.ViewConfig.formSpacing
-        </td>
-      </tr><tr>
-        <td>
-          45
-        </td>
-        <td>
-          967
-        </td>
-        <td>
-          1303
-          -
-          1340
+          2051
         </td>
         <td>
           Apply
@@ -163,36 +181,36 @@
         </td>
       </tr><tr>
         <td>
-          46
+          84
         </td>
         <td>
-          1991
+          2586
         </td>
         <td>
-          1360
+          2029
           -
-          1369
+          2051
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          scalafx.geometry.Insets.apply
+          it.parttimeteam.view.ViewConfig.formSpacing
         </td>
         <td style="background: #F0ADAD">
-          scalafx.geometry.Insets.apply(5.0)
+          it.parttimeteam.view.ViewConfig.formSpacing
         </td>
       </tr><tr>
         <td>
-          46
+          85
         </td>
         <td>
-          1379
+          2325
         </td>
         <td>
-          1345
+          2056
           -
-          1369
+          2080
         </td>
         <td>
           Apply
@@ -205,36 +223,36 @@
         </td>
       </tr><tr>
         <td>
-          48
+          85
         </td>
         <td>
-          1423
+          1293
         </td>
         <td>
-          1396
+          2071
           -
-          1467
+          2080
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.view.utils.MachiavelliButton.apply
+          scalafx.geometry.Insets.apply
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;Make Combination&quot;, (() =&gt; ActionBarImpl.this.listener.makeCombination()))
+          scalafx.geometry.Insets.apply(5.0)
         </td>
       </tr><tr>
         <td>
-          48
+          87
         </td>
         <td>
-          2350
+          1653
         </td>
         <td>
-          1414
+          2125
           -
-          1432
+          2143
         </td>
         <td>
           Literal
@@ -247,57 +265,78 @@
         </td>
       </tr><tr>
         <td>
-          48
+          87
         </td>
         <td>
-          1790
+          1421
         </td>
         <td>
-          1440
+          2151
           -
-          1466
+          2177
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.view.game.listeners.GameSceneListener.makeCombination
+          it.parttimeteam.view.game.scenes.panes.ActionBarListener.makeCombination
         </td>
         <td style="background: #F0ADAD">
           ActionBarImpl.this.listener.makeCombination()
         </td>
       </tr><tr>
         <td>
-          49
+          87
         </td>
         <td>
-          2484
+          2458
         </td>
         <td>
-          1518
+          2107
           -
-          1535
+          2178
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          it.parttimeteam.view.utils.MachiavelliButton.apply
         </td>
         <td style="background: #F0ADAD">
-          &quot;Clear Selection&quot;
+          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;Make Combination&quot;, (() =&gt; ActionBarImpl.this.listener.makeCombination()))
         </td>
       </tr><tr>
         <td>
-          49
+          88
         </td>
         <td>
-          1257
+          1205
         </td>
         <td>
-          1500
+          2254
           -
-          1573
+          2283
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBarListener.clearHandSelection
+        </td>
+        <td style="background: #F0ADAD">
+          ActionBarImpl.this.listener.clearHandSelection()
+        </td>
+      </tr><tr>
+        <td>
+          88
+        </td>
+        <td>
+          2188
+        </td>
+        <td>
+          2211
+          -
+          2284
         </td>
         <td>
           Apply
@@ -310,57 +349,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          88
         </td>
         <td>
-          1885
+          1855
         </td>
         <td>
-          1543
+          2229
           -
-          1572
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.listeners.GameSceneListener.clearHandSelection
-        </td>
-        <td style="background: #F0ADAD">
-          ActionBarImpl.this.listener.clearHandSelection()
-        </td>
-      </tr><tr>
-        <td>
-          50
-        </td>
-        <td>
-          1943
-        </td>
-        <td>
-          1635
-          -
-          1655
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.listeners.GameSceneListener.pickCards
-        </td>
-        <td style="background: #F0ADAD">
-          ActionBarImpl.this.listener.pickCards()
-        </td>
-      </tr><tr>
-        <td>
-          50
-        </td>
-        <td>
-          971
-        </td>
-        <td>
-          1615
-          -
-          1627
+          2246
         </td>
         <td>
           Literal
@@ -369,19 +366,19 @@
           &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          &quot;Pick Cards&quot;
+          &quot;Clear Selection&quot;
         </td>
       </tr><tr>
         <td>
-          50
+          89
         </td>
         <td>
-          1382
+          2344
         </td>
         <td>
-          1597
+          2308
           -
-          1656
+          2367
         </td>
         <td>
           Apply
@@ -394,57 +391,78 @@
         </td>
       </tr><tr>
         <td>
-          51
+          89
         </td>
         <td>
-          1431
+          1897
         </td>
         <td>
-          1688
+          2326
           -
-          1763
+          2338
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          it.parttimeteam.view.utils.MachiavelliButton.apply
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;Update Combination&quot;, (() =&gt; ActionBarImpl.this.listener.updateCombination()))
+          &quot;Pick Cards&quot;
         </td>
       </tr><tr>
         <td>
-          51
+          89
         </td>
         <td>
-          1774
+          1298
         </td>
         <td>
-          1734
+          2346
           -
-          1762
+          2366
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.view.game.listeners.GameSceneListener.updateCombination
+          it.parttimeteam.view.game.scenes.panes.ActionBarListener.pickCards
+        </td>
+        <td style="background: #F0ADAD">
+          ActionBarImpl.this.listener.pickCards()
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          1378
+        </td>
+        <td>
+          2445
+          -
+          2473
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBarListener.updateCombination
         </td>
         <td style="background: #F0ADAD">
           ActionBarImpl.this.listener.updateCombination()
         </td>
       </tr><tr>
         <td>
-          51
+          90
         </td>
         <td>
-          2327
+          1735
         </td>
         <td>
-          1706
+          2417
           -
-          1726
+          2437
         </td>
         <td>
           Literal
@@ -457,15 +475,36 @@
         </td>
       </tr><tr>
         <td>
-          52
+          90
         </td>
         <td>
-          2443
+          2465
         </td>
         <td>
-          1806
+          2399
           -
-          1817
+          2474
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.MachiavelliButton.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;Update Combination&quot;, (() =&gt; ActionBarImpl.this.listener.updateCombination()))
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          1843
+        </td>
+        <td>
+          2517
+          -
+          2528
         </td>
         <td>
           Literal
@@ -478,36 +517,36 @@
         </td>
       </tr><tr>
         <td>
-          52
+          91
         </td>
         <td>
-          1829
+          1173
         </td>
         <td>
-          1825
+          2536
           -
-          1850
+          2561
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.view.game.listeners.GameSceneListener.sortHandBySuit
+          it.parttimeteam.view.game.scenes.panes.ActionBarListener.sortHandBySuit
         </td>
         <td style="background: #F0ADAD">
           ActionBarImpl.this.listener.sortHandBySuit()
         </td>
       </tr><tr>
         <td>
-          52
+          91
         </td>
         <td>
-          1263
+          2267
         </td>
         <td>
-          1788
+          2499
           -
-          1851
+          2562
         </td>
         <td>
           Apply
@@ -520,36 +559,36 @@
         </td>
       </tr><tr>
         <td>
-          53
+          92
         </td>
         <td>
-          1952
+          1301
         </td>
         <td>
-          1913
+          2624
           -
-          1938
+          2649
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.view.game.listeners.GameSceneListener.sortHandByRank
+          it.parttimeteam.view.game.scenes.panes.ActionBarListener.sortHandByRank
         </td>
         <td style="background: #F0ADAD">
           ActionBarImpl.this.listener.sortHandByRank()
         </td>
       </tr><tr>
         <td>
-          53
+          92
         </td>
         <td>
-          1333
+          2318
         </td>
         <td>
-          1876
+          2587
           -
-          1939
+          2650
         </td>
         <td>
           Apply
@@ -562,15 +601,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          92
         </td>
         <td>
-          889
+          1902
         </td>
         <td>
-          1894
+          2605
           -
-          1905
+          2616
         </td>
         <td>
           Literal
@@ -583,15 +622,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          94
         </td>
         <td>
-          2328
+          1696
         </td>
         <td>
-          1945
+          2656
           -
-          1976
+          2687
         </td>
         <td>
           Apply
@@ -604,15 +643,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          95
         </td>
         <td>
-          1779
+          1370
         </td>
         <td>
-          1981
+          2692
           -
-          2019
+          2730
         </td>
         <td>
           Apply
@@ -625,15 +664,15 @@
         </td>
       </tr><tr>
         <td>
-          57
+          96
         </td>
         <td>
-          1401
+          2434
         </td>
         <td>
-          2024
+          2735
           -
-          2053
+          2764
         </td>
         <td>
           Apply
@@ -646,15 +685,15 @@
         </td>
       </tr><tr>
         <td>
-          58
+          97
         </td>
         <td>
-          2446
+          1773
         </td>
         <td>
-          2058
+          2769
           -
-          2095
+          2806
         </td>
         <td>
           Apply
@@ -667,141 +706,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          99
         </td>
         <td>
-          2305
+          1154
         </td>
         <td>
-          2152
+          2902
           -
-          2166
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.control.Button.sfxButton2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(ActionBarImpl.this.combinationBtn)
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          2206
-        </td>
-        <td>
-          2205
-          -
-          2225
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.control.Button.sfxButton2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(ActionBarImpl.this.updateCombinationBtn)
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          2418
-        </td>
-        <td>
-          2191
-          -
-          2203
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.pickCardsBtn
-        </td>
-        <td style="background: #F0ADAD">
-          ActionBarImpl.this.pickCardsBtn
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          1192
-        </td>
-        <td>
-          2205
-          -
-          2225
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.updateCombinationBtn
-        </td>
-        <td style="background: #F0ADAD">
-          ActionBarImpl.this.updateCombinationBtn
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          1748
-        </td>
-        <td>
-          2168
-          -
-          2189
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.clearHandSelectionBtn
-        </td>
-        <td style="background: #F0ADAD">
-          ActionBarImpl.this.clearHandSelectionBtn
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          1915
-        </td>
-        <td>
-          2137
-          -
-          2150
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.control.Button.sfxButton2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(ActionBarImpl.this.sortByRankBtn)
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          1882
-        </td>
-        <td>
-          2191
-          -
-          2203
+          2914
         </td>
         <td>
           ApplyImplicitView
@@ -814,120 +727,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          99
         </td>
         <td>
-          1406
+          2323
         </td>
         <td>
-          2168
+          2863
           -
-          2189
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.control.Button.sfxButton2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(ActionBarImpl.this.clearHandSelectionBtn)
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          1920
-        </td>
-        <td>
-          2101
-          -
-          2226
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.collections.ObservableList.addAll
-        </td>
-        <td style="background: #F0ADAD">
-          this.children.addAll(control.this.Button.sfxButton2jfx(ActionBarImpl.this.sortBySuitBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.sortByRankBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.combinationBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.clearHandSelectionBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.pickCardsBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.updateCombinationBtn))
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          1878
-        </td>
-        <td>
-          2122
-          -
-          2135
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.sortBySuitBtn
-        </td>
-        <td style="background: #F0ADAD">
-          ActionBarImpl.this.sortBySuitBtn
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          2228
-        </td>
-        <td>
-          2137
-          -
-          2150
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.sortByRankBtn
-        </td>
-        <td style="background: #F0ADAD">
-          ActionBarImpl.this.sortByRankBtn
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          1232
-        </td>
-        <td>
-          2122
-          -
-          2135
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.control.Button.sfxButton2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(ActionBarImpl.this.sortBySuitBtn)
-        </td>
-      </tr><tr>
-        <td>
-          60
-        </td>
-        <td>
-          1376
-        </td>
-        <td>
-          2152
-          -
-          2166
+          2877
         </td>
         <td>
           Select
@@ -940,141 +748,15 @@
         </td>
       </tr><tr>
         <td>
-          63
+          99
         </td>
         <td>
-          1772
+          1007
         </td>
         <td>
-          2315
+          2879
           -
-          2349
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.scene.Node.setDisable
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(ActionBarImpl.this.combinationBtn).setDisable(enable.unary_!)
-        </td>
-      </tr><tr>
-        <td>
-          63
-        </td>
-        <td>
-          1380
-        </td>
-        <td>
-          2315
-          -
-          2329
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.combinationBtn
-        </td>
-        <td style="background: #F0ADAD">
-          ActionBarImpl.this.combinationBtn
-        </td>
-      </tr><tr>
-        <td>
-          63
-        </td>
-        <td>
-          2388
-        </td>
-        <td>
-          2341
-          -
-          2348
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Boolean.unary_!
-        </td>
-        <td style="background: #F0ADAD">
-          enable.unary_!
-        </td>
-      </tr><tr>
-        <td>
-          66
-        </td>
-        <td>
-          1889
-        </td>
-        <td>
-          2432
-          -
-          2464
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.scene.Node.setDisable
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(ActionBarImpl.this.pickCardsBtn).setDisable(enable.unary_!)
-        </td>
-      </tr><tr>
-        <td>
-          66
-        </td>
-        <td>
-          2468
-        </td>
-        <td>
-          2456
-          -
-          2463
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Boolean.unary_!
-        </td>
-        <td style="background: #F0ADAD">
-          enable.unary_!
-        </td>
-      </tr><tr>
-        <td>
-          66
-        </td>
-        <td>
-          1489
-        </td>
-        <td>
-          2432
-          -
-          2444
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.pickCardsBtn
-        </td>
-        <td style="background: #F0ADAD">
-          ActionBarImpl.this.pickCardsBtn
-        </td>
-      </tr><tr>
-        <td>
-          69
-        </td>
-        <td>
-          1285
-        </td>
-        <td>
-          2556
-          -
-          2577
+          2900
         </td>
         <td>
           Select
@@ -1087,78 +769,120 @@
         </td>
       </tr><tr>
         <td>
-          69
+          99
         </td>
         <td>
-          1996
+          2182
         </td>
         <td>
-          2556
+          2833
           -
-          2597
+          2846
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Button.sfxButton2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(ActionBarImpl.this.sortBySuitBtn)
+        </td>
+      </tr><tr>
+        <td>
+          99
+        </td>
+        <td>
+          1219
+        </td>
+        <td>
+          2812
+          -
+          2937
         </td>
         <td>
           Apply
         </td>
         <td>
-          javafx.scene.Node.setDisable
+          javafx.collections.ObservableList.addAll
         </td>
         <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(ActionBarImpl.this.clearHandSelectionBtn).setDisable(enable.unary_!)
+          this.children.addAll(control.this.Button.sfxButton2jfx(ActionBarImpl.this.sortBySuitBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.sortByRankBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.combinationBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.clearHandSelectionBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.pickCardsBtn), control.this.Button.sfxButton2jfx(ActionBarImpl.this.updateCombinationBtn))
         </td>
       </tr><tr>
         <td>
-          69
+          99
         </td>
         <td>
-          2279
+          2439
         </td>
         <td>
-          2589
+          2879
           -
-          2596
+          2900
         </td>
         <td>
-          Select
+          ApplyImplicitView
         </td>
         <td>
-          scala.Boolean.unary_!
+          scalafx.scene.control.Button.sfxButton2jfx
         </td>
         <td style="background: #F0ADAD">
-          enable.unary_!
+          control.this.Button.sfxButton2jfx(ActionBarImpl.this.clearHandSelectionBtn)
         </td>
       </tr><tr>
         <td>
-          72
+          99
         </td>
         <td>
-          2391
+          1682
         </td>
         <td>
-          2724
+          2863
           -
-          2731
+          2877
         </td>
         <td>
-          Select
+          ApplyImplicitView
         </td>
         <td>
-          scala.Boolean.unary_!
+          scalafx.scene.control.Button.sfxButton2jfx
         </td>
         <td style="background: #F0ADAD">
-          enable.unary_!
+          control.this.Button.sfxButton2jfx(ActionBarImpl.this.combinationBtn)
         </td>
       </tr><tr>
         <td>
-          72
+          99
         </td>
         <td>
-          1359
+          1272
         </td>
         <td>
-          2692
+          2848
           -
-          2712
+          2861
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Button.sfxButton2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(ActionBarImpl.this.sortByRankBtn)
+        </td>
+      </tr><tr>
+        <td>
+          99
+        </td>
+        <td>
+          2262
+        </td>
+        <td>
+          2916
+          -
+          2936
         </td>
         <td>
           Select
@@ -1171,15 +895,330 @@
         </td>
       </tr><tr>
         <td>
-          72
+          99
         </td>
         <td>
-          1740
+          1756
         </td>
         <td>
-          2692
+          2902
           -
-          2732
+          2914
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.pickCardsBtn
+        </td>
+        <td style="background: #F0ADAD">
+          ActionBarImpl.this.pickCardsBtn
+        </td>
+      </tr><tr>
+        <td>
+          99
+        </td>
+        <td>
+          1956
+        </td>
+        <td>
+          2916
+          -
+          2936
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Button.sfxButton2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(ActionBarImpl.this.updateCombinationBtn)
+        </td>
+      </tr><tr>
+        <td>
+          99
+        </td>
+        <td>
+          1905
+        </td>
+        <td>
+          2848
+          -
+          2861
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.sortByRankBtn
+        </td>
+        <td style="background: #F0ADAD">
+          ActionBarImpl.this.sortByRankBtn
+        </td>
+      </tr><tr>
+        <td>
+          99
+        </td>
+        <td>
+          1148
+        </td>
+        <td>
+          2833
+          -
+          2846
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.sortBySuitBtn
+        </td>
+        <td style="background: #F0ADAD">
+          ActionBarImpl.this.sortBySuitBtn
+        </td>
+      </tr><tr>
+        <td>
+          102
+        </td>
+        <td>
+          1009
+        </td>
+        <td>
+          3026
+          -
+          3060
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(ActionBarImpl.this.combinationBtn).setDisable(enable.unary_!)
+        </td>
+      </tr><tr>
+        <td>
+          102
+        </td>
+        <td>
+          2294
+        </td>
+        <td>
+          3026
+          -
+          3040
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.combinationBtn
+        </td>
+        <td style="background: #F0ADAD">
+          ActionBarImpl.this.combinationBtn
+        </td>
+      </tr><tr>
+        <td>
+          102
+        </td>
+        <td>
+          1732
+        </td>
+        <td>
+          3052
+          -
+          3059
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Boolean.unary_!
+        </td>
+        <td style="background: #F0ADAD">
+          enable.unary_!
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          1124
+        </td>
+        <td>
+          3143
+          -
+          3175
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(ActionBarImpl.this.pickCardsBtn).setDisable(enable.unary_!)
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          2492
+        </td>
+        <td>
+          3143
+          -
+          3155
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.pickCardsBtn
+        </td>
+        <td style="background: #F0ADAD">
+          ActionBarImpl.this.pickCardsBtn
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          1758
+        </td>
+        <td>
+          3167
+          -
+          3174
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Boolean.unary_!
+        </td>
+        <td style="background: #F0ADAD">
+          enable.unary_!
+        </td>
+      </tr><tr>
+        <td>
+          108
+        </td>
+        <td>
+          2266
+        </td>
+        <td>
+          3267
+          -
+          3288
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.clearHandSelectionBtn
+        </td>
+        <td style="background: #F0ADAD">
+          ActionBarImpl.this.clearHandSelectionBtn
+        </td>
+      </tr><tr>
+        <td>
+          108
+        </td>
+        <td>
+          1261
+        </td>
+        <td>
+          3267
+          -
+          3308
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(ActionBarImpl.this.clearHandSelectionBtn).setDisable(enable.unary_!)
+        </td>
+      </tr><tr>
+        <td>
+          108
+        </td>
+        <td>
+          1535
+        </td>
+        <td>
+          3300
+          -
+          3307
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Boolean.unary_!
+        </td>
+        <td style="background: #F0ADAD">
+          enable.unary_!
+        </td>
+      </tr><tr>
+        <td>
+          111
+        </td>
+        <td>
+          1737
+        </td>
+        <td>
+          3435
+          -
+          3442
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Boolean.unary_!
+        </td>
+        <td style="background: #F0ADAD">
+          enable.unary_!
+        </td>
+      </tr><tr>
+        <td>
+          111
+        </td>
+        <td>
+          2298
+        </td>
+        <td>
+          3403
+          -
+          3423
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl.updateCombinationBtn
+        </td>
+        <td style="background: #F0ADAD">
+          ActionBarImpl.this.updateCombinationBtn
+        </td>
+      </tr><tr>
+        <td>
+          111
+        </td>
+        <td>
+          1089
+        </td>
+        <td>
+          3403
+          -
+          3443
         </td>
         <td>
           Apply
@@ -1192,15 +1231,15 @@
         </td>
       </tr><tr>
         <td>
-          76
+          115
         </td>
         <td>
-          1162
+          2430
         </td>
         <td>
-          2807
+          3518
           -
-          2838
+          3549
         </td>
         <td>
           Apply
@@ -1213,15 +1252,15 @@
         </td>
       </tr><tr>
         <td>
-          77
+          116
         </td>
         <td>
-          2471
+          1810
         </td>
         <td>
-          2845
+          3556
           -
-          2883
+          3594
         </td>
         <td>
           Apply
@@ -1234,15 +1273,15 @@
         </td>
       </tr><tr>
         <td>
-          78
+          117
         </td>
         <td>
-          1860
+          1130
         </td>
         <td>
-          2890
+          3601
           -
-          2919
+          3630
         </td>
         <td>
           Apply
@@ -1255,15 +1294,15 @@
         </td>
       </tr><tr>
         <td>
-          79
+          118
         </td>
         <td>
-          1229
+          2270
         </td>
         <td>
-          2926
+          3637
           -
-          2963
+          3674
         </td>
         <td>
           Apply
@@ -1276,15 +1315,15 @@
         </td>
       </tr><tr>
         <td>
-          83
+          122
         </td>
         <td>
-          2255
+          1626
         </td>
         <td>
-          3035
+          3746
           -
-          3037
+          3748
         </td>
         <td>
           Literal

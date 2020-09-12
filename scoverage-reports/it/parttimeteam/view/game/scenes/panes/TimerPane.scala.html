@@ -28,32 +28,47 @@
 </span>4 <span style=''>import scalafx.scene.layout.VBox
 </span>5 <span style=''>
 </span>6 <span style=''>trait TimerPane extends VBox {
-</span>7 <span style=''>  def hide(): Unit
-</span>8 <span style=''>
-</span>9 <span style=''>  def show(): Unit
-</span>10 <span style=''>
-</span>11 <span style=''>  def setTime(time: String): Unit
-</span>12 <span style=''>}
+</span>7 <span style=''>
+</span>8 <span style=''>  def displayMessage(message: String): Unit
+</span>9 <span style=''>
+</span>10 <span style=''>  def set(minutes: Long, seconds: Long): Unit
+</span>11 <span style=''>
+</span>12 <span style=''>  def show(startingMinutes: Long, startingSeconds: Long): Unit
 </span>13 <span style=''>
-</span>14 <span style=''>object TimerPane {
-</span>15 <span style=''>
-</span>16 <span style=''>  class TimerPaneImpl extends TimerPane {
-</span>17 <span style=''>    val timerLabel = </span><span style='background: #F0ADAD'>MachiavelliLabel(&quot;Timer&quot;)</span><span style=''>
-</span>18 <span style=''>    val countdownLabel = </span><span style='background: #F0ADAD'>MachiavelliLabel(&quot;03:00&quot;)</span><span style=''>
-</span>19 <span style=''>
-</span>20 <span style=''>    override def hide(): Unit = {
-</span>21 <span style=''>      </span><span style='background: #F0ADAD'>visible = false</span><span style=''>
-</span>22 <span style=''>    }
-</span>23 <span style=''>
-</span>24 <span style=''>    override def show(): Unit = {
-</span>25 <span style=''>      </span><span style='background: #F0ADAD'>visible = true</span><span style=''>
-</span>26 <span style=''>    }
-</span>27 <span style=''>
-</span>28 <span style=''>    override def setTime(time: String): Unit = {
-</span>29 <span style=''>      </span><span style='background: #F0ADAD'>countdownLabel.setText(time)</span><span style=''>
-</span>30 <span style=''>    }
-</span>31 <span style=''>  }
-</span>32 <span style=''>}
+</span>14 <span style=''>  def hide(): Unit
+</span>15 <span style=''>}
+</span>16 <span style=''>
+</span>17 <span style=''>object TimerPane {
+</span>18 <span style=''>
+</span>19 <span style=''>  class TimerPaneImpl extends TimerPane {
+</span>20 <span style=''>    val timerLabel = </span><span style='background: #F0ADAD'>MachiavelliLabel(&quot;Timer&quot;)</span><span style=''>
+</span>21 <span style=''>    </span><span style='background: #F0ADAD'>timerLabel.getStyleClass.add(&quot;boldText&quot;)</span><span style=''>
+</span>22 <span style=''>
+</span>23 <span style=''>    val countdownLabel = </span><span style='background: #F0ADAD'>MachiavelliLabel()</span><span style=''>
+</span>24 <span style=''>
+</span>25 <span style=''>    </span><span style='background: #F0ADAD'>this.children.addAll(timerLabel, countdownLabel)</span><span style=''>
+</span>26 <span style=''>
+</span>27 <span style=''>    override def hide(): Unit = {
+</span>28 <span style=''>      </span><span style='background: #F0ADAD'>visible = false</span><span style=''>
+</span>29 <span style=''>    }
+</span>30 <span style=''>
+</span>31 <span style=''>    override def displayMessage(message: String): Unit = {
+</span>32 <span style=''>      </span><span style='background: #F0ADAD'>setText(message)</span><span style=''>
+</span>33 <span style=''>    }
+</span>34 <span style=''>
+</span>35 <span style=''>    override def set(minutes: Long, seconds: Long): Unit = </span><span style='background: #F0ADAD'>setText(timeToLabel(minutes, seconds))</span><span style=''>
+</span>36 <span style=''>
+</span>37 <span style=''>    override def show(startingMinutes: Long, startingSeconds: Long): Unit = {
+</span>38 <span style=''>      </span><span style='background: #F0ADAD'>visible = true</span><span style=''>
+</span>39 <span style=''>      </span><span style='background: #F0ADAD'>setText(timeToLabel(startingMinutes, startingSeconds))</span><span style=''>
+</span>40 <span style=''>    }
+</span>41 <span style=''>
+</span>42 <span style=''>    private def setText(message: String): Unit = </span><span style='background: #F0ADAD'>countdownLabel.text = message</span><span style=''>
+</span>43 <span style=''>
+</span>44 <span style=''>    private def timeToLabel(minutes: Long, seconds: Long): String = </span><span style='background: #F0ADAD'>s&quot;${f&quot;$minutes%02d&quot;}:${f&quot;$seconds%02d&quot;}&quot;</span><span style=''>
+</span>45 <span style=''>  }
+</span>46 <span style=''>
+</span>47 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -67,15 +82,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          17
+          20
         </td>
         <td>
-          982
+          2286
         </td>
         <td>
-          324
+          426
           -
-          349
+          451
         </td>
         <td>
           Apply
@@ -88,15 +103,36 @@
         </td>
       </tr><tr>
         <td>
-          18
+          21
         </td>
         <td>
-          1905
+          1982
         </td>
         <td>
-          375
+          456
           -
-          400
+          496
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.add
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(TimerPaneImpl.this.timerLabel).getStyleClass().add(&quot;boldText&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1386
+        </td>
+        <td>
+          523
+          -
+          541
         </td>
         <td>
           Apply
@@ -105,19 +141,124 @@
           it.parttimeteam.view.utils.MachiavelliLabel.apply
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliLabel.apply(&quot;03:00&quot;)
+          it.parttimeteam.view.utils.MachiavelliLabel.apply()
         </td>
       </tr><tr>
         <td>
-          21
+          25
         </td>
         <td>
-          1300
+          1829
         </td>
         <td>
-          442
+          568
           -
-          457
+          578
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Label.sfxLabel2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(TimerPaneImpl.this.timerLabel)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1915
+        </td>
+        <td>
+          547
+          -
+          595
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.collections.ObservableList.addAll
+        </td>
+        <td style="background: #F0ADAD">
+          this.children.addAll(control.this.Label.sfxLabel2jfx(TimerPaneImpl.this.timerLabel), control.this.Label.sfxLabel2jfx(TimerPaneImpl.this.countdownLabel))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          2519
+        </td>
+        <td>
+          580
+          -
+          594
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Label.sfxLabel2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(TimerPaneImpl.this.countdownLabel)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          2483
+        </td>
+        <td>
+          568
+          -
+          578
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl.timerLabel
+        </td>
+        <td style="background: #F0ADAD">
+          TimerPaneImpl.this.timerLabel
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1113
+        </td>
+        <td>
+          580
+          -
+          594
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl.countdownLabel
+        </td>
+        <td style="background: #F0ADAD">
+          TimerPaneImpl.this.countdownLabel
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          1314
+        </td>
+        <td>
+          637
+          -
+          652
         </td>
         <td>
           Apply
@@ -130,15 +271,78 @@
         </td>
       </tr><tr>
         <td>
-          25
+          32
         </td>
         <td>
-          2377
+          2366
         </td>
         <td>
-          505
+          725
           -
-          519
+          741
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl.setText
+        </td>
+        <td style="background: #F0ADAD">
+          TimerPaneImpl.this.setText(message)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1390
+        </td>
+        <td>
+          808
+          -
+          846
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl.setText
+        </td>
+        <td style="background: #F0ADAD">
+          TimerPaneImpl.this.setText(TimerPaneImpl.this.timeToLabel(minutes, seconds))
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1649
+        </td>
+        <td>
+          816
+          -
+          845
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl.timeToLabel
+        </td>
+        <td style="background: #F0ADAD">
+          TimerPaneImpl.this.timeToLabel(minutes, seconds)
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          2454
+        </td>
+        <td>
+          932
+          -
+          946
         </td>
         <td>
           Apply
@@ -151,24 +355,156 @@
         </td>
       </tr><tr>
         <td>
-          29
+          39
         </td>
         <td>
-          2058
+          1186
         </td>
         <td>
-          582
+          953
           -
-          610
+          1007
         </td>
         <td>
           Apply
         </td>
         <td>
-          javafx.scene.control.Labeled.setText
+          it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl.setText
         </td>
         <td style="background: #F0ADAD">
-          control.this.Label.sfxLabel2jfx(TimerPaneImpl.this.countdownLabel).setText(time)
+          TimerPaneImpl.this.setText(TimerPaneImpl.this.timeToLabel(startingMinutes, startingSeconds))
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1794
+        </td>
+        <td>
+          961
+          -
+          1006
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl.timeToLabel
+        </td>
+        <td style="background: #F0ADAD">
+          TimerPaneImpl.this.timeToLabel(startingMinutes, startingSeconds)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          2560
+        </td>
+        <td>
+          1064
+          -
+          1093
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Labeled.text_=
+        </td>
+        <td style="background: #F0ADAD">
+          TimerPaneImpl.this.countdownLabel.text_=(message)
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1704
+        </td>
+        <td>
+          1163
+          -
+          1203
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;&quot;, &quot;:&quot;, &quot;&quot;).s(({
+  val arg$macro$1: Long = minutes;
+  new scala.collection.immutable.StringOps(&quot;%02d&quot;).format(arg$macro$1)
+}: String), ({
+  val arg$macro$2: Long = seconds;
+  new scala.collection.immutable.StringOps(&quot;%02d&quot;).format(arg$macro$2)
+}: String))
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          2340
+        </td>
+        <td>
+          1202
+          -
+          1203
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1921
+        </td>
+        <td>
+          1165
+          -
+          1166
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1251
+        </td>
+        <td>
+          1183
+          -
+          1185
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;:&quot;
         </td>
       </tr>
     </table>
