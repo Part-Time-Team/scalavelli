@@ -38,7 +38,7 @@ case class CardCombination(id: String, cards: Seq[Card]) {
    * @param cards Cards to put in.
    * @return CardCombination with cards.
    */
-  def putCards(cards: Seq[Card]): CardCombination = copy(cards = this.cards ++ cards sortBy (_.rank))
+  def putCards(cards: Seq[Card]): CardCombination = copy(cards = (this.cards ++ cards).sortByRank())
 }
 
 object CardCombination {
