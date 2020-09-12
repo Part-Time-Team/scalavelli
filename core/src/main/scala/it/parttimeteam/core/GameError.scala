@@ -9,6 +9,4 @@ object GameError {
   case object HandNotContainCard extends  GameError
 
   case object NoCardInBoard extends  GameError
-
-  case object NoValidTurnPlay extends  GameError
 }

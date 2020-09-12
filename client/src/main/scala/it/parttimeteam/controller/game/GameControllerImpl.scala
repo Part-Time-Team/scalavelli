@@ -49,7 +49,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       gameStage.notifyInfo(message)
     }
 
-    case ErrorEvent(reason: GameError) => {
+    case GameErrorEvent(reason: GameError) => {
       gameStage.notifyError(reason)
     }
 
