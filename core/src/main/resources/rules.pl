@@ -34,24 +34,24 @@ lengthList([], 0).
 lengthList([(_,_)|T],X) :- lengthList(T,N), X is N+1.
 
 % sameNumber(+List)
-sameNumber([(N,_,_)]).
+sameNumber([(_,_,_)]).
 sameNumber([(N1,_,_), (N2,_,_) | T]) :- integer(N1),
                            			    integer(N2),
                            			    N1 =:= N2,
                            			    sameNumber([(N2,_,_)| T]).
 
 % sameSuit(+List)
-sameSuit([(_,S,_)]).
+sameSuit([(_,_,_)]).
 sameSuit([(_,S1,_), (_,S2,_) | T]) :- S1 == S2,
                            		      sameSuit([(_,S2,_)| T]).
 
 % sameElementList(+ListSuit, +Suit)
-sameElementList([], Suit).
+sameElementList([], _).
 sameElementList([H|T], Suit) :- H \== Suit,
                                 sameElementList(T, Suit).
 
 % differentSuit(+List)
-differentSuit([], Suit).
+differentSuit([], _).
 differentSuit([(_, S1, _), (_, S2, _) |T]) :- S1 \== S2,
                                               append([], [S1, S2], ListSuit),
                                               differentSuit(T, ListSuit).
@@ -61,13 +61,13 @@ differentSuit([(_, Suit, _) |T], ListSuit) :- sameElementList(ListSuit, Suit),
                                               differentSuit(T, NewListSuit).
 
 % endSequence(+Cards)
-endSequence([(N,_,_)]).
-endSequence([(N1,_,_), (N2,_,_) | T]) :- ( N1 =:= 13, N2 =:= 14 -> lengthList(T, S), S =:= 0
-								         ; endSequence([(N2,_,_) | T])
-								    	 ).
+endSequence([(_,_,_)]).
+endSequence([(13,_,_), (14,_,_) | T]):- lengthList(T, S), S =:= 0.
+endSequence([(_,_,_), (N2,_,_) | T]) :- endSequence([(N2,_,_) | T]).
+
 
 % orderByValue(+List)
-checkOrderByValue([(N,_,_)]).
+checkOrderByValue([(_,_,_)]).
 checkOrderByValue([(N1,_,_), (N2,_,_) | T]) :-  integer(N1),
 										        integer(N2),
 											    X is N1 + 1,
@@ -78,7 +78,6 @@ checkOrderByValue([(N1,_,_), (N2,_,_) | T]) :-  integer(N1),
 validationQuarter(L) :- lengthList(L, X), X >= 3, X =< 4,
                         sameNumber(L),
                         differentSuit(L).
-
 
 % validationChain(+Cards)
 validationChain(L) :- lengthList(L, X), X >= 3, X =< 14,
@@ -94,7 +93,9 @@ quicksortValue([(X,Sx,Cx)|Xs],Ys) :- partitionValue(Xs,(X,Sx,Cx),Ls,Bs),
 								     append(LOs,[(X,Sx,Cx)|BOs],Ys).
 												
 partitionValue([],_,[],[]).
-partitionValue([(X,Sx,Cx)|Xs],(Y,Sy,Cy),[(X,Sx,Cx)|Ls],Bs):- X<Y, !, partitionValue(Xs,(Y,Sy,Cy),Ls,Bs).
+partitionValue([(X,Sx,Cx)|Xs],(Y,Sy,Cy),[(X,Sx,Cx)|Ls],Bs):- X<Y,
+                                                             !,
+                                                             partitionValue(Xs,(Y,Sy,Cy),Ls,Bs).
 partitionValue([(X,Sx,Cx)|Xs],(Y,Sy,Cy),Ls,[(X,Sx,Cx)|Bs]):- partitionValue(Xs,(Y,Sy,Cy),Ls,Bs).
 
 % quicksortSuit(+ListToOrder, -SortedList) 
@@ -105,7 +106,11 @@ quicksortSuit([(X,Sx,Cx)|Xs],Ys):- partitionSuit(Xs,(X,Sx,Cx),Ls,Bs),
 								   append(LOs,[(X,Sx,Cx)|BOs],Ys).
 												
 partitionSuit([],_,[],[]).
-partitionSuit([(X,Sx,Cx)|Xs],(Y,Sy,Cy),[(X,Sx,Cx)|Ls],Bs):- priority(Sx,Px), priority(Sy,Py), compareCard((X,Px),(Y,Py)), !, partitionSuit(Xs,(Y,Sy,Cy),Ls,Bs).
+partitionSuit([(X,Sx,Cx)|Xs],(Y,Sy,Cy),[(X,Sx,Cx)|Ls],Bs):- priority(Sx,Px),
+                                                            priority(Sy,Py),
+                                                            compareCard((X,Px),(Y,Py)),
+                                                            !,
+                                                            partitionSuit(Xs,(Y,Sy,Cy),Ls,Bs).
 partitionSuit([(X,Sx,Cx)|Xs],(Y,Sy,Cy),Ls,[(X,Sx,Cx)|Bs]):- partitionSuit(Xs,(Y,Sy,Cy),Ls,Bs).
 
 %compareCard(+Tuple1, +Tuple2)
