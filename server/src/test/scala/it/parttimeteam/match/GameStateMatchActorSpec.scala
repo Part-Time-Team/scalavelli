@@ -8,7 +8,7 @@ import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, Deck, Hand}
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
-import it.parttimeteam.core.{GameInterface, GameState}
+import it.parttimeteam.core.{GameError, GameInterface, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
@@ -76,11 +76,11 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
 
     override def validateCombination(cards: Seq[Card]): Boolean = ???
 
-    override def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
+    override def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[GameError, (Hand, Board)] = ???
 
-    override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
+    override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[GameError, (Hand, Board)] = ???
 
-    override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
+    override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): Either[GameError, (Hand, Board)] = ???
 
     override def validateTurn(board: Board, startBoard: Board, hand: Hand, startHand: Hand): Boolean = ???
   }
