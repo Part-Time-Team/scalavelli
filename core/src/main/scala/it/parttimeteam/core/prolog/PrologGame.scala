@@ -75,7 +75,7 @@ class PrologGame() {
    */
   def sortByRank(cards: Seq[Card]): Seq[Card] = {
 
-    val optionalAceCards: Seq[Card] = conversion optionalValueCards cards
+    val optionalAceCards: Seq[Card] = conversion optionalValueAce cards
     val prologResult: Seq[Term] = engine goal orderByValue + conversion.cardsConvertToString(optionalAceCards)(Some(X))
     conversion sortedCard prologResult
   }
