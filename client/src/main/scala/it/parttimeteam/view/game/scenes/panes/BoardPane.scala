@@ -1,18 +1,18 @@
 package it.parttimeteam.view.game.scenes.panes
 
-import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination}
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 import it.parttimeteam.view.game.scenes.model.GameCardCombination
 import it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl
 import scalafx.geometry.Insets
+import scalafx.scene.control.ScrollPane
 import scalafx.scene.layout.TilePane
 
 /**
   * Pane which contains the game board.
   */
-trait BoardPane extends TilePane with ActionGamePane {
+trait BoardPane extends ScrollPane with ActionGamePane {
 
   /**
     * Sets the game board inside a ScrollPane.
@@ -25,35 +25,40 @@ trait BoardPane extends TilePane with ActionGamePane {
 object BoardPane {
 
   class BoardPaneImpl(boardListener: BoardListener) extends BoardPane {
-    this.prefColumns = 2
-    this.prefWidth <= this.getWidth
-    this.vgap = 20d
-    this.hgap = 20d
-    this.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
 
-    var selectedCards: Seq[Card] = Seq()
+    var tilePane: TilePane = new TilePane()
+    tilePane.prefColumns = 2
+    tilePane.prefWidth <= this.getWidth
+    tilePane.vgap = 20d
+    tilePane.hgap = 20d
+
+    tilePane.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
+    content = tilePane
+    this.setFitToWidth(true)
+
+    this.getStyleClass.add("greenBack")
 
 
     /** @inheritdoc */
     override def setBoard(board: Board): Unit = {
-      this.children.clear()
+      tilePane.children.clear()
 
       for (combination: CardCombination <- board.combinations) {
         val playerCombination: GameCardCombination = new GameCardCombinationImpl(combination, boardListener)
-        this.children.add(playerCombination)
+        tilePane.children.add(playerCombination)
       }
     }
 
     /** @inheritdoc */
     override def disableActions(): Unit = {
-      this.children.forEach(playerCombination => {
+      tilePane.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].disableActions()
       })
     }
 
     /** @inheritdoc */
     override def enableActions(): Unit = {
-      this.children.forEach(playerCombination => {
+      tilePane.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].enableActions()
       })
     }
