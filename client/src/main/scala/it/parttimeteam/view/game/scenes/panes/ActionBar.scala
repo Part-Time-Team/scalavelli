@@ -1,7 +1,6 @@
 package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.view.ViewConfig
-import it.parttimeteam.view.game.listeners.GameSceneListener
 import it.parttimeteam.view.utils.MachiavelliButton
 import scalafx.geometry.Insets
 import scalafx.scene.layout.HBox
@@ -39,9 +38,49 @@ trait ActionBar extends HBox with ActionGamePane {
   def enableClearHandSelection(enable: Boolean): Unit
 }
 
+trait ActionBarListener {
+
+  /**
+    * Clear selected cards
+    */
+  def clearHandSelection(): Unit
+
+  /**
+    * The player pick a combination from the game board.
+    *
+    * @param combinationId the CardCombination identifier picked by player
+    */
+  def pickCombination(combinationId: String): Unit
+
+  /**
+    * The player clicked the make combination button.
+    */
+  def makeCombination(): Unit
+
+  /**
+    * The player clicked the pick cards button.
+    */
+  def pickCards(): Unit
+
+  /**
+    * The player clicked the update combination button.
+    */
+  def updateCombination(): Unit
+
+  /**
+    * The player sorts his hand cards by suit.
+    */
+  def sortHandBySuit(): Unit
+
+  /**
+    * The player sorts his hand cards by rank.
+    */
+  def sortHandByRank(): Unit
+}
+
 object ActionBar {
 
-  class ActionBarImpl(listener: GameSceneListener) extends ActionBar {
+  class ActionBarImpl(listener: ActionBarListener) extends ActionBar {
     this.spacing = ViewConfig.formSpacing
     this.padding = Insets(5)
 

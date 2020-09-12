@@ -1,5 +1,9 @@
 package it.parttimeteam.controller.game
 
+import java.util.concurrent.TimeUnit
+
+import it.parttimeteam.Constants
+import it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl
 import it.parttimeteam.core.GameInterfaceImpl
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
@@ -14,6 +18,29 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
   private var gameStage: MachiavelliGameStage = _
   private var gameService: GameService = _
   private var currentState: ClientGameState = _
+
+  private val turnTimer: TurnTimer = new TurnTimerImpl(Constants.Client.TURN_TIMER_DURATION, new TurnTimerListener {
+
+    override def onStart(): Unit = {
+      val time = millisToMinutesAndSeconds(Constants.Client.TURN_TIMER_DURATION * 1000)
+      println(s"TIMER -> Timer started: ${time._1}:${time._2}")
+      gameStage.showTimer(time._1, time._2)
+    }
+
+    override def onEnd(): Unit = {
+      println(s"TIMER -> Timer ended")
+      gameStage.notifyTimerEnded()
+      gameService.endTurnDrawingACard()
+    }
+
+    override def onTick(millis: Long): Unit = {
+      val time = millisToMinutesAndSeconds(millis)
+
+      println(s"TIMER -> Timer tick: ${time._1}:${time._2}")
+
+      gameStage.updateTimer(time._1, time._2)
+    }
+  })
 
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
@@ -42,7 +69,6 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
     case InTurnEvent => {
       gameStage.setInTurn()
-      gameStage.showTimer()
     }
 
     case InfoEvent(message: String) => {
@@ -67,7 +93,6 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
     case TurnEndedEvent => {
       gameStage.setTurnEnded()
-      gameStage.hideTimer()
     }
 
     case _ =>
@@ -92,6 +117,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       } else {
         gameService.endTurnWithMoves()
       }
+      turnTimer.end()
     }
 
     case MakeCombinationEvent(cards: Seq[Card]) => gameService.makeCombination(cards)
@@ -103,6 +129,14 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     case UpdateCardCombinationEvent(combinationId: String, cards: Seq[Card]) => gameService.updateCardCombination(combinationId, cards)
 
     case PlayAgainEvent => playAgain()
+
+    case TurnStartedEvent => turnTimer.start()
+  }
+
+  private def millisToMinutesAndSeconds(millis: Long): (Long, Long) = {
+    val minutes: Long = TimeUnit.MILLISECONDS.toMinutes(millis)
+    val seconds: Long = TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(minutes)
+    (minutes, seconds)
   }
 
   private def getMockState: ClientGameState = {
@@ -138,6 +172,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
     ClientGameState(PlayerGameState(board, hand, players), true, true, true, true)
   }
+
 
   override def end(): Unit = {
 
