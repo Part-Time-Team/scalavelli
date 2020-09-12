@@ -2,7 +2,7 @@
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title id="title">
-          it/parttimeteam/view/utils/MachiavelliAlert.scala.html
+          it/parttimeteam/model/ErrorEvent.scala.html
         </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
@@ -22,24 +22,41 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="codegrid">
-            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.utils
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.model
 </span>2 <span style=''>
-</span>3 <span style=''>import scalafx.scene.control.Alert
-</span>4 <span style=''>import scalafx.scene.control.Alert.AlertType
-</span>5 <span style=''>
-</span>6 <span style=''>/**
-</span>7 <span style=''>  * Builder for a default Alert dialog
-</span>8 <span style=''>  */
-</span>9 <span style=''>object MachiavelliAlert {
+</span>3 <span style=''>import it.parttimeteam.core.GameError
+</span>4 <span style=''>
+</span>5 <span style=''>sealed class ErrorEvent
+</span>6 <span style=''>
+</span>7 <span style=''>object ErrorEvent {
+</span>8 <span style=''>
+</span>9 <span style=''>  // TODO inserire i vari errori generabili dal model verso i controller
 </span>10 <span style=''>
-</span>11 <span style=''>  def apply(title: String, message: String, alertType: AlertType): Alert = {
-</span>12 <span style=''>    val alert: Alert = </span><span style='background: #F0ADAD'>new Alert(alertType)</span><span style=''>
-</span>13 <span style=''>    </span><span style='background: #F0ADAD'>alert.setTitle(title)</span><span style=''>
-</span>14 <span style=''>    </span><span style='background: #F0ADAD'>alert.setHeaderText(null)</span><span style=''>
-</span>15 <span style=''>    </span><span style='background: #F0ADAD'>alert.setContentText(message)</span><span style=''>
-</span>16 <span style=''>    alert
-</span>17 <span style=''>  }
-</span>18 <span style=''>}
+</span>11 <span style=''>  case class GenericError(reason: String) extends ErrorEvent
+</span>12 <span style=''>
+</span>13 <span style=''>  case object ServerNotFound extends ErrorEvent
+</span>14 <span style=''>
+</span>15 <span style=''>  case object NoValidTurnPlay extends ErrorEvent
+</span>16 <span style=''>
+</span>17 <span style=''>  case object CombinationNotValid extends ErrorEvent
+</span>18 <span style=''>
+</span>19 <span style=''>  case object HandNotContainCard extends ErrorEvent
+</span>20 <span style=''>
+</span>21 <span style=''>  case object NoCardInBoard extends ErrorEvent
+</span>22 <span style=''>
+</span>23 <span style=''>  /**
+</span>24 <span style=''>   * Function 
+</span>25 <span style=''>   *
+</span>26 <span style=''>   * @param error error GameError
+</span>27 <span style=''>   * @return ErrorEvent
+</span>28 <span style=''>   */
+</span>29 <span style=''>  def mapError(error : GameError) : ErrorEvent = error match {
+</span>30 <span style=''>    case GameError.CombinationNotValid =&gt; </span><span style='background: #F0ADAD'>this.CombinationNotValid</span><span style=''>
+</span>31 <span style=''>    case GameError.HandNotContainCard =&gt; </span><span style='background: #F0ADAD'>this.HandNotContainCard</span><span style=''>
+</span>32 <span style=''>    case GameError.NoCardInBoard =&gt; </span><span style='background: #F0ADAD'>this.NoCardInBoard</span><span style=''>
+</span>33 <span style=''>    case _ =&gt; </span><span style='background: #F0ADAD'>this.GenericError(&quot;Unknown error&quot;)</span><span style=''>
+</span>34 <span style=''>  }
+</span>35 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -53,87 +70,87 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          12
+          30
         </td>
         <td>
-          2244
+          1967
         </td>
         <td>
-          292
+          701
           -
-          312
+          725
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          scalafx.scene.control.Alert.&lt;init&gt;
+          it.parttimeteam.model.ErrorEvent.CombinationNotValid
         </td>
         <td style="background: #F0ADAD">
-          new scalafx.scene.control.Alert(alertType)
+          this.CombinationNotValid
         </td>
       </tr><tr>
         <td>
-          13
+          31
         </td>
         <td>
-          1629
+          1261
         </td>
         <td>
-          317
+          767
           -
-          338
+          790
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          javafx.scene.control.Dialog.setTitle
+          it.parttimeteam.model.ErrorEvent.HandNotContainCard
         </td>
         <td style="background: #F0ADAD">
-          control.this.Alert.sfxAlert2jfx(alert).setTitle(title)
+          this.HandNotContainCard
         </td>
       </tr><tr>
         <td>
-          14
+          32
         </td>
         <td>
-          950
+          954
         </td>
         <td>
-          343
+          827
           -
-          368
+          845
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          javafx.scene.control.Dialog.setHeaderText
+          it.parttimeteam.model.ErrorEvent.NoCardInBoard
         </td>
         <td style="background: #F0ADAD">
-          control.this.Alert.sfxAlert2jfx(alert).setHeaderText(null)
+          this.NoCardInBoard
         </td>
       </tr><tr>
         <td>
-          15
+          33
         </td>
         <td>
-          2361
+          2059
         </td>
         <td>
-          373
+          860
           -
-          402
+          894
         </td>
         <td>
           Apply
         </td>
         <td>
-          javafx.scene.control.Dialog.setContentText
+          it.parttimeteam.model.ErrorEvent.GenericError.apply
         </td>
         <td style="background: #F0ADAD">
-          control.this.Alert.sfxAlert2jfx(alert).setContentText(message)
+          this.GenericError.apply(&quot;Unknown error&quot;)
         </td>
       </tr>
     </table>

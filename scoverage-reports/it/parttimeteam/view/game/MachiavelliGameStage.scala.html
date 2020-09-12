@@ -25,113 +25,114 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game
 </span>2 <span style=''>
 </span>3 <span style=''>import it.parttimeteam.controller.game.GameListener
-</span>4 <span style=''>import it.parttimeteam.model.game.ClientGameState
-</span>5 <span style=''>import it.parttimeteam.view._
-</span>6 <span style=''>import it.parttimeteam.view.game.listeners.GameStageListener
-</span>7 <span style=''>
-</span>8 <span style=''>/**
-</span>9 <span style=''>  * Main stage for the game view, interacts with GameScene
-</span>10 <span style=''>  */
-</span>11 <span style=''>trait MachiavelliGameStage extends BaseStage with GameStageListener {
-</span>12 <span style=''>  /**
-</span>13 <span style=''>    * Set the current user turn
-</span>14 <span style=''>    *
-</span>15 <span style=''>    * @return
-</span>16 <span style=''>    */
-</span>17 <span style=''>  def setInTurn(): Unit
-</span>18 <span style=''>
-</span>19 <span style=''>  /**
-</span>20 <span style=''>    * Set the current user turn ended
-</span>21 <span style=''>    *
-</span>22 <span style=''>    * @return
-</span>23 <span style=''>    */
-</span>24 <span style=''>  def setTurnEnded(): Unit
-</span>25 <span style=''>
-</span>26 <span style=''>  /**
-</span>27 <span style=''>    * Make the timer countdown visible.
-</span>28 <span style=''>    *
-</span>29 <span style=''>    * @param minutes countdown minutes
-</span>30 <span style=''>    * @param seconds countdown seconds
-</span>31 <span style=''>    */
-</span>32 <span style=''>  def showTimer(minutes: Long, seconds: Long): Unit
-</span>33 <span style=''>
-</span>34 <span style=''>  /**
-</span>35 <span style=''>    * Update countdown.
-</span>36 <span style=''>    *
-</span>37 <span style=''>    * @param minutes countdown minutes
-</span>38 <span style=''>    * @param seconds countdown seconds
-</span>39 <span style=''>    */
-</span>40 <span style=''>  def updateTimer(minutes: Long, seconds: Long): Unit
-</span>41 <span style=''>
-</span>42 <span style=''>  /**
-</span>43 <span style=''>    * End countdown and show alert
-</span>44 <span style=''>    */
-</span>45 <span style=''>  def notifyTimerEnded(): Unit
-</span>46 <span style=''>
-</span>47 <span style=''>  /**
-</span>48 <span style=''>    * Enable player actions on view.
-</span>49 <span style=''>    */
-</span>50 <span style=''>  def enableActions(): Unit
-</span>51 <span style=''>
-</span>52 <span style=''>  /**
-</span>53 <span style=''>    * Disabled player actions on view.
-</span>54 <span style=''>    */
-</span>55 <span style=''>  def disableActions(): Unit
-</span>56 <span style=''>
-</span>57 <span style=''>  /**
-</span>58 <span style=''>    * Notify the player the game ended.
-</span>59 <span style=''>    *
-</span>60 <span style=''>    * @param gameEndType the type of game end
-</span>61 <span style=''>    */
-</span>62 <span style=''>  def notifyGameEnd(gameEndType: GameEndType): Unit
-</span>63 <span style=''>
+</span>4 <span style=''>import it.parttimeteam.model.ErrorEvent
+</span>5 <span style=''>import it.parttimeteam.model.game.ClientGameState
+</span>6 <span style=''>import it.parttimeteam.view._
+</span>7 <span style=''>import it.parttimeteam.view.game.listeners.GameStageListener
+</span>8 <span style=''>
+</span>9 <span style=''>/**
+</span>10 <span style=''>  * Main stage for the game view, interacts with GameScene
+</span>11 <span style=''>  */
+</span>12 <span style=''>trait MachiavelliGameStage extends BaseStage with GameStageListener {
+</span>13 <span style=''>  /**
+</span>14 <span style=''>    * Set the current user turn
+</span>15 <span style=''>    *
+</span>16 <span style=''>    * @return
+</span>17 <span style=''>    */
+</span>18 <span style=''>  def setInTurn(): Unit
+</span>19 <span style=''>
+</span>20 <span style=''>  /**
+</span>21 <span style=''>    * Set the current user turn ended
+</span>22 <span style=''>    *
+</span>23 <span style=''>    * @return
+</span>24 <span style=''>    */
+</span>25 <span style=''>  def setTurnEnded(): Unit
+</span>26 <span style=''>
+</span>27 <span style=''>  /**
+</span>28 <span style=''>    * Make the timer countdown visible.
+</span>29 <span style=''>    *
+</span>30 <span style=''>    * @param minutes countdown minutes
+</span>31 <span style=''>    * @param seconds countdown seconds
+</span>32 <span style=''>    */
+</span>33 <span style=''>  def showTimer(minutes: Long, seconds: Long): Unit
+</span>34 <span style=''>
+</span>35 <span style=''>  /**
+</span>36 <span style=''>    * Update countdown.
+</span>37 <span style=''>    *
+</span>38 <span style=''>    * @param minutes countdown minutes
+</span>39 <span style=''>    * @param seconds countdown seconds
+</span>40 <span style=''>    */
+</span>41 <span style=''>  def updateTimer(minutes: Long, seconds: Long): Unit
+</span>42 <span style=''>
+</span>43 <span style=''>  /**
+</span>44 <span style=''>    * End countdown and show alert
+</span>45 <span style=''>    */
+</span>46 <span style=''>  def notifyTimerEnded(): Unit
+</span>47 <span style=''>
+</span>48 <span style=''>  /**
+</span>49 <span style=''>    * Enable player actions on view.
+</span>50 <span style=''>    */
+</span>51 <span style=''>  def enableActions(): Unit
+</span>52 <span style=''>
+</span>53 <span style=''>  /**
+</span>54 <span style=''>    * Disabled player actions on view.
+</span>55 <span style=''>    */
+</span>56 <span style=''>  def disableActions(): Unit
+</span>57 <span style=''>
+</span>58 <span style=''>  /**
+</span>59 <span style=''>    * Notify the player the game ended.
+</span>60 <span style=''>    *
+</span>61 <span style=''>    * @param gameEndType the type of game end
+</span>62 <span style=''>    */
+</span>63 <span style=''>  def notifyGameEnd(gameEndType: GameEndType): Unit
 </span>64 <span style=''>
-</span>65 <span style=''>  /**
-</span>66 <span style=''>    * Notify the player an info message.
-</span>67 <span style=''>    *
-</span>68 <span style=''>    * @param message the message to be displayed
-</span>69 <span style=''>    */
-</span>70 <span style=''>  def notifyInfo(message: String): Unit
-</span>71 <span style=''>
-</span>72 <span style=''>  /**
-</span>73 <span style=''>    * Display a message in the RightBar.
-</span>74 <span style=''>    *
-</span>75 <span style=''>    * @param message the message to be displayed
-</span>76 <span style=''>    */
-</span>77 <span style=''>  def setMessage(message: String): Unit
-</span>78 <span style=''>
-</span>79 <span style=''>  /**
-</span>80 <span style=''>    * Called when the match is ready.
-</span>81 <span style=''>    */
-</span>82 <span style=''>  def matchReady(): Unit
-</span>83 <span style=''>
-</span>84 <span style=''>  /**
-</span>85 <span style=''>    * Called when the match start setting up.
-</span>86 <span style=''>    */
-</span>87 <span style=''>  def initMatch(): Unit
-</span>88 <span style=''>
-</span>89 <span style=''>  /**
-</span>90 <span style=''>    * Updates the displayed game state with the actual one.
-</span>91 <span style=''>    *
-</span>92 <span style=''>    * @param gameState the actual game state
-</span>93 <span style=''>    */
-</span>94 <span style=''>  def updateState(gameState: ClientGameState): Unit
-</span>95 <span style=''>
-</span>96 <span style=''>  /**
-</span>97 <span style=''>    * Notify the player an error.
-</span>98 <span style=''>    *
-</span>99 <span style=''>    * @param error the error occurred
-</span>100 <span style=''>    */
-</span>101 <span style=''>  def notifyError(error: String): Unit
-</span>102 <span style=''>}
-</span>103 <span style=''>
-</span>104 <span style=''>/**
-</span>105 <span style=''>  * Companion object for MachiavelliGameStage
-</span>106 <span style=''>  */
-</span>107 <span style=''>object MachiavelliGameStage {
-</span>108 <span style=''>
-</span>109 <span style=''>  def apply(listener: GameListener): MachiavelliGameStage = </span><span style='background: #F0ADAD'>new MachiavelliGameStageImpl(listener)</span><span style=''>
-</span>110 <span style=''>}
+</span>65 <span style=''>
+</span>66 <span style=''>  /**
+</span>67 <span style=''>    * Notify the player an info message.
+</span>68 <span style=''>    *
+</span>69 <span style=''>    * @param message the message to be displayed
+</span>70 <span style=''>    */
+</span>71 <span style=''>  def notifyInfo(message: String): Unit
+</span>72 <span style=''>
+</span>73 <span style=''>  /**
+</span>74 <span style=''>    * Display a message in the RightBar.
+</span>75 <span style=''>    *
+</span>76 <span style=''>    * @param message the message to be displayed
+</span>77 <span style=''>    */
+</span>78 <span style=''>  def setMessage(message: String): Unit
+</span>79 <span style=''>
+</span>80 <span style=''>  /**
+</span>81 <span style=''>    * Called when the match is ready.
+</span>82 <span style=''>    */
+</span>83 <span style=''>  def matchReady(): Unit
+</span>84 <span style=''>
+</span>85 <span style=''>  /**
+</span>86 <span style=''>    * Called when the match start setting up.
+</span>87 <span style=''>    */
+</span>88 <span style=''>  def initMatch(): Unit
+</span>89 <span style=''>
+</span>90 <span style=''>  /**
+</span>91 <span style=''>    * Updates the displayed game state with the actual one.
+</span>92 <span style=''>    *
+</span>93 <span style=''>    * @param gameState the actual game state
+</span>94 <span style=''>    */
+</span>95 <span style=''>  def updateState(gameState: ClientGameState): Unit
+</span>96 <span style=''>
+</span>97 <span style=''>  /**
+</span>98 <span style=''>    * Notify the player an error.
+</span>99 <span style=''>    *
+</span>100 <span style=''>    * @param error the error occurred
+</span>101 <span style=''>    */
+</span>102 <span style=''>  def notifyError(error: ErrorEvent): Unit
+</span>103 <span style=''>}
+</span>104 <span style=''>
+</span>105 <span style=''>/**
+</span>106 <span style=''>  * Companion object for MachiavelliGameStage
+</span>107 <span style=''>  */
+</span>108 <span style=''>object MachiavelliGameStage {
+</span>109 <span style=''>
+</span>110 <span style=''>  def apply(listener: GameListener): MachiavelliGameStage = </span><span style='background: #F0ADAD'>new MachiavelliGameStageImpl(listener)</span><span style=''>
+</span>111 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -145,15 +146,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          109
+          110
         </td>
         <td>
-          2348
+          2365
         </td>
         <td>
-          2239
+          2283
           -
-          2277
+          2321
         </td>
         <td>
           Apply

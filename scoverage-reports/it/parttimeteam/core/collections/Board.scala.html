@@ -26,100 +26,101 @@
 </span>2 <span style=''>
 </span>3 <span style=''>import java.util.UUID
 </span>4 <span style=''>
-</span>5 <span style=''>import it.parttimeteam.core.cards.Card
-</span>6 <span style=''>
-</span>7 <span style=''>import scala.annotation.tailrec
-</span>8 <span style=''>
-</span>9 <span style=''>trait IdGenerator {
-</span>10 <span style=''>  def generateId: String = </span><span style='background: #AEF1AE'>UUID.randomUUID().toString</span><span style=''>
-</span>11 <span style=''>}
-</span>12 <span style=''>
-</span>13 <span style=''>object CombinationIdGenerator extends IdGenerator {
-</span>14 <span style=''>  private var cache = </span><span style='background: #AEF1AE'>Set.empty[String]</span><span style=''>
-</span>15 <span style=''>
-</span>16 <span style=''>  @tailrec
-</span>17 <span style=''>  def generateUniqueId: String = {
-</span>18 <span style=''>    val id = </span><span style='background: #AEF1AE'>super.generateId</span><span style=''>
-</span>19 <span style=''>    if (</span><span style='background: #AEF1AE'>!(cache contains id)</span><span style=''>) </span><span style='background: #AEF1AE'>{
-</span>20 <span style=''></span><span style='background: #AEF1AE'>      cache = cache + id
-</span>21 <span style=''></span><span style='background: #AEF1AE'>      id
-</span>22 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''> else {
-</span>23 <span style=''>      </span><span style='background: #F0ADAD'>generateUniqueId</span><span style=''>
-</span>24 <span style=''>    }
-</span>25 <span style=''>  }
-</span>26 <span style=''>}
-</span>27 <span style=''>
-</span>28 <span style=''>/**
-</span>29 <span style=''> * Represent the game board.
-</span>30 <span style=''> *
-</span>31 <span style=''> * @param combinations combinations of cards.
-</span>32 <span style=''> */
-</span>33 <span style=''>case class Board(combinations: Seq[CardCombination]) {
-</span>34 <span style=''>  /**
-</span>35 <span style=''>   * Add new combination to game board.
-</span>36 <span style=''>   *
-</span>37 <span style=''>   * @param combination Combinations to add.
-</span>38 <span style=''>   * @return Updated game board.
-</span>39 <span style=''>   */
-</span>40 <span style=''>  def putCombination(combination: CardCombination): Board = </span><span style='background: #AEF1AE'>copy(combinations = (combination +: combinations).reverse)</span><span style=''>
-</span>41 <span style=''>
-</span>42 <span style=''>  /**
-</span>43 <span style=''>   * Add new combination by card sequence.
-</span>44 <span style=''>   * @param cards Cards to add.
-</span>45 <span style=''>   * @return Updated game board.
-</span>46 <span style=''>   */
-</span>47 <span style=''>  def putCombination(cards: Seq[Card]): Board = </span><span style='background: #AEF1AE'>putCombination(CardCombination(CombinationIdGenerator.generateUniqueId, cards))</span><span style=''>
-</span>48 <span style=''>
-</span>49 <span style=''>  /**
-</span>50 <span style=''>   * Pick a card seq from the actual game board.
-</span>51 <span style=''>   *
-</span>52 <span style=''>   * @param cards Combinations to pick up.
-</span>53 <span style=''>   * @return Error string or the updated board.
-</span>54 <span style=''>   */
-</span>55 <span style=''>  def pickCards(cards: Seq[Card]): Either[String, Board] = {
-</span>56 <span style=''>    </span><span style='background: #AEF1AE'>Either.cond(
-</span>57 <span style=''></span><span style='background: #AEF1AE'>      cardsInBoard(cards),
-</span>58 <span style=''></span><span style='background: #AEF1AE'>      Board(combinations.foldLeft(Seq.empty[CardCombination]) {
-</span>59 <span style=''></span><span style='background: #AEF1AE'>        (acc: Seq[CardCombination], boardCombination: CardCombination) =&gt; {
-</span>60 <span style=''></span><span style='background: #AEF1AE'>          val comb = boardCombination.pickCards(cards)
-</span>61 <span style=''></span><span style='background: #AEF1AE'>          if (comb.isEmpty) acc else comb +: acc
-</span>62 <span style=''></span><span style='background: #AEF1AE'>        }
-</span>63 <span style=''></span><span style='background: #AEF1AE'>      }.reverse),
-</span>64 <span style=''></span><span style='background: #AEF1AE'>      &quot;No cards in the board&quot;)</span><span style=''>
-</span>65 <span style=''>  }
-</span>66 <span style=''>
-</span>67 <span style=''>  /**
-</span>68 <span style=''>   * Put a card seq into the actual game board.
-</span>69 <span style=''>   *
-</span>70 <span style=''>   * @param id    Id id the combination where to put cards.
-</span>71 <span style=''>   * @param cards Cards to put.
-</span>72 <span style=''>   * @return Updated game board.
-</span>73 <span style=''>   * @todo This function maybe override without id.
-</span>74 <span style=''>   */
-</span>75 <span style=''>  def putCards(id: String, cards: Seq[Card]): Board = </span><span style='background: #AEF1AE'>copy(combinations = this.combinations.map(comb =&gt;
-</span>76 <span style=''></span><span style='background: #AEF1AE'>    if (comb.id == id) {
-</span>77 <span style=''></span><span style='background: #AEF1AE'>      comb.putCards(cards)
-</span>78 <span style=''></span><span style='background: #AEF1AE'>    } else {
-</span>79 <span style=''></span><span style='background: #AEF1AE'>      comb
-</span>80 <span style=''></span><span style='background: #AEF1AE'>    }))</span><span style=''>
-</span>81 <span style=''>
-</span>82 <span style=''>  /**
-</span>83 <span style=''>   * Return if a card is present in any combination on the board or not.
-</span>84 <span style=''>   *
-</span>85 <span style=''>   * @return True if is present, false anywhere.
-</span>86 <span style=''>   */
-</span>87 <span style=''>  private def cardsInBoard(cards: Seq[Card]): Boolean = {
-</span>88 <span style=''>    val boardCards = </span><span style='background: #AEF1AE'>this.combinations.flatMap(_.cards)</span><span style=''>
-</span>89 <span style=''>    </span><span style='background: #AEF1AE'>cards forall (c =&gt; boardCards contains c)</span><span style=''>
-</span>90 <span style=''>  }
-</span>91 <span style=''>}
-</span>92 <span style=''>
-</span>93 <span style=''>object Board {
-</span>94 <span style=''>  /**
-</span>95 <span style=''>   * Represent an empty game board.
-</span>96 <span style=''>   */
-</span>97 <span style=''>  def empty: Board = </span><span style='background: #AEF1AE'>Board(Seq.empty)</span><span style=''>
-</span>98 <span style=''>}
+</span>5 <span style=''>import it.parttimeteam.core.GameError
+</span>6 <span style=''>import it.parttimeteam.core.cards.Card
+</span>7 <span style=''>
+</span>8 <span style=''>import scala.annotation.tailrec
+</span>9 <span style=''>
+</span>10 <span style=''>trait IdGenerator {
+</span>11 <span style=''>  def generateId: String = </span><span style='background: #AEF1AE'>UUID.randomUUID().toString</span><span style=''>
+</span>12 <span style=''>}
+</span>13 <span style=''>
+</span>14 <span style=''>object CombinationIdGenerator extends IdGenerator {
+</span>15 <span style=''>  private var cache = </span><span style='background: #AEF1AE'>Set.empty[String]</span><span style=''>
+</span>16 <span style=''>
+</span>17 <span style=''>  @tailrec
+</span>18 <span style=''>  def generateUniqueId: String = {
+</span>19 <span style=''>    val id = </span><span style='background: #AEF1AE'>super.generateId</span><span style=''>
+</span>20 <span style=''>    if (</span><span style='background: #AEF1AE'>!(cache contains id)</span><span style=''>) </span><span style='background: #AEF1AE'>{
+</span>21 <span style=''></span><span style='background: #AEF1AE'>      cache = cache + id
+</span>22 <span style=''></span><span style='background: #AEF1AE'>      id
+</span>23 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''> else {
+</span>24 <span style=''>      </span><span style='background: #F0ADAD'>generateUniqueId</span><span style=''>
+</span>25 <span style=''>    }
+</span>26 <span style=''>  }
+</span>27 <span style=''>}
+</span>28 <span style=''>
+</span>29 <span style=''>/**
+</span>30 <span style=''> * Represent the game board.
+</span>31 <span style=''> *
+</span>32 <span style=''> * @param combinations combinations of cards.
+</span>33 <span style=''> */
+</span>34 <span style=''>case class Board(combinations: Seq[CardCombination]) {
+</span>35 <span style=''>  /**
+</span>36 <span style=''>   * Add new combination to game board.
+</span>37 <span style=''>   *
+</span>38 <span style=''>   * @param combination Combinations to add.
+</span>39 <span style=''>   * @return Updated game board.
+</span>40 <span style=''>   */
+</span>41 <span style=''>  def putCombination(combination: CardCombination): Board = </span><span style='background: #AEF1AE'>copy(combinations = (combination +: combinations).reverse)</span><span style=''>
+</span>42 <span style=''>
+</span>43 <span style=''>  /**
+</span>44 <span style=''>   * Add new combination by card sequence.
+</span>45 <span style=''>   * @param cards Cards to add.
+</span>46 <span style=''>   * @return Updated game board.
+</span>47 <span style=''>   */
+</span>48 <span style=''>  def putCombination(cards: Seq[Card]): Board = </span><span style='background: #AEF1AE'>putCombination(CardCombination(CombinationIdGenerator.generateUniqueId, cards))</span><span style=''>
+</span>49 <span style=''>
+</span>50 <span style=''>  /**
+</span>51 <span style=''>   * Pick a card seq from the actual game board.
+</span>52 <span style=''>   *
+</span>53 <span style=''>   * @param cards Combinations to pick up.
+</span>54 <span style=''>   * @return Error string or the updated board.
+</span>55 <span style=''>   */
+</span>56 <span style=''>  def pickCards(cards: Seq[Card]): Either[GameError, Board] = {
+</span>57 <span style=''>    </span><span style='background: #AEF1AE'>Either.cond(
+</span>58 <span style=''></span><span style='background: #AEF1AE'>      cardsInBoard(cards),
+</span>59 <span style=''></span><span style='background: #AEF1AE'>      Board(combinations.foldLeft(Seq.empty[CardCombination]) {
+</span>60 <span style=''></span><span style='background: #AEF1AE'>        (acc: Seq[CardCombination], boardCombination: CardCombination) =&gt; {
+</span>61 <span style=''></span><span style='background: #AEF1AE'>          val comb = boardCombination.pickCards(cards)
+</span>62 <span style=''></span><span style='background: #AEF1AE'>          if (comb.isEmpty) acc else comb +: acc
+</span>63 <span style=''></span><span style='background: #AEF1AE'>        }
+</span>64 <span style=''></span><span style='background: #AEF1AE'>      }.reverse),
+</span>65 <span style=''></span><span style='background: #AEF1AE'>      GameError.NoCardInBoard)</span><span style=''>
+</span>66 <span style=''>  }
+</span>67 <span style=''>
+</span>68 <span style=''>  /**
+</span>69 <span style=''>   * Put a card seq into the actual game board.
+</span>70 <span style=''>   *
+</span>71 <span style=''>   * @param id    Id id the combination where to put cards.
+</span>72 <span style=''>   * @param cards Cards to put.
+</span>73 <span style=''>   * @return Updated game board.
+</span>74 <span style=''>   * @todo This function maybe override without id.
+</span>75 <span style=''>   */
+</span>76 <span style=''>  def putCards(id: String, cards: Seq[Card]): Board = </span><span style='background: #AEF1AE'>copy(combinations = this.combinations.map(comb =&gt;
+</span>77 <span style=''></span><span style='background: #AEF1AE'>    if (comb.id == id) {
+</span>78 <span style=''></span><span style='background: #AEF1AE'>      comb.putCards(cards)
+</span>79 <span style=''></span><span style='background: #AEF1AE'>    } else {
+</span>80 <span style=''></span><span style='background: #AEF1AE'>      comb
+</span>81 <span style=''></span><span style='background: #AEF1AE'>    }))</span><span style=''>
+</span>82 <span style=''>
+</span>83 <span style=''>  /**
+</span>84 <span style=''>   * Return if a card is present in any combination on the board or not.
+</span>85 <span style=''>   *
+</span>86 <span style=''>   * @return True if is present, false anywhere.
+</span>87 <span style=''>   */
+</span>88 <span style=''>  private def cardsInBoard(cards: Seq[Card]): Boolean = {
+</span>89 <span style=''>    val boardCards = </span><span style='background: #AEF1AE'>this.combinations.flatMap(_.cards)</span><span style=''>
+</span>90 <span style=''>    </span><span style='background: #AEF1AE'>cards forall (c =&gt; boardCards contains c)</span><span style=''>
+</span>91 <span style=''>  }
+</span>92 <span style=''>}
+</span>93 <span style=''>
+</span>94 <span style=''>object Board {
+</span>95 <span style=''>  /**
+</span>96 <span style=''>   * Represent an empty game board.
+</span>97 <span style=''>   */
+</span>98 <span style=''>  def empty: Board = </span><span style='background: #AEF1AE'>Board(Seq.empty)</span><span style=''>
+</span>99 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -133,15 +134,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
-          468
+          664
         </td>
         <td>
-          185
+          223
           -
-          211
+          249
         </td>
         <td>
           Apply
@@ -154,15 +155,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
-          735
+          492
         </td>
         <td>
-          289
+          327
           -
-          306
+          344
         </td>
         <td>
           TypeApply
@@ -175,15 +176,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          19
         </td>
         <td>
-          663
+          764
         </td>
         <td>
-          367
+          405
           -
-          383
+          421
         </td>
         <td>
           Select
@@ -196,15 +197,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          20
         </td>
         <td>
-          878
+          615
         </td>
         <td>
-          414
+          452
           -
-          455
+          493
         </td>
         <td>
           Block
@@ -220,15 +221,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          20
         </td>
         <td>
-          491
+          605
         </td>
         <td>
-          392
+          430
           -
-          412
+          450
         </td>
         <td>
           Select
@@ -241,15 +242,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          21
         </td>
         <td>
-          762
+          880
         </td>
         <td>
-          430
+          468
           -
-          440
+          478
         </td>
         <td>
           Apply
@@ -262,15 +263,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          21
         </td>
         <td>
-          604
+          799
         </td>
         <td>
-          422
+          460
           -
-          440
+          478
         </td>
         <td>
           Apply
@@ -283,15 +284,15 @@
         </td>
       </tr><tr>
         <td>
-          23
-        </td>
-        <td>
-          797
+          24
         </td>
         <td>
           469
+        </td>
+        <td>
+          507
           -
-          485
+          523
         </td>
         <td>
           Select
@@ -304,15 +305,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          24
         </td>
         <td>
-          614
+          746
         </td>
         <td>
-          469
+          507
           -
-          485
+          523
         </td>
         <td>
           Block
@@ -325,81 +326,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          41
         </td>
         <td>
-          469
+          759
         </td>
         <td>
-          868
+          894
           -
-          868
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.Seq.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination]
-        </td>
-      </tr><tr>
-        <td>
-          40
-        </td>
-        <td>
-          492
-        </td>
-        <td>
-          835
-          -
-          893
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.collections.Board.copy
-        </td>
-        <td style="background: #AEF1AE">
-          Board.this.copy({
-  &lt;synthetic&gt; &lt;artifact&gt; val x$1: it.parttimeteam.core.collections.CardCombination = combination;
-  Board.this.combinations.+:[it.parttimeteam.core.collections.CardCombination, Seq[it.parttimeteam.core.collections.CardCombination]](x$1)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination])
-}.reverse)
-        </td>
-      </tr><tr>
-        <td>
-          40
-        </td>
-        <td>
-          745
-        </td>
-        <td>
-          868
-          -
-          883
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.SeqLike.+:
-        </td>
-        <td style="background: #AEF1AE">
-          Board.this.combinations.+:[it.parttimeteam.core.collections.CardCombination, Seq[it.parttimeteam.core.collections.CardCombination]](x$1)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination])
-        </td>
-      </tr><tr>
-        <td>
-          40
-        </td>
-        <td>
-          580
-        </td>
-        <td>
-          856
-          -
-          892
+          930
         </td>
         <td>
           Select
@@ -415,57 +350,81 @@
         </td>
       </tr><tr>
         <td>
-          47
+          41
         </td>
         <td>
-          757
+          606
         </td>
         <td>
-          1094
+          873
           -
-          1133
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.collections.CombinationIdGenerator.generateUniqueId
-        </td>
-        <td style="background: #AEF1AE">
-          CombinationIdGenerator.generateUniqueId
-        </td>
-      </tr><tr>
-        <td>
-          47
-        </td>
-        <td>
-          874
-        </td>
-        <td>
-          1063
-          -
-          1142
+          931
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.core.collections.Board.putCombination
+          it.parttimeteam.core.collections.Board.copy
         </td>
         <td style="background: #AEF1AE">
-          Board.this.putCombination(CardCombination.apply(CombinationIdGenerator.generateUniqueId, cards))
+          Board.this.copy({
+  &lt;synthetic&gt; &lt;artifact&gt; val x$1: it.parttimeteam.core.collections.CardCombination = combination;
+  Board.this.combinations.+:[it.parttimeteam.core.collections.CardCombination, Seq[it.parttimeteam.core.collections.CardCombination]](x$1)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination])
+}.reverse)
         </td>
       </tr><tr>
         <td>
-          47
+          41
         </td>
         <td>
-          605
+          581
         </td>
         <td>
-          1078
+          906
           -
-          1141
+          906
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination]
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          493
+        </td>
+        <td>
+          906
+          -
+          921
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.SeqLike.+:
+        </td>
+        <td style="background: #AEF1AE">
+          Board.this.combinations.+:[it.parttimeteam.core.collections.CardCombination, Seq[it.parttimeteam.core.collections.CardCombination]](x$1)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination])
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          791
+        </td>
+        <td>
+          1116
+          -
+          1179
         </td>
         <td>
           Apply
@@ -478,15 +437,57 @@
         </td>
       </tr><tr>
         <td>
-          56
+          48
         </td>
         <td>
-          463
+          876
         </td>
         <td>
-          1366
+          1132
           -
-          1708
+          1171
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CombinationIdGenerator.generateUniqueId
+        </td>
+        <td style="background: #AEF1AE">
+          CombinationIdGenerator.generateUniqueId
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          616
+        </td>
+        <td>
+          1101
+          -
+          1180
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Board.putCombination
+        </td>
+        <td style="background: #AEF1AE">
+          Board.this.putCombination(CardCombination.apply(CombinationIdGenerator.generateUniqueId, cards))
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          571
+        </td>
+        <td>
+          1407
+          -
+          1749
         </td>
         <td>
           Apply
@@ -495,7 +496,7 @@
           scala.util.Either.cond
         </td>
         <td style="background: #AEF1AE">
-          scala.`package`.Either.cond[String, it.parttimeteam.core.collections.Board](Board.this.cardsInBoard(cards), Board.apply(Board.this.combinations.foldLeft[Seq[it.parttimeteam.core.collections.CardCombination]](scala.collection.Seq.empty[it.parttimeteam.core.collections.CardCombination])(((acc: Seq[it.parttimeteam.core.collections.CardCombination], boardCombination: it.parttimeteam.core.collections.CardCombination) =&gt; {
+          scala.`package`.Either.cond[it.parttimeteam.core.GameError.NoCardInBoard.type, it.parttimeteam.core.collections.Board](Board.this.cardsInBoard(cards), Board.apply(Board.this.combinations.foldLeft[Seq[it.parttimeteam.core.collections.CardCombination]](scala.collection.Seq.empty[it.parttimeteam.core.collections.CardCombination])(((acc: Seq[it.parttimeteam.core.collections.CardCombination], boardCombination: it.parttimeteam.core.collections.CardCombination) =&gt; {
   val comb: it.parttimeteam.core.collections.CardCombination = boardCombination.pickCards(cards);
   if (comb.isEmpty)
     acc
@@ -504,19 +505,19 @@
       &lt;synthetic&gt; &lt;artifact&gt; val x$2: it.parttimeteam.core.collections.CardCombination = comb;
       acc.+:[it.parttimeteam.core.collections.CardCombination, Seq[it.parttimeteam.core.collections.CardCombination]](x$2)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination])
     }
-})).reverse), &quot;No cards in the board&quot;)
+})).reverse), it.parttimeteam.core.GameError.NoCardInBoard)
         </td>
       </tr><tr>
         <td>
-          57
+          58
         </td>
         <td>
-          789
+          461
         </td>
         <td>
-          1385
+          1426
           -
-          1404
+          1445
         </td>
         <td>
           Apply
@@ -529,15 +530,15 @@
         </td>
       </tr><tr>
         <td>
-          58
+          59
         </td>
         <td>
-          711
+          463
         </td>
         <td>
-          1412
+          1453
           -
-          1676
+          1717
         </td>
         <td>
           Apply
@@ -559,15 +560,15 @@
         </td>
       </tr><tr>
         <td>
-          58
+          59
         </td>
         <td>
-          615
+          733
         </td>
         <td>
-          1440
+          1481
           -
-          1466
+          1507
         </td>
         <td>
           TypeApply
@@ -580,15 +581,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          61
         </td>
         <td>
-          461
+          575
         </td>
         <td>
-          1567
+          1608
           -
-          1600
+          1641
         </td>
         <td>
           Apply
@@ -601,15 +602,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          62
         </td>
         <td>
-          732
+          486
         </td>
         <td>
-          1615
+          1656
           -
-          1627
+          1668
         </td>
         <td>
           Select
@@ -622,15 +623,57 @@
         </td>
       </tr><tr>
         <td>
-          61
+          62
         </td>
         <td>
-          606
+          871
         </td>
         <td>
-          1638
+          1684
           -
-          1649
+          1690
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          scala.collection.SeqLike.+:
+        </td>
+        <td style="background: #AEF1AE">
+          acc.+:[it.parttimeteam.core.collections.CardCombination, Seq[it.parttimeteam.core.collections.CardCombination]](x$2)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination])
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          760
+        </td>
+        <td>
+          1670
+          -
+          1673
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Board.acc
+        </td>
+        <td style="background: #AEF1AE">
+          acc
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          712
+        </td>
+        <td>
+          1679
+          -
+          1690
         </td>
         <td>
           Block
@@ -646,36 +689,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          62
         </td>
         <td>
-          758
+          607
         </td>
         <td>
-          1643
+          1684
           -
-          1649
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          scala.collection.SeqLike.+:
-        </td>
-        <td style="background: #AEF1AE">
-          acc.+:[it.parttimeteam.core.collections.CardCombination, Seq[it.parttimeteam.core.collections.CardCombination]](x$2)(collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination])
-        </td>
-      </tr><tr>
-        <td>
-          61
-        </td>
-        <td>
-          485
-        </td>
-        <td>
-          1643
-          -
-          1643
+          1684
         </td>
         <td>
           TypeApply
@@ -688,36 +710,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          64
         </td>
         <td>
-          574
+          614
         </td>
         <td>
-          1629
+          1459
           -
-          1632
-        </td>
-        <td>
-          Ident
-        </td>
-        <td>
-          it.parttimeteam.core.collections.Board.acc
-        </td>
-        <td style="background: #AEF1AE">
-          acc
-        </td>
-      </tr><tr>
-        <td>
-          63
-        </td>
-        <td>
-          869
-        </td>
-        <td>
-          1418
-          -
-          1675
+          1716
         </td>
         <td>
           Select
@@ -739,36 +740,36 @@
         </td>
       </tr><tr>
         <td>
-          64
+          65
         </td>
         <td>
-          613
+          735
         </td>
         <td>
-          1684
+          1725
           -
-          1707
+          1748
         </td>
         <td>
-          Literal
+          Select
         </td>
         <td>
-          &lt;nosymbol&gt;
+          it.parttimeteam.core.GameError.NoCardInBoard
         </td>
         <td style="background: #AEF1AE">
-          &quot;No cards in the board&quot;
+          it.parttimeteam.core.GameError.NoCardInBoard
         </td>
       </tr><tr>
         <td>
-          75
+          76
         </td>
         <td>
-          608
+          708
         </td>
         <td>
-          2051
+          2092
           -
-          2051
+          2092
         </td>
         <td>
           TypeApply
@@ -781,39 +782,15 @@
         </td>
       </tr><tr>
         <td>
-          75
+          76
         </td>
         <td>
-          707
+          632
         </td>
         <td>
-          2010
+          2071
           -
-          2143
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.collections.Board.copy
-        </td>
-        <td style="background: #AEF1AE">
-          Board.this.copy(this.combinations.map[it.parttimeteam.core.collections.CardCombination, Seq[it.parttimeteam.core.collections.CardCombination]](((comb: it.parttimeteam.core.collections.CardCombination) =&gt; if (comb.id.==(id))
-  comb.putCards(cards)
-else
-  comb))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination]))
-        </td>
-      </tr><tr>
-        <td>
-          75
-        </td>
-        <td>
-          871
-        </td>
-        <td>
-          2030
-          -
-          2142
+          2183
         </td>
         <td>
           ApplyToImplicitArgs
@@ -832,12 +809,36 @@ else
           76
         </td>
         <td>
-          734
+          464
         </td>
         <td>
-          2068
+          2051
           -
-          2081
+          2184
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Board.copy
+        </td>
+        <td style="background: #AEF1AE">
+          Board.this.copy(this.combinations.map[it.parttimeteam.core.collections.CardCombination, Seq[it.parttimeteam.core.collections.CardCombination]](((comb: it.parttimeteam.core.collections.CardCombination) =&gt; if (comb.id.==(id))
+  comb.putCards(cards)
+else
+  comb))(collection.this.Seq.canBuildFrom[it.parttimeteam.core.collections.CardCombination]))
+        </td>
+      </tr><tr>
+        <td>
+          77
+        </td>
+        <td>
+          491
+        </td>
+        <td>
+          2109
+          -
+          2122
         </td>
         <td>
           Apply
@@ -850,15 +851,15 @@ else
         </td>
       </tr><tr>
         <td>
-          77
+          78
         </td>
         <td>
-          490
+          609
         </td>
         <td>
-          2091
+          2132
           -
-          2111
+          2152
         </td>
         <td>
           Block
@@ -871,15 +872,15 @@ else
         </td>
       </tr><tr>
         <td>
-          77
+          78
         </td>
         <td>
-          570
+          753
         </td>
         <td>
-          2091
+          2132
           -
-          2111
+          2152
         </td>
         <td>
           Apply
@@ -892,15 +893,15 @@ else
         </td>
       </tr><tr>
         <td>
-          79
+          80
         </td>
         <td>
-          752
+          873
         </td>
         <td>
-          2131
+          2172
           -
-          2135
+          2176
         </td>
         <td>
           Ident
@@ -913,36 +914,15 @@ else
         </td>
       </tr><tr>
         <td>
-          88
+          89
         </td>
         <td>
-          464
+          749
         </td>
         <td>
-          2388
+          2430
           -
-          2388
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.Seq.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          631
-        </td>
-        <td>
-          2389
-          -
-          2396
+          2437
         </td>
         <td>
           Select
@@ -955,15 +935,36 @@ else
         </td>
       </tr><tr>
         <td>
-          88
+          89
         </td>
         <td>
-          748
+          572
         </td>
         <td>
-          2363
+          2429
           -
-          2397
+          2429
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[it.parttimeteam.core.cards.Card]
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          485
+        </td>
+        <td>
+          2404
+          -
+          2438
         </td>
         <td>
           ApplyToImplicitArgs
@@ -976,15 +977,15 @@ else
         </td>
       </tr><tr>
         <td>
-          89
+          90
         </td>
         <td>
-          571
+          772
         </td>
         <td>
-          2421
+          2462
           -
-          2442
+          2483
         </td>
         <td>
           Apply
@@ -997,15 +998,15 @@ else
         </td>
       </tr><tr>
         <td>
-          89
+          90
         </td>
         <td>
-          484
+          610
         </td>
         <td>
-          2402
-          -
           2443
+          -
+          2484
         </td>
         <td>
           Apply
@@ -1018,36 +1019,15 @@ else
         </td>
       </tr><tr>
         <td>
-          97
+          98
         </td>
         <td>
-          609
+          883
         </td>
         <td>
-          2535
+          2582
           -
-          2551
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.collections.Board.apply
-        </td>
-        <td style="background: #AEF1AE">
-          Board.apply(scala.collection.Seq.empty[Nothing])
-        </td>
-      </tr><tr>
-        <td>
-          97
-        </td>
-        <td>
-          770
-        </td>
-        <td>
-          2541
-          -
-          2550
+          2591
         </td>
         <td>
           TypeApply
@@ -1057,6 +1037,27 @@ else
         </td>
         <td style="background: #AEF1AE">
           scala.collection.Seq.empty[Nothing]
+        </td>
+      </tr><tr>
+        <td>
+          98
+        </td>
+        <td>
+          721
+        </td>
+        <td>
+          2576
+          -
+          2592
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Board.apply
+        </td>
+        <td style="background: #AEF1AE">
+          Board.apply(scala.collection.Seq.empty[Nothing])
         </td>
       </tr>
     </table>

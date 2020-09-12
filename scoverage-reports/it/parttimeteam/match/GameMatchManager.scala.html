@@ -48,52 +48,48 @@
 </span>24 <span style=''>   */
 </span>25 <span style=''>  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
 </span>26 <span style=''>    playerAction match {
-</span>27 <span style=''>      case DrawCard =&gt; {
-</span>28 <span style=''>        </span><span style='background: #AEF1AE'>nextStateOnCardDrawn(currentState, playerInTurn)</span><span style=''>
-</span>29 <span style=''>      }
+</span>27 <span style=''>      case DrawCard =&gt; </span><span style='background: #AEF1AE'>nextStateOnCardDrawn(currentState, playerInTurn)</span><span style=''>
+</span>28 <span style=''>
+</span>29 <span style=''>      case PlayedMove(updatedHand, updatedBoard) =&gt; </span><span style='background: #F0ADAD'>nextStateOnPlayerMove(currentState, playerInTurn, updatedHand, updatedBoard)</span><span style=''>
 </span>30 <span style=''>
-</span>31 <span style=''>      case PlayedMove(updatedHand, updatedBoard) =&gt; {
-</span>32 <span style=''>        </span><span style='background: #F0ADAD'>nextStateOnPlayerMove(currentState, playerInTurn, updatedHand, updatedBoard)</span><span style=''>
-</span>33 <span style=''>      }
+</span>31 <span style=''>      case _ =&gt; </span><span style='background: #F0ADAD'>Left(&quot;Non supported action&quot;)</span><span style=''>
+</span>32 <span style=''>    }
+</span>33 <span style=''>  }
 </span>34 <span style=''>
-</span>35 <span style=''>      case _ =&gt; </span><span style='background: #F0ADAD'>Left(&quot;Non supported action&quot;)</span><span style=''>
-</span>36 <span style=''>    }
-</span>37 <span style=''>  }
-</span>38 <span style=''>
-</span>39 <span style=''>  private def nextStateOnPlayerMove(currentState: GameState, playerInTurn: GamePlayer, updatedHand: Hand, updatedBoard: Board) = {
-</span>40 <span style=''>    if (</span><span style='background: #F0ADAD'>gameApi.validateMove(updatedBoard, updatedHand)</span><span style=''>) </span><span style='background: #F0ADAD'>{
-</span>41 <span style=''></span><span style='background: #F0ADAD'>      val updatedState = currentState
-</span>42 <span style=''></span><span style='background: #F0ADAD'>        .getPlayer(playerInTurn.id)
-</span>43 <span style=''></span><span style='background: #F0ADAD'>        .map(p =&gt; currentState.updatePlayer(p.copy(
-</span>44 <span style=''></span><span style='background: #F0ADAD'>          hand = updatedHand)))
-</span>45 <span style=''></span><span style='background: #F0ADAD'>        .get.copy(board = updatedBoard)
-</span>46 <span style=''></span><span style='background: #F0ADAD'>
-</span>47 <span style=''></span><span style='background: #F0ADAD'>      Right(StateResult(
-</span>48 <span style=''></span><span style='background: #F0ADAD'>        updatedState = updatedState,
-</span>49 <span style=''></span><span style='background: #F0ADAD'>        additionalInformation = None
-</span>50 <span style=''></span><span style='background: #F0ADAD'>      ))
-</span>51 <span style=''></span><span style='background: #F0ADAD'>
-</span>52 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''> else {
-</span>53 <span style=''>      </span><span style='background: #F0ADAD'>Left(&quot;Non valid plays&quot;)</span><span style=''>
-</span>54 <span style=''>    }
-</span>55 <span style=''>  }
-</span>56 <span style=''>
-</span>57 <span style=''>  private def nextStateOnCardDrawn(currentState: GameState, playerInTurn: GamePlayer) = {
-</span>58 <span style=''>    val (updateDeck, cardDrawn) = gameApi.draw(currentState.deck)
-</span>59 <span style=''>
-</span>60 <span style=''>    // updated player with the new card on his hand
-</span>61 <span style=''>    val updatedState = </span><span style='background: #AEF1AE'>currentState
-</span>62 <span style=''></span><span style='background: #AEF1AE'>      .getPlayer(playerInTurn.id)
-</span>63 <span style=''></span><span style='background: #AEF1AE'>      .map(p =&gt; currentState.updatePlayer(p.copy(
-</span>64 <span style=''></span><span style='background: #AEF1AE'>        hand = p.hand.copy(playerCards = cardDrawn +: p.hand.playerCards))))
-</span>65 <span style=''></span><span style='background: #AEF1AE'>      .get.copy(deck = updateDeck)</span><span style=''>
-</span>66 <span style=''>
-</span>67 <span style=''>    </span><span style='background: #AEF1AE'>Right(StateResult(
-</span>68 <span style=''></span><span style='background: #AEF1AE'>      updatedState = updatedState,
-</span>69 <span style=''></span><span style='background: #AEF1AE'>      additionalInformation = Some(CardDrawnInfo(cardDrawn))
-</span>70 <span style=''></span><span style='background: #AEF1AE'>    ))</span><span style=''>
-</span>71 <span style=''>  }
-</span>72 <span style=''>}
+</span>35 <span style=''>  private def nextStateOnPlayerMove(currentState: GameState, playerInTurn: GamePlayer, updatedHand: Hand, updatedBoard: Board) = {
+</span>36 <span style=''>    if (</span><span style='background: #F0ADAD'>gameApi.validateMove(updatedBoard, updatedHand)</span><span style=''>) </span><span style='background: #F0ADAD'>{
+</span>37 <span style=''></span><span style='background: #F0ADAD'>      val updatedState = currentState
+</span>38 <span style=''></span><span style='background: #F0ADAD'>        .getPlayer(playerInTurn.id)
+</span>39 <span style=''></span><span style='background: #F0ADAD'>        .map(p =&gt; currentState.updatePlayer(p.copy(
+</span>40 <span style=''></span><span style='background: #F0ADAD'>          hand = updatedHand)))
+</span>41 <span style=''></span><span style='background: #F0ADAD'>        .get.copy(board = updatedBoard)
+</span>42 <span style=''></span><span style='background: #F0ADAD'>
+</span>43 <span style=''></span><span style='background: #F0ADAD'>      Right(StateResult(
+</span>44 <span style=''></span><span style='background: #F0ADAD'>        updatedState = updatedState,
+</span>45 <span style=''></span><span style='background: #F0ADAD'>        additionalInformation = None
+</span>46 <span style=''></span><span style='background: #F0ADAD'>      ))
+</span>47 <span style=''></span><span style='background: #F0ADAD'>
+</span>48 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''> else {
+</span>49 <span style=''>      </span><span style='background: #F0ADAD'>Left(&quot;Non valid plays&quot;)</span><span style=''>
+</span>50 <span style=''>    }
+</span>51 <span style=''>  }
+</span>52 <span style=''>
+</span>53 <span style=''>  private def nextStateOnCardDrawn(currentState: GameState, playerInTurn: GamePlayer) = {
+</span>54 <span style=''>    val (updateDeck, cardDrawn) = gameApi.draw(currentState.deck)
+</span>55 <span style=''>
+</span>56 <span style=''>    // updated player with the new card on his hand
+</span>57 <span style=''>    val updatedState = </span><span style='background: #AEF1AE'>currentState
+</span>58 <span style=''></span><span style='background: #AEF1AE'>      .getPlayer(playerInTurn.id)
+</span>59 <span style=''></span><span style='background: #AEF1AE'>      .map(p =&gt; currentState.updatePlayer(p.copy(
+</span>60 <span style=''></span><span style='background: #AEF1AE'>        hand = p.hand.copy(playerCards = cardDrawn +: p.hand.playerCards))))
+</span>61 <span style=''></span><span style='background: #AEF1AE'>      .get.copy(deck = updateDeck)</span><span style=''>
+</span>62 <span style=''>
+</span>63 <span style=''>    </span><span style='background: #AEF1AE'>Right(StateResult(
+</span>64 <span style=''></span><span style='background: #AEF1AE'>      updatedState = updatedState,
+</span>65 <span style=''></span><span style='background: #AEF1AE'>      additionalInformation = Some(CardDrawnInfo(cardDrawn))
+</span>66 <span style=''></span><span style='background: #AEF1AE'>    ))</span><span style=''>
+</span>67 <span style=''>  }
+</span>68 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -128,15 +124,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          27
         </td>
         <td>
           313
         </td>
         <td>
-          1051
+          1041
           -
-          1099
+          1089
         </td>
         <td>
           Apply
@@ -149,15 +145,15 @@
         </td>
       </tr><tr>
         <td>
-          32
+          29
         </td>
         <td>
           164
         </td>
         <td>
-          1171
+          1143
           -
-          1247
+          1219
         </td>
         <td>
           Apply
@@ -170,15 +166,15 @@
         </td>
       </tr><tr>
         <td>
-          35
+          31
         </td>
         <td>
           436
         </td>
         <td>
-          1273
+          1237
           -
-          1301
+          1265
         </td>
         <td>
           Apply
@@ -191,15 +187,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          36
         </td>
         <td>
           141
         </td>
         <td>
-          1501
+          1465
           -
-          1816
+          1780
         </td>
         <td>
           Block
@@ -226,15 +222,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          36
         </td>
         <td>
           266
         </td>
         <td>
-          1452
+          1416
           -
-          1499
+          1463
         </td>
         <td>
           Apply
@@ -247,15 +243,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          38
         </td>
         <td>
           189
         </td>
         <td>
-          1560
+          1524
           -
-          1575
+          1539
         </td>
         <td>
           Select
@@ -268,15 +264,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          39
         </td>
         <td>
           125
         </td>
         <td>
-          1621
+          1585
           -
-          1658
+          1622
         </td>
         <td>
           Apply
@@ -289,15 +285,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          39
         </td>
         <td>
           13
         </td>
         <td>
-          1623
+          1587
           -
-          1623
+          1587
         </td>
         <td>
           Select
@@ -310,15 +306,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          39
         </td>
         <td>
           309
         </td>
         <td>
-          1623
+          1587
           -
-          1623
+          1587
         </td>
         <td>
           Select
@@ -331,15 +327,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          39
         </td>
         <td>
           36
         </td>
         <td>
-          1595
+          1559
           -
-          1659
+          1623
         </td>
         <td>
           Apply
@@ -357,15 +353,15 @@
         </td>
       </tr><tr>
         <td>
-          45
+          41
         </td>
         <td>
           333
         </td>
         <td>
-          1528
+          1492
           -
-          1673
+          1637
         </td>
         <td>
           Select
@@ -383,15 +379,15 @@
         </td>
       </tr><tr>
         <td>
-          45
+          41
         </td>
         <td>
           279
         </td>
         <td>
-          1528
+          1492
           -
-          1700
+          1664
         </td>
         <td>
           Apply
@@ -404,15 +400,15 @@
         </td>
       </tr><tr>
         <td>
-          45
+          41
         </td>
         <td>
           165
         </td>
         <td>
-          1674
+          1638
           -
-          1674
+          1638
         </td>
         <td>
           Select
@@ -425,15 +421,15 @@
         </td>
       </tr><tr>
         <td>
-          45
+          41
         </td>
         <td>
           446
         </td>
         <td>
-          1674
+          1638
           -
-          1674
+          1638
         </td>
         <td>
           Select
@@ -446,15 +442,15 @@
         </td>
       </tr><tr>
         <td>
-          47
+          43
         </td>
         <td>
           310
         </td>
         <td>
-          1708
+          1672
           -
-          1809
+          1773
         </td>
         <td>
           Apply
@@ -467,15 +463,15 @@
         </td>
       </tr><tr>
         <td>
-          47
+          43
         </td>
         <td>
           9
         </td>
         <td>
-          1714
+          1678
           -
-          1808
+          1772
         </td>
         <td>
           Apply
@@ -488,15 +484,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          45
         </td>
         <td>
           179
         </td>
         <td>
-          1796
+          1760
           -
-          1800
+          1764
         </td>
         <td>
           Select
@@ -509,15 +505,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          49
         </td>
         <td>
           424
         </td>
         <td>
-          1830
+          1794
           -
-          1853
+          1817
         </td>
         <td>
           Apply
@@ -530,15 +526,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          49
         </td>
         <td>
           334
         </td>
         <td>
-          1830
+          1794
           -
-          1853
+          1817
         </td>
         <td>
           Block
@@ -551,15 +547,15 @@
         </td>
       </tr><tr>
         <td>
-          58
+          54
         </td>
         <td>
           448
         </td>
         <td>
-          1976
+          1940
           -
-          1976
+          1940
         </td>
         <td>
           Select
@@ -572,15 +568,15 @@
         </td>
       </tr><tr>
         <td>
-          58
+          54
         </td>
         <td>
           156
         </td>
         <td>
-          1964
+          1928
           -
-          1964
+          1928
         </td>
         <td>
           Select
@@ -593,15 +589,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          58
         </td>
         <td>
           274
         </td>
         <td>
-          2127
+          2091
           -
-          2142
+          2106
         </td>
         <td>
           Select
@@ -614,15 +610,15 @@
         </td>
       </tr><tr>
         <td>
-          63
+          59
         </td>
         <td>
           441
         </td>
         <td>
-          2186
+          2150
           -
-          2268
+          2232
         </td>
         <td>
           Apply
@@ -635,15 +631,15 @@
         </td>
       </tr><tr>
         <td>
-          63
+          59
         </td>
         <td>
           157
         </td>
         <td>
-          2188
+          2152
           -
-          2188
+          2152
         </td>
         <td>
           Select
@@ -656,15 +652,15 @@
         </td>
       </tr><tr>
         <td>
-          63
+          59
         </td>
         <td>
           275
         </td>
         <td>
-          2160
+          2124
           -
-          2269
+          2233
         </td>
         <td>
           Apply
@@ -690,15 +686,15 @@
         </td>
       </tr><tr>
         <td>
-          63
+          59
         </td>
         <td>
           314
         </td>
         <td>
-          2188
+          2152
           -
-          2188
+          2152
         </td>
         <td>
           Select
@@ -711,15 +707,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          60
         </td>
         <td>
           131
         </td>
         <td>
-          2216
+          2180
           -
-          2216
+          2180
         </td>
         <td>
           Select
@@ -732,15 +728,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          60
         </td>
         <td>
           11
         </td>
         <td>
-          2245
+          2209
           -
-          2245
+          2209
         </td>
         <td>
           TypeApply
@@ -753,15 +749,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          60
         </td>
         <td>
           180
         </td>
         <td>
-          2209
+          2173
           -
-          2215
+          2179
         </td>
         <td>
           Select
@@ -774,15 +770,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          60
         </td>
         <td>
           425
         </td>
         <td>
-          2209
+          2173
           -
-          2267
+          2231
         </td>
         <td>
           Apply
@@ -795,15 +791,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          60
         </td>
         <td>
           302
         </td>
         <td>
-          2245
+          2209
           -
-          2266
+          2230
         </td>
         <td>
           ApplyToImplicitArgs
@@ -816,15 +812,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          61
         </td>
         <td>
           181
         </td>
         <td>
-          2097
+          2061
           -
-          2281
+          2245
         </td>
         <td>
           Select
@@ -850,15 +846,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          61
         </td>
         <td>
           139
         </td>
         <td>
-          2097
+          2061
           -
-          2305
+          2269
         </td>
         <td>
           Apply
@@ -871,15 +867,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          61
         </td>
         <td>
           303
         </td>
         <td>
-          2282
+          2246
           -
-          2282
+          2246
         </td>
         <td>
           Select
@@ -892,15 +888,15 @@
         </td>
       </tr><tr>
         <td>
-          65
+          61
         </td>
         <td>
           3
         </td>
         <td>
-          2282
+          2246
           -
-          2282
+          2246
         </td>
         <td>
           Select
@@ -913,15 +909,15 @@
         </td>
       </tr><tr>
         <td>
-          67
+          63
         </td>
         <td>
           447
         </td>
         <td>
-          2311
+          2275
           -
-          2432
+          2396
         </td>
         <td>
           Apply
@@ -934,15 +930,15 @@
         </td>
       </tr><tr>
         <td>
-          67
+          63
         </td>
         <td>
           147
         </td>
         <td>
-          2317
+          2281
           -
-          2431
+          2395
         </td>
         <td>
           Apply
@@ -955,15 +951,15 @@
         </td>
       </tr><tr>
         <td>
-          69
+          65
         </td>
         <td>
           315
         </td>
         <td>
-          2395
+          2359
           -
-          2425
+          2389
         </td>
         <td>
           Apply
@@ -976,15 +972,15 @@
         </td>
       </tr><tr>
         <td>
-          69
+          65
         </td>
         <td>
           419
         </td>
         <td>
-          2400
+          2364
           -
-          2424
+          2388
         </td>
         <td>
           Apply
