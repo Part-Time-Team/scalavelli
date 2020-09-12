@@ -15,7 +15,7 @@ import scalafx.stage.Stage
   * @param parentStage the stage which contains the scene
   * @param listener    the listener which allow to select the modality
   */
-class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) extends BaseStartUpScene(parentStage) {
+class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) extends BaseStartupScene(parentStage) {
   val title: ImageView = new ImageView(new Image("/images/game_title.png")) {
     fitWidth <== parentStage.width / 3
     preserveRatio = true

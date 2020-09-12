@@ -3,7 +3,7 @@ package it.parttimeteam.view.startup.scenes
 import it.parttimeteam.GamePreferences
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.PublicGameSubmitViewEvent
-import it.parttimeteam.view.startup.listeners.StartUpSceneListener
+import it.parttimeteam.view.startup.listeners.StartupSceneListener
 import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
@@ -16,9 +16,9 @@ import scalafx.stage.Stage
   *
   * @param listener to interact with parent stage
   */
-class PublicGameStartUpScene(override val parentStage: Stage, val listener: StartUpSceneListener) extends BaseStartUpFormScene(parentStage) {
-  val topBar: StartUpSceneTopBar = new StartUpSceneTopBar(listener)
-  val bottomBar: StartUpSceneBottomBar = new StartUpSceneBottomBar(() => submit())
+class PublicGameScene(override val parentStage: Stage, val listener: StartupSceneListener) extends BaseStartupFormScene(parentStage) {
+  val topBar: StartupSceneTopBar = new StartupSceneTopBar(listener)
+  val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBar(() => submit())
 
   val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
   val usernameField: TextField = MachiavelliTextField("Username")

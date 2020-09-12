@@ -8,20 +8,20 @@ import scalafx.application.{JFXApp, Platform}
 
 class StartUpControllerImpl extends StartUpController {
 
-  private var startUpStage: MachiavelliStartUpStage = _
+  private var startUpStage: MachiavelliStartupStage = _
   private val startUpService: StartupService = new StartupServiceImpl(notifyEvent)
   private var startGameFunction: GameMatchInformations => Unit = _
 
   override def start(app: JFXApp, startGame: GameMatchInformations => Unit): Unit = {
     Platform.runLater({
-      startUpStage = MachiavelliStartUpStage(this)
+      startUpStage = MachiavelliStartupStage(this)
       app.stage = startUpStage
     })
     startGameFunction = startGame
     this.startUpService.connect(Constants.Remote.SERVER_ADDRESS, Constants.Remote.SERVER_PORT)
   }
 
-  override def onViewEvent(viewEvent: StartUpViewEvent): Unit = viewEvent match {
+  override def onViewEvent(viewEvent: StartupViewEvent): Unit = viewEvent match {
     case PublicGameSubmitViewEvent(username, playersNumber) => {
       System.out.println(s"PublicGameSubmitViewEvent $username - $playersNumber")
       this.startUpService.joinPublicLobby(username, playersNumber)

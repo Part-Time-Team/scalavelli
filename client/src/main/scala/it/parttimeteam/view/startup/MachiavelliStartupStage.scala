@@ -13,7 +13,7 @@ import scalafx.scene.control.Alert.AlertType
 /**
   * Stage for startup scenes.
   */
-trait MachiavelliStartUpStage extends BaseStage with PrimaryStageListener {
+trait MachiavelliStartupStage extends BaseStage with PrimaryStageListener {
   def notifyPrivateCode(privateCode: String): Unit
 
   def notifyLobbyJoined(): Unit
@@ -26,7 +26,7 @@ trait MachiavelliStartUpStage extends BaseStage with PrimaryStageListener {
   *
   * @param gameStartUpListener enables to call actions exposed by controller
   */
-class MachiavelliStartUpStageImpl(gameStartUpListener: GameStartUpListener) extends MachiavelliStartUpStage {
+class MachiavelliStartupStageImpl(gameStartUpListener: GameStartUpListener) extends MachiavelliStartupStage {
   private val mainScene = new SelectScene(this, new SelectSceneListener {
 
     override def onSelectedPublicGame(): Unit = setCurrentScene(publicGameScene)
@@ -36,12 +36,12 @@ class MachiavelliStartUpStageImpl(gameStartUpListener: GameStartUpListener) exte
     override def onSelectedCreatePrivateGame(): Unit = setCurrentScene(createPrivateGame)
   })
 
-  val stage: MachiavelliStartUpStage = this
-  val publicGameScene: PublicGameStartUpScene = new PublicGameStartUpScene(this, this)
-  val privateGameScene: PrivateGameStartUpScene = new PrivateGameStartUpScene(this, this)
-  val createPrivateGame: CreatePrivateGameStartUpSceneImpl = new CreatePrivateGameStartUpSceneImpl(this, this)
+  val stage: MachiavelliStartupStage = this
+  val publicGameScene: PublicGameScene = new PublicGameScene(this, this)
+  val privateGameScene: PrivateGameScene = new PrivateGameScene(this, this)
+  val createPrivateGame: CreatePrivateGameStartupSceneImpl = new CreatePrivateGameStartupSceneImpl(this, this)
 
-  var currentInnerScene: BaseStartUpFormScene = _
+  var currentInnerScene: BaseStartupFormScene = _
 
   scene = mainScene
 
@@ -49,7 +49,7 @@ class MachiavelliStartUpStageImpl(gameStartUpListener: GameStartUpListener) exte
     System.exit(0)
   }
 
-  def setCurrentScene(newScene: BaseStartUpFormScene): Unit = {
+  def setCurrentScene(newScene: BaseStartupFormScene): Unit = {
     scene = newScene
     currentInnerScene = newScene
   }
@@ -63,7 +63,7 @@ class MachiavelliStartUpStageImpl(gameStartUpListener: GameStartUpListener) exte
     scene = mainScene
   }
 
-  override def onSubmit(viewEvent: StartUpViewEvent): Unit = {
+  override def onSubmit(viewEvent: StartupViewEvent): Unit = {
     gameStartUpListener.onViewEvent(viewEvent)
   }
 
@@ -88,13 +88,13 @@ class MachiavelliStartUpStageImpl(gameStartUpListener: GameStartUpListener) exte
 /**
   * Companion object for MachiavelliStartupPrimaryStage
   */
-object MachiavelliStartUpStage {
+object MachiavelliStartupStage {
   val windowWidth: Double = ViewConfig.screenWidth
   val windowHeight: Double = ViewConfig.screenHeight
 
-  def apply(listener: GameStartUpListener): MachiavelliStartUpStage = new MachiavelliStartUpStageImpl(listener)
+  def apply(listener: GameStartUpListener): MachiavelliStartupStage = new MachiavelliStartupStageImpl(listener)
 
-  def apply(): MachiavelliStartUpStage = new MachiavelliStartUpStageImpl(null)
+  def apply(): MachiavelliStartupStage = new MachiavelliStartupStageImpl(null)
 }
 
-trait PrimaryStageListener extends StartUpSceneListener
+trait PrimaryStageListener extends StartupSceneListener

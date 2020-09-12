@@ -7,7 +7,7 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, StackPane}
 import scalafx.stage.Stage
 
-abstract class BaseStartUpScene(parentStage: Stage) extends Scene() {
+abstract class BaseStartupScene(parentStage: Stage) extends Scene() {
 
   val background: ImageView = new ImageView(new Image("/images/background.png")) {
     fitWidth <== parentStage.width

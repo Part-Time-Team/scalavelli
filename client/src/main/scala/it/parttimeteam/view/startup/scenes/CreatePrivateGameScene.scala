@@ -3,7 +3,7 @@ package it.parttimeteam.view.startup.scenes
 import it.parttimeteam.GamePreferences
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.CreatePrivateGameSubmitViewEvent
-import it.parttimeteam.view.startup.listeners.StartUpSceneListener
+import it.parttimeteam.view.startup.listeners.StartupSceneListener
 import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
 import javafx.scene.text.Font
 import scalafx.geometry.Pos.Center
@@ -27,9 +27,9 @@ trait CreatePrivateGameScene {
   *
   * @param listener to interact with parent stage
   */
-class CreatePrivateGameStartUpSceneImpl(override val parentStage: Stage, val listener: StartUpSceneListener) extends BaseStartUpFormScene(parentStage) with CreatePrivateGameScene {
-  val topBar: StartUpSceneTopBar = new StartUpSceneTopBar(listener)
-  val bottomBar: StartUpSceneBottomBar = new StartUpSceneBottomBar(() => submit())
+class CreatePrivateGameStartupSceneImpl(override val parentStage: Stage, val listener: StartupSceneListener) extends BaseStartupFormScene(parentStage) with CreatePrivateGameScene {
+  val topBar: StartupSceneTopBar = new StartupSceneTopBar(listener)
+  val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBar(() => submit())
 
   val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
   val usernameField: TextField = MachiavelliTextField("Username")

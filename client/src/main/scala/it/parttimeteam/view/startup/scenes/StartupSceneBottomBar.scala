@@ -6,7 +6,7 @@ import scalafx.geometry.Pos.BottomRight
 import scalafx.scene.control.{Button, Label, ProgressIndicator}
 import scalafx.scene.layout.HBox
 
-class StartUpSceneBottomBar(onSubmit: () => Unit) extends HBox {
+class StartupSceneBottomBar(onSubmit: () => Unit) extends HBox {
   alignment = BottomRight
 
   val btnSubmit: Button = MachiavelliButton("Send", () => onSubmit())

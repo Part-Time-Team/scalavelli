@@ -2,7 +2,7 @@ package it.parttimeteam.view.startup.scenes
 
 import scalafx.stage.Stage
 
-abstract class BaseStartUpFormScene(val parentStage: Stage) extends BaseStartUpScene(parentStage) {
+abstract class BaseStartupFormScene(val parentStage: Stage) extends BaseStartupScene(parentStage) {
 
   def showMessage(message: String): Unit
 
