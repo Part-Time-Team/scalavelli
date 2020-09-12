@@ -5,9 +5,12 @@ Raggiunto il numero necessario di essi si potrà partecipare ad una partita.
 Vi è anche la possibilità di scegliere di giocare specificatamente con i propri amici inserendo il codice identificativo per una partita privata.
 
 \subsection{Utente}\label{subsec:utente}
-L’utente medio utilizzatore potrà interagire solamente con il client dell’applicazione, tramite le seguenti operazioni in fase di creazione della partita:
+L’utente medio utilizzatore potrà interagire solamente con il client dell’applicazione.
+Le operazioni in fase di creazione della partita sono:
 \begin{itemize}
-    \item Specificare il proprio username (per potersi registrare nel server) e il numero di giocatori di una partita o inserire il codice di una partita privata che gli è stato inviato o generato da lui stesso;
+    \item Specificare il proprio username (per potersi registrare nel server) e il numero di giocatori di una partita pubblica;
+    \item Specificare il proprio username e il codice di una partita privata che gli è stato inviato;
+    \item Specificare il proprio username, il numero di giocatori e generare un codice per una partita privata;
     \item Inserire o creare una lobby privata;
     \item Connettersi ad una lobby e attendere il raggiungimento del numero di giocatori.
 \end{itemize}
@@ -16,10 +19,12 @@ Dopo aver generato una partita ed esservi entrato, in una nuova schermata il gio
     \item Vedere sullo schermo le combinazioni che ci sono attualmente sul tavolo da gioco, le carte che ha in mano, il nome degli altri giocatori e il numero di carte nelle loro mani;
     \item Solamente nel proprio turno, eseguire le seguenti azioni:
     \begin{itemize}
-        \item Giocare una combinazione: si possono mettere sul tavolo da giocare una sequenza di carte che compongono una combinazione tra un tris, un poker oppure una scala. Se la combinazione è valida, allora vengono tolte le carte che si vuole giocare dalla mano e vengono messe sul tavolo;
+        \item Giocare una combinazione: si possono mettere sul tavolo da giocare una sequenza di carte che compongono una combinazione tra un tris, un poker oppure una scala.
+        Se la combinazione è valida, allora vengono tolte le carte che si vuole giocare dalla mano e vengono messe sul tavolo;
         \item Aggiungere carte ad una combinazione sul tavolo già esistente: si possono scegliere delle carte dalla propria mano, che non necessariamente compongono una combinazione valida e mettere assieme alle carte che compongono un’altra combinazione, a patto che venga sempre rispettata la validità della combinazione;
         \item Prendere delle carte dal tavolo: si possono scegliere delle carte che appartengono ad una combinazione presente sul tavolo da gioco e metterle nella propria mano.
-        \item Passare il turno al giocatore successivo: dopo che viene eseguita questa azione, il turno viene passato al giocatore successivo nell’ordine. Il giocatore che ha eseguito questa azione non ne può effettuare nessun’altra fino a che non riprende il proprio turno dall’azione del giocatore precedente nell’ordine.
+        \item Passare il turno al giocatore successivo: dopo che viene eseguita questa azione, il turno viene passato al giocatore successivo nell’ordine.
+        Il giocatore che ha eseguito questa azione non ne può effettuare nessun’altra fino a che non riprende il proprio turno dall’azione del giocatore precedente nell’ordine.
         Nel caso in cui il giocatore di turno:
         \begin{itemize}
             \item non avesse eseguito nessuna mossa;
@@ -63,10 +68,16 @@ Il gioco.
 \subsection{Non Funzionali}
 
 \subsubsection{Scalabilità}
-Il server deve essere in grado di supportare un numero indefinito di utenti nell’insieme di tutte le partite. Nel caso in cui non ci siano abbastanza giocatori in coda per iniziare una partita, allora devono essere lasciati in attesa dell’arrivo di altri giocatori che vogliano giocare anche loro. Il sistema non consente l’accesso ad altri utenti per una partita specifica quando questa ha raggiunto il numero di partecipanti richiesto.
+Il server deve essere in grado di supportare un numero indefinito di utenti nell’insieme di tutte le partite.
+Nel caso in cui non ci siano abbastanza giocatori in coda per iniziare una partita, allora devono essere lasciati in attesa dell’arrivo di altri giocatori che vogliano giocare anche loro.
+Il sistema non consente l’accesso ad altri utenti per una partita specifica quando questa ha raggiunto il numero di partecipanti richiesto.
 
 \subsubsection{Modularità}
-Il progetto è stato pensato in modo tale da dover effettuare meno modifiche possibili al client nel caso in cui debba essere cambiato il server e viceversa. Nello specifico: se il server deve subire un aggiornamento, esso dovrebbe essere spento e poi riacceso. Gli utenti finali non devono eseguire nessuna operazione sui loro client, o almeno l’aggiornamento deve essere mantenuto il più piccolo possibile. Viceversa, nel caso di aggiornamento dei client, non dovrebbe essere necessario né riavviare il server, né aggiornare nessuna sua parte. Tutto il software deve riuscire a funzionare anche cambiando l’implementazione interna del modulo del “core” (regole e logica di gioco) a patto di non impattare sull’interfaccia dello stesso.
+Il progetto è stato pensato in modo tale da dover effettuare meno modifiche possibili al client nel caso in cui debba essere cambiato il server e viceversa.
+Nello specifico: se il server deve subire un aggiornamento, esso dovrebbe essere spento e poi riacceso.
+Gli utenti finali non devono eseguire nessuna operazione sui loro client, o almeno l’aggiornamento deve essere mantenuto il più piccolo possibile.
+Viceversa, nel caso di aggiornamento dei client, non dovrebbe essere necessario né riavviare il server, né aggiornare nessuna sua parte.
+Tutto il software deve riuscire a funzionare anche cambiando l’implementazione interna del modulo del “core” (regole e logica di gioco) a patto di non impattare sull’interfaccia dello stesso.
 
 \subsubsection{Usabilità}
 Il sistema deve fornire agli utenti un'interfaccia chiara, semplice, ben organizzata in modo da poter utilizzare al meglio tutte le sue funzionalità messe a disposizione e visualizzate.
@@ -75,7 +86,8 @@ Il sistema deve fornire agli utenti un'interfaccia chiara, semplice, ben organiz
 Il sistema deve poter consentire di giocare una partita senza ritardi e/o blocchi temporali dati dall’esecuzione degli algoritmi di validazione e controllo e dai protocolli di comunicazione.
 
 \subsubsection{Sicurezza}
-Il sistema deve aver sempre la possibilità di controllare lo stato attuale del gioco in modo da impedire che alcuni giocatori possano iniettarne uno non veritiero nella partita attuale. Per questo ad ogni fine turno deve essere validato da parte del server in modo che un client malevolo non possa rovinare l’esperienza di gioco agli altri giocatori.
+Il sistema deve aver sempre la possibilità di controllare lo stato attuale del gioco in modo da impedire che alcuni giocatori possano iniettarne uno non veritiero nella partita attuale.
+Per questo ad ogni fine turno deve essere validato da parte del server in modo che un client malevolo non possa rovinare l’esperienza di gioco agli altri giocatori.
 
 \subsection{Implementativi}
 Di seguito vengono descritti i vincoli che abbiamo cercato di rispettare per l’intero sviluppo del progetto:
