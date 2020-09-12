@@ -26,14 +26,17 @@ trait HandBar extends ScrollPane with ActionGamePane {
 object HandBar {
 
   class HandBarImpl(handListener: HandListener) extends HandBar {
+    this.getStyleClass.add("transparent")
 
     val handCardsContainer = new HBox()
     handCardsContainer.spacing = 5d
-    handCardsContainer.padding = Insets(ViewConfig.CARD_Y_TRANSLATION + 5d, 5d, 5d, 5d)
+    handCardsContainer.padding = Insets(ViewConfig.CARD_Y_TRANSLATION + ViewConfig.HAND_CARD_PADDING, ViewConfig.HAND_CARD_PADDING, ViewConfig.HAND_CARD_PADDING, ViewConfig.HAND_CARD_PADDING)
+
+    this.setMinHeight(ViewConfig.HAND_CARD_HEIGHT + ViewConfig.CARD_Y_TRANSLATION + ViewConfig.HAND_PADDING)
 
     this.setContent(handCardsContainer)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def setHand(hand: Hand): Unit = {
       handCardsContainer.children.clear()
 
@@ -46,14 +49,14 @@ object HandBar {
       }
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def disableActions(): Unit = {
       handCardsContainer.children.forEach(playerCard => {
         playerCard.asInstanceOf[GameCard].disableActions()
       })
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def enableActions(): Unit = {
       handCardsContainer.children.forEach(playerCard => {
         playerCard.asInstanceOf[GameCard].enableActions()
