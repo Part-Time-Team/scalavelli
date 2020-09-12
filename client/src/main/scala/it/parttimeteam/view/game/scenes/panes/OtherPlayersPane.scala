@@ -19,10 +19,11 @@ object OtherPlayersPane {
     var pane: TilePane = new TilePane()
     pane.setPrefColumns(2)
 
+    this.prefWidth = 200d
     this.children.addAll(label, pane)
 
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
       pane.children.clear()
       pane.hgap = ViewConfig.TILE_GAP
