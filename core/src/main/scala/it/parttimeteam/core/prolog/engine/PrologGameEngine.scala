@@ -13,7 +13,7 @@ class PrologGameEngine() extends PrologEngine {
   /**
    * Set theory from specific file prolog
    */
-  engine.setTheory(new Theory(getClass.getResourceAsStream("/rules.prolog")))
+  engine.setTheory(new Theory(getClass.getResourceAsStream("/rules.pl")))
 
   /**
    * @inheritdoc
