@@ -13,6 +13,14 @@ trait HistoryNavigationPane extends HBox with ActionGamePane {
   def setResetEnabled(enabled: Boolean)
 }
 
+trait HistoryNavigationListener {
+
+  def onUndoClick(): Unit
+
+  def onRedoClick(): Unit
+
+  def onResetClick(): Unit
+}
 
 object HistoryNavigationPane {
 

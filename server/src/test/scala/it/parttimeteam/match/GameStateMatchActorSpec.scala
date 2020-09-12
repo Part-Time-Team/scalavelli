@@ -8,7 +8,8 @@ import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, Deck, Hand}
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
-import it.parttimeteam.core.{GameInterface, GameState}
+import it.parttimeteam.core.{GameError, GameInterface, GameState}
+import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
 import it.parttimeteam.{DrawCard, common, core}
@@ -45,15 +46,16 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       player1.expectMsg(PlayerTurn)
       player1.send(gameActor, PlayerActionMade("id1", DrawCard))
       player1.expectMsgType[GameStateUpdated]
-      player2.expectMsgType[GameStateUpdated]
+      player2.expectMsgType[OpponentInTurn]
       player1.expectMsg(TurnEnded)
-      player2.expectMsg(PlayerTurn)
+      player2.expectMsg(GameStateUpdated(PlayerGameState(Board(List()),Hand(List(),List()),List(Opponent("player1",1))))
+      )
     }
 
   }
 
   object FakeGameInterface {
-    val cardToDraw = Card.string2card("2♣R")
+    val cardToDraw = Card.string2card("2CR")
   }
 
   class FakeGameInterface extends GameInterface {
@@ -70,23 +72,17 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
 
     override def draw(deck: Deck): (Deck, Card) = (deck, FakeGameInterface.cardToDraw)
 
-    override def validateTurn(board: Board, hand: Hand): Boolean = ???
+    override def validateMove(board: Board, hand: Hand): Boolean = ???
 
     override def validateCombination(cards: Seq[Card]): Boolean = ???
 
-    override def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
+    override def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[GameError, (Hand, Board)] = ???
 
-    override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
+    override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[GameError, (Hand, Board)] = ???
 
-    /**
-     * Update a combination in the board by his id with some cards.
-     *
-     * @param board Board with the combination to update.
-     * @param id    Id of the combnation to update.
-     * @param cards Cards to pur in the combination.
-     * @return Updated board.
-     */
-    override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): (Hand, Board) = ???
+    override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): Either[GameError, (Hand, Board)] = ???
+
+    override def validateTurn(board: Board, startBoard: Board, hand: Hand, startHand: Hand): Boolean = ???
   }
 
 }

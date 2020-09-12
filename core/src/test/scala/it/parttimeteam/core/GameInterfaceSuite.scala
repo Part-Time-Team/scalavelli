@@ -13,6 +13,10 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
     // Use the same instance of GameInterface for all tests.
     val gameInterface: GameInterface = new GameInterfaceImpl()
     val playerInfos = Seq(("1", "Daniele"), ("2", "Lorenzo"), ("3", "Luca"), ("4", "Matteo"))
+    val comb1 = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS))
+    val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
+    val comb3 = CardCombination("#3", Seq(TWO_CLUBS, THREE_CLUBS, FIVE_HEARTS))
+    val comb4 = CardCombination("#4", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
 
     describe("Can create a game") {
       it("Empty if no players are added") {
@@ -45,33 +49,36 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
       }
     }
 
-    describe("Validate a turn") {
-      // TODO: Waiting for PROLOG part.
+    describe("Validate a move") {
       it("True with complex op") {
-        val comb1 = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS))
-        val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
         val board = Board(Seq(comb1, comb2))
-        val hand = Hand(List(FIVE_CLUBS))
-        assert(gameInterface validateTurn(board, hand))
+        val hand = Hand(Seq(FIVE_CLUBS))
+        assert(gameInterface validateMove(board, hand))
       }
 
       describe("False with complex op") {
         it("With invalid board") {
-          val comb1 = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FIVE_HEARTS))
-          val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
-          val board = Board(Seq(comb1, comb2))
-          val hand = Hand(List(FIVE_CLUBS))
-          assert(!(gameInterface validateTurn(board, hand)))
+          val board = Board(Seq(comb3, comb4))
+          val hand = Hand(Seq(FIVE_CLUBS))
+          assert(!(gameInterface validateMove(board, hand)))
         }
 
         it("With invalid hand") {
-          val comb1 = CardCombination("#1", Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS))
-          val comb2 = CardCombination("#2", Seq(FIVE_SPADES, FIVE_DIAMONDS, FIVE_HEARTS))
           val board = Board(Seq(comb1, comb2))
-
-          val hand = Hand(boardCards = List(FIVE_CLUBS))
-          assert(!(gameInterface validateTurn(board, hand)))
+          val hand = Hand(boardCards = Seq(FIVE_CLUBS))
+          assert(!(gameInterface validateMove(board, hand)))
         }
+      }
+    }
+
+    describe("Validate a turn") {
+      it("True with complex op") {
+        val startBoard = Board(Seq(comb1, comb2))
+        val startHand = Hand(Seq(FIVE_CLUBS, SIX_CLUBS, SEVEN_CLUBS, EIGHT_CLUBS))
+        val combTmp = CardCombination("#tmp", Seq(SIX_CLUBS, SEVEN_CLUBS, EIGHT_CLUBS))
+        val board = Board(Seq(comb1, comb2, combTmp))
+        val hand = Hand(Seq(FIVE_CLUBS))
+        assert(gameInterface validateTurn(board, startBoard, hand, startHand))
       }
     }
 
@@ -93,9 +100,24 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
 
       it("Play cards that are not present in the hand returns error") {
         val cards = Seq(TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS)
-        val handSeq = List(THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS)
+        val handSeq = Seq(THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS)
         val result = gameInterface.playCombination(Hand(handSeq), state.board, cards)
         assert(result.isLeft)
+      }
+
+      it("Play a combination with on overflow ace") {
+        val handSeq = List(JACK_HEARTS, ACE_HEARTS, QUEEN_HEARTS, KING_HEARTS)
+        val cards = Seq(JACK_HEARTS, ACE_HEARTS, QUEEN_HEARTS, KING_HEARTS)
+        val result = gameInterface.playCombination(Hand(handSeq), state.board, cards)
+        assert(result.isRight)
+      }
+
+      it("Play a combination with a royal flush") {
+
+        val handSeq = Seq(ACE_CLUBS_RED, TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS, SIX_CLUBS, SEVEN_CLUBS, EIGHT_CLUBS, NINE_CLUBS, TEN_CLUBS, JACK_CLUBS, ACE_CLUBS_BLUE, QUEEN_CLUBS, KING_CLUBS)
+        val cards =   Seq(ACE_CLUBS_RED, TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS, SIX_CLUBS, SEVEN_CLUBS, EIGHT_CLUBS, NINE_CLUBS, TEN_CLUBS, JACK_CLUBS, ACE_CLUBS_BLUE, QUEEN_CLUBS, KING_CLUBS)
+        val result = gameInterface.playCombination(Hand(handSeq), state.board, cards)
+        assert(result.isRight)
       }
     }
 
@@ -140,7 +162,7 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
         assert(board.isRight)
 
         val res = gameInterface.putCardsInCombination(hand, board.right.get, "#1", Seq(THREE_CLUBS, FOUR_CLUBS))
-        assertResult(Board(Seq(comb)))(res._2)
+        assertResult(Board(Seq(comb)))(res.right.get._2)
       }
     }
   }

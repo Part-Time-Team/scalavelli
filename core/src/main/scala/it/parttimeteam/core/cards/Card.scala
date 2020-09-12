@@ -49,7 +49,8 @@ case class Card(rank: Rank, suit: Suit, color: Color)
 }
 
 object Card {
-  private val pattern = "^([AJKQ2-9])\\s*([♣♠♦♥])\\s*([RB])$".r
+
+  private val pattern = "^([1-9]|1[0-4])\\s*([HSDC])\\s*([RB])$".r
 
   implicit def string2card(s: String): Card = s match {
     case pattern(rank, suit, color) => cards.Card(rank, suit, color)
@@ -81,6 +82,11 @@ object Card {
      */
     def sortBySuit(): Seq[Card] = this.prologGame.sortBySuit(cards)
 
+    /**
+     * Try to validate the Sequence.
+     *
+     * @return True if is valid, false anywhere.
+     */
     def isValid: Boolean =
       if (cards.forall(c => c.rank equals cards.head.rank))
         this.prologGame.validateQuarter(cards)

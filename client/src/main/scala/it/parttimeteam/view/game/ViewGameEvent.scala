@@ -76,3 +76,5 @@ case class UpdateCardCombinationEvent(combinationId: String, cards: Seq[Card]) e
   */
 case object PlayAgainEvent extends ViewGameEvent
 
+case object TurnStartedEvent extends ViewGameEvent
+

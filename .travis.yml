@@ -63,13 +63,14 @@ jobs:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
     - stage: Deploy to Github Releases
-      before_deploy:
-        - sbt packArchive
+      script:
         # Set up git user name and tag this commit.
         - git config --local user.name "Daniele Tentoni"
-        - git config --local user.email "YOUR GIT USER EMAIL"
+        - git config --local user.email "daniele.tentoni.1996@gmail.com"
         - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
         - git tag $TRAVIS_TAG
+      before_deploy:
+        - sbt clean packArchive
       deploy:
         provider: releases
         skip_cleanup: true

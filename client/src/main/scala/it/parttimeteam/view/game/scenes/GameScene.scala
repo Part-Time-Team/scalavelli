@@ -11,15 +11,34 @@ import scalafx.scene.Scene
 trait GameScene extends Scene {
 
   /**
-    * Allows to show timer during the player turn.
-    */
-  def showTimer(): Unit
-
-  /**
-    * Allows to hide timer after the player turn.
+    * Hide the timer countdown.
+    *
+    * @return
     */
   def hideTimer(): Unit
 
+  /**
+    * Make the timer countdown visible.
+    *
+    * @param minutes countdown minutes
+    * @param seconds countdown seconds
+    */
+  def showTimer(minutes: Long, seconds: Long): Unit
+
+  /**
+    * Update countdown.
+    *
+    * @param minutes countdown minutes
+    * @param seconds countdown seconds
+    */
+  def updateTimer(minutes: Long, seconds: Long): Unit
+
+  /**
+    * Show timer's up message
+    * @return
+    */
+  def notifyTimerEnd(): Unit 
+  
   /**
     * Enable all the view actions during the player turn.
     */

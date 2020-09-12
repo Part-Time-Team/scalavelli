@@ -22,7 +22,6 @@ object GameMessage {
    */
   case class GameStateUpdated(gameState: PlayerGameState)
 
-
   /**
    * Tells the player it's his turn
    */
@@ -55,7 +54,7 @@ object GameMessage {
    *
    * @param errorType
    */
-  case class Error(errorType: ErrorMessage)
+  case class MatchErrorOccurred(errorType: MatchError)
 
   /**
    * Send the drawn card to the current player
@@ -84,5 +83,20 @@ object GameMessage {
 
 
   case object GameEndedForPlayerLeft
+
+
+  /**
+   * Error occurred during a game
+   */
+  sealed class MatchError
+
+  object MatchError {
+
+    case object InvalidPlays extends MatchError
+
+    case object PlayerActionNotValid extends MatchError
+
+  }
+
 
 }

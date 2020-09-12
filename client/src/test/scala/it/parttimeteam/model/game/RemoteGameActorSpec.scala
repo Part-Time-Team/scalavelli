@@ -6,6 +6,7 @@ import com.typesafe.config.ConfigFactory
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage._
+import it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -49,7 +50,7 @@ class RemoteGameActorSpec extends TestKit(ActorSystem("test", ConfigFactory.load
     }
 
     "notify the lister on turn ended with card drawn" in {
-      val sampleCard = Card.string2card("2♣R")
+      val sampleCard = Card.string2card("2CR")
       actor ! CardDrawn(sampleCard)
       (mockListener.turnEndedWithCartDrawn _).verify(sampleCard).once()
     }

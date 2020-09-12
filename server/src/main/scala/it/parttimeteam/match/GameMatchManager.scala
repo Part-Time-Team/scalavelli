@@ -24,20 +24,16 @@ class GameMatchManager(private val gameApi: GameInterface) {
    */
   def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
     playerAction match {
-      case DrawCard => {
-        nextStateOnCardDrawn(currentState, playerInTurn)
-      }
+      case DrawCard => nextStateOnCardDrawn(currentState, playerInTurn)
 
-      case PlayedMove(updatedHand, updatedBoard) => {
-        nextStateOnPlayerMove(currentState, playerInTurn, updatedHand, updatedBoard)
-      }
+      case PlayedMove(updatedHand, updatedBoard) => nextStateOnPlayerMove(currentState, playerInTurn, updatedHand, updatedBoard)
 
       case _ => Left("Non supported action")
     }
   }
 
   private def nextStateOnPlayerMove(currentState: GameState, playerInTurn: GamePlayer, updatedHand: Hand, updatedBoard: Board) = {
-    if (gameApi.validateTurn(updatedBoard, updatedHand)) {
+    if (gameApi.validateMove(updatedBoard, updatedHand)) {
       val updatedState = currentState
         .getPlayer(playerInTurn.id)
         .map(p => currentState.updatePlayer(p.copy(

@@ -38,36 +38,51 @@ trait SelectionManager[T <: SelectableItem] {
 
 object SelectionManager {
 
-  def apply[T <: SelectableItem](): SelectionManager[T] = new SelectionManagerImpl[T]()
+  def apply[T <: SelectableItem](allowOnlyOne: Boolean): SelectionManager[T] = new SelectionManagerImpl[T](allowOnlyOne)
 
-  class SelectionManagerImpl[T <: SelectableItem](private var selectedItems: Seq[T] = List.empty) extends SelectionManager[T] {
-    /** @inheritdoc*/
+  class SelectionManagerImpl[T <: SelectableItem](allowOnlyOne: Boolean, private var selectedItems: Seq[T] = List.empty) extends SelectionManager[T] {
+    /** @inheritdoc */
     override def onItemSelected(item: T): Unit = {
-      if (selectedItems.contains(item)) {
-        selectedItems = selectedItems.filter(i => i != item)
-        item.setSelected(false)
+      if (allowOnlyOne) {
+        this.clearSelection()
+        this.addItem(item)
       } else {
-        selectedItems = selectedItems :+ item
-        item.setSelected(true)
+        if (selectedItems.contains(item)) {
+          this.removeItem(item)
+        } else {
+          this.addItem(item)
+        }
       }
 
       println(s"Selected cards: ${getSelectedItems.toString}")
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def getSelectedItems: Seq[T] = selectedItems
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def isSelectionEmpty: Boolean = selectedItems.isEmpty
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def clearSelection(): Unit = {
+      unselectAll()
+      selectedItems = List.empty
+    }
+
+    private def unselectAll(): Unit = {
       for (item: SelectableItem <- selectedItems) {
         item.setSelected(false)
       }
+    }
 
-      selectedItems = List.empty
+    private def removeItem(item: T): Unit = {
+      selectedItems = selectedItems.filter(i => i != item)
+      item.setSelected(false)
+    }
+
+    private def addItem(item: T): Unit = {
+      selectedItems = selectedItems :+ item
+      item.setSelected(true)
     }
   }
-
 }

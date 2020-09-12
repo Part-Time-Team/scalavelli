@@ -2,6 +2,7 @@ package it.parttimeteam.view.game
 
 import it.parttimeteam.controller.game.GameListener
 import it.parttimeteam.core.cards.Card
+import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
 import it.parttimeteam.view.utils.MachiavelliAlert
@@ -23,12 +24,7 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
 
   onCloseRequest = _ => System.exit(0)
 
-  /** @inheritdoc */
-  override def showTimer(): Unit = {
-    Platform.runLater({
-      gameScene.showTimer()
-    })
-  }
+
 
   /** @inheritdoc */
   override def setMessage(message: String): Unit = {
@@ -101,16 +97,10 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   }
 
   /** @inheritdoc */
-  override def hideTimer(): Unit = {
+  override def notifyError(result: ErrorEvent): Unit = {
+    // TODO create string error
     Platform.runLater({
-      gameScene.hideTimer()
-    })
-  }
-
-  /** @inheritdoc */
-  override def notifyError(result: String): Unit = {
-    Platform.runLater({
-      val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
+      val alert: Alert = MachiavelliAlert("Error", result toString, AlertType.Error)
       alert.showAndWait()
     })
   }
@@ -126,14 +116,30 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   /** @inheritdoc */
   override def setInTurn(): Unit = {
     gameScene.setInTurn(true)
-    notifyInfo("It's your turn")
-    setMessage("Your turn")
+    Platform.runLater({
+      val alert = MachiavelliAlert("", "It's your turn", AlertType.Information)
+      alert.showAndWait match {
+        case Some(b) =>
+          if (b == ButtonType.OK) {
+            gameListener.onViewEvent(TurnStartedEvent)
+          } else {
+            System.exit(0)
+          }
+
+        case None =>
+      }
+
+      setMessage("Your turn")
+    })
   }
 
   /** @inheritdoc */
   override def setTurnEnded(): Unit = {
     gameScene.setInTurn(false)
-    setMessage("")
+    Platform.runLater({
+      setMessage("")
+      gameScene.hideTimer()
+    })
   }
 
   // view actions
@@ -181,5 +187,28 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
 
   /** @inheritdoc*/
   override def resetHistory(): Unit = gameListener.onViewEvent(ResetEvent)
+
+  /** @inheritdoc */
+  override def showTimer(minutes: Long, seconds: Long): Unit = {
+    Platform.runLater({
+      gameScene.showTimer(minutes, seconds)
+    })
+  }
+
+  /** @inheritdoc */
+  override def updateTimer(minutes: Long, seconds: Long): Unit = {
+    Platform.runLater({
+      gameScene.updateTimer(minutes, seconds)
+    })
+  }
+
+  /** @inheritdoc */
+  override def notifyTimerEnded(): Unit = {
+    Platform.runLater({
+      gameScene.notifyTimerEnd()
+      notifyInfo("You haven't passed your turn. We will pass and draw a card for you.")
+    })
+  }
+
 
 }

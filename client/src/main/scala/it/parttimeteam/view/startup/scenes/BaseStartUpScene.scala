@@ -13,6 +13,7 @@ abstract class BaseStartUpScene(parentStage: Stage) extends Scene() {
     fitWidth <== parentStage.width
     fitHeight <== parentStage.height
   }
+  background.preserveRatio = true
 
   val mainContent: BorderPane = new BorderPane()
 

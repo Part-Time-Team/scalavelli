@@ -2,6 +2,7 @@ package it.parttimeteam.core.collections
 
 import java.util.UUID
 
+import it.parttimeteam.core.GameError
 import it.parttimeteam.core.cards.Card
 
 import scala.annotation.tailrec
@@ -52,7 +53,7 @@ case class Board(combinations: Seq[CardCombination]) {
    * @param cards Combinations to pick up.
    * @return Error string or the updated board.
    */
-  def pickCards(cards: Seq[Card]): Either[String, Board] = {
+  def pickCards(cards: Seq[Card]): Either[GameError, Board] = {
     Either.cond(
       cardsInBoard(cards),
       Board(combinations.foldLeft(Seq.empty[CardCombination]) {
@@ -61,7 +62,7 @@ case class Board(combinations: Seq[CardCombination]) {
           if (comb.isEmpty) acc else comb +: acc
         }
       }.reverse),
-      "No cards in the board")
+      GameError.NoCardInBoard)
   }
 
   /**

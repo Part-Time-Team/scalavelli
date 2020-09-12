@@ -13,19 +13,19 @@ class PrologGameConverterSuite extends AnyFunSuite {
 
   test("Convert sequence of cards in string") {
 
-    val sequence: Seq[Card] = Seq(ACE_CLUBS, FOUR_SPADES, KING_DIAMONDS)
+    val sequence: Seq[Card] = Seq(ACE_CLUBS_BLUE, FOUR_SPADES, KING_DIAMONDS)
 
-    assertResult("([(1,\"Clubs\"),(4,\"Spades\"),(13,\"Diamonds\")]).")(prologConverter.cardsConvertToString(sequence)(None))
-    assertResult("([(1,\"Clubs\"),(4,\"Spades\"),(13,\"Diamonds\")],X).")(prologConverter.cardsConvertToString(sequence)(Some(new Var("X"))))
+    assertResult("([(1,\"C\",\"B\"),(4,\"S\",\"B\"),(13,\"D\",\"R\")]).")(prologConverter.cardsConvertToString(sequence)(None))
+    assertResult("([(1,\"C\",\"B\"),(4,\"S\",\"B\"),(13,\"D\",\"R\")],X).")(prologConverter.cardsConvertToString(sequence)(Some(new Var("X"))))
   }
 
   test("Convert a sequence of term into a tuple sequence") {
 
     val prologEngine = new PrologGameEngine
-    val sequence: Seq[Card] = Seq(ACE_CLUBS, ACE_SPADES, ACE_DIAMONDS)
+    val sequence: Seq[Card] = Seq(ACE_CLUBS_BLUE, ACE_SPADES, ACE_DIAMONDS)
 
     val termSeq: Seq[Term] = prologEngine goal "quicksortValue" + prologConverter.cardsConvertToString(sequence)(Some(new Var("X")))
-    val tupleSeq: Seq[(Rank, Suit)] = sequence map (card => (card.rank, card.suit))
+    val tupleSeq: Seq[Card] = sequence map (card => Card(card.rank, card.suit, card.color))
 
     assertResult(tupleSeq)(prologConverter.sortedCard(termSeq))
   }
@@ -33,21 +33,21 @@ class PrologGameConverterSuite extends AnyFunSuite {
   test("Get a card given the color, rank and suit") {
     val card: Card = Card(Rank.Ace(), Suit.Clubs(), Color.Blue())
 
-    assertResult(card)(prologConverter getCard(prolog toTerm "B", prolog toTerm "Clubs", prolog toTerm "1"))
+    assertResult(card)(prologConverter getCard(prolog toTerm "B", prolog toTerm "C", prolog toTerm "1"))
   }
 
-  test("Change optional value of the card Ace if it is after King card") {
+  test("It replaces the Ace value card in the Overflow Ace card in specific cases") {
 
-    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS.copy(rank = "14")))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS)))
+    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE.copy(rank = "14")))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE)))
 
-    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS.copy(rank = "14"), TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS, TWO_CLUBS, THREE_CLUBS)))
+    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE.copy(rank = "14"), ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE, ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS)))
 
-    assertResult(Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS)))
+    assertResult(Seq(ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS)))
   }
 
   test("Convert a tuple sequence into string") {
 
-    val tupleSeq: Seq[(Int, String)] = Seq(QUEEN_CLUBS, KING_CLUBS) map (card => (card.rank.value, card.suit.name))
+    val tupleSeq: Seq[(Int, String, String)] = Seq(QUEEN_CLUBS, KING_CLUBS) map (card => (card.rank.value, card.suit.shortName, card.color.shortName))
     val varX = new Var("X")
 
     assertResult("([" + tupleSeq.mkString(",") + "]).")(prologConverter.prologList(tupleSeq)(None))

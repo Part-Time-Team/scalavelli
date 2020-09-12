@@ -1,6 +1,5 @@
 package it.parttimeteam.view.game.scenes.panes
 
-import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination}
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
@@ -8,7 +7,7 @@ import it.parttimeteam.view.game.scenes.model.GameCardCombination
 import it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl
 import scalafx.geometry.Insets
 import scalafx.scene.control.ScrollPane
-import scalafx.scene.layout.VBox
+import scalafx.scene.layout.TilePane
 
 /**
   * Pane which contains the game board.
@@ -26,34 +25,40 @@ trait BoardPane extends ScrollPane with ActionGamePane {
 object BoardPane {
 
   class BoardPaneImpl(boardListener: BoardListener) extends BoardPane {
-    val tableCombinations = new VBox()
-    tableCombinations.spacing = 10d
-    tableCombinations.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
 
-    var selectedCards: Seq[Card] = Seq()
+    var tilePane: TilePane = new TilePane()
+    tilePane.prefColumns = 2
+    tilePane.prefWidth <= this.getWidth
+    tilePane.vgap = 20d
+    tilePane.hgap = 20d
 
-    this.setContent(tableCombinations)
+    tilePane.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
+    content = tilePane
+    this.setFitToWidth(true)
 
-    /** @inheritdoc*/
+    this.getStyleClass.add("greenBack")
+
+
+    /** @inheritdoc */
     override def setBoard(board: Board): Unit = {
-      tableCombinations.children.clear()
+      tilePane.children.clear()
 
       for (combination: CardCombination <- board.combinations) {
         val playerCombination: GameCardCombination = new GameCardCombinationImpl(combination, boardListener)
-        tableCombinations.children.add(playerCombination)
+        tilePane.children.add(playerCombination)
       }
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def disableActions(): Unit = {
-      tableCombinations.children.forEach(playerCombination => {
+      tilePane.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].disableActions()
       })
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def enableActions(): Unit = {
-      tableCombinations.children.forEach(playerCombination => {
+      tilePane.children.forEach(playerCombination => {
         playerCombination.asInstanceOf[GameCardCombination].enableActions()
       })
     }

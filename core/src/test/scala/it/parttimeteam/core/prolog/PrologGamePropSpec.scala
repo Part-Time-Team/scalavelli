@@ -58,7 +58,7 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val validQuarter: TableFor1[Seq[Card]] = Table(
     "valid quarter",
-    Seq(ACE_CLUBS, ACE_DIAMONDS, ACE_SPADES),
+    Seq(ACE_CLUBS_BLUE, ACE_DIAMONDS, ACE_SPADES),
     Seq(TEN_CLUBS, TEN_HEARTS, TEN_SPADES, TEN_DIAMONDS)
   )
 
@@ -76,8 +76,8 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val validChain: TableFor1[Seq[Card]] = Table(
     "valid chain",
-    Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS),
-    Seq(JACK_HEARTS, QUEEN_HEARTS, KING_HEARTS, ACE_HEARTS)
+    Seq(ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS),
+    Seq(JACK_HEARTS, QUEEN_HEARTS, KING_HEARTS, OVERFLOW_ACE_HEARTS)
   )
 
   /**
@@ -85,8 +85,8 @@ class PrologGamePropSpec extends AnyPropSpec with TableDrivenPropertyChecks with
    */
   val invalidChain: TableFor1[Seq[Card]] = Table(
     "invalid chain",
-    Seq(ACE_CLUBS, TWO_CLUBS, THREE_CLUBS, FOUR_SPADES),
-    Seq(ACE_CLUBS, THREE_CLUBS, FOUR_SPADES),
+    Seq(ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS, FOUR_SPADES),
+    Seq(ACE_CLUBS_BLUE, THREE_CLUBS, FOUR_SPADES),
     Seq(JACK_HEARTS, QUEEN_HEARTS, KING_HEARTS, ACE_HEARTS, TWO_HEARTS)
   )
 
