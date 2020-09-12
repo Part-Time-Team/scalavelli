@@ -13,7 +13,7 @@ Use openjdk11 and scala 2.12.8.
 Move to main dir of project and execute following commands to compile executable packages
 
 ```shell script
-sbt pack
+sbt clean pack
 ```
 
 You can also modify configuration files to execute the server on a different machine. You have to change the Constant as:
