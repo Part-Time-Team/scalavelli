@@ -1,6 +1,6 @@
 package it.parttimeteam.view.startup.scenes
 
-import it.parttimeteam.view.utils.{MachiavelliButton, MachiavelliLabel}
+import it.parttimeteam.view.utils.{ScalavelliButton, ScalavelliLabel}
 import scalafx.application.Platform
 import scalafx.geometry.Pos.BottomRight
 import scalafx.scene.control.{Button, Label, ProgressIndicator}
@@ -9,9 +9,9 @@ import scalafx.scene.layout.HBox
 class StartupSceneBottomBar(onSubmit: () => Unit) extends HBox {
   alignment = BottomRight
 
-  val btnSubmit: Button = MachiavelliButton("Send", () => onSubmit())
+  val btnSubmit: Button = ScalavelliButton("Send", () => onSubmit())
   val progress: ProgressIndicator = new ProgressIndicator()
-  val messageContainer: Label = MachiavelliLabel()
+  val messageContainer: Label = ScalavelliLabel()
 
   progress.prefHeight <== height
 

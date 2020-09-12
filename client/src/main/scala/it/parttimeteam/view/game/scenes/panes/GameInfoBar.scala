@@ -4,7 +4,7 @@ import it.parttimeteam.gamestate.Opponent
 import it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl
 import it.parttimeteam.view.game.scenes.panes.OtherPlayersPane.OtherPlayersPaneImpl
 import it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl
-import it.parttimeteam.view.utils.{MachiavelliButton, MachiavelliLabel}
+import it.parttimeteam.view.utils.{ScalavelliButton, ScalavelliLabel}
 import scalafx.geometry.Insets
 import scalafx.scene.layout.{BorderPane, VBox}
 
@@ -150,13 +150,13 @@ object GameInfoBar {
 
     val stateContainer = new VBox()
 
-    val messageLabel = MachiavelliLabel()
+    val messageLabel = ScalavelliLabel()
 
     timerPane.hide()
     stateContainer.children.addAll(messageLabel, timerPane)
 
-    val nextBtn = MachiavelliButton("Pass", () => listener.endTurn())
-    val leaveBtn = MachiavelliButton("Leave Game", () => listener.leaveGame())
+    val nextBtn = ScalavelliButton("Pass", () => listener.endTurn())
+    val leaveBtn = ScalavelliButton("Leave Game", () => listener.leaveGame())
 
     nextBtn.prefWidth <== rightBottom.width
     leaveBtn.prefWidth <== rightBottom.width

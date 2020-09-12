@@ -3,7 +3,7 @@ package it.parttimeteam.view.startup.scenes
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.PrivateGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartupSceneListener
-import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
+import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
@@ -19,11 +19,11 @@ class PrivateGameScene(override val parentStage: Stage, val listener: StartupSce
   val topBar: StartupSceneTopBar = new StartupSceneTopBar(listener)
   val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBar(() => submit())
 
-  val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
-  val usernameField: TextField = MachiavelliTextField("Username")
+  val usernameLabel: Label = ScalavelliLabel("Username", ViewConfig.formLabelFontSize)
+  val usernameField: TextField = ScalavelliTextField("Username")
 
-  val codeLabel: Label = MachiavelliLabel("Code", ViewConfig.formLabelFontSize)
-  val codeField: TextField = MachiavelliTextField("Code")
+  val codeLabel: Label = ScalavelliLabel("Code", ViewConfig.formLabelFontSize)
+  val codeField: TextField = ScalavelliTextField("Code")
 
   val center: VBox = new VBox()
   center.spacing = ViewConfig.formSpacing
@@ -45,7 +45,7 @@ class PrivateGameScene(override val parentStage: Stage, val listener: StartupSce
   bottomBar.hideLoading()
   bottomBar.hideMessage()
 
-  val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and code.", AlertType.Warning)
+  val alert: Alert = ScalavelliAlert("Input missing", "You must enter username and code.", AlertType.Warning)
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 

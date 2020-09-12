@@ -9,7 +9,7 @@ import it.parttimeteam.view.game.listeners.GameStageListener
 /**
   * Main stage for the game view, interacts with GameScene
   */
-trait MachiavelliGameStage extends BaseStage with GameStageListener {
+trait GameStage extends BaseStage with GameStageListener {
   /**
     * Set the current user turn
     *
@@ -103,9 +103,9 @@ trait MachiavelliGameStage extends BaseStage with GameStageListener {
 }
 
 /**
-  * Companion object for MachiavelliGameStage
+  * Companion object for ScalavelliGameStage
   */
-object MachiavelliGameStage {
+object GameStage {
 
-  def apply(listener: GameListener): MachiavelliGameStage = new MachiavelliGameStageImpl(listener)
+  def apply(listener: GameListener): GameStage = new GameStageImpl(listener)
 }

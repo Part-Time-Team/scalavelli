@@ -1,20 +1,19 @@
 package it.parttimeteam.controller.startup
 
 import it.parttimeteam.Constants
-import it.parttimeteam.model._
-import it.parttimeteam.model.startup.{GameMatchInformations, GameStartUpEvent, GameStartedEvent, LobbyJoinErrorEvent, LobbyJoinedEvent, PrivateLobbyCreatedEvent, StartupService, StartupServiceImpl}
+import it.parttimeteam.model.startup._
 import it.parttimeteam.view.startup._
 import scalafx.application.{JFXApp, Platform}
 
-class StartUpControllerImpl extends StartUpController {
+class StartupControllerImpl extends StartupController {
 
-  private var startUpStage: MachiavelliStartupStage = _
+  private var startUpStage: StartupStage = _
   private val startUpService: StartupService = new StartupServiceImpl(notifyEvent)
   private var startGameFunction: GameMatchInformations => Unit = _
 
   override def start(app: JFXApp, startGame: GameMatchInformations => Unit): Unit = {
     Platform.runLater({
-      startUpStage = MachiavelliStartupStage(this)
+      startUpStage = StartupStage(this)
       app.stage = startUpStage
     })
     startGameFunction = startGame
@@ -40,7 +39,7 @@ class StartUpControllerImpl extends StartUpController {
     case _ =>
   }
 
-  def notifyEvent(gameStartUpEvent: GameStartUpEvent): Unit = gameStartUpEvent match {
+  def notifyEvent(gameStartupEvent: GameStartupEvent): Unit = gameStartupEvent match {
 
     case LobbyJoinedEvent => {
       startUpStage.notifyLobbyJoined()

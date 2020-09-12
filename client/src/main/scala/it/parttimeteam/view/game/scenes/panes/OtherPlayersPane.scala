@@ -2,7 +2,7 @@ package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.gamestate.Opponent
 import it.parttimeteam.view.ViewConfig
-import it.parttimeteam.view.utils.MachiavelliLabel
+import it.parttimeteam.view.utils.ScalavelliLabel
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{HBox, TilePane, VBox}
 
@@ -14,7 +14,7 @@ trait OtherPlayersPane extends VBox {
 object OtherPlayersPane {
 
   class OtherPlayersPaneImpl extends OtherPlayersPane {
-    var label = MachiavelliLabel("Other players:")
+    var label = ScalavelliLabel("Other players:")
     label.getStyleClass.add("boldText")
     var pane: TilePane = new TilePane()
     pane.setPrefColumns(2)
@@ -30,8 +30,8 @@ object OtherPlayersPane {
       pane.vgap = ViewConfig.TILE_GAP
 
       for (player: Opponent <- otherPlayers) {
-        val nameLabel = MachiavelliLabel(player.name)
-        val cardsNumberLabel = MachiavelliLabel(player.cardsNumber.toString)
+        val nameLabel = ScalavelliLabel(player.name)
+        val cardsNumberLabel = ScalavelliLabel(player.cardsNumber.toString)
 
         val playerInfoContainer: VBox = new VBox()
         val cardInfoContainer: HBox = new HBox()

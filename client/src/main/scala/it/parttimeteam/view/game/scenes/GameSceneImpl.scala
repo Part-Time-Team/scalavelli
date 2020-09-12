@@ -10,12 +10,12 @@ import it.parttimeteam.view.game.scenes.panes.GameInfoBar.GameInfoBarImpl
 import it.parttimeteam.view.game.scenes.panes.HandBar.HandBarImpl
 import it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl
 import it.parttimeteam.view.game.scenes.panes._
-import it.parttimeteam.view.game.{MachiavelliGameStage, SelectionManager}
+import it.parttimeteam.view.game.{GameStage, SelectionManager}
 import scalafx.application.Platform
 import scalafx.scene.layout.{BorderPane, VBox}
 
 /** @inheritdoc */
-class GameSceneImpl(val parentStage: MachiavelliGameStage) extends GameScene {
+class GameSceneImpl(val parentStage: GameStage) extends GameScene {
   var inTurn = false
 
   val handSelectionManager: SelectionManager[GameCard] = SelectionManager(allowOnlyOne = false)

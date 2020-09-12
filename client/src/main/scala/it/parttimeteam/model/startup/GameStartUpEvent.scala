@@ -1,13 +1,13 @@
 package it.parttimeteam.model.startup
 
-sealed class GameStartUpEvent
+sealed class GameStartupEvent
 
-case object LobbyJoinedEvent extends GameStartUpEvent
+case object LobbyJoinedEvent extends GameStartupEvent
 
-case class PrivateLobbyCreatedEvent(privateCode: String) extends GameStartUpEvent
+case class PrivateLobbyCreatedEvent(privateCode: String) extends GameStartupEvent
 
-case class GameStartedEvent(gameInfo: GameMatchInformations) extends GameStartUpEvent
+case class GameStartedEvent(gameInfo: GameMatchInformations) extends GameStartupEvent
 
-case class LobbyJoinErrorEvent(result: String) extends GameStartUpEvent
+case class LobbyJoinErrorEvent(result: String) extends GameStartupEvent
 
 

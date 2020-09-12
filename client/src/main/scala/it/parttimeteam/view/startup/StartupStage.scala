@@ -1,9 +1,9 @@
 package it.parttimeteam.view.startup
 
-import it.parttimeteam.controller.startup.GameStartUpListener
+import it.parttimeteam.controller.startup.StartupListener
 import it.parttimeteam.view.startup.listeners._
 import it.parttimeteam.view.startup.scenes._
-import it.parttimeteam.view.utils.MachiavelliAlert
+import it.parttimeteam.view.utils.ScalavelliAlert
 import it.parttimeteam.view.{BaseStage, ViewConfig}
 import scalafx.application.Platform
 import scalafx.scene.control.Alert
@@ -13,7 +13,7 @@ import scalafx.scene.control.Alert.AlertType
 /**
   * Stage for startup scenes.
   */
-trait MachiavelliStartupStage extends BaseStage with PrimaryStageListener {
+trait StartupStage extends BaseStage {
   def notifyPrivateCode(privateCode: String): Unit
 
   def notifyLobbyJoined(): Unit
@@ -24,10 +24,10 @@ trait MachiavelliStartupStage extends BaseStage with PrimaryStageListener {
 /**
   * Stage for startup scenes.
   *
-  * @param gameStartUpListener enables to call actions exposed by controller
+  * @param gameStartupListener enables to call actions exposed by controller
   */
-class MachiavelliStartupStageImpl(gameStartUpListener: GameStartUpListener) extends MachiavelliStartupStage {
-  private val mainScene = new SelectScene(this, new SelectSceneListener {
+class StartupStageImpl(gameStartupListener: StartupListener) extends StartupStage {
+  private val mainScene: SelectScene = new SelectScene(this, new SelectSceneListener {
 
     override def onSelectedPublicGame(): Unit = setCurrentScene(publicGameScene)
 
@@ -36,10 +36,24 @@ class MachiavelliStartupStageImpl(gameStartUpListener: GameStartUpListener) exte
     override def onSelectedCreatePrivateGame(): Unit = setCurrentScene(createPrivateGame)
   })
 
-  val stage: MachiavelliStartupStage = this
-  val publicGameScene: PublicGameScene = new PublicGameScene(this, this)
-  val privateGameScene: PrivateGameScene = new PrivateGameScene(this, this)
-  val createPrivateGame: CreatePrivateGameStartupSceneImpl = new CreatePrivateGameStartupSceneImpl(this, this)
+  val stage: StartupStage = this
+
+  val listener: StartupSceneListener = new StartupSceneListener {
+
+    override def onBackPressed(): Unit = {
+      gameStartupListener.onViewEvent(LeaveLobbyViewEvent)
+
+      currentInnerScene.resetScreen()
+      scene = mainScene
+    }
+
+    override def onSubmit(viewEvent: StartupViewEvent): Unit = {
+      gameStartupListener.onViewEvent(viewEvent)
+    }
+  }
+  val publicGameScene: PublicGameScene = new PublicGameScene(this, listener)
+  val privateGameScene: PrivateGameScene = new PrivateGameScene(this, listener)
+  val createPrivateGame: CreatePrivateGameStartupSceneImpl = new CreatePrivateGameStartupSceneImpl(this, listener)
 
   var currentInnerScene: BaseStartupFormScene = _
 
@@ -54,19 +68,6 @@ class MachiavelliStartupStageImpl(gameStartUpListener: GameStartUpListener) exte
     currentInnerScene = newScene
   }
 
-  // View actions
-  override def onBackPressed(): Unit = {
-    // TODO: Luca - Call leave lobby only when joined
-    gameStartUpListener.onViewEvent(LeaveLobbyViewEvent)
-
-    currentInnerScene.resetScreen()
-    scene = mainScene
-  }
-
-  override def onSubmit(viewEvent: StartupViewEvent): Unit = {
-    gameStartUpListener.onViewEvent(viewEvent)
-  }
-
   // Controller actions
   override def notifyPrivateCode(privateCode: String): Unit = {
     Platform.runLater(createPrivateGame.showCode(privateCode))
@@ -79,22 +80,20 @@ class MachiavelliStartupStageImpl(gameStartUpListener: GameStartUpListener) exte
 
   override def notifyError(result: String): Unit = {
     Platform.runLater {
-      val alert: Alert = MachiavelliAlert("Error", result, AlertType.Error)
+      val alert: Alert = ScalavelliAlert("Error", result, AlertType.Error)
       alert.showAndWait()
     }
   }
 }
 
 /**
-  * Companion object for MachiavelliStartupPrimaryStage
+  * Companion object for ScalavelliStartupPrimaryStage
   */
-object MachiavelliStartupStage {
+object StartupStage {
   val windowWidth: Double = ViewConfig.screenWidth
   val windowHeight: Double = ViewConfig.screenHeight
 
-  def apply(listener: GameStartUpListener): MachiavelliStartupStage = new MachiavelliStartupStageImpl(listener)
+  def apply(listener: StartupListener): StartupStage = new StartupStageImpl(listener)
 
-  def apply(): MachiavelliStartupStage = new MachiavelliStartupStageImpl(null)
+  def apply(): StartupStage = new StartupStageImpl(null)
 }
-
-trait PrimaryStageListener extends StartupSceneListener

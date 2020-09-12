@@ -7,7 +7,7 @@ import scalafx.scene.text.Font
 /**
   * Builder for a default Label
   */
-object MachiavelliLabel {
+object ScalavelliLabel {
 
   def apply(text: String, fontSize:Double): Label = {
     val label:Label = Label(text)

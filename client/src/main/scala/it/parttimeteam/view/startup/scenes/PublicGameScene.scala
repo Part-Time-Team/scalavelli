@@ -4,7 +4,7 @@ import it.parttimeteam.GamePreferences
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.PublicGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartupSceneListener
-import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
+import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
@@ -20,12 +20,12 @@ class PublicGameScene(override val parentStage: Stage, val listener: StartupScen
   val topBar: StartupSceneTopBar = new StartupSceneTopBar(listener)
   val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBar(() => submit())
 
-  val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
-  val usernameField: TextField = MachiavelliTextField("Username")
+  val usernameLabel: Label = ScalavelliLabel("Username", ViewConfig.formLabelFontSize)
+  val usernameField: TextField = ScalavelliTextField("Username")
 
   val options: Range = GamePreferences.MIN_PLAYERS_NUM to GamePreferences.MAX_PLAYERS_NUM by 1
 
-  val selectPlayersLabel: Label = MachiavelliLabel("Select players number", ViewConfig.formLabelFontSize)
+  val selectPlayersLabel: Label = ScalavelliLabel("Select players number", ViewConfig.formLabelFontSize)
   val comboBox = new ComboBox(options)
   comboBox.setValue(GamePreferences.MIN_PLAYERS_NUM)
 
@@ -49,7 +49,7 @@ class PublicGameScene(override val parentStage: Stage, val listener: StartupScen
 
   center.getChildren.addAll(usernameLabel, usernameField, selectPlayersLabel, comboBox)
 
-  val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
+  val alert: Alert = ScalavelliAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 

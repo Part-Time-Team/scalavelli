@@ -2,7 +2,7 @@ package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.listeners.SelectSceneListener
-import it.parttimeteam.view.utils.MachiavelliButton
+import it.parttimeteam.view.utils.ScalavelliButton
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Button
 import scalafx.scene.image.{Image, ImageView}
@@ -26,9 +26,9 @@ class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) ext
   center.spacing = ViewConfig.formSpacing
   center.setMaxWidth(ViewConfig.formWidth)
 
-  val btnPublicGame: Button = MachiavelliButton("Start new game", () => listener.onSelectedPublicGame())
-  val btnPrivateGame: Button = MachiavelliButton("Participate with a code", () => listener.onSelectedPrivateGame())
-  val btnCreatePrivateGame: Button = MachiavelliButton("Create new code", () => listener.onSelectedCreatePrivateGame())
+  val btnPublicGame: Button = ScalavelliButton("Start new game", () => listener.onSelectedPublicGame())
+  val btnPrivateGame: Button = ScalavelliButton("Participate with a code", () => listener.onSelectedPrivateGame())
+  val btnCreatePrivateGame: Button = ScalavelliButton("Create new code", () => listener.onSelectedCreatePrivateGame())
 
   btnPublicGame.prefWidth <== center.width
   btnPrivateGame.prefWidth <== center.width

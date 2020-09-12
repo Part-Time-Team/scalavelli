@@ -6,7 +6,7 @@ import scalafx.scene.image.{Image, ImageView}
 /**
   * Builder for a default Button
   */
-object MachiavelliButton {
+object ScalavelliButton {
 
   def apply(text: String, onClick: () => Unit): Button = {
     val btn: Button = new Button(text)

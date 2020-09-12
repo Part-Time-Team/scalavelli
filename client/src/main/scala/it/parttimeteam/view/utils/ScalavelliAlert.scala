@@ -6,7 +6,7 @@ import scalafx.scene.control.Alert.AlertType
 /**
   * Builder for a default Alert dialog
   */
-object MachiavelliAlert {
+object ScalavelliAlert {
 
   def apply(title: String, message: String, alertType: AlertType): Alert = {
     val alert: Alert = new Alert(alertType)

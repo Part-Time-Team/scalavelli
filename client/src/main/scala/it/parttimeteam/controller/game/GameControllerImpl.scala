@@ -15,7 +15,7 @@ import scalafx.application.{JFXApp, Platform}
 
 class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
-  private var gameStage: MachiavelliGameStage = _
+  private var gameStage: GameStage = _
   private var gameService: GameService = _
   private var currentState: ClientGameState = _
 
@@ -44,7 +44,7 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
   override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
     Platform.runLater({
-      gameStage = MachiavelliGameStage(this)
+      gameStage = GameStage(this)
       gameStage.initMatch()
       app.stage = gameStage
     })

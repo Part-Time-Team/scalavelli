@@ -5,8 +5,8 @@ import it.parttimeteam.view.game.scenes.model.{GameCard, GameCardCombination}
 import scalafx.scene.Scene
 
 /**
-  * Main scene for MachiavelliGameStage.
-  * Allows MachiavelliGameStage to interact with each view element.
+  * Main scene for ScalavelliGameStage.
+  * Allows ScalavelliGameStage to interact with each view element.
   */
 trait GameScene extends Scene {
 

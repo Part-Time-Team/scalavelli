@@ -5,18 +5,18 @@ import it.parttimeteam.core.cards.Card
 import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
-import it.parttimeteam.view.utils.MachiavelliAlert
+import it.parttimeteam.view.utils.ScalavelliAlert
 import scalafx.application.Platform
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.{Alert, ButtonType}
 
 /**
-  * MachiavelliGameStage implementation
+  * GameStage implementation
   *
   * @param gameListener
   */
-class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGameStage {
-  val stage: MachiavelliGameStage = this
+class GameStageImpl(gameListener: GameListener) extends GameStage {
+  val stage: GameStage = this
 
   val gameScene: GameScene = new GameSceneImpl(stage)
 
@@ -25,22 +25,21 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   onCloseRequest = _ => System.exit(0)
 
 
-
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def setMessage(message: String): Unit = {
     Platform.runLater({
       gameScene.setMessage(message)
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def updateState(viewGameState: ClientGameState): Unit = {
     Platform.runLater({
       gameScene.setState(viewGameState)
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def initMatch(): Unit = {
     Platform.runLater({
       gameScene.disableActions()
@@ -48,14 +47,14 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def matchReady(): Unit = {
     Platform.runLater({
       gameScene.hideInitMatch()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def notifyGameEnd(gameEndType: GameEndType): Unit = {
     Platform.runLater({
       val message: String = gameEndType match {
@@ -68,7 +67,7 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
         case _ => ""
       }
 
-      val alert = MachiavelliAlert("Game ended", message, AlertType.Information)
+      val alert = ScalavelliAlert("Game ended", message, AlertType.Information)
       alert.showAndWait match {
         case Some(b) =>
           if (b == ButtonType.OK) {
@@ -82,42 +81,42 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def enableActions(): Unit = {
     Platform.runLater({
       gameScene.enableActions()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def disableActions(): Unit = {
     Platform.runLater({
       gameScene.disableActions()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def notifyError(result: ErrorEvent): Unit = {
     // TODO create string error
     Platform.runLater({
-      val alert: Alert = MachiavelliAlert("Error", result toString, AlertType.Error)
+      val alert: Alert = ScalavelliAlert("Error", result toString, AlertType.Error)
       alert.showAndWait()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def notifyInfo(message: String): Unit = {
     Platform.runLater({
-      val alert: Alert = MachiavelliAlert("", message, AlertType.Information)
+      val alert: Alert = ScalavelliAlert("", message, AlertType.Information)
       alert.showAndWait()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def setInTurn(): Unit = {
     gameScene.setInTurn(true)
     Platform.runLater({
-      val alert = MachiavelliAlert("", "It's your turn", AlertType.Information)
+      val alert = ScalavelliAlert("", "It's your turn", AlertType.Information)
       alert.showAndWait match {
         case Some(b) =>
           if (b == ButtonType.OK) {
@@ -133,7 +132,7 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def setTurnEnded(): Unit = {
     gameScene.setInTurn(false)
     Platform.runLater({
@@ -143,36 +142,36 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
   }
 
   // view actions
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def pickCombination(combinationId: String): Unit = gameListener.onViewEvent(PickCardCombinationEvent(combinationId))
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def endTurn(): Unit = gameListener.onViewEvent(EndTurnEvent)
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def nextState(): Unit = gameListener.onViewEvent(RedoEvent)
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def previousState(): Unit = gameListener.onViewEvent(UndoEvent)
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationEvent(cards))
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def pickCards(cards: Seq[Card]): Unit = gameListener.onViewEvent(PickCardsEvent(cards))
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def sortHandBySuit(): Unit = gameListener.onViewEvent(SortHandBySuitEvent)
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def sortHandByRank(): Unit = gameListener.onViewEvent(SortHandByRankEvent)
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = gameListener.onViewEvent(UpdateCardCombinationEvent(combinationId, cards))
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def leaveGame(): Unit = {
-    val alert: Alert = MachiavelliAlert("Leave the game", "Are you sure you want to leave the game? The action cannot be undone.", AlertType.Confirmation)
+    val alert: Alert = ScalavelliAlert("Leave the game", "Are you sure you want to leave the game? The action cannot be undone.", AlertType.Confirmation)
 
     alert.showAndWait match {
       case Some(b) =>
@@ -185,24 +184,24 @@ class MachiavelliGameStageImpl(gameListener: GameListener) extends MachiavelliGa
     }
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def resetHistory(): Unit = gameListener.onViewEvent(ResetEvent)
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def showTimer(minutes: Long, seconds: Long): Unit = {
     Platform.runLater({
       gameScene.showTimer(minutes, seconds)
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def updateTimer(minutes: Long, seconds: Long): Unit = {
     Platform.runLater({
       gameScene.updateTimer(minutes, seconds)
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def notifyTimerEnded(): Unit = {
     Platform.runLater({
       gameScene.notifyTimerEnd()
