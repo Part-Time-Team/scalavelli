@@ -58,12 +58,6 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def opponentInTurn(opponentName: String): Unit = notifyEvent(OpponentInTurnEvent(opponentName))
 
-    override def turnEndedWithCartDrawn(card: Card): Unit = {
-      turnHistory = turnHistory.clear()
-      notifyEvent(StateUpdatedEvent(generateClientGameState(storeOpt.get.onCardDrawn(card), turnHistory)))
-      notifyEvent(TurnEndedEvent)
-    }
-
     override def gameWon(): Unit = notifyEvent(GameWonEvent)
 
     override def gameLost(winnerName: String): Unit = notifyEvent(GameLostEvent(winnerName))
