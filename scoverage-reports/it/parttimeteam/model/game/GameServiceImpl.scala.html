@@ -82,174 +82,168 @@
 </span>58 <span style=''>
 </span>59 <span style=''>    override def opponentInTurn(opponentName: String): Unit = </span><span style='background: #F0ADAD'>notifyEvent(OpponentInTurnEvent(opponentName))</span><span style=''>
 </span>60 <span style=''>
-</span>61 <span style=''>    override def turnEndedWithCartDrawn(card: Card): Unit = {
-</span>62 <span style=''>      </span><span style='background: #F0ADAD'>turnHistory = turnHistory.clear()</span><span style=''>
-</span>63 <span style=''>      </span><span style='background: #F0ADAD'>notifyEvent(StateUpdatedEvent(generateClientGameState(storeOpt.get.onCardDrawn(card), turnHistory)))</span><span style=''>
-</span>64 <span style=''>      </span><span style='background: #F0ADAD'>notifyEvent(TurnEndedEvent)</span><span style=''>
-</span>65 <span style=''>    }
+</span>61 <span style=''>    override def gameWon(): Unit = </span><span style='background: #F0ADAD'>notifyEvent(GameWonEvent)</span><span style=''>
+</span>62 <span style=''>
+</span>63 <span style=''>    override def gameLost(winnerName: String): Unit = </span><span style='background: #F0ADAD'>notifyEvent(GameLostEvent(winnerName))</span><span style=''>
+</span>64 <span style=''>
+</span>65 <span style=''>    override def gameEndedWithErrorEvent(reason: String): Unit = </span><span style='background: #F0ADAD'>notifyEvent(GameEndedWithErrorEvent(reason))</span><span style=''>
 </span>66 <span style=''>
-</span>67 <span style=''>    override def gameWon(): Unit = </span><span style='background: #F0ADAD'>notifyEvent(GameWonEvent)</span><span style=''>
+</span>67 <span style=''>  }
 </span>68 <span style=''>
-</span>69 <span style=''>    override def gameLost(winnerName: String): Unit = </span><span style='background: #F0ADAD'>notifyEvent(GameLostEvent(winnerName))</span><span style=''>
+</span>69 <span style=''>  private val gameClientActorRef = </span><span style='background: #F0ADAD'>ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener))</span><span style=''>
 </span>70 <span style=''>
-</span>71 <span style=''>    override def gameEndedWithErrorEvent(reason: String): Unit = </span><span style='background: #F0ADAD'>notifyEvent(GameEndedWithErrorEvent(reason))</span><span style=''>
+</span>71 <span style=''>  // region GameService
 </span>72 <span style=''>
-</span>73 <span style=''>  }
-</span>74 <span style=''>
-</span>75 <span style=''>  private val gameClientActorRef = </span><span style='background: #F0ADAD'>ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener))</span><span style=''>
-</span>76 <span style=''>
-</span>77 <span style=''>  // region GameService
-</span>78 <span style=''>
-</span>79 <span style=''>  override def playerReady(): Unit = {
-</span>80 <span style=''>    // timer to be sure the view is ready on server responses
-</span>81 <span style=''>    </span><span style='background: #F0ADAD'>ActorSystemManager.actorSystem.scheduler.scheduleOnce(1.second) {
-</span>82 <span style=''></span><span style='background: #F0ADAD'>      remoteMatchGameRef ! Ready(playerId, gameClientActorRef)
-</span>83 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>84 <span style=''>  }
-</span>85 <span style=''>
-</span>86 <span style=''>  override def leaveGame(): Unit = </span><span style='background: #F0ADAD'>this.remoteMatchGameRef ! LeaveGame(this.playerId)</span><span style=''>
-</span>87 <span style=''>
-</span>88 <span style=''>  override def endTurnDrawingACard(): Unit = </span><span style='background: #F0ADAD'>remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)</span><span style=''>
-</span>89 <span style=''>
-</span>90 <span style=''>  override def endTurnWithMoves(): Unit = {
-</span>91 <span style=''>    </span><span style='background: #F0ADAD'>withState { currentState =&gt;
-</span>92 <span style=''></span><span style='background: #F0ADAD'>      if (isTurnValid(currentState)) {
-</span>93 <span style=''></span><span style='background: #F0ADAD'>        remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
-</span>94 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>95 <span style=''></span><span style='background: #F0ADAD'>      else {
-</span>96 <span style=''></span><span style='background: #F0ADAD'>        this.notifyEvent(GameErrorEvent(ErrorEvent.NoValidTurnPlay))
-</span>97 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>98 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>99 <span style=''>  }
-</span>100 <span style=''>
-</span>101 <span style=''>  override def makeCombination(cards: Seq[Card]): Unit = {
-</span>102 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
-</span>103 <span style=''></span><span style='background: #F0ADAD'>      this.gameInterface.playCombination(state.hand, state.board, cards) match {
-</span>104 <span style=''></span><span style='background: #F0ADAD'>        case Right((updatedHand, updatedBoard)) =&gt;
-</span>105 <span style=''></span><span style='background: #F0ADAD'>          val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-</span>106 <span style=''></span><span style='background: #F0ADAD'>          this.updateHistoryAndNotify(updatedState)
-</span>107 <span style=''></span><span style='background: #F0ADAD'>
-</span>108 <span style=''></span><span style='background: #F0ADAD'>        case Left(error) =&gt; this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
-</span>109 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>110 <span style=''></span><span style='background: #F0ADAD'>
-</span>111 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>112 <span style=''>  }
-</span>113 <span style=''>
-</span>114 <span style=''>  override def pickCardsFromBoard(cards: Seq[Card]): Unit = {
-</span>115 <span style=''>    </span><span style='background: #F0ADAD'>withState { currentState =&gt;
-</span>116 <span style=''></span><span style='background: #F0ADAD'>      gameInterface.pickBoardCards(currentState.hand, currentState.board, cards) match {
-</span>117 <span style=''></span><span style='background: #F0ADAD'>        case Right((hand, board)) =&gt; {
-</span>118 <span style=''></span><span style='background: #F0ADAD'>          val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
-</span>119 <span style=''></span><span style='background: #F0ADAD'>          this.updateHistoryAndNotify(updatedState)
-</span>120 <span style=''></span><span style='background: #F0ADAD'>        }
-</span>121 <span style=''></span><span style='background: #F0ADAD'>        case Left(error) =&gt; this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
-</span>122 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>123 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>124 <span style=''>  }
-</span>125 <span style=''>
-</span>126 <span style=''>  override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = {
-</span>127 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
-</span>128 <span style=''></span><span style='background: #F0ADAD'>      this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards) match {
-</span>129 <span style=''></span><span style='background: #F0ADAD'>        case Right((updatedHand, updatedBoard)) =&gt; {
-</span>130 <span style=''></span><span style='background: #F0ADAD'>          val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-</span>131 <span style=''></span><span style='background: #F0ADAD'>          this.updateHistoryAndNotify(updatedState)
-</span>132 <span style=''></span><span style='background: #F0ADAD'>        }
-</span>133 <span style=''></span><span style='background: #F0ADAD'>        case Left(error) =&gt; this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
-</span>134 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>135 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>136 <span style=''>  }
-</span>137 <span style=''>
-</span>138 <span style=''>  override def undoTurn(): Unit = {
-</span>139 <span style=''>    </span><span style='background: #F0ADAD'>this.updateStateThroughHistory(turnHistory.previous)</span><span style=''>
-</span>140 <span style=''>  }
-</span>141 <span style=''>
-</span>142 <span style=''>  override def redoTurn(): Unit = {
-</span>143 <span style=''>    </span><span style='background: #F0ADAD'>this.updateStateThroughHistory(turnHistory.next)</span><span style=''>
-</span>144 <span style=''>  }
-</span>145 <span style=''>
-</span>146 <span style=''>  override def resetTurnState(): Unit = {
-</span>147 <span style=''>    </span><span style='background: #F0ADAD'>this.updateStateThroughHistory(turnHistory.reset)</span><span style=''>
-</span>148 <span style=''>  }
-</span>149 <span style=''>
-</span>150 <span style=''>  override def pickCardCombination(combinationId: String): Unit = {
-</span>151 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
-</span>152 <span style=''></span><span style='background: #F0ADAD'>      this.gameInterface.pickBoardCards(
-</span>153 <span style=''></span><span style='background: #F0ADAD'>        state.hand, state.board, state.board.combinations.find(_.id == combinationId).get.cards) match {
-</span>154 <span style=''></span><span style='background: #F0ADAD'>        case Right((updatedHand, updatedBoard)) =&gt; {
-</span>155 <span style=''></span><span style='background: #F0ADAD'>          val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
-</span>156 <span style=''></span><span style='background: #F0ADAD'>          this.updateHistoryAndNotify(updatedState)
-</span>157 <span style=''></span><span style='background: #F0ADAD'>        }
-</span>158 <span style=''></span><span style='background: #F0ADAD'>        case Left(error) =&gt; this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
-</span>159 <span style=''></span><span style='background: #F0ADAD'>      }
-</span>160 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>161 <span style=''>  }
-</span>162 <span style=''>
-</span>163 <span style=''>  override def sortHandByRank(): Unit = {
-</span>164 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
-</span>165 <span style=''></span><span style='background: #F0ADAD'>      val updatedState = this.storeOpt.get.onLocalTurnStateChanged(state.hand.sortByRank(), state.board)
-</span>166 <span style=''></span><span style='background: #F0ADAD'>      this.updateHistoryAndNotify(updatedState)
-</span>167 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>168 <span style=''>  }
-</span>169 <span style=''>
-</span>170 <span style=''>  override def sortHandBySuit(): Unit = {
-</span>171 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
-</span>172 <span style=''></span><span style='background: #F0ADAD'>      val updatedState = this.storeOpt.get.onLocalTurnStateChanged(state.hand.sortBySuit(), state.board)
-</span>173 <span style=''></span><span style='background: #F0ADAD'>      this.updateHistoryAndNotify(updatedState)
-</span>174 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>175 <span style=''>  }
-</span>176 <span style=''>
-</span>177 <span style=''>  // endregion
-</span>178 <span style=''>
-</span>179 <span style=''>  private def updateHistoryAndNotify(updatedState: PlayerGameState): Unit = {
-</span>180 <span style=''>    </span><span style='background: #F0ADAD'>this.updateHistory(updatedState)</span><span style=''>
-</span>181 <span style=''>    </span><span style='background: #F0ADAD'>this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))</span><span style=''>
-</span>182 <span style=''>  }
-</span>183 <span style=''>
-</span>184 <span style=''>  private def updateHistory(newState: PlayerGameState): Unit = {
-</span>185 <span style=''>    </span><span style='background: #F0ADAD'>this.turnHistory = this.turnHistory.setPresent(newState)</span><span style=''>
-</span>186 <span style=''>  }
-</span>187 <span style=''>
-</span>188 <span style=''>  private def withState(f: PlayerGameState =&gt; Unit): Unit = </span><span style='background: #F0ADAD'>this.storeOpt</span><span style=''> match {
-</span>189 <span style=''>    case Some(state) =&gt; </span><span style='background: #F0ADAD'>f(state.currentState)</span><span style=''>
-</span>190 <span style=''>    case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>191 <span style=''>  }
-</span>192 <span style=''>
-</span>193 <span style=''>  private def generateClientGameState(state: PlayerGameState,
-</span>194 <span style=''>                                      turnHistory: History[PlayerGameState]): ClientGameState =
-</span>195 <span style=''>    </span><span style='background: #F0ADAD'>ClientGameState(
-</span>196 <span style=''></span><span style='background: #F0ADAD'>      playerGameState = state,
-</span>197 <span style=''></span><span style='background: #F0ADAD'>      canUndo = turnHistory.canPrevious,
-</span>198 <span style=''></span><span style='background: #F0ADAD'>      canRedo = turnHistory.canNext,
-</span>199 <span style=''></span><span style='background: #F0ADAD'>      canReset = turnHistory.canPrevious,
-</span>200 <span style=''></span><span style='background: #F0ADAD'>      canDrawCard = !isTurnValid(state)
-</span>201 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
-</span>202 <span style=''>
-</span>203 <span style=''>  /**
-</span>204 <span style=''>   * Execute the history method, updates the history and the resulting state
-</span>205 <span style=''>   *
-</span>206 <span style=''>   * @param historyUpdate History method to execute.
-</span>207 <span style=''>   */
-</span>208 <span style=''>  private def updateStateThroughHistory(historyUpdate: () =&gt; (Option[PlayerGameState], History[PlayerGameState])): Unit = {
-</span>209 <span style=''>    val (optState, updatedHistory) = historyUpdate()
-</span>210 <span style=''>    </span><span style='background: #F0ADAD'>this.turnHistory = updatedHistory</span><span style=''>
-</span>211 <span style=''>    if (</span><span style='background: #F0ADAD'>optState.isDefined</span><span style=''>) </span><span style='background: #F0ADAD'>{
-</span>212 <span style=''></span><span style='background: #F0ADAD'>      this.storeOpt.get.onStateChanged(optState.get)
-</span>213 <span style=''></span><span style='background: #F0ADAD'>      this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
-</span>214 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>215 <span style=''>  }
-</span>216 <span style=''>
-</span>217 <span style=''>  /**
-</span>218 <span style=''>   * Return if Turn is valid or not.
-</span>219 <span style=''>   *
-</span>220 <span style=''>   * @param currentState Current Game State.
-</span>221 <span style=''>   * @return True if the Turn isn't valid, false anywhere.
-</span>222 <span style=''>   */
-</span>223 <span style=''>  private def isTurnValid(currentState: PlayerGameState) = {
-</span>224 <span style=''>    val startState = </span><span style='background: #F0ADAD'>turnHistory.headOption</span><span style=''>
-</span>225 <span style=''>    </span><span style='background: #F0ADAD'>startState.isDefined &amp;&amp; gameInterface.validateTurn(
-</span>226 <span style=''></span><span style='background: #F0ADAD'>      currentState.board, startState.get.board, currentState.hand, startState.get.hand)</span><span style=''>
-</span>227 <span style=''>  }
-</span>228 <span style=''>}
+</span>73 <span style=''>  override def playerReady(): Unit = {
+</span>74 <span style=''>    // timer to be sure the view is ready on server responses
+</span>75 <span style=''>    </span><span style='background: #F0ADAD'>ActorSystemManager.actorSystem.scheduler.scheduleOnce(1.second) {
+</span>76 <span style=''></span><span style='background: #F0ADAD'>      remoteMatchGameRef ! Ready(playerId, gameClientActorRef)
+</span>77 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>78 <span style=''>  }
+</span>79 <span style=''>
+</span>80 <span style=''>  override def leaveGame(): Unit = </span><span style='background: #F0ADAD'>this.remoteMatchGameRef ! LeaveGame(this.playerId)</span><span style=''>
+</span>81 <span style=''>
+</span>82 <span style=''>  override def endTurnDrawingACard(): Unit = </span><span style='background: #F0ADAD'>remoteMatchGameRef ! PlayerActionMade(this.playerId, DrawCard)</span><span style=''>
+</span>83 <span style=''>
+</span>84 <span style=''>  override def endTurnWithMoves(): Unit = {
+</span>85 <span style=''>    </span><span style='background: #F0ADAD'>withState { currentState =&gt;
+</span>86 <span style=''></span><span style='background: #F0ADAD'>      if (isTurnValid(currentState)) {
+</span>87 <span style=''></span><span style='background: #F0ADAD'>        remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
+</span>88 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>89 <span style=''></span><span style='background: #F0ADAD'>      else {
+</span>90 <span style=''></span><span style='background: #F0ADAD'>        this.notifyEvent(GameErrorEvent(ErrorEvent.NoValidTurnPlay))
+</span>91 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>92 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>93 <span style=''>  }
+</span>94 <span style=''>
+</span>95 <span style=''>  override def makeCombination(cards: Seq[Card]): Unit = {
+</span>96 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
+</span>97 <span style=''></span><span style='background: #F0ADAD'>      this.gameInterface.playCombination(state.hand, state.board, cards) match {
+</span>98 <span style=''></span><span style='background: #F0ADAD'>        case Right((updatedHand, updatedBoard)) =&gt;
+</span>99 <span style=''></span><span style='background: #F0ADAD'>          val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+</span>100 <span style=''></span><span style='background: #F0ADAD'>          this.updateHistoryAndNotify(updatedState)
+</span>101 <span style=''></span><span style='background: #F0ADAD'>
+</span>102 <span style=''></span><span style='background: #F0ADAD'>        case Left(error) =&gt; this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
+</span>103 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>104 <span style=''></span><span style='background: #F0ADAD'>
+</span>105 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>106 <span style=''>  }
+</span>107 <span style=''>
+</span>108 <span style=''>  override def pickCardsFromBoard(cards: Seq[Card]): Unit = {
+</span>109 <span style=''>    </span><span style='background: #F0ADAD'>withState { currentState =&gt;
+</span>110 <span style=''></span><span style='background: #F0ADAD'>      gameInterface.pickBoardCards(currentState.hand, currentState.board, cards) match {
+</span>111 <span style=''></span><span style='background: #F0ADAD'>        case Right((hand, board)) =&gt; {
+</span>112 <span style=''></span><span style='background: #F0ADAD'>          val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
+</span>113 <span style=''></span><span style='background: #F0ADAD'>          this.updateHistoryAndNotify(updatedState)
+</span>114 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>115 <span style=''></span><span style='background: #F0ADAD'>        case Left(error) =&gt; this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
+</span>116 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>117 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>118 <span style=''>  }
+</span>119 <span style=''>
+</span>120 <span style=''>  override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = {
+</span>121 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
+</span>122 <span style=''></span><span style='background: #F0ADAD'>      this.gameInterface.putCardsInCombination(state.hand, state.board, combinationId, cards) match {
+</span>123 <span style=''></span><span style='background: #F0ADAD'>        case Right((updatedHand, updatedBoard)) =&gt; {
+</span>124 <span style=''></span><span style='background: #F0ADAD'>          val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+</span>125 <span style=''></span><span style='background: #F0ADAD'>          this.updateHistoryAndNotify(updatedState)
+</span>126 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>127 <span style=''></span><span style='background: #F0ADAD'>        case Left(error) =&gt; this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
+</span>128 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>129 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>130 <span style=''>  }
+</span>131 <span style=''>
+</span>132 <span style=''>  override def undoTurn(): Unit = {
+</span>133 <span style=''>    </span><span style='background: #F0ADAD'>this.updateStateThroughHistory(turnHistory.previous)</span><span style=''>
+</span>134 <span style=''>  }
+</span>135 <span style=''>
+</span>136 <span style=''>  override def redoTurn(): Unit = {
+</span>137 <span style=''>    </span><span style='background: #F0ADAD'>this.updateStateThroughHistory(turnHistory.next)</span><span style=''>
+</span>138 <span style=''>  }
+</span>139 <span style=''>
+</span>140 <span style=''>  override def resetTurnState(): Unit = {
+</span>141 <span style=''>    </span><span style='background: #F0ADAD'>this.updateStateThroughHistory(turnHistory.reset)</span><span style=''>
+</span>142 <span style=''>  }
+</span>143 <span style=''>
+</span>144 <span style=''>  override def pickCardCombination(combinationId: String): Unit = {
+</span>145 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
+</span>146 <span style=''></span><span style='background: #F0ADAD'>      this.gameInterface.pickBoardCards(
+</span>147 <span style=''></span><span style='background: #F0ADAD'>        state.hand, state.board, state.board.combinations.find(_.id == combinationId).get.cards) match {
+</span>148 <span style=''></span><span style='background: #F0ADAD'>        case Right((updatedHand, updatedBoard)) =&gt; {
+</span>149 <span style=''></span><span style='background: #F0ADAD'>          val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
+</span>150 <span style=''></span><span style='background: #F0ADAD'>          this.updateHistoryAndNotify(updatedState)
+</span>151 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>152 <span style=''></span><span style='background: #F0ADAD'>        case Left(error) =&gt; this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
+</span>153 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>154 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>155 <span style=''>  }
+</span>156 <span style=''>
+</span>157 <span style=''>  override def sortHandByRank(): Unit = {
+</span>158 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
+</span>159 <span style=''></span><span style='background: #F0ADAD'>      val updatedState = this.storeOpt.get.onLocalTurnStateChanged(state.hand.sortByRank(), state.board)
+</span>160 <span style=''></span><span style='background: #F0ADAD'>      this.updateHistoryAndNotify(updatedState)
+</span>161 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>162 <span style=''>  }
+</span>163 <span style=''>
+</span>164 <span style=''>  override def sortHandBySuit(): Unit = {
+</span>165 <span style=''>    </span><span style='background: #F0ADAD'>withState { state =&gt;
+</span>166 <span style=''></span><span style='background: #F0ADAD'>      val updatedState = this.storeOpt.get.onLocalTurnStateChanged(state.hand.sortBySuit(), state.board)
+</span>167 <span style=''></span><span style='background: #F0ADAD'>      this.updateHistoryAndNotify(updatedState)
+</span>168 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>169 <span style=''>  }
+</span>170 <span style=''>
+</span>171 <span style=''>  // endregion
+</span>172 <span style=''>
+</span>173 <span style=''>  private def updateHistoryAndNotify(updatedState: PlayerGameState): Unit = {
+</span>174 <span style=''>    </span><span style='background: #F0ADAD'>this.updateHistory(updatedState)</span><span style=''>
+</span>175 <span style=''>    </span><span style='background: #F0ADAD'>this.notifyEvent(StateUpdatedEvent(generateClientGameState(updatedState, turnHistory)))</span><span style=''>
+</span>176 <span style=''>  }
+</span>177 <span style=''>
+</span>178 <span style=''>  private def updateHistory(newState: PlayerGameState): Unit = {
+</span>179 <span style=''>    </span><span style='background: #F0ADAD'>this.turnHistory = this.turnHistory.setPresent(newState)</span><span style=''>
+</span>180 <span style=''>  }
+</span>181 <span style=''>
+</span>182 <span style=''>  private def withState(f: PlayerGameState =&gt; Unit): Unit = </span><span style='background: #F0ADAD'>this.storeOpt</span><span style=''> match {
+</span>183 <span style=''>    case Some(state) =&gt; </span><span style='background: #F0ADAD'>f(state.currentState)</span><span style=''>
+</span>184 <span style=''>    case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>185 <span style=''>  }
+</span>186 <span style=''>
+</span>187 <span style=''>  private def generateClientGameState(state: PlayerGameState,
+</span>188 <span style=''>                                      turnHistory: History[PlayerGameState]): ClientGameState =
+</span>189 <span style=''>    </span><span style='background: #F0ADAD'>ClientGameState(
+</span>190 <span style=''></span><span style='background: #F0ADAD'>      playerGameState = state,
+</span>191 <span style=''></span><span style='background: #F0ADAD'>      canUndo = turnHistory.canPrevious,
+</span>192 <span style=''></span><span style='background: #F0ADAD'>      canRedo = turnHistory.canNext,
+</span>193 <span style=''></span><span style='background: #F0ADAD'>      canReset = turnHistory.canPrevious,
+</span>194 <span style=''></span><span style='background: #F0ADAD'>      canDrawCard = !isTurnValid(state)
+</span>195 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>196 <span style=''>
+</span>197 <span style=''>  /**
+</span>198 <span style=''>   * Execute the history method, updates the history and the resulting state
+</span>199 <span style=''>   *
+</span>200 <span style=''>   * @param historyUpdate History method to execute.
+</span>201 <span style=''>   */
+</span>202 <span style=''>  private def updateStateThroughHistory(historyUpdate: () =&gt; (Option[PlayerGameState], History[PlayerGameState])): Unit = {
+</span>203 <span style=''>    val (optState, updatedHistory) = historyUpdate()
+</span>204 <span style=''>    </span><span style='background: #F0ADAD'>this.turnHistory = updatedHistory</span><span style=''>
+</span>205 <span style=''>    if (</span><span style='background: #F0ADAD'>optState.isDefined</span><span style=''>) </span><span style='background: #F0ADAD'>{
+</span>206 <span style=''></span><span style='background: #F0ADAD'>      this.storeOpt.get.onStateChanged(optState.get)
+</span>207 <span style=''></span><span style='background: #F0ADAD'>      this.notifyEvent(StateUpdatedEvent(generateClientGameState(optState.get, turnHistory)))
+</span>208 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>209 <span style=''>  }
+</span>210 <span style=''>
+</span>211 <span style=''>  /**
+</span>212 <span style=''>   * Return if Turn is valid or not.
+</span>213 <span style=''>   *
+</span>214 <span style=''>   * @param currentState Current Game State.
+</span>215 <span style=''>   * @return True if the Turn isn't valid, false anywhere.
+</span>216 <span style=''>   */
+</span>217 <span style=''>  private def isTurnValid(currentState: PlayerGameState) = {
+</span>218 <span style=''>    val startState = </span><span style='background: #F0ADAD'>turnHistory.headOption</span><span style=''>
+</span>219 <span style=''>    </span><span style='background: #F0ADAD'>startState.isDefined &amp;&amp; gameInterface.validateTurn(
+</span>220 <span style=''></span><span style='background: #F0ADAD'>      currentState.board, startState.get.board, currentState.hand, startState.get.hand)</span><span style=''>
+</span>221 <span style=''>  }
+</span>222 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -266,7 +260,7 @@
           25
         </td>
         <td>
-          1397
+          1393
         </td>
         <td>
           1078
@@ -287,7 +281,7 @@
           26
         </td>
         <td>
-          2436
+          2426
         </td>
         <td>
           1154
@@ -308,7 +302,7 @@
           28
         </td>
         <td>
-          1809
+          1802
         </td>
         <td>
           1220
@@ -329,7 +323,7 @@
           30
         </td>
         <td>
-          1438
+          1434
         </td>
         <td>
           1298
@@ -350,7 +344,7 @@
           31
         </td>
         <td>
-          2577
+          2567
         </td>
         <td>
           1347
@@ -371,7 +365,7 @@
           33
         </td>
         <td>
-          1176
+          2589
         </td>
         <td>
           1417
@@ -392,7 +386,7 @@
           37
         </td>
         <td>
-          1934
+          1927
         </td>
         <td>
           1531
@@ -413,7 +407,7 @@
           38
         </td>
         <td>
-          1988
+          1981
         </td>
         <td>
           1606
@@ -434,28 +428,7 @@
           38
         </td>
         <td>
-          2415
-        </td>
-        <td>
-          1576
-          -
-          1688
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.notifyEvent.apply(StateUpdatedEvent.apply(GameServiceImpl.this.generateClientGameState(store.onStateChanged(gameState), GameServiceImpl.this.turnHistory)))
-        </td>
-      </tr><tr>
-        <td>
-          38
-        </td>
-        <td>
-          1368
+          1364
         </td>
         <td>
           1588
@@ -473,10 +446,31 @@
         </td>
       </tr><tr>
         <td>
+          38
+        </td>
+        <td>
+          2405
+        </td>
+        <td>
+          1576
+          -
+          1688
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          GameServiceImpl.this.notifyEvent.apply(StateUpdatedEvent.apply(GameServiceImpl.this.generateClientGameState(store.onStateChanged(gameState), GameServiceImpl.this.turnHistory)))
+        </td>
+      </tr><tr>
+        <td>
           39
         </td>
         <td>
-          919
+          917
         </td>
         <td>
           1674
@@ -497,7 +491,7 @@
           39
         </td>
         <td>
-          1265
+          1261
         </td>
         <td>
           1641
@@ -518,7 +512,28 @@
           42
         </td>
         <td>
-          1817
+          1438
+        </td>
+        <td>
+          1785
+          -
+          1816
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Some.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Some.apply[it.parttimeteam.model.game.GameStateStore](GameStateStore.apply(gameState))
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1810
         </td>
         <td>
           1790
@@ -539,7 +554,7 @@
           42
         </td>
         <td>
-          2528
+          2518
         </td>
         <td>
           1774
@@ -557,31 +572,10 @@
         </td>
       </tr><tr>
         <td>
-          42
-        </td>
-        <td>
-          1442
-        </td>
-        <td>
-          1785
-          -
-          1816
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Some.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scala.Some.apply[it.parttimeteam.model.game.GameStateStore](GameStateStore.apply(gameState))
-        </td>
-      </tr><tr>
-        <td>
           43
         </td>
         <td>
-          2296
+          2287
         </td>
         <td>
           1839
@@ -602,7 +596,7 @@
           43
         </td>
         <td>
-          1957
+          1950
         </td>
         <td>
           1892
@@ -623,7 +617,7 @@
           43
         </td>
         <td>
-          1993
+          1986
         </td>
         <td>
           1827
@@ -644,7 +638,7 @@
           43
         </td>
         <td>
-          1233
+          1229
         </td>
         <td>
           1857
@@ -665,7 +659,7 @@
           48
         </td>
         <td>
-          2498
+          2488
         </td>
         <td>
           1969
@@ -686,7 +680,7 @@
           49
         </td>
         <td>
-          1351
+          1347
         </td>
         <td>
           1998
@@ -707,7 +701,7 @@
           51
         </td>
         <td>
-          1822
+          1815
         </td>
         <td>
           2042
@@ -728,28 +722,7 @@
           55
         </td>
         <td>
-          1526
-        </td>
-        <td>
-          2133
-          -
-          2152
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.History.clear
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.turnHistory.clear()
-        </td>
-      </tr><tr>
-        <td>
-          55
-        </td>
-        <td>
-          2530
+          2520
         </td>
         <td>
           2119
@@ -767,10 +740,31 @@
         </td>
       </tr><tr>
         <td>
+          55
+        </td>
+        <td>
+          1521
+        </td>
+        <td>
+          2133
+          -
+          2152
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.History.clear
+        </td>
+        <td style="background: #F0ADAD">
+          GameServiceImpl.this.turnHistory.clear()
+        </td>
+      </tr><tr>
+        <td>
           56
         </td>
         <td>
-          1928
+          1921
         </td>
         <td>
           2159
@@ -791,7 +785,7 @@
           59
         </td>
         <td>
-          1319
+          1315
         </td>
         <td>
           2268
@@ -812,7 +806,7 @@
           59
         </td>
         <td>
-          2300
+          2291
         </td>
         <td>
           2256
@@ -830,183 +824,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          61
         </td>
         <td>
-          1396
+          2060
         </td>
         <td>
-          2372
+          2339
           -
-          2405
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.turnHistory_=
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.turnHistory_=(GameServiceImpl.this.turnHistory.clear())
-        </td>
-      </tr><tr>
-        <td>
-          62
-        </td>
-        <td>
-          2067
-        </td>
-        <td>
-          2386
-          -
-          2405
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.History.clear
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.turnHistory.clear()
-        </td>
-      </tr><tr>
-        <td>
-          63
-        </td>
-        <td>
-          1931
-        </td>
-        <td>
-          2412
-          -
-          2512
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.notifyEvent.apply(StateUpdatedEvent.apply(GameServiceImpl.this.generateClientGameState(GameServiceImpl.this.storeOpt.get.onCardDrawn(card), GameServiceImpl.this.turnHistory)))
-        </td>
-      </tr><tr>
-        <td>
-          63
-        </td>
-        <td>
-          2469
-        </td>
-        <td>
-          2466
-          -
-          2496
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameStateStore.onCardDrawn
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.storeOpt.get.onCardDrawn(card)
-        </td>
-      </tr><tr>
-        <td>
-          63
-        </td>
-        <td>
-          1425
-        </td>
-        <td>
-          2442
-          -
-          2510
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.generateClientGameState
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.generateClientGameState(GameServiceImpl.this.storeOpt.get.onCardDrawn(card), GameServiceImpl.this.turnHistory)
-        </td>
-      </tr><tr>
-        <td>
-          63
-        </td>
-        <td>
-          1804
-        </td>
-        <td>
-          2498
-          -
-          2509
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.turnHistory
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.turnHistory
-        </td>
-      </tr><tr>
-        <td>
-          63
-        </td>
-        <td>
-          2599
-        </td>
-        <td>
-          2424
-          -
-          2511
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.StateUpdatedEvent.apply
-        </td>
-        <td style="background: #F0ADAD">
-          StateUpdatedEvent.apply(GameServiceImpl.this.generateClientGameState(GameServiceImpl.this.storeOpt.get.onCardDrawn(card), GameServiceImpl.this.turnHistory))
-        </td>
-      </tr><tr>
-        <td>
-          64
-        </td>
-        <td>
-          1320
-        </td>
-        <td>
-          2519
-          -
-          2546
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.notifyEvent.apply(TurnEndedEvent)
-        </td>
-      </tr><tr>
-        <td>
-          67
-        </td>
-        <td>
-          2354
-        </td>
-        <td>
-          2589
-          -
-          2614
+          2364
         </td>
         <td>
           Apply
@@ -1019,36 +845,15 @@
         </td>
       </tr><tr>
         <td>
-          69
+          63
         </td>
         <td>
-          1381
+          1392
         </td>
         <td>
-          2670
+          2432
           -
-          2708
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.notifyEvent.apply(GameLostEvent.apply(winnerName))
-        </td>
-      </tr><tr>
-        <td>
-          69
-        </td>
-        <td>
-          1968
-        </td>
-        <td>
-          2682
-          -
-          2707
+          2457
         </td>
         <td>
           Apply
@@ -1061,15 +866,15 @@
         </td>
       </tr><tr>
         <td>
-          71
+          63
         </td>
         <td>
-          1814
+          2459
         </td>
         <td>
-          2775
+          2420
           -
-          2819
+          2458
         </td>
         <td>
           Apply
@@ -1078,19 +883,19 @@
           scala.Function1.apply
         </td>
         <td style="background: #F0ADAD">
-          GameServiceImpl.this.notifyEvent.apply(GameEndedWithErrorEvent.apply(reason))
+          GameServiceImpl.this.notifyEvent.apply(GameLostEvent.apply(winnerName))
         </td>
       </tr><tr>
         <td>
-          71
+          65
         </td>
         <td>
-          2475
+          1797
         </td>
         <td>
-          2787
+          2537
           -
-          2818
+          2568
         </td>
         <td>
           Apply
@@ -1103,15 +908,36 @@
         </td>
       </tr><tr>
         <td>
-          75
+          65
         </td>
         <td>
-          1304
+          1421
         </td>
         <td>
-          2861
+          2525
           -
-          2956
+          2569
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          GameServiceImpl.this.notifyEvent.apply(GameEndedWithErrorEvent.apply(reason))
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          2344
+        </td>
+        <td>
+          2611
+          -
+          2706
         </td>
         <td>
           Apply
@@ -1124,15 +950,15 @@
         </td>
       </tr><tr>
         <td>
-          75
+          69
         </td>
         <td>
-          2569
+          1924
         </td>
         <td>
-          2922
+          2672
           -
-          2954
+          2704
         </td>
         <td>
           Select
@@ -1145,15 +971,15 @@
         </td>
       </tr><tr>
         <td>
-          75
+          69
         </td>
         <td>
-          1908
+          1316
         </td>
         <td>
-          2900
+          2650
           -
-          2955
+          2705
         </td>
         <td>
           Apply
@@ -1166,15 +992,15 @@
         </td>
       </tr><tr>
         <td>
-          81
+          75
         </td>
         <td>
-          2362
+          1961
         </td>
         <td>
-          3142
+          2892
           -
-          3143
+          2893
         </td>
         <td>
           Literal
@@ -1187,15 +1013,78 @@
         </td>
       </tr><tr>
         <td>
-          81
+          75
         </td>
         <td>
-          1656
+          2466
         </td>
         <td>
-          3088
+          2902
           -
-          3222
+          2902
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          2020
+        </td>
+        <td>
+          2902
+          -
+          2902
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameServiceImpl.executionContext
+        </td>
+        <td style="background: #F0ADAD">
+          GameServiceImpl.this.executionContext
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          1377
+        </td>
+        <td>
+          2892
+          -
+          2900
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.concurrent.duration.DurationConversions.second
+        </td>
+        <td style="background: #F0ADAD">
+          scala.concurrent.duration.`package`.DurationInt(1).second
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          1379
+        </td>
+        <td>
+          2838
+          -
+          2972
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1213,141 +1102,15 @@
         </td>
       </tr><tr>
         <td>
-          81
+          76
         </td>
         <td>
-          2027
+          1300
         </td>
         <td>
-          3142
+          2929
           -
-          3150
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.concurrent.duration.DurationConversions.second
-        </td>
-        <td style="background: #F0ADAD">
-          scala.concurrent.duration.`package`.DurationInt(1).second
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          1352
-        </td>
-        <td>
-          3152
-          -
-          3152
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          81
-        </td>
-        <td>
-          2333
-        </td>
-        <td>
-          3152
-          -
-          3152
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.executionContext
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.executionContext
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          1781
-        </td>
-        <td>
-          3187
-          -
-          3195
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.playerId
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.playerId
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          1383
-        </td>
-        <td>
-          3160
-          -
-          3178
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.remoteMatchGameRef
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.remoteMatchGameRef
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          1236
-        </td>
-        <td>
-          3160
-          -
-          3216
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!
-        </td>
-        <td style="background: #F0ADAD">
-          qual$1.!(x$1)(x$2)
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          1912
-        </td>
-        <td>
-          3179
-          -
-          3179
+          2929
         </td>
         <td>
           Apply
@@ -1360,36 +1123,15 @@
         </td>
       </tr><tr>
         <td>
-          82
+          76
         </td>
         <td>
-          1179
+          1901
         </td>
         <td>
-          3197
+          2931
           -
-          3215
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.gameClientActorRef
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.gameClientActorRef
-        </td>
-      </tr><tr>
-        <td>
-          82
-        </td>
-        <td>
-          2593
-        </td>
-        <td>
-          3181
-          -
-          3216
+          2966
         </td>
         <td>
           Apply
@@ -1402,57 +1144,36 @@
         </td>
       </tr><tr>
         <td>
-          82
+          76
         </td>
         <td>
-          2476
+          2559
         </td>
         <td>
-          3160
+          2947
           -
-          3178
+          2965
         </td>
         <td>
-          ApplyImplicitView
+          Select
         </td>
         <td>
-          akka.actor.actorRef2Scala
+          it.parttimeteam.model.game.GameServiceImpl.gameClientActorRef
         </td>
         <td style="background: #F0ADAD">
-          actor.this.`package`.actorRef2Scala(GameServiceImpl.this.remoteMatchGameRef)
+          GameServiceImpl.this.gameClientActorRef
         </td>
       </tr><tr>
         <td>
-          86
+          76
         </td>
         <td>
-          2598
+          2352
         </td>
         <td>
-          3289
+          2910
           -
-          3313
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.messages.GameMessage.LeaveGame.apply
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.messages.GameMessage.LeaveGame.apply(this.playerId)
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          1222
-        </td>
-        <td>
-          3263
-          -
-          3313
+          2966
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1465,36 +1186,15 @@
         </td>
       </tr><tr>
         <td>
-          86
+          76
         </td>
         <td>
-          2448
+          1807
         </td>
         <td>
-          3263
+          2910
           -
-          3286
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.remoteMatchGameRef
-        </td>
-        <td style="background: #F0ADAD">
-          this.remoteMatchGameRef
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          1787
-        </td>
-        <td>
-          3263
-          -
-          3286
+          2928
         </td>
         <td>
           ApplyImplicitView
@@ -1503,61 +1203,19 @@
           akka.actor.actorRef2Scala
         </td>
         <td style="background: #F0ADAD">
-          actor.this.`package`.actorRef2Scala(this.remoteMatchGameRef)
+          actor.this.`package`.actorRef2Scala(GameServiceImpl.this.remoteMatchGameRef)
         </td>
       </tr><tr>
         <td>
-          86
+          76
         </td>
         <td>
-          1882
+          2465
         </td>
         <td>
-          3287
+          2910
           -
-          3287
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!$default$2
-        </td>
-        <td style="background: #F0ADAD">
-          qual$1.!$default$2(x$1)
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          1155
-        </td>
-        <td>
-          3299
-          -
-          3312
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.playerId
-        </td>
-        <td style="background: #F0ADAD">
-          this.playerId
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          2338
-        </td>
-        <td>
-          3360
-          -
-          3378
+          2928
         </td>
         <td>
           Select
@@ -1570,99 +1228,36 @@
         </td>
       </tr><tr>
         <td>
-          88
+          76
         </td>
         <td>
-          1764
+          1173
         </td>
         <td>
-          3381
+          2937
           -
-          3422
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.messages.GameMessage.PlayerActionMade.apply
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.messages.GameMessage.PlayerActionMade.apply(this.playerId, it.parttimeteam.DrawCard)
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          2472
-        </td>
-        <td>
-          3413
-          -
-          3421
+          2945
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.DrawCard
+          it.parttimeteam.model.game.GameServiceImpl.playerId
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.DrawCard
+          GameServiceImpl.this.playerId
         </td>
       </tr><tr>
         <td>
-          88
+          80
         </td>
         <td>
-          1739
+          2583
         </td>
         <td>
-          3360
+          3049
           -
-          3378
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          akka.actor.actorRef2Scala
-        </td>
-        <td style="background: #F0ADAD">
-          actor.this.`package`.actorRef2Scala(GameServiceImpl.this.remoteMatchGameRef)
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          2501
-        </td>
-        <td>
-          3360
-          -
-          3422
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!
-        </td>
-        <td style="background: #F0ADAD">
-          qual$1.!(x$1)(x$2)
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          1424
-        </td>
-        <td>
-          3398
-          -
-          3411
+          3062
         </td>
         <td>
           Select
@@ -1675,15 +1270,99 @@
         </td>
       </tr><tr>
         <td>
-          88
+          80
         </td>
         <td>
-          1208
+          1176
         </td>
         <td>
-          3379
+          3013
           -
-          3379
+          3036
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.actor.actorRef2Scala
+        </td>
+        <td style="background: #F0ADAD">
+          actor.this.`package`.actorRef2Scala(this.remoteMatchGameRef)
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          1774
+        </td>
+        <td>
+          3013
+          -
+          3036
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameServiceImpl.remoteMatchGameRef
+        </td>
+        <td style="background: #F0ADAD">
+          this.remoteMatchGameRef
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          2324
+        </td>
+        <td>
+          3013
+          -
+          3063
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!(x$1)(x$2)
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          1905
+        </td>
+        <td>
+          3039
+          -
+          3063
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.messages.GameMessage.LeaveGame.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.GameMessage.LeaveGame.apply(this.playerId)
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          1232
+        </td>
+        <td>
+          3037
+          -
+          3037
         </td>
         <td>
           Apply
@@ -1696,15 +1375,162 @@
         </td>
       </tr><tr>
         <td>
-          91
+          82
         </td>
         <td>
-          1823
+          1650
         </td>
         <td>
-          3472
+          3110
           -
-          3754
+          3128
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameServiceImpl.remoteMatchGameRef
+        </td>
+        <td style="background: #F0ADAD">
+          GameServiceImpl.this.remoteMatchGameRef
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          1348
+        </td>
+        <td>
+          3110
+          -
+          3128
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.actor.actorRef2Scala
+        </td>
+        <td style="background: #F0ADAD">
+          actor.this.`package`.actorRef2Scala(GameServiceImpl.this.remoteMatchGameRef)
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          2588
+        </td>
+        <td>
+          3129
+          -
+          3129
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!$default$2
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!$default$2(x$1)
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          1152
+        </td>
+        <td>
+          3131
+          -
+          3172
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.messages.GameMessage.PlayerActionMade.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.GameMessage.PlayerActionMade.apply(this.playerId, it.parttimeteam.DrawCard)
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          1780
+        </td>
+        <td>
+          3163
+          -
+          3171
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.DrawCard
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.DrawCard
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          2438
+        </td>
+        <td>
+          3148
+          -
+          3161
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameServiceImpl.playerId
+        </td>
+        <td style="background: #F0ADAD">
+          this.playerId
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          1875
+        </td>
+        <td>
+          3110
+          -
+          3172
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #F0ADAD">
+          qual$1.!(x$1)(x$2)
+        </td>
+      </tr><tr>
+        <td>
+          85
+        </td>
+        <td>
+          1208
+        </td>
+        <td>
+          3222
+          -
+          3504
         </td>
         <td>
           Apply
@@ -1725,15 +1551,15 @@ else
         </td>
       </tr><tr>
         <td>
-          92
+          86
         </td>
         <td>
-          1966
+          1218
         </td>
         <td>
-          3510
+          3260
           -
-          3535
+          3285
         </td>
         <td>
           Apply
@@ -1746,99 +1572,15 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          87
         </td>
         <td>
-          1324
+          1420
         </td>
         <td>
-          3611
+          3335
           -
-          3628
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.gamestate.PlayerGameState.hand
-        </td>
-        <td style="background: #F0ADAD">
-          currentState.hand
-        </td>
-      </tr><tr>
-        <td>
-          93
-        </td>
-        <td>
-          2308
-        </td>
-        <td>
-          3547
-          -
-          3565
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          akka.actor.actorRef2Scala
-        </td>
-        <td style="background: #F0ADAD">
-          actor.this.`package`.actorRef2Scala(GameServiceImpl.this.remoteMatchGameRef)
-        </td>
-      </tr><tr>
-        <td>
-          93
-        </td>
-        <td>
-          1850
-        </td>
-        <td>
-          3600
-          -
-          3649
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.PlayedMove.apply
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.PlayedMove.apply(currentState.hand, currentState.board)
-        </td>
-      </tr><tr>
-        <td>
-          93
-        </td>
-        <td>
-          2280
-        </td>
-        <td>
-          3566
-          -
-          3566
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!$default$2
-        </td>
-        <td style="background: #F0ADAD">
-          qual$1.!$default$2(x$1)
-        </td>
-      </tr><tr>
-        <td>
-          93
-        </td>
-        <td>
-          1745
-        </td>
-        <td>
-          3585
-          -
-          3598
+          3348
         </td>
         <td>
           Select
@@ -1851,15 +1593,15 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          87
         </td>
         <td>
-          1909
+          1297
         </td>
         <td>
-          3547
+          3297
           -
-          3650
+          3400
         </td>
         <td>
           ApplyToImplicitArgs
@@ -1872,15 +1614,15 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          87
         </td>
         <td>
-          1272
+          2299
         </td>
         <td>
-          3547
+          3297
           -
-          3650
+          3400
         </td>
         <td>
           Block
@@ -1898,36 +1640,36 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          87
         </td>
         <td>
-          1212
+          1204
         </td>
         <td>
-          3568
+          3350
           -
-          3650
+          3399
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.messages.GameMessage.PlayerActionMade.apply
+          it.parttimeteam.PlayedMove.apply
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.messages.GameMessage.PlayerActionMade.apply(this.playerId, it.parttimeteam.PlayedMove.apply(currentState.hand, currentState.board))
+          it.parttimeteam.PlayedMove.apply(currentState.hand, currentState.board)
         </td>
       </tr><tr>
         <td>
-          93
+          87
         </td>
         <td>
-          2441
+          1757
         </td>
         <td>
-          3630
+          3380
           -
-          3648
+          3398
         </td>
         <td>
           Select
@@ -1940,15 +1682,15 @@ else
         </td>
       </tr><tr>
         <td>
-          93
+          87
         </td>
         <td>
-          1301
+          2328
         </td>
         <td>
-          3547
+          3297
           -
-          3565
+          3315
         </td>
         <td>
           Select
@@ -1961,57 +1703,99 @@ else
         </td>
       </tr><tr>
         <td>
-          96
+          87
         </td>
         <td>
-          2329
+          2462
         </td>
         <td>
-          3712
+          3361
           -
-          3738
+          3378
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.model.ErrorEvent.NoValidTurnPlay
+          it.parttimeteam.gamestate.PlayerGameState.hand
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.model.ErrorEvent.NoValidTurnPlay
+          currentState.hand
         </td>
       </tr><tr>
         <td>
-          96
+          87
         </td>
         <td>
-          1401
+          1732
         </td>
         <td>
-          3680
+          3297
           -
-          3740
+          3315
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          akka.actor.actorRef2Scala
+        </td>
+        <td style="background: #F0ADAD">
+          actor.this.`package`.actorRef2Scala(GameServiceImpl.this.remoteMatchGameRef)
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1959
+        </td>
+        <td>
+          3316
+          -
+          3316
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Function1.apply
+          akka.actor.ScalaActorRef.!$default$2
         </td>
         <td style="background: #F0ADAD">
-          this.notifyEvent.apply(GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.NoValidTurnPlay))
+          qual$1.!$default$2(x$1)
         </td>
       </tr><tr>
         <td>
-          96
+          87
         </td>
         <td>
-          1750
+          2491
         </td>
         <td>
-          3697
+          3318
           -
-          3739
+          3400
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.messages.GameMessage.PlayerActionMade.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.GameMessage.PlayerActionMade.apply(this.playerId, it.parttimeteam.PlayedMove.apply(currentState.hand, currentState.board))
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          1320
+        </td>
+        <td>
+          3447
+          -
+          3489
         </td>
         <td>
           Apply
@@ -2024,15 +1808,15 @@ else
         </td>
       </tr><tr>
         <td>
-          96
+          90
         </td>
         <td>
-          2446
+          1843
         </td>
         <td>
-          3680
+          3430
           -
-          3740
+          3490
         </td>
         <td>
           Block
@@ -2045,15 +1829,57 @@ else
         </td>
       </tr><tr>
         <td>
-          102
+          90
         </td>
         <td>
-          1828
+          1738
         </td>
         <td>
-          3823
+          3462
           -
-          4225
+          3488
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.ErrorEvent.NoValidTurnPlay
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.model.ErrorEvent.NoValidTurnPlay
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          2431
+        </td>
+        <td>
+          3430
+          -
+          3490
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          this.notifyEvent.apply(GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.NoValidTurnPlay))
+        </td>
+      </tr><tr>
+        <td>
+          96
+        </td>
+        <td>
+          1150
+        </td>
+        <td>
+          3573
+          -
+          3975
         </td>
         <td>
           Apply
@@ -2072,36 +1898,15 @@ else
         </td>
       </tr><tr>
         <td>
-          103
+          97
         </td>
         <td>
-          1895
+          2271
         </td>
         <td>
-          3850
+          3635
           -
-          3916
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.GameInterface.playCombination
-        </td>
-        <td style="background: #F0ADAD">
-          this.gameInterface.playCombination(state.hand, state.board, cards)
-        </td>
-      </tr><tr>
-        <td>
-          103
-        </td>
-        <td>
-          1153
-        </td>
-        <td>
-          3885
-          -
-          3895
+          3645
         </td>
         <td>
           Select
@@ -2114,15 +1919,36 @@ else
         </td>
       </tr><tr>
         <td>
-          103
+          97
         </td>
         <td>
-          2175
+          1268
         </td>
         <td>
-          3897
+          3600
           -
-          3908
+          3666
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.GameInterface.playCombination
+        </td>
+        <td style="background: #F0ADAD">
+          this.gameInterface.playCombination(state.hand, state.board, cards)
+        </td>
+      </tr><tr>
+        <td>
+          97
+        </td>
+        <td>
+          1902
+        </td>
+        <td>
+          3647
+          -
+          3658
         </td>
         <td>
           Select
@@ -2135,15 +1961,15 @@ else
         </td>
       </tr><tr>
         <td>
-          105
+          99
         </td>
         <td>
-          1277
+          2320
         </td>
         <td>
-          4005
+          3755
           -
-          4068
+          3818
         </td>
         <td>
           Apply
@@ -2156,15 +1982,15 @@ else
         </td>
       </tr><tr>
         <td>
-          106
+          100
         </td>
         <td>
-          2335
+          1743
         </td>
         <td>
-          4079
+          3829
           -
-          4120
+          3870
         </td>
         <td>
           Apply
@@ -2177,57 +2003,15 @@ else
         </td>
       </tr><tr>
         <td>
-          108
+          102
         </td>
         <td>
-          2419
+          2436
         </td>
         <td>
-          4150
+          3917
           -
-          4210
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #F0ADAD">
-          this.notifyEvent.apply(GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error)))
-        </td>
-      </tr><tr>
-        <td>
-          108
-        </td>
-        <td>
-          1690
-        </td>
-        <td>
-          4182
-          -
-          4208
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.ErrorEvent.mapError
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.model.ErrorEvent.mapError(error)
-        </td>
-      </tr><tr>
-        <td>
-          108
-        </td>
-        <td>
-          1376
-        </td>
-        <td>
-          4167
-          -
-          4209
+          3959
         </td>
         <td>
           Apply
@@ -2240,15 +2024,57 @@ else
         </td>
       </tr><tr>
         <td>
-          115
+          102
         </td>
         <td>
-          1765
+          1816
         </td>
         <td>
-          4297
+          3900
           -
-          4696
+          3960
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          this.notifyEvent.apply(GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error)))
+        </td>
+      </tr><tr>
+        <td>
+          102
+        </td>
+        <td>
+          1397
+        </td>
+        <td>
+          3932
+          -
+          3958
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.ErrorEvent.mapError
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.model.ErrorEvent.mapError(error)
+        </td>
+      </tr><tr>
+        <td>
+          109
+        </td>
+        <td>
+          1154
+        </td>
+        <td>
+          4047
+          -
+          4446
         </td>
         <td>
           Apply
@@ -2267,36 +2093,15 @@ else
         </td>
       </tr><tr>
         <td>
-          116
+          110
         </td>
         <td>
-          2215
+          1273
         </td>
         <td>
-          4379
+          4081
           -
-          4397
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.gamestate.PlayerGameState.board
-        </td>
-        <td style="background: #F0ADAD">
-          currentState.board
-        </td>
-      </tr><tr>
-        <td>
-          116
-        </td>
-        <td>
-          1896
-        </td>
-        <td>
-          4331
-          -
-          4405
+          4155
         </td>
         <td>
           Apply
@@ -2309,15 +2114,15 @@ else
         </td>
       </tr><tr>
         <td>
-          116
+          110
         </td>
         <td>
-          1157
+          2167
         </td>
         <td>
-          4360
+          4110
           -
-          4377
+          4127
         </td>
         <td>
           Select
@@ -2330,15 +2135,36 @@ else
         </td>
       </tr><tr>
         <td>
-          118
+          110
         </td>
         <td>
-          1242
+          1888
         </td>
         <td>
-          4482
+          4129
           -
-          4531
+          4147
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.board
+        </td>
+        <td style="background: #F0ADAD">
+          currentState.board
+        </td>
+      </tr><tr>
+        <td>
+          112
+        </td>
+        <td>
+          2325
+        </td>
+        <td>
+          4232
+          -
+          4281
         </td>
         <td>
           Apply
@@ -2351,15 +2177,15 @@ else
         </td>
       </tr><tr>
         <td>
-          119
+          113
         </td>
         <td>
-          2304
+          1683
         </td>
         <td>
-          4542
+          4292
           -
-          4583
+          4333
         </td>
         <td>
           Apply
@@ -2372,36 +2198,15 @@ else
         </td>
       </tr><tr>
         <td>
-          121
+          115
         </td>
         <td>
-          1088
+          1372
         </td>
         <td>
-          4639
+          4404
           -
-          4681
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameErrorEvent.apply
-        </td>
-        <td style="background: #F0ADAD">
-          GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error))
-        </td>
-      </tr><tr>
-        <td>
-          121
-        </td>
-        <td>
-          1692
-        </td>
-        <td>
-          4654
-          -
-          4680
+          4430
         </td>
         <td>
           Apply
@@ -2414,15 +2219,36 @@ else
         </td>
       </tr><tr>
         <td>
-          121
+          115
         </td>
         <td>
-          2423
+          2409
         </td>
         <td>
-          4622
+          4389
           -
-          4682
+          4431
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameErrorEvent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error))
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          1821
+        </td>
+        <td>
+          4372
+          -
+          4432
         </td>
         <td>
           Apply
@@ -2435,15 +2261,15 @@ else
         </td>
       </tr><tr>
         <td>
-          127
+          121
         </td>
         <td>
-          1753
+          1126
         </td>
         <td>
-          4794
+          4544
           -
-          5232
+          4982
         </td>
         <td>
           Apply
@@ -2462,15 +2288,15 @@ else
         </td>
       </tr><tr>
         <td>
-          128
+          122
         </td>
         <td>
-          1129
+          2206
         </td>
         <td>
-          4862
+          4612
           -
-          4872
+          4622
         </td>
         <td>
           Select
@@ -2483,15 +2309,15 @@ else
         </td>
       </tr><tr>
         <td>
-          128
+          122
         </td>
         <td>
-          2276
+          1889
         </td>
         <td>
-          4874
+          4624
           -
-          4885
+          4635
         </td>
         <td>
           Select
@@ -2504,15 +2330,15 @@ else
         </td>
       </tr><tr>
         <td>
-          128
+          122
         </td>
         <td>
-          1935
+          1238
         </td>
         <td>
-          4821
+          4571
           -
-          4908
+          4658
         </td>
         <td>
           Apply
@@ -2525,15 +2351,15 @@ else
         </td>
       </tr><tr>
         <td>
-          130
+          124
         </td>
         <td>
-          1246
+          2295
         </td>
         <td>
-          4999
+          4749
           -
-          5067
+          4817
         </td>
         <td>
           Apply
@@ -2546,15 +2372,15 @@ else
         </td>
       </tr><tr>
         <td>
-          131
+          125
         </td>
         <td>
-          2309
+          1685
         </td>
         <td>
-          5078
+          4828
           -
-          5119
+          4869
         </td>
         <td>
           Apply
@@ -2567,15 +2393,57 @@ else
         </td>
       </tr><tr>
         <td>
-          133
+          127
         </td>
         <td>
-          1094
+          1085
         </td>
         <td>
-          5175
+          4940
           -
-          5217
+          4966
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.ErrorEvent.mapError
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.model.ErrorEvent.mapError(error)
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          1758
+        </td>
+        <td>
+          4908
+          -
+          4968
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          this.notifyEvent.apply(GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error)))
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          2413
+        </td>
+        <td>
+          4925
+          -
+          4967
         </td>
         <td>
           Apply
@@ -2591,75 +2459,12 @@ else
           133
         </td>
         <td>
-          2397
+          1928
         </td>
         <td>
-          5158
+          5028
           -
-          5218
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #F0ADAD">
-          this.notifyEvent.apply(GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error)))
-        </td>
-      </tr><tr>
-        <td>
-          133
-        </td>
-        <td>
-          1672
-        </td>
-        <td>
-          5190
-          -
-          5216
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.ErrorEvent.mapError
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.model.ErrorEvent.mapError(error)
-        </td>
-      </tr><tr>
-        <td>
-          139
-        </td>
-        <td>
-          1136
-        </td>
-        <td>
-          5309
-          -
-          5329
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.History.previous
-        </td>
-        <td style="background: #F0ADAD">
-          eta$0$1.previous()
-        </td>
-      </tr><tr>
-        <td>
-          139
-        </td>
-        <td>
-          2244
-        </td>
-        <td>
-          5278
-          -
-          5330
+          5080
         </td>
         <td>
           Apply
@@ -2675,15 +2480,36 @@ else
         </td>
       </tr><tr>
         <td>
-          143
+          133
         </td>
         <td>
-          1632
+          2267
         </td>
         <td>
-          5407
+          5059
           -
-          5423
+          5079
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.History.previous
+        </td>
+        <td style="background: #F0ADAD">
+          eta$0$1.previous()
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          1242
+        </td>
+        <td>
+          5157
+          -
+          5173
         </td>
         <td>
           Apply
@@ -2696,15 +2522,15 @@ else
         </td>
       </tr><tr>
         <td>
-          143
+          137
         </td>
         <td>
-          1274
+          2300
         </td>
         <td>
-          5376
+          5126
           -
-          5424
+          5174
         </td>
         <td>
           Apply
@@ -2720,15 +2546,15 @@ else
         </td>
       </tr><tr>
         <td>
-          147
+          141
         </td>
         <td>
-          2289
+          1665
         </td>
         <td>
-          5507
+          5257
           -
-          5524
+          5274
         </td>
         <td>
           Apply
@@ -2741,15 +2567,15 @@ else
         </td>
       </tr><tr>
         <td>
-          147
+          141
         </td>
         <td>
-          1720
+          1091
         </td>
         <td>
-          5476
+          5226
           -
-          5525
+          5275
         </td>
         <td>
           Apply
@@ -2765,15 +2591,15 @@ else
         </td>
       </tr><tr>
         <td>
-          151
+          145
         </td>
         <td>
-          2422
+          1818
         </td>
         <td>
-          5603
+          5353
           -
-          6085
+          5835
         </td>
         <td>
           Apply
@@ -2792,15 +2618,15 @@ else
         </td>
       </tr><tr>
         <td>
-          152
+          146
         </td>
         <td>
-          2249
+          1626
         </td>
         <td>
-          5630
+          5380
           -
-          5761
+          5511
         </td>
         <td>
           Apply
@@ -2813,57 +2639,15 @@ else
         </td>
       </tr><tr>
         <td>
-          153
+          147
         </td>
         <td>
-          1106
+          1133
         </td>
         <td>
-          5698
+          5478
           -
-          5760
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.collections.CardCombination.cards
-        </td>
-        <td style="background: #F0ADAD">
-          state.board.combinations.find(((x$1: it.parttimeteam.core.collections.CardCombination) =&gt; x$1.id.==(combinationId))).get.cards
-        </td>
-      </tr><tr>
-        <td>
-          153
-        </td>
-        <td>
-          1055
-        </td>
-        <td>
-          5673
-          -
-          5683
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.gamestate.PlayerGameState.hand
-        </td>
-        <td style="background: #F0ADAD">
-          state.hand
-        </td>
-      </tr><tr>
-        <td>
-          153
-        </td>
-        <td>
-          1825
-        </td>
-        <td>
-          5728
-          -
-          5749
+          5499
         </td>
         <td>
           Apply
@@ -2876,15 +2660,15 @@ else
         </td>
       </tr><tr>
         <td>
-          153
+          147
         </td>
         <td>
-          2480
+          1746
         </td>
         <td>
-          5685
+          5435
           -
-          5696
+          5446
         </td>
         <td>
           Select
@@ -2897,15 +2681,57 @@ else
         </td>
       </tr><tr>
         <td>
-          155
+          147
         </td>
         <td>
-          1528
+          2235
         </td>
         <td>
-          5852
+          5448
           -
-          5920
+          5510
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.collections.CardCombination.cards
+        </td>
+        <td style="background: #F0ADAD">
+          state.board.combinations.find(((x$1: it.parttimeteam.core.collections.CardCombination) =&gt; x$1.id.==(combinationId))).get.cards
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          2387
+        </td>
+        <td>
+          5423
+          -
+          5433
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.hand
+        </td>
+        <td style="background: #F0ADAD">
+          state.hand
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          1270
+        </td>
+        <td>
+          5602
+          -
+          5670
         </td>
         <td>
           Apply
@@ -2918,15 +2744,15 @@ else
         </td>
       </tr><tr>
         <td>
-          156
+          150
         </td>
         <td>
-          1238
+          2280
         </td>
         <td>
-          5931
+          5681
           -
-          5972
+          5722
         </td>
         <td>
           Apply
@@ -2939,15 +2765,57 @@ else
         </td>
       </tr><tr>
         <td>
-          158
+          152
         </td>
         <td>
-          2368
+          2470
         </td>
         <td>
-          6043
+          5761
           -
-          6069
+          5821
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          this.notifyEvent.apply(GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error)))
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          1052
+        </td>
+        <td>
+          5778
+          -
+          5820
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameErrorEvent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error))
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          1713
+        </td>
+        <td>
+          5793
+          -
+          5819
         </td>
         <td>
           Apply
@@ -2963,54 +2831,12 @@ else
           158
         </td>
         <td>
-          1706
+          2358
         </td>
         <td>
-          6028
+          5887
           -
-          6070
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameErrorEvent.apply
-        </td>
-        <td style="background: #F0ADAD">
-          GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error))
-        </td>
-      </tr><tr>
-        <td>
-          158
-        </td>
-        <td>
-          1063
-        </td>
-        <td>
-          6011
-          -
-          6071
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #F0ADAD">
-          this.notifyEvent.apply(GameErrorEvent.apply(it.parttimeteam.model.ErrorEvent.mapError(error)))
-        </td>
-      </tr><tr>
-        <td>
-          164
-        </td>
-        <td>
-          1243
-        </td>
-        <td>
-          6137
-          -
-          6316
+          6066
         </td>
         <td>
           Apply
@@ -3026,36 +2852,15 @@ else
         </td>
       </tr><tr>
         <td>
-          165
+          159
         </td>
         <td>
-          1127
+          1523
         </td>
         <td>
-          6250
+          5933
           -
-          6261
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.gamestate.PlayerGameState.board
-        </td>
-        <td style="background: #F0ADAD">
-          state.board
-        </td>
-      </tr><tr>
-        <td>
-          165
-        </td>
-        <td>
-          2227
-        </td>
-        <td>
-          6183
-          -
-          6262
+          6012
         </td>
         <td>
           Apply
@@ -3068,15 +2873,36 @@ else
         </td>
       </tr><tr>
         <td>
-          165
+          159
         </td>
         <td>
-          1790
+          2240
         </td>
         <td>
-          6225
+          6000
           -
-          6248
+          6011
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.board
+        </td>
+        <td style="background: #F0ADAD">
+          state.board
+        </td>
+      </tr><tr>
+        <td>
+          159
+        </td>
+        <td>
+          1103
+        </td>
+        <td>
+          5975
+          -
+          5998
         </td>
         <td>
           Apply
@@ -3089,15 +2915,15 @@ else
         </td>
       </tr><tr>
         <td>
-          166
+          160
         </td>
         <td>
-          1609
+          1234
         </td>
         <td>
-          6269
+          6019
           -
-          6310
+          6060
         </td>
         <td>
           Apply
@@ -3110,15 +2936,15 @@ else
         </td>
       </tr><tr>
         <td>
-          171
+          165
         </td>
         <td>
-          1795
+          1124
         </td>
         <td>
-          6368
+          6118
           -
-          6547
+          6297
         </td>
         <td>
           Apply
@@ -3134,57 +2960,15 @@ else
         </td>
       </tr><tr>
         <td>
-          172
+          166
         </td>
         <td>
-          2341
+          2412
         </td>
         <td>
-          6456
+          6164
           -
-          6479
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.collections.Hand.sortBySuit
-        </td>
-        <td style="background: #F0ADAD">
-          state.hand.sortBySuit()
-        </td>
-      </tr><tr>
-        <td>
-          172
-        </td>
-        <td>
-          1668
-        </td>
-        <td>
-          6481
-          -
-          6492
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.gamestate.PlayerGameState.board
-        </td>
-        <td style="background: #F0ADAD">
-          state.board
-        </td>
-      </tr><tr>
-        <td>
-          172
-        </td>
-        <td>
-          1072
-        </td>
-        <td>
-          6414
-          -
-          6493
+          6243
         </td>
         <td>
           Apply
@@ -3197,15 +2981,57 @@ else
         </td>
       </tr><tr>
         <td>
-          173
+          166
         </td>
         <td>
-          2093
+          1060
         </td>
         <td>
-          6500
+          6231
           -
-          6541
+          6242
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.board
+        </td>
+        <td style="background: #F0ADAD">
+          state.board
+        </td>
+      </tr><tr>
+        <td>
+          166
+        </td>
+        <td>
+          1699
+        </td>
+        <td>
+          6206
+          -
+          6229
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.core.collections.Hand.sortBySuit
+        </td>
+        <td style="background: #F0ADAD">
+          state.hand.sortBySuit()
+        </td>
+      </tr><tr>
+        <td>
+          167
+        </td>
+        <td>
+          1783
+        </td>
+        <td>
+          6250
+          -
+          6291
         </td>
         <td>
           Apply
@@ -3218,15 +3044,15 @@ else
         </td>
       </tr><tr>
         <td>
-          180
+          174
         </td>
         <td>
-          1213
+          2218
         </td>
         <td>
-          6651
+          6401
           -
-          6683
+          6433
         </td>
         <td>
           Apply
@@ -3239,57 +3065,15 @@ else
         </td>
       </tr><tr>
         <td>
-          181
+          175
         </td>
         <td>
-          2203
+          2331
         </td>
         <td>
-          6761
+          6455
           -
-          6772
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.turnHistory
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.turnHistory
-        </td>
-      </tr><tr>
-        <td>
-          181
-        </td>
-        <td>
-          2286
-        </td>
-        <td>
-          6688
-          -
-          6775
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #F0ADAD">
-          this.notifyEvent.apply(StateUpdatedEvent.apply(GameServiceImpl.this.generateClientGameState(updatedState, GameServiceImpl.this.turnHistory)))
-        </td>
-      </tr><tr>
-        <td>
-          181
-        </td>
-        <td>
-          1224
-        </td>
-        <td>
-          6705
-          -
-          6774
+          6524
         </td>
         <td>
           Apply
@@ -3302,15 +3086,36 @@ else
         </td>
       </tr><tr>
         <td>
-          181
+          175
         </td>
         <td>
-          1549
+          1661
         </td>
         <td>
-          6723
+          6438
           -
-          6773
+          6525
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          this.notifyEvent.apply(StateUpdatedEvent.apply(GameServiceImpl.this.generateClientGameState(updatedState, GameServiceImpl.this.turnHistory)))
+        </td>
+      </tr><tr>
+        <td>
+          175
+        </td>
+        <td>
+          1239
+        </td>
+        <td>
+          6473
+          -
+          6523
         </td>
         <td>
           Apply
@@ -3323,36 +3128,36 @@ else
         </td>
       </tr><tr>
         <td>
-          185
+          175
         </td>
         <td>
-          1674
+          1603
         </td>
         <td>
-          6869
+          6511
           -
-          6906
+          6522
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          it.parttimeteam.model.game.History.setPresent
+          it.parttimeteam.model.game.GameServiceImpl.turnHistory
         </td>
         <td style="background: #F0ADAD">
-          this.turnHistory.setPresent(newState)
+          GameServiceImpl.this.turnHistory
         </td>
       </tr><tr>
         <td>
-          185
+          179
         </td>
         <td>
-          1015
+          2086
         </td>
         <td>
-          6850
+          6600
           -
-          6906
+          6656
         </td>
         <td>
           Apply
@@ -3365,15 +3170,36 @@ else
         </td>
       </tr><tr>
         <td>
-          188
+          179
         </td>
         <td>
-          2097
+          1069
         </td>
         <td>
-          6972
+          6619
           -
-          6985
+          6656
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.History.setPresent
+        </td>
+        <td style="background: #F0ADAD">
+          this.turnHistory.setPresent(newState)
+        </td>
+      </tr><tr>
+        <td>
+          182
+        </td>
+        <td>
+          1788
+        </td>
+        <td>
+          6722
+          -
+          6735
         </td>
         <td>
           Select
@@ -3386,36 +3212,15 @@ else
         </td>
       </tr><tr>
         <td>
-          189
+          183
         </td>
         <td>
-          1769
+          2194
         </td>
         <td>
-          7020
+          6768
           -
-          7038
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameStateStore.currentState
-        </td>
-        <td style="background: #F0ADAD">
-          state.currentState
-        </td>
-      </tr><tr>
-        <td>
-          189
-        </td>
-        <td>
-          1103
-        </td>
-        <td>
-          7018
-          -
-          7039
+          6789
         </td>
         <td>
           Apply
@@ -3428,15 +3233,36 @@ else
         </td>
       </tr><tr>
         <td>
-          190
+          183
         </td>
         <td>
-          2205
+          1209
         </td>
         <td>
-          7051
+          6770
           -
-          7053
+          6788
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameStateStore.currentState
+        </td>
+        <td style="background: #F0ADAD">
+          state.currentState
+        </td>
+      </tr><tr>
+        <td>
+          184
+        </td>
+        <td>
+          1544
+        </td>
+        <td>
+          6801
+          -
+          6803
         </td>
         <td>
           Literal
@@ -3449,15 +3275,15 @@ else
         </td>
       </tr><tr>
         <td>
-          195
+          189
         </td>
         <td>
-          1059
+          2090
         </td>
         <td>
-          7221
+          6971
           -
-          7434
+          7184
         </td>
         <td>
           Apply
@@ -3470,15 +3296,15 @@ else
         </td>
       </tr><tr>
         <td>
-          197
+          191
         </td>
         <td>
-          1599
+          1220
         </td>
         <td>
-          7285
+          7035
           -
-          7308
+          7058
         </td>
         <td>
           Select
@@ -3491,15 +3317,15 @@ else
         </td>
       </tr><tr>
         <td>
-          198
+          192
         </td>
         <td>
-          1226
+          2277
         </td>
         <td>
-          7326
+          7076
           -
-          7345
+          7095
         </td>
         <td>
           Select
@@ -3512,15 +3338,15 @@ else
         </td>
       </tr><tr>
         <td>
-          199
+          193
         </td>
         <td>
-          2386
+          1667
         </td>
         <td>
-          7364
+          7114
           -
-          7387
+          7137
         </td>
         <td>
           Select
@@ -3533,15 +3359,15 @@ else
         </td>
       </tr><tr>
         <td>
-          200
+          194
         </td>
         <td>
-          1642
+          1012
         </td>
         <td>
-          7409
+          7159
           -
-          7428
+          7178
         </td>
         <td>
           Select
@@ -3554,36 +3380,15 @@ else
         </td>
       </tr><tr>
         <td>
-          209
+          203
         </td>
         <td>
-          2151
+          1100
         </td>
         <td>
-          7716
+          7476
           -
-          7716
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Tuple2._1
-        </td>
-        <td style="background: #F0ADAD">
-          x$2._1
-        </td>
-      </tr><tr>
-        <td>
-          209
-        </td>
-        <td>
-          1771
-        </td>
-        <td>
-          7726
-          -
-          7726
+          7476
         </td>
         <td>
           Select
@@ -3596,15 +3401,36 @@ else
         </td>
       </tr><tr>
         <td>
-          210
+          203
         </td>
         <td>
-          1107
+          1762
         </td>
         <td>
-          7764
+          7466
           -
-          7797
+          7466
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Tuple2._1
+        </td>
+        <td style="background: #F0ADAD">
+          x$2._1
+        </td>
+      </tr><tr>
+        <td>
+          204
+        </td>
+        <td>
+          2196
+        </td>
+        <td>
+          7514
+          -
+          7547
         </td>
         <td>
           Apply
@@ -3617,15 +3443,15 @@ else
         </td>
       </tr><tr>
         <td>
-          211
+          205
         </td>
         <td>
-          2228
+          1599
         </td>
         <td>
-          7802
+          7552
           -
-          7802
+          7552
         </td>
         <td>
           Literal
@@ -3638,36 +3464,36 @@ else
         </td>
       </tr><tr>
         <td>
-          211
+          205
         </td>
         <td>
-          1573
+          1593
         </td>
         <td>
-          7802
+          7556
           -
-          7802
+          7574
         </td>
         <td>
-          Block
+          Select
         </td>
         <td>
-          &lt;nosymbol&gt;
+          scala.Option.isDefined
         </td>
         <td style="background: #F0ADAD">
-          ()
+          optState.isDefined
         </td>
       </tr><tr>
         <td>
-          211
+          205
         </td>
         <td>
-          1199
+          2172
         </td>
         <td>
-          7826
+          7576
           -
-          7980
+          7730
         </td>
         <td>
           Block
@@ -3683,36 +3509,36 @@ else
         </td>
       </tr><tr>
         <td>
-          211
+          205
         </td>
         <td>
-          2180
+          978
         </td>
         <td>
-          7806
+          7552
           -
-          7824
+          7552
         </td>
         <td>
-          Select
+          Block
         </td>
         <td>
-          scala.Option.isDefined
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          optState.isDefined
+          ()
         </td>
       </tr><tr>
         <td>
-          212
+          206
         </td>
         <td>
-          1605
+          1222
         </td>
         <td>
-          7867
+          7617
           -
-          7879
+          7629
         </td>
         <td>
           Select
@@ -3725,15 +3551,15 @@ else
         </td>
       </tr><tr>
         <td>
-          212
+          206
         </td>
         <td>
-          980
+          2376
         </td>
         <td>
-          7834
+          7584
           -
-          7880
+          7630
         </td>
         <td>
           Apply
@@ -3746,15 +3572,15 @@ else
         </td>
       </tr><tr>
         <td>
-          213
+          207
         </td>
         <td>
-          2155
+          1764
         </td>
         <td>
-          7904
+          7654
           -
-          7973
+          7723
         </td>
         <td>
           Apply
@@ -3767,78 +3593,15 @@ else
         </td>
       </tr><tr>
         <td>
-          213
+          207
         </td>
         <td>
-          1034
+          1056
         </td>
         <td>
-          7922
+          7710
           -
-          7972
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.game.GameServiceImpl.generateClientGameState
-        </td>
-        <td style="background: #F0ADAD">
-          GameServiceImpl.this.generateClientGameState(optState.get, GameServiceImpl.this.turnHistory)
-        </td>
-      </tr><tr>
-        <td>
-          213
-        </td>
-        <td>
-          1793
-        </td>
-        <td>
-          7887
-          -
-          7974
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Function1.apply
-        </td>
-        <td style="background: #F0ADAD">
-          this.notifyEvent.apply(StateUpdatedEvent.apply(GameServiceImpl.this.generateClientGameState(optState.get, GameServiceImpl.this.turnHistory)))
-        </td>
-      </tr><tr>
-        <td>
-          213
-        </td>
-        <td>
-          2388
-        </td>
-        <td>
-          7946
-          -
-          7958
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.Option.get
-        </td>
-        <td style="background: #F0ADAD">
-          optState.get
-        </td>
-      </tr><tr>
-        <td>
-          213
-        </td>
-        <td>
-          1645
-        </td>
-        <td>
-          7960
-          -
-          7971
+          7721
         </td>
         <td>
           Select
@@ -3851,15 +3614,78 @@ else
         </td>
       </tr><tr>
         <td>
-          224
+          207
         </td>
         <td>
-          982
+          1104
         </td>
         <td>
-          8226
+          7637
           -
-          8248
+          7724
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          this.notifyEvent.apply(StateUpdatedEvent.apply(GameServiceImpl.this.generateClientGameState(optState.get, GameServiceImpl.this.turnHistory)))
+        </td>
+      </tr><tr>
+        <td>
+          207
+        </td>
+        <td>
+          1636
+        </td>
+        <td>
+          7696
+          -
+          7708
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.Option.get
+        </td>
+        <td style="background: #F0ADAD">
+          optState.get
+        </td>
+      </tr><tr>
+        <td>
+          207
+        </td>
+        <td>
+          2144
+        </td>
+        <td>
+          7672
+          -
+          7722
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.GameServiceImpl.generateClientGameState
+        </td>
+        <td style="background: #F0ADAD">
+          GameServiceImpl.this.generateClientGameState(optState.get, GameServiceImpl.this.turnHistory)
+        </td>
+      </tr><tr>
+        <td>
+          218
+        </td>
+        <td>
+          2378
+        </td>
+        <td>
+          7976
+          -
+          7998
         </td>
         <td>
           Select
@@ -3872,36 +3698,15 @@ else
         </td>
       </tr><tr>
         <td>
-          225
+          219
         </td>
         <td>
-          1163
+          1196
         </td>
         <td>
-          8253
+          8027
           -
-          8392
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Boolean.&amp;&amp;
-        </td>
-        <td style="background: #F0ADAD">
-          startState.isDefined.&amp;&amp;(GameServiceImpl.this.gameInterface.validateTurn(currentState.board, startState.get.board, currentState.hand, startState.get.hand))
-        </td>
-      </tr><tr>
-        <td>
-          225
-        </td>
-        <td>
-          1480
-        </td>
-        <td>
-          8277
-          -
-          8392
+          8142
         </td>
         <td>
           Apply
@@ -3914,15 +3719,57 @@ else
         </td>
       </tr><tr>
         <td>
-          226
+          219
         </td>
         <td>
-          2128
+          2219
         </td>
         <td>
-          8372
+          8003
           -
-          8391
+          8142
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #F0ADAD">
+          startState.isDefined.&amp;&amp;(GameServiceImpl.this.gameInterface.validateTurn(currentState.board, startState.get.board, currentState.hand, startState.get.hand))
+        </td>
+      </tr><tr>
+        <td>
+          220
+        </td>
+        <td>
+          1031
+        </td>
+        <td>
+          8081
+          -
+          8101
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.gamestate.PlayerGameState.board
+        </td>
+        <td style="background: #F0ADAD">
+          startState.get.board
+        </td>
+      </tr><tr>
+        <td>
+          220
+        </td>
+        <td>
+          1786
+        </td>
+        <td>
+          8122
+          -
+          8141
         </td>
         <td>
           Select
@@ -3935,15 +3782,15 @@ else
         </td>
       </tr><tr>
         <td>
-          226
+          220
         </td>
         <td>
-          1036
+          2148
         </td>
         <td>
-          8353
+          8103
           -
-          8370
+          8120
         </td>
         <td>
           Select
@@ -3956,15 +3803,15 @@ else
         </td>
       </tr><tr>
         <td>
-          226
+          220
         </td>
         <td>
-          2342
+          1639
         </td>
         <td>
-          8311
+          8061
           -
-          8329
+          8079
         </td>
         <td>
           Select
@@ -3974,27 +3821,6 @@ else
         </td>
         <td style="background: #F0ADAD">
           currentState.board
-        </td>
-      </tr><tr>
-        <td>
-          226
-        </td>
-        <td>
-          1732
-        </td>
-        <td>
-          8331
-          -
-          8351
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.gamestate.PlayerGameState.board
-        </td>
-        <td style="background: #F0ADAD">
-          startState.get.board
         </td>
       </tr>
     </table>
