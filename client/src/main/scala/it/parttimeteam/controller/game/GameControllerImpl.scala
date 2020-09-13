@@ -63,37 +63,21 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       })
     }
 
-    case OpponentInTurnEvent(actualPlayerName) => {
-      gameStage.setMessage(s"It's $actualPlayerName turn")
-    }
+    case OpponentInTurnEvent(actualPlayerName) => gameStage.setMessage(s"It's $actualPlayerName turn")
 
-    case InTurnEvent => {
-      gameStage.setInTurn()
-    }
+    case InTurnEvent => gameStage.setInTurn()
 
-    case InfoEvent(message: String) => {
-      gameStage.notifyInfo(message)
-    }
+    case InfoEvent(message: String) => gameStage.notifyInfo(message)
 
-    case ErrorEvent(reason: String) => {
-      gameStage.notifyError(reason)
-    }
+    case ErrorEvent(reason: String) => gameStage.notifyError(reason)
 
-    case GameWonEvent => {
-      gameStage.notifyGameEnd(GameWon)
-    }
+    case GameWonEvent => gameStage.notifyGameEnd(GameWon)
 
-    case GameLostEvent(winnerName: String) => {
-      gameStage.notifyGameEnd(GameLost(winnerName))
-    }
+    case GameLostEvent(winnerName: String) => gameStage.notifyGameEnd(GameLost(winnerName))
 
-    case GameEndedWithErrorEvent(reason: String) => {
-      gameStage.notifyGameEnd(GameEndWithError(reason))
-    }
+    case GameEndedWithErrorEvent(reason: String) => gameStage.notifyGameEnd(GameEndWithError(reason))
 
-    case TurnEndedEvent => {
-      gameStage.setTurnEnded()
-    }
+    case TurnEndedEvent => gameStage.setTurnEnded()
 
     case _ =>
   }
