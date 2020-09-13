@@ -19,8 +19,6 @@ object RemoteGameActor {
 
     def opponentInTurn(opponentName: String)
 
-    def turnEndedWithCartDrawn(card: Card)
-
     def gameEndedWithErrorEvent(reason: String)
 
     def gameWon()
@@ -46,8 +44,6 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
     }
 
     case OpponentInTurn(name) => this.listener.opponentInTurn(name)
-
-    case CardDrawn(card) => this.listener.turnEndedWithCartDrawn(card)
 
     case TurnEnded => this.listener.turnEnded()
 
