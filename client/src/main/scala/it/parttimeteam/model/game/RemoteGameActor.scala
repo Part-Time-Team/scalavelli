@@ -57,6 +57,7 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
 
     case MatchErrorOccurred(error) => error match {
       case PlayerActionNotValid => this.listener.invalidPlayerAction()
+      case _ =>
     }
   }
 }

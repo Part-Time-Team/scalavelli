@@ -52,8 +52,13 @@ class StartUpControllerImpl extends StartUpController {
     }
 
 
-    case LobbyJoinErrorEvent(result: String) => {
-      startUpStage.notifyError(result)
+    case LobbyJoinErrorEvent(error: ErrorEvent) => {
+      val errorMessage = error match {
+        case ErrorEvent.LobbyCodeNotValid => "the code is not valid"
+        case ErrorEvent.ServerNotFound => "server not found"
+        case _ => "an error occurred"
+      }
+      startUpStage.notifyError(errorMessage)
     }
 
     case GameStartedEvent(gameInfo: GameMatchInformations) => {
