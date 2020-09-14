@@ -30,7 +30,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
   "a game actor" should {
 
     "accept players and notify game started with initial state" in {
-      val gameActor = TestActorRef[GameMatchActor](GameMatchActor.props(NUMBER_OF_PLAYERS, new GameMatchManager(new FakeGameInterface())
+      val gameActor = TestActorRef[GameMatchActor](GameMatchActor.props(NUMBER_OF_PLAYERS, new GameHelper(new FakeGameInterface())
       ))
       val player1 = TestProbe()
       val player2 = TestProbe()

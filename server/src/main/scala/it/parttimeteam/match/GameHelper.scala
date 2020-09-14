@@ -8,7 +8,7 @@ import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
 import it.parttimeteam.core.{GameInterface, GameState}
 import it.parttimeteam.messages.GameMessage.MatchError
 
-class GameMatchManager(private val gameApi: GameInterface) {
+class GameHelper(private val gameApi: GameInterface) {
 
 
   def retrieveInitialState(players: Seq[(PlayerId, PlayerName)]): GameState =

@@ -1,7 +1,7 @@
 package it.parttimeteam.lobby
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
-import it.parttimeteam.`match`.{GameMatchManager, GameMatchActor}
+import it.parttimeteam.`match`.{GameHelper, GameMatchActor}
 import it.parttimeteam.`match`.GameMatchActor.GamePlayers
 import it.parttimeteam.common.{GamePlayer, IdGenerator}
 import it.parttimeteam.core.GameInterfaceImpl
@@ -84,7 +84,7 @@ class LobbyManagerActor extends Actor with IdGenerator with ActorLogging {
   }
 
   private def generateAndStartGameActor(lobbyType: LobbyType)(players: Seq[GamePlayer]): Unit = {
-    val gameActor = context.actorOf(GameMatchActor.props(lobbyType.numberOfPlayers, new GameMatchManager(new GameInterfaceImpl())))
+    val gameActor = context.actorOf(GameMatchActor.props(lobbyType.numberOfPlayers, new GameHelper(new GameInterfaceImpl())))
     players.foreach(p => {
       context.unwatch(p.actorRef)
       // remove player form lobby

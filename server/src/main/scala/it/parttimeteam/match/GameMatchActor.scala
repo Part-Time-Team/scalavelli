@@ -14,7 +14,7 @@ import scala.concurrent.duration.DurationInt
 
 
 object GameMatchActor {
-  def props(numberOfPlayers: Int, gameMatchManager: GameMatchManager): Props = Props(new GameMatchActor(numberOfPlayers, gameMatchManager))
+  def props(numberOfPlayers: Int, gameHelper: GameHelper): Props = Props(new GameMatchActor(numberOfPlayers, gameHelper))
 
 
   case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
@@ -36,7 +36,7 @@ object GameMatchActor {
  * Responsible for a game match
  *
  */
-class GameMatchActor(numberOfPlayers: Int, private val gameMatchManager: GameMatchManager)
+class GameMatchActor(numberOfPlayers: Int, private val gameHelper: GameHelper)
   extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
@@ -145,7 +145,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameMatchManager: GameMat
 
     this.turnManager = TurnManager[GamePlayer](players)
     log.info("initializing game..")
-    val gameState = this.gameMatchManager.retrieveInitialState(players.map(p => (p.id, p.username)))
+    val gameState = this.gameHelper.retrieveInitialState(players.map(p => (p.id, p.username)))
     this.broadcastGameStateToPlayers(gameState)
     val currentPlayer = this.turnManager.getInTurn
     currentPlayer.actorRef ! PlayerTurn
@@ -162,7 +162,7 @@ class GameMatchActor(numberOfPlayers: Int, private val gameMatchManager: GameMat
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
       log.info(s"received action $action from ${playerInTurn.username}")
-      this.gameMatchManager.determineNextState(gameState, playerInTurn, action) match {
+      this.gameHelper.determineNextState(gameState, playerInTurn, action) match {
         case Right(stateResult) =>
           this.handleStateResult(stateResult, playerInTurn)
 
