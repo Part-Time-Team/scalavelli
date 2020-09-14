@@ -85,8 +85,6 @@ object GameMessage {
 
   object MatchError {
 
-    case object InvalidPlays extends MatchError
-
     case object PlayerActionNotValid extends MatchError
 
   }
