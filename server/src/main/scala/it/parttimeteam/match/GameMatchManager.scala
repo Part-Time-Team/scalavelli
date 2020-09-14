@@ -6,6 +6,7 @@ import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.collections.{Board, Hand}
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
 import it.parttimeteam.core.{GameInterface, GameState}
+import it.parttimeteam.messages.GameMessage.MatchError
 
 class GameMatchManager(private val gameApi: GameInterface) {
 
@@ -22,7 +23,7 @@ class GameMatchManager(private val gameApi: GameInterface) {
    * @param playerAction action made my the player
    * @return a state result or a string representing an error
    */
-  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
+  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[MatchError, StateResult] = {
     playerAction match {
       case DrawCard => nextStateOnCardDrawn(currentState, playerInTurn)
       case PlayedMove(updatedHand, updatedBoard) => nextStateOnPlayerMove(currentState, playerInTurn, updatedHand, updatedBoard)
@@ -43,7 +44,7 @@ class GameMatchManager(private val gameApi: GameInterface) {
       ))
 
     } else {
-      Left("Non valid plays")
+      Left(MatchError.PlayerActionNotValid)
     }
   }
 
