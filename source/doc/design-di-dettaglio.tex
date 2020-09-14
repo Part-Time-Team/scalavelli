@@ -84,9 +84,9 @@ Per ottenere le funzionalità descritte è stato creato il file rules.pl nella c
     Questo significa che non è possibile continuare la scala aggiungendo un due e via di seguito
     \item \textit{checkOrderByValue}: in caso di una scala verifica se le carte sono in ordine di valore
     \item \textit{validationQuarter}: verifica se una combinazione è un tris o un poker.
-    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: lenghtList, sameNumber e differentSuit
+    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: lengthList, sameNumber e differentSuit
     \item \textit{validationChain}: verifica se una combinazione è una scala.
-    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: lenghtList, sameSuit, endSequence e checkOrderByValue;
+    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: lengthList, sameSuit, endSequence e checkOrderByValue;
 \end{itemize}
 
 \subparagraph{Ordinamento}
@@ -158,7 +158,7 @@ Per velocizzare la creazione degli elementi di view più utilizzati, sono state 
     \item ScalavelliAlert, factory per gli oggetti Alert
     \item ScalavelliTextField, factory per gli oggetti Button
 \end{itemize}
-L’object CardUtils è invece una utility che permette di ottenere il path dell’immagine della carta da gioco a partire dall’entità Card.
+L’object CardUtils è invece una utility che permette di ottenere il percorso dell’immagine raffigurante la carta da gioco a partire dall’entità Card.
 Si è scelto di gestire la visualizzazione degli alert e degli errori direttamente da Stage in quanto deve essere indipendente dalla scena in cui ci si trova.
 Tutti i metodi che agiscono sugli elementi già renderizzati dalla view e gli aggiornamenti di stato hanno l’esigenza di agire sullo stesso thread di ScalaFX. Per poter ottenere questo risultato sono stati eseguiti all’interno della chiamata a Platform.runLater().
 
@@ -170,19 +170,19 @@ Una volta fatto questo, tramite l’interazione con StartupService comunica al s
 
 \paragraph{View}
 %todo: Add Lobby View diagram.
-La parte di view si caratterizza di 4 scene che vengono caricate all’interno di StartupStage.
+La parte di view si compone di 4 scene che vengono caricate all’interno di \textit{StartupStage}.
 La scena principale permette di scegliere tra le 3 modalità di iscrizione a disposizione:
 \begin{itemize}
     \item Iscrizione ad una lobby pubblica, in base al numero di players selezionati.
     \item Iscrizione ad una lobby privata, inserendo un codice segreto.
     \item Creazione di una lobby privata, selezionando il numero di membri necessari per questa lobby.
 \end{itemize}
-Alla selezione di una di queste modalità, viene caricata una nuova scena, alla quale viene passato un listener di tipo StartUpSceneListener che tramite callback permette di reagire alle azione di submit() e della pressione del tasto back.
+Alla selezione di una di queste modalità, viene caricata una nuova scena, alla quale viene passato un listener di tipo \textit{StartUpSceneListener} che tramite callback permette di reagire alle azione di submit() e della pressione del tasto back.
 \newline
-Ciascuna scena scena eredita da StartupBaseScene e si compone di 3 parti:
+Ciascuna scena scena eredita da \textit{StartupBaseScene} e si compone di 3 parti:
 \begin{itemize}
-    \item StartupSceneTopBar, che contiene il pulsante per tornare alla schermata precedente
-    \item StartupSceneBottomBar, che contiene il pulsante di invio e la rotella di caricamento mentre si è in attesa della creazione di una partita.
+    \item \textit{StartupSceneTopBar}, che contiene il pulsante per tornare alla schermata precedente
+    \item \textit{StartupSceneBottomBar}, che contiene il pulsante di invio e la rotella di caricamento mentre si è in attesa della creazione di una partita.
     \item Un nodo centrale in cui è possibile l’inserimento dei dati o, nel caso della creazione di un codice segreto, la visualizzazione di quest’ultimo.
 \end{itemize}
 
@@ -224,13 +224,13 @@ In costruzione riceve poi una funzione che utilizza per notificare al chiamante 
 %todo: Here is missing the diagram. Was the same as next paragraph.
 Il grafico di cui sopra mostra la sequenza di operazioni che avvengono durante il turno di un giocatore quando quest’ultimo esegue una mossa:
 \begin{itemize}
-    \item Un chiamante invoca un metodo del GameService corrispondente a un’azione di gioco
-    \item GameService risolve l’azione per mezzo di gameInterface
-    \item Sulla base dell’output della funzione invocata su gameInterface viene aggiornato lo stato locale di gioco tramite un metodo di gameStateStore
-    \item Il nuovo stato di gioco viene salvato sulla history
+    \item Un chiamante invoca un metodo del \textit{GameService} corrispondente a un’azione di gioco
+    \item \textit{GameService} risolve l’azione per mezzo di \textit{GameInterface}
+    \item Sulla base dell’output della funzione invocata su \textit{GameInterface} viene aggiornato lo stato locale di gioco tramite un metodo di \textit{GameStateStore}
+    \item Il nuovo stato di gioco viene salvato sulla \textit{History}
     \item Il nuovo stato di gioco viene notificato al componente sottostante per mezzo della funzione notifyEvent ottenuta in costruzione
 \end{itemize}
-Nel caso di una mossa eseguita in remoto la chiamata al gameInterface è sostituita con un messaggio inviato al server, mentre manca l’aggiornamento della history che viene utilizzata solamente durante la gestione locale del turno.
+Nel caso di una mossa eseguita in remoto la chiamata al \textit{GameInterface} è sostituita con un messaggio inviato al \textit{Server}, mentre manca l’aggiornamento della \textit{History} che viene utilizzata solamente durante la gestione locale del turno.
 
 \subsection{Server}
 È la componente che permette lo svolgersi del gioco in modalità multiplayer del gioco, ogni sessione utente è possibile distinguerla in 2 fasi principali:
