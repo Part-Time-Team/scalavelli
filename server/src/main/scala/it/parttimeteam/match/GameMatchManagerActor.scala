@@ -1,11 +1,11 @@
 package it.parttimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, PoisonPill, Props, Stash, Terminated}
-import it.parttimeteam.`match`.GameMatchManagerActor.{CardDrawnInfo, GamePlayers, StateResult}
+import it.parttimeteam.`match`.GameMatchManagerActor.{GamePlayers, StateResult}
 import it.parttimeteam.common.GamePlayer
+import it.parttimeteam.core.GameState
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.player.Player.PlayerId
-import it.parttimeteam.core.{GameInterface, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
@@ -14,7 +14,7 @@ import scala.concurrent.duration.DurationInt
 
 
 object GameMatchManagerActor {
-  def props(numberOfPlayers: Int, gameApi: GameInterface): Props = Props(new GameMatchManagerActor(numberOfPlayers, gameApi: GameInterface))
+  def props(numberOfPlayers: Int, gameMatchManager: GameMatchManager): Props = Props(new GameMatchManagerActor(numberOfPlayers, gameMatchManager))
 
 
   case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
@@ -35,10 +35,8 @@ object GameMatchManagerActor {
 /**
  * Responsible for a game match
  *
- * @param numberOfPlayers number of players
- * @param gameApi
  */
-class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInterface)
+class GameMatchManagerActor(numberOfPlayers: Int, private val gameMatchManager: GameMatchManager)
   extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
@@ -47,9 +45,6 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
 
   private var players: Seq[GamePlayer] = _
   private var turnManager: TurnManager[GamePlayer] = _
-
-  // TODO spostare in costruzione a posto di gameApi
-  private val gameMatchManager = new GameMatchManager(gameApi)
 
   private def idle: Receive = {
     case GamePlayers(players) => {
@@ -158,6 +153,12 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
     context.become(inTurn(gameState, currentPlayer) orElse terminationAfterGameStarted())
   }
 
+  /**
+   * Server behaviour during a player turn
+   *
+   * @param gameState    current game state
+   * @param playerInTurn current player in turn
+   */
   private def inTurn(gameState: GameState, playerInTurn: GamePlayer): Receive = {
     case PlayerActionMade(playerId, action) if playerId == playerInTurn.id => {
       log.info(s"received action $action from ${playerInTurn.username}")
@@ -169,12 +170,10 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
           log.error("Error resolving player action")
           playerInTurn.actorRef ! MatchErrorOccurred(error)
       }
-
     }
   }
 
   private def handleStateResult(stateResult: StateResult, playerInTurn: GamePlayer): Unit = {
-
 
     // notify the state
     this.broadcastGameStateToPlayers(stateResult.updatedState)
@@ -233,7 +232,6 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
       ))
 
     })
-    //this.broadcastMessageToPlayers(PlayerGameState(Board(), Hand(), Seq.empty))
   }
 
 
