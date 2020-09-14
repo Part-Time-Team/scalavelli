@@ -165,9 +165,9 @@ class GameMatchManagerActor(numberOfPlayers: Int, private val gameApi: GameInter
         case Right(stateResult) =>
           this.handleStateResult(stateResult, playerInTurn)
 
-        case Left(errorMessage) =>
+        case Left(error) =>
           log.error("Error resolving player action")
-          playerInTurn.actorRef ! MatchError.PlayerActionNotValid
+          playerInTurn.actorRef ! MatchErrorOccurred(error)
       }
 
     }

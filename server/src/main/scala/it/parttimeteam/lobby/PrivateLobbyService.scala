@@ -10,6 +10,11 @@ object PrivateLobbyService {
  */
 trait PrivateLobbyService {
 
+  /**
+   *
+   * @param numberOfPlayers number of player
+   * @return the
+   */
   def generateNewPrivateLobby(numberOfPlayers: Int): PrivateLobby
 
   def retrieveExistingLobby(lobbyId: String): Option[PrivateLobby]

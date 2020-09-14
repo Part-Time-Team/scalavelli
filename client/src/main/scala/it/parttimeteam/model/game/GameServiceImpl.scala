@@ -5,6 +5,7 @@ import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{LeaveGame, PlayerActionMade, Ready}
 import it.parttimeteam.model.ErrorEvent
+import it.parttimeteam.model.ErrorEvent.NoValidTurnPlay
 import it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener
 import it.parttimeteam.model.startup.GameMatchInformations
 import it.parttimeteam.{ActorSystemManager, DrawCard, PlayedMove}
@@ -64,6 +65,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def gameEndedWithErrorEvent(reason: String): Unit = notifyEvent(GameEndedWithErrorEvent(reason))
 
+    override def invalidPlayerAction(): Unit = notifyEvent(GameErrorEvent(NoValidTurnPlay))
   }
 
   private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener))
