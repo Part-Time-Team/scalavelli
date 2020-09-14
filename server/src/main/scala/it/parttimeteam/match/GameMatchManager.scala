@@ -1,7 +1,7 @@
 package it.parttimeteam.`match`
 
 import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
-import it.parttimeteam.`match`.GameMatchManagerActor.{CardDrawnInfo, StateResult}
+import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, StateResult}
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.collections.{Board, Hand}
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}

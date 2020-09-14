@@ -1,7 +1,7 @@
 package it.parttimeteam.`match`
 
 import akka.actor.{Actor, ActorLogging, PoisonPill, Props, Stash, Terminated}
-import it.parttimeteam.`match`.GameMatchManagerActor.{GamePlayers, StateResult}
+import it.parttimeteam.`match`.GameMatchActor.{GamePlayers, StateResult}
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.GameState
 import it.parttimeteam.core.cards.Card
@@ -13,8 +13,8 @@ import it.parttimeteam.messages.LobbyMessages.MatchFound
 import scala.concurrent.duration.DurationInt
 
 
-object GameMatchManagerActor {
-  def props(numberOfPlayers: Int, gameMatchManager: GameMatchManager): Props = Props(new GameMatchManagerActor(numberOfPlayers, gameMatchManager))
+object GameMatchActor {
+  def props(numberOfPlayers: Int, gameMatchManager: GameMatchManager): Props = Props(new GameMatchActor(numberOfPlayers, gameMatchManager))
 
 
   case class StateResult(updatedState: GameState, additionalInformation: Option[AdditionalInfo])
@@ -36,7 +36,7 @@ object GameMatchManagerActor {
  * Responsible for a game match
  *
  */
-class GameMatchManagerActor(numberOfPlayers: Int, private val gameMatchManager: GameMatchManager)
+class GameMatchActor(numberOfPlayers: Int, private val gameMatchManager: GameMatchManager)
   extends Actor with ActorLogging with Stash {
 
   override def receive: Receive = idle
