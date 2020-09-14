@@ -34,7 +34,7 @@ Look to our travis.yml file for packaging scripts.
 
 ### How to execute
 
-This command produce executable scripts in client and server directories. You can execute them with those commands:
+This command produces executable scripts in client and server directories. You can execute them with those commands:
 
 | Project | Linux | Windows |
 | --- | --- | --- |
@@ -43,4 +43,4 @@ This command produce executable scripts in client and server directories. You ca
 
 Be aware to execute first the server and after that how many clients you want.
 
-We don't provide guide to deploy on remote machine or containers. 
+We don't provide the guide to deploy on a remote machine or containers. 
