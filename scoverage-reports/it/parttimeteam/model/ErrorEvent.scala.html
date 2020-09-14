@@ -30,19 +30,19 @@
 </span>6 <span style=''>
 </span>7 <span style=''>object ErrorEvent {
 </span>8 <span style=''>
-</span>9 <span style=''>  // TODO inserire i vari errori generabili dal model verso i controller
+</span>9 <span style=''>  case class GenericError(reason: String) extends ErrorEvent
 </span>10 <span style=''>
-</span>11 <span style=''>  case class GenericError(reason: String) extends ErrorEvent
+</span>11 <span style=''>  case object ServerNotFound extends ErrorEvent
 </span>12 <span style=''>
-</span>13 <span style=''>  case object ServerNotFound extends ErrorEvent
+</span>13 <span style=''>  case object NoValidTurnPlay extends ErrorEvent
 </span>14 <span style=''>
-</span>15 <span style=''>  case object NoValidTurnPlay extends ErrorEvent
+</span>15 <span style=''>  case object CombinationNotValid extends ErrorEvent
 </span>16 <span style=''>
-</span>17 <span style=''>  case object CombinationNotValid extends ErrorEvent
+</span>17 <span style=''>  case object HandNotContainCard extends ErrorEvent
 </span>18 <span style=''>
-</span>19 <span style=''>  case object HandNotContainCard extends ErrorEvent
+</span>19 <span style=''>  case object NoCardInBoard extends ErrorEvent
 </span>20 <span style=''>
-</span>21 <span style=''>  case object NoCardInBoard extends ErrorEvent
+</span>21 <span style=''>  case object LobbyCodeNotValid extends ErrorEvent
 </span>22 <span style=''>
 </span>23 <span style=''>  /**
 </span>24 <span style=''>   * Function 
@@ -50,7 +50,7 @@
 </span>26 <span style=''>   * @param error error GameError
 </span>27 <span style=''>   * @return ErrorEvent
 </span>28 <span style=''>   */
-</span>29 <span style=''>  def mapError(error : GameError) : ErrorEvent = error match {
+</span>29 <span style=''>  def mapError(error: GameError): ErrorEvent = error match {
 </span>30 <span style=''>    case GameError.CombinationNotValid =&gt; </span><span style='background: #F0ADAD'>this.CombinationNotValid</span><span style=''>
 </span>31 <span style=''>    case GameError.HandNotContainCard =&gt; </span><span style='background: #F0ADAD'>this.HandNotContainCard</span><span style=''>
 </span>32 <span style=''>    case GameError.NoCardInBoard =&gt; </span><span style='background: #F0ADAD'>this.NoCardInBoard</span><span style=''>
@@ -73,12 +73,12 @@
           30
         </td>
         <td>
-          1956
+          2058
         </td>
         <td>
-          701
+          677
           -
-          725
+          701
         </td>
         <td>
           Select
@@ -94,12 +94,12 @@
           31
         </td>
         <td>
-          1253
+          1398
         </td>
         <td>
-          767
+          743
           -
-          790
+          766
         </td>
         <td>
           Select
@@ -115,12 +115,12 @@
           32
         </td>
         <td>
-          948
+          2440
         </td>
         <td>
-          827
+          803
           -
-          845
+          821
         </td>
         <td>
           Select
@@ -136,12 +136,12 @@
           33
         </td>
         <td>
-          2048
+          1811
         </td>
         <td>
-          860
+          836
           -
-          894
+          870
         </td>
         <td>
           Apply

@@ -25,7 +25,7 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.model.startup
 </span>2 <span style=''>
 </span>3 <span style=''>import akka.actor.{Actor, ActorLogging, Props}
-</span>4 <span style=''>import it.parttimeteam.messages.LobbyMessages.{Connected, MatchFound, PrivateLobbyCreated, UserAddedToLobby}
+</span>4 <span style=''>import it.parttimeteam.messages.LobbyMessages._
 </span>5 <span style=''>
 </span>6 <span style=''>object StartUpActor {
 </span>7 <span style=''>  def props(serverResponsesListener: StartupServerResponsesListener): Props = </span><span style='background: #F0ADAD'>Props(new StartUpActor(serverResponsesListener))</span><span style=''>
@@ -43,11 +43,15 @@
 </span>19 <span style=''>    case UserAddedToLobby() =&gt; </span><span style='background: #F0ADAD'>this.serverResponsesListener.addedToLobby()</span><span style=''>
 </span>20 <span style=''>    case PrivateLobbyCreated(lobbyCode) =&gt; </span><span style='background: #F0ADAD'>this.serverResponsesListener.privateLobbyCreated(lobbyCode)</span><span style=''>
 </span>21 <span style=''>    case MatchFound(gameRoom) =&gt; </span><span style='background: #F0ADAD'>this.serverResponsesListener.matchFound(gameRoom)</span><span style=''>
-</span>22 <span style=''>    case m: String =&gt; </span><span style='background: #F0ADAD'>log.debug(m)</span><span style=''>
-</span>23 <span style=''>  }
-</span>24 <span style=''>
-</span>25 <span style=''>
-</span>26 <span style=''>}
+</span>22 <span style=''>    case LobbyErrorOccurred(error) =&gt; error match {
+</span>23 <span style=''>      case LobbyError.PrivateLobbyIdNotValid =&gt; </span><span style='background: #F0ADAD'>this.serverResponsesListener.privateLobbyCodeNotValid()</span><span style=''>
+</span>24 <span style=''>      case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>25 <span style=''>    }
+</span>26 <span style=''>    case m: String =&gt; </span><span style='background: #F0ADAD'>log.debug(m)</span><span style=''>
+</span>27 <span style=''>  }
+</span>28 <span style=''>
+</span>29 <span style=''>
+</span>30 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -64,33 +68,12 @@
           7
         </td>
         <td>
-          2496
+          1002
         </td>
         <td>
-          296
+          241
           -
-          344
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.Props.apply
-        </td>
-        <td style="background: #F0ADAD">
-          akka.actor.Props.apply[it.parttimeteam.model.startup.StartUpActor](new StartUpActor(serverResponsesListener))((ClassTag.apply[it.parttimeteam.model.startup.StartUpActor](classOf[it.parttimeteam.model.startup.StartUpActor]): scala.reflect.ClassTag[it.parttimeteam.model.startup.StartUpActor]))
-        </td>
-      </tr><tr>
-        <td>
-          7
-        </td>
-        <td>
-          1491
-        </td>
-        <td>
-          302
-          -
-          343
+          282
         </td>
         <td>
           Apply
@@ -103,15 +86,36 @@
         </td>
       </tr><tr>
         <td>
+          7
+        </td>
+        <td>
+          2090
+        </td>
+        <td>
+          235
+          -
+          283
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.Props.apply
+        </td>
+        <td style="background: #F0ADAD">
+          akka.actor.Props.apply[it.parttimeteam.model.startup.StartUpActor](new StartUpActor(serverResponsesListener))((ClassTag.apply[it.parttimeteam.model.startup.StartUpActor](classOf[it.parttimeteam.model.startup.StartUpActor]): scala.reflect.ClassTag[it.parttimeteam.model.startup.StartUpActor]))
+        </td>
+      </tr><tr>
+        <td>
           17
         </td>
         <td>
-          2080
+          2138
         </td>
         <td>
-          661
+          600
           -
-          661
+          600
         </td>
         <td>
           Apply
@@ -127,12 +131,12 @@
           18
         </td>
         <td>
-          1882
+          1469
         </td>
         <td>
-          732
+          671
           -
-          740
+          679
         </td>
         <td>
           Apply
@@ -148,12 +152,12 @@
           18
         </td>
         <td>
-          1541
+          2515
         </td>
         <td>
-          689
+          628
           -
-          741
+          680
         </td>
         <td>
           Apply
@@ -169,12 +173,12 @@
           19
         </td>
         <td>
-          910
+          1872
         </td>
         <td>
-          773
+          712
           -
-          816
+          755
         </td>
         <td>
           Apply
@@ -190,12 +194,12 @@
           20
         </td>
         <td>
-          2038
+          1584
         </td>
         <td>
-          860
+          799
           -
-          919
+          858
         </td>
         <td>
           Apply
@@ -211,12 +215,12 @@
           21
         </td>
         <td>
-          1326
+          913
         </td>
         <td>
-          953
+          892
           -
-          1002
+          941
         </td>
         <td>
           Apply
@@ -229,15 +233,57 @@
         </td>
       </tr><tr>
         <td>
-          22
+          23
         </td>
         <td>
-          1000
+          2061
         </td>
         <td>
-          1025
+          1042
           -
-          1037
+          1097
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServerResponsesListener.privateLobbyCodeNotValid
+        </td>
+        <td style="background: #F0ADAD">
+          this.serverResponsesListener.privateLobbyCodeNotValid()
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1341
+        </td>
+        <td>
+          1111
+          -
+          1113
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          2490
+        </td>
+        <td>
+          1142
+          -
+          1154
         </td>
         <td>
           Apply

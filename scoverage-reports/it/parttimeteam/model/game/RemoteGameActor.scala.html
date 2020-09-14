@@ -25,8 +25,8 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.model.game
 </span>2 <span style=''>
 </span>3 <span style=''>import akka.actor.{Actor, ActorLogging, Props}
-</span>4 <span style=''>import it.parttimeteam.core.cards.Card
-</span>5 <span style=''>import it.parttimeteam.gamestate.PlayerGameState
+</span>4 <span style=''>import it.parttimeteam.gamestate.PlayerGameState
+</span>5 <span style=''>import it.parttimeteam.messages.GameMessage.MatchError.PlayerActionNotValid
 </span>6 <span style=''>import it.parttimeteam.messages.GameMessage._
 </span>7 <span style=''>import it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener
 </span>8 <span style=''>
@@ -49,37 +49,42 @@
 </span>25 <span style=''>
 </span>26 <span style=''>    def gameLost(winnerName: String)
 </span>27 <span style=''>
-</span>28 <span style=''>  }
+</span>28 <span style=''>    def invalidPlayerAction()
 </span>29 <span style=''>
-</span>30 <span style=''>}
+</span>30 <span style=''>  }
 </span>31 <span style=''>
-</span>32 <span style=''>class RemoteGameActor(private val listener: MatchServerResponseListener) extends Actor with ActorLogging {
+</span>32 <span style=''>}
 </span>33 <span style=''>
-</span>34 <span style=''>  override def receive: Receive = {
+</span>34 <span style=''>class RemoteGameActor(private val listener: MatchServerResponseListener) extends Actor with ActorLogging {
 </span>35 <span style=''>
-</span>36 <span style=''>    case GameStateUpdated(gameState) =&gt; {
-</span>37 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(s&quot;Received game state $gameState&quot;)</span><span style=''>
-</span>38 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.gameStateUpdated(gameState)</span><span style=''>
-</span>39 <span style=''>    }
-</span>40 <span style=''>
-</span>41 <span style=''>    case PlayerTurn =&gt; {
-</span>42 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(&quot;Its my turn&quot;)</span><span style=''>
-</span>43 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.turnStarted()</span><span style=''>
-</span>44 <span style=''>    }
-</span>45 <span style=''>
-</span>46 <span style=''>    case OpponentInTurn(name) =&gt; </span><span style='background: #AEF1AE'>this.listener.opponentInTurn(name)</span><span style=''>
+</span>36 <span style=''>  override def receive: Receive = {
+</span>37 <span style=''>
+</span>38 <span style=''>    case GameStateUpdated(gameState) =&gt; {
+</span>39 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(s&quot;Received game state $gameState&quot;)</span><span style=''>
+</span>40 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.gameStateUpdated(gameState)</span><span style=''>
+</span>41 <span style=''>    }
+</span>42 <span style=''>
+</span>43 <span style=''>    case PlayerTurn =&gt; {
+</span>44 <span style=''>      </span><span style='background: #AEF1AE'>log.debug(&quot;Its my turn&quot;)</span><span style=''>
+</span>45 <span style=''>      </span><span style='background: #AEF1AE'>this.listener.turnStarted()</span><span style=''>
+</span>46 <span style=''>    }
 </span>47 <span style=''>
-</span>48 <span style=''>    case TurnEnded =&gt; </span><span style='background: #AEF1AE'>this.listener.turnEnded()</span><span style=''>
+</span>48 <span style=''>    case OpponentInTurn(name) =&gt; </span><span style='background: #AEF1AE'>this.listener.opponentInTurn(name)</span><span style=''>
 </span>49 <span style=''>
-</span>50 <span style=''>    case Won =&gt; </span><span style='background: #AEF1AE'>this.listener.gameWon()</span><span style=''>
+</span>50 <span style=''>    case TurnEnded =&gt; </span><span style='background: #AEF1AE'>this.listener.turnEnded()</span><span style=''>
 </span>51 <span style=''>
-</span>52 <span style=''>    case Lost(winnerName) =&gt; </span><span style='background: #AEF1AE'>this.listener.gameLost(winnerName)</span><span style=''>
+</span>52 <span style=''>    case Won =&gt; </span><span style='background: #AEF1AE'>this.listener.gameWon()</span><span style=''>
 </span>53 <span style=''>
-</span>54 <span style=''>    case GameEndedForPlayerLeft =&gt; </span><span style='background: #F0ADAD'>this.listener.gameEndedWithErrorEvent(&quot;a player left the game&quot;)</span><span style=''>
+</span>54 <span style=''>    case Lost(winnerName) =&gt; </span><span style='background: #AEF1AE'>this.listener.gameLost(winnerName)</span><span style=''>
 </span>55 <span style=''>
-</span>56 <span style=''>    case MatchErrorOccurred(_) </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
-</span>57 <span style=''>  }
-</span>58 <span style=''>}
+</span>56 <span style=''>    case GameEndedForPlayerLeft =&gt; </span><span style='background: #F0ADAD'>this.listener.gameEndedWithErrorEvent(&quot;a player left the game&quot;)</span><span style=''>
+</span>57 <span style=''>
+</span>58 <span style=''>    case MatchErrorOccurred(error) =&gt; error match {
+</span>59 <span style=''>      case PlayerActionNotValid =&gt; </span><span style='background: #F0ADAD'>this.listener.invalidPlayerAction()</span><span style=''>
+</span>60 <span style=''>      case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>61 <span style=''>    }
+</span>62 <span style=''>  }
+</span>63 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -96,12 +101,12 @@
           10
         </td>
         <td>
-          935
+          2528
         </td>
         <td>
-          380
+          417
           -
-          409
+          446
         </td>
         <td>
           Apply
@@ -117,12 +122,12 @@
           10
         </td>
         <td>
-          1975
+          1920
         </td>
         <td>
-          374
+          411
           -
-          410
+          447
         </td>
         <td>
           ApplyToImplicitArgs
@@ -135,15 +140,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          36
         </td>
         <td>
-          2077
+          1331
         </td>
         <td>
-          851
+          919
           -
-          851
+          919
         </td>
         <td>
           Apply
@@ -156,36 +161,15 @@
         </td>
       </tr><tr>
         <td>
-          37
+          39
         </td>
         <td>
-          1381
+          941
         </td>
         <td>
-          912
+          970
           -
-          945
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #AEF1AE">
-          scala.StringContext.apply(&quot;Received game state &quot;, &quot;&quot;).s(gameState)
-        </td>
-      </tr><tr>
-        <td>
-          37
-        </td>
-        <td>
-          1041
-        </td>
-        <td>
-          902
-          -
-          946
+          1014
         </td>
         <td>
           Apply
@@ -198,15 +182,36 @@
         </td>
       </tr><tr>
         <td>
-          38
+          39
         </td>
         <td>
-          2098
+          1592
         </td>
         <td>
-          953
+          980
           -
-          994
+          1013
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;Received game state &quot;, &quot;&quot;).s(gameState)
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          2045
+        </td>
+        <td>
+          1021
+          -
+          1062
         </td>
         <td>
           Apply
@@ -219,15 +224,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          44
         </td>
         <td>
-          1488
+          1389
         </td>
         <td>
-          1033
+          1101
           -
-          1057
+          1125
         </td>
         <td>
           Apply
@@ -240,15 +245,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          45
         </td>
         <td>
-          2514
+          1028
         </td>
         <td>
-          1064
+          1132
           -
-          1091
+          1159
         </td>
         <td>
           Apply
@@ -261,15 +266,15 @@
         </td>
       </tr><tr>
         <td>
-          46
+          48
         </td>
         <td>
-          1911
+          2087
         </td>
         <td>
-          1132
+          1200
           -
-          1166
+          1234
         </td>
         <td>
           Apply
@@ -282,15 +287,15 @@
         </td>
       </tr><tr>
         <td>
-          48
+          50
         </td>
         <td>
-          1586
+          1496
         </td>
         <td>
-          1190
+          1258
           -
-          1215
+          1283
         </td>
         <td>
           Apply
@@ -303,15 +308,15 @@
         </td>
       </tr><tr>
         <td>
-          50
+          52
         </td>
         <td>
-          940
+          2510
         </td>
         <td>
-          1233
+          1301
           -
-          1256
+          1324
         </td>
         <td>
           Apply
@@ -324,15 +329,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          54
         </td>
         <td>
-          2035
+          1891
         </td>
         <td>
-          1287
+          1355
           -
-          1321
+          1389
         </td>
         <td>
           Apply
@@ -345,15 +350,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          56
         </td>
         <td>
-          1384
+          1547
         </td>
         <td>
-          1358
+          1426
           -
-          1421
+          1489
         </td>
         <td>
           Apply
@@ -366,15 +371,36 @@
         </td>
       </tr><tr>
         <td>
-          56
+          59
         </td>
         <td>
-          1025
+          910
         </td>
         <td>
-          1454
+          1578
           -
-          1456
+          1613
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener.invalidPlayerAction
+        </td>
+        <td style="background: #F0ADAD">
+          this.listener.invalidPlayerAction()
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          2048
+        </td>
+        <td>
+          1627
+          -
+          1629
         </td>
         <td>
           Literal
