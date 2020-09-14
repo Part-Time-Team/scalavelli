@@ -1,38 +1,57 @@
 \subsection{Matteo}
-Per il progetto ho deciso di assumere il ruolo di product owner, mi sono occupato della coordinare il lavoro dei miei colleghi e di curare quanto possibile la bacheca trello, organizzando con l’aiuto degli altri le attività da svolgere in ogni sprint e cercando di tenere sempre sotto controllo lo stato dei lavori al fine di rispettare le scadenze programmate in principio.
+Per il progetto ho deciso di assumere il ruolo di Product Owner, mi sono occupato della coordinare il lavoro dei miei colleghi e di curare quanto possibile la bacheca trello, organizzando con l’aiuto degli altri le attività da svolgere in ogni sprint e cercando di tenere sempre sotto controllo lo stato dei lavori al fine di rispettare le scadenze programmate in principio.
 A livello implementativo mi sono invece occupato della realizzazione della parte server in tutte le sue componenti.
 Ho deciso di utilizzare il modello ad attori e un modello di comunicazione interamente basato su scambio di messaggi utilizzando il framework Akka in quanto l’ho ritenuto il modello ideale per modellare una situazione come quella di un gioco multiplayer, in cui ogni utente è caratterizzato da una fase “attiva” di gioco in cui esegue delle azioni, ma anche una “passiva” (nel caso specifico di Machiavelli quella del turno dell’avversario) in cui rimane silente ricevendo solo gli aggiornamenti del server riguardanti le mosse degli altri giocatori.
 Ho lavorato anche sui file di configurazione di server e client per poter eseguire e testare il gioco in modalità multiplayer su una rete privata, e quindi non per forza su un unico computer.
 Questi file di configurazione sono stati anche utile per poter personalizzare e visualizzare i log di akka, utili in certe fase dello sviluppo per poter identificare alcuni problemi durante il gioco reale, non venuti a galla in precedenza con i vari unit test realizzati.
 L’altra componente di cui mi sono occupato è quella lato client della parte di Service sia dello lobby che di gioco, e strutture annesse:
-attori di lobby e di game per la comunicazione con il server
-History, per la gestione dello storico delle mosse effettuate durante il turno del giocatore e poterci navigare avanti e indietro.
-GameStateStore, per la memorizzazione e l’aggiornamento dello stato locale della partita
+\begin{itemize}
+    \item Attori di lobby e di game per la comunicazione con il server.
+    \item History, per la gestione dello storico delle mosse effettuate durante il turno del giocatore e poterci navigare avanti e indietro.
+    \item GameStateStore, per la memorizzazione e l’aggiornamento dello stato locale della partita.
+\end{itemize}
 Ho poi contribuito alla realizzazione e modifica di alcuni elementi del core, aiutando anche a risolvere problemi sorti durante lo sviluppo.
 In generale ho cercato sempre di curare la parte architetturale, facendo attenzione che le dipendenze tra classi e moduli dell’app venissero sempre rispettate.
 Ho cercato anche di mantenermi il più possibile aderente allo stile di programmazione funzionale, preferendo sempre l’utilizzo di funzioni di libreria immutabili, promuovendo l’utilizzo di espressioni lambda e l’utilizzo di monadi come Either e Option.
 Anche nelle classi realizzate ho cercato di seguire quando possibile il modello funzionale, prediligendo l’immutabilità, tranne in quei casi in cui a fronte di un’attenta analisi, ho optato per la creazione di strutture non totalmente funzionali con uso di side effect, come nei casi di classi caratterizzate dal fatto di mantenere uno stato locale aggiornato secondo delle funzioni esposte all’esterno, come il caso di LobbyManager lato server o GameStateStore sul client.
 
-
 \subsection{Luca}
 
 \subsection{Lorenzo}
+Durante lo sviluppo del progetto ho cercato di mantenermi il più possibile consono allo stile della programmazione funzionale, cercando di mantenere uno stato immutabile nei punti in cui fosse necessario.
+Mi sono occupato principalmente della parte core del progetto: lavorando sulle entità che lo compongono e su tutta la logica correlata alla gestione delle regole necessarie per poter implementare il gioco.
+Quest’ultima parte è stata realizzata integrando Prolog con Scala.
+
+\paragraph{Entità Core}
+Assieme a Daniele ho definito e implementato le entità base per l’interazione tra esse e altri componenti del progetto.
+
+\paragraph{Prolog - Core}
+La creazione delle entità e gestione delle regole è stata realizzata tramite il linguaggio Prolog.
+In particolare ho creato il file rules.pl in cui ho definito tutte le regole di validazione che il gioco ammette (tris, poker e scale), ho realizzato l’ordinamento delle carte nella mano di un giocatore per seme e per valore e ho creato le entità di base del gioco.
+Ho implementato tutta la parte in scala di gestione al prolog utilizzando la libreria TuProlog.
+In quest'ultimo caso è stato necessario definire la classe PrologGameEngine in grado di risolvere i vari goals dati in input ed ottenere i rispettivi risultati.
+Ho definito la classe PrologGameConverter che converte i risultati ottenuti da prolog in un formato conforme alle entità del progetto.
+Quest’ultima classe non è stata banale implementarla poiché ho riscontrato alcuni errori della libreria TuProlog.
+Questo accadeva quando il predicato specificato per risolvere un goal conteneva una lista di tuple.
+Per questo motivo ho creato un oggetto ad-hoc, PrologUtils, in grado di poter definire delle funzioni che permettevano di ‘pulire’ il risultato ottenuto con specifici caratteri per poterlo convertire nel formato richiesto (ad esempio una carta).
+Infine ho aiutato gli altri membri nella realizzazione di alcuni task.
 
 \subsection{Daniele}
 
-\subsubsection{Continuous Integration}
+\paragraph{Continuous Integration}
 Mi sono occupato di configurare opportunamente l'ambiente di CI scelto in modo da poter verificare la correttezza di ogni singola build, compilando ad ogni push su ogni branch e pull request.
 Inoltre, documentandomi online, ho trovato molto utile anche il sito \textit{Codecov.io}, che si occupa di mantenere delle statistiche sulla copertura dei test sul progetto.
-Per il rilascio della Doc e Scaladoc ad ogni rilascio sul branch di dev ho scelto \textit{Github Pages} in modo da renderlo disponibile per tutti, mentre per il rilascio dei pacchetti eseguibili degli applicativi server e client ad ogni push etichettata sul master ho scelto \textit{Github Releases}.
+Per il rilascio della Relazione e Scaladoc ad ogni rilascio sul branch di dev ho scelto \textit{Github Pages} in modo da renderlo disponibile per tutti.
+Per il rilascio dei pacchetti eseguibili degli applicativi server e client ad ogni push etichettata sul master ho scelto sempre \textit{Github Releases}.
 Questa parte ha richiesto molto lavoro ancora prima di iniziare a sviluppare, ma successivamente tutto il team ne ha tratto beneficio.
 In corso d'opera, si e trattato solamente di adattare mano a mano la configurazione già esistente alle crescenti esigenze del progetto (sopratutto in quanto a riduzione dei tempi di compilazione).
 
-\subsubsection{Build automation}
+\paragraph{Build automation}
 Mi sono occupato inoltre degli script necessari per eseguire agilmente una compilazione di tutto il progetto o di parte di esso in base alle esigenze.
 Tutto il progetto è stato incapsulato in moduli logicamente separati, seppur talvolta con dipendenze gli uni dagli altri.
 Questo ha permesso tante volte di ridurre tempi morti, compilando o testando solamente parti del progetto.
 
-\subsubsection{Core}
-Assieme a Lorenzo mi sono occupato dello sviluppo delle entità base del progetto e di tutti quegli elementi di gioco che riguardavano le regole del gioco e l'interazione tra di esse.
+\paragraph{Core}
+Assieme a Lorenzo mi sono occupato dello sviluppo delle entità base del progetto e di tutti quegli elementi di gioco che riguardavano le regole del gioco e le interazioni tra di esse.
 
 \newpage
