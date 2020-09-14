@@ -37,15 +37,15 @@ Le entità di gioco sono elencabili come:
 Per la gestione delle regole di validazione, sii è deciso di utilizzare questo linguaggio in quanto è possibile esprimerle in maniera totalmente dichiarativa conciso ed efficiente.
 La libreria utilizzata è TuProlog.
 \begin{center}
-    \includegraphics{prolog}
+    \includegraphics[scale=0.6]{prolog}
 \end{center}
 Di seguito vengono descritte le classi:
 \begin{itemize}
-    \item il PrologGame espone tutte le funzionalità implementate attraverso tale linguaggio.
+    \item PrologGame: espone tutte le funzionalità implementate attraverso tale linguaggio.
     Ogni qualvolta che si deve eseguire una funzionalità in Prolog, è necessario richiamare un metodo di questa classe corrispondente all’azione di Prolog.
     In particolare permette di creare le carte corredate da un valore, un seme e un colore per formare il deck di gioco, di eseguire la validazione di una sequenza di carte, che sia essa una scala, tris o poker e ne esegue l’ordinamento per seme e per valore.
 
-    \item il PrologEngine esegue effettivamente le azioni di Prolog.
+    \item PrologEngine: esegue effettivamente le azioni di Prolog.
     Si è deciso di realizzare un piccolo DSL che permettesse di facilitare l’utilizzo della libreria TuProlog e di aumentarne l’espressività del codice.
     Dopo aver caricato la specifica teoria, il PrologEngine esegue le funzioni in grado di:
     \begin{itemize}
@@ -55,20 +55,72 @@ Di seguito vengono descritte le classi:
         \item estrarre i valori dalle variabili, dopo l’esecuzione di un predicato, tramite il metodo bindingVars
     \end{itemize}
 
-    \item il PrologGameConverter espone le funzioni in grado di formulare obiettivi nel giusto ‘formato’ in Prolog e di convertire il risultato ottenuto dal PrologEngine nel tipo corretto, a seconda dell’utilizzo.
-    In particolare, grazie all’utilizzo dell’oggetto PrologUtils, espone metodi in grado di ‘pulire’ (da caratteri non conformi) il risultato del Prolog dopo averlo convertito in stringa.
-    Questo è stato reso necessario poiché quando si dava in input un obiettivo che conteneva una lista di tuple (ogni carta è una tupla che contiene nel seguente ordine valore, seme e colore), il risultato risultava essere ‘sporco’ da caratteri estranei rispetto al predicato dato in input.
-    Di fatto l’oggetto PrologUtils espone delle funzioni e una Regex che lavorano su stringhe e sostituiscono i caratteri non accettati.
-    La classe converter permette infine di gestire la validazione di specifici casi, ad esempio una combinazione contenente uno o più assi.
-    Questo perché l’asso in una combinazione che forma una scala, può essere posto prima del due o dopo del re e quindi a fini di validazione, per la teoria definita, l’asso può assumere sia il valore 1, sia il 14.
-    Il metodo OptionalValueAce gestisce i casi appena descritti cambiandone il valore in modo conforme.
-
+    \item PrologGameConverter: espone funzioni in grado di formulare obiettivi nel giusto ‘formato’ in Prolog e di convertire il risultato ottenuto dal PrologEngine nel tipo corretto, a seconda dell’utilizzo.
+    In particolare, grazie all’utilizzo dell’oggetto PrologUtils, espone funzioni in grado di ‘pulire’ (da caratteri non conformi) il risultato del Prolog dopo averlo convertito in stringa.
+    Questo è stato reso necessario poiché, quando si dava in input un obiettivo che conteneva una lista di tuple (ogni carta è una tupla che contiene nell’ordine valore, seme e colore), il risultato risultava essere ‘sporco’ da caratteri estranei rispetto al predicato dato in input.
+    La classe permette infine di gestire la validazione di specifici casi, ad esempio una combinazione che contiene uno o due assi.
+    Essi, in una combinazione che forma una scala, possono essere posti uno prima del due e l’altro dopo del re, assumendo il valore di 1 o 14 a seconda della posizione inserita in una scala.
+    La funzione OptionalValueAce gestisce i casi appena descritti cambiando il valore dell’asso da 1 a 14.
 \end{itemize}
+
+\paragraph{Predicati}
+Per ottenere le funzionalità descritte è stato creato il file rules.pl nella cartella delle risorse del modulo \textit{Core}.
+
+\subparagraph{Entità} I predicati che permettono di creare le entità sono:
+\begin{itemize}
+    \item \textit{color}: specifica il tipo di colore di una carta
+    \item \textit{suit}: specifica il tipo di seme di una carta
+    \item \textit{card}: definisce l’entità carta composta da un valore, seme e colore
+\end{itemize}
+
+\subparagraph{Combinazioni} I predicati utilizzati per la validazione delle combinazioni sono:
+\begin{itemize}
+    \item \textit{lengthList}: permette di determinare la lunghezza di una lista
+    \item \textit{sameNumber}: verifica se all’interno della lista le carte hanno tutti lo stesso valore
+    \item \textit{sameSuit}: verifica se all’interno della lista le carte hanno tutti lo stesso seme
+    \item \textit{differentSuit}: verifica se all’interno di una lista è presente più volte lo stesso seme.
+    Tale predicato ne utilizza internamente un altro chiamato sameElementList che mantiene memorizzato il seme della prima carta per poter confrontarlo con tutte le altre carte della lista
+    \item \textit{endSequence}: verifica la giusta terminazione di una scala che termina con un asso posto dopo il re.
+    Questo significa che non è possibile continuare la scala aggiungendo un due e via di seguito
+    \item \textit{checkOrderByValue}: in caso di una scala verifica se le carte sono in ordine di valore
+    \item \textit{validationQuarter}: verifica se una combinazione è un tris o un poker.
+    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: lenghtList, sameNumber e differentSuit
+    \item \textit{validationChain}: verifica se una combinazione è una scala.
+    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: lenghtList, sameSuit, endSequence e checkOrderByValue;
+\end{itemize}
+
+\subparagraph{Ordinamento}
+I predicati utilizzati per l’ordinamento delle carte sono:
+\begin{itemize}
+    \item \textit{priority}: definisce la priorità dei semi.
+    L’ordine utilizzato è: cuori, quadri, fiori e picche;
+    \item \textit{quickSortSuit}: esegue l’ordinamento per seme.
+    Internamente utilizza il predicato compareCard per ordinare per valore tutte le carte dello stesso seme in base alla priorità;
+    \item \textit{quickSortValue}: esegue l’ordinamento per valore.
+\end{itemize}
+Gli algoritmi di ordinamento quicksort per valore (o seme) a sua volta implementano il predicato partitionValue (o partitionSuit) che specifica la condizione necessario per ordinare.
+\newline
+Descrivere le funzionalità più complesse come composizione di singoli predicati specifici ha permesso una maggiore leggibilità e manutenibilità del codice, in modo da poterli riutilizzare più volte all’interno della teoria.
 
 \subsubsection{Game Interface}
 \begin{center}
     \includegraphics[width=\textwidth]{classi-Page-2.png} %todo: add diagram.
 \end{center}
+Consiste in un insieme di funzioni utilizzabili dall’esterno del core per effettuare le normali operazioni che un giocatore reale farebbe durante una partita.
+Queste operazioni comprendono:
+\begin{itemize}
+    \item Creare uno stato iniziale di una partita dato il numero e il nome dei players da aggiungerci;
+    \item Pescare una carta da un mazzo;
+    \item Validare una combinazione di carte;
+    \item Validare una Hand e una Board, cioè una mossa effettuata da un giocatore;
+    \item Validare un turno intero, quindi una Hand e una Board attuale con la Hand e la Board di inizio turno;
+    \item Prendere delle carte da una CardCombination in una Board;
+    \item Giocare delle carte da una Hand in una Board in una CardCombination esistente;
+    \item Giocare una nuova CardCombination da una Hand su una Board;
+\end{itemize}
+Il risultato di vari metodi consiste in un oggetto complesso, un Either, che può contenere un valore piuttosto che un altro a seconda del risultato di un’altra funzione.
+Esso viene usato per poter gestire in modo consistente gli errori che eventualmente possono essere lanciati all’interno delle relative funzioni.
+Questo permette di evitare di lanciare delle eccezioni che non sono corrette in un approccio funzionale.
 
 \subsection{Client}
 %todo: Add Client class diagram.
