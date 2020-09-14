@@ -1,0 +1,38 @@
+\subsection{Matteo}
+Per il progetto ho deciso di assumere il ruolo di product owner, mi sono occupato della coordinare il lavoro dei miei colleghi e di curare quanto possibile la bacheca trello, organizzando con l’aiuto degli altri le attività da svolgere in ogni sprint e cercando di tenere sempre sotto controllo lo stato dei lavori al fine di rispettare le scadenze programmate in principio.
+A livello implementativo mi sono invece occupato della realizzazione della parte server in tutte le sue componenti.
+Ho deciso di utilizzare il modello ad attori e un modello di comunicazione interamente basato su scambio di messaggi utilizzando il framework Akka in quanto l’ho ritenuto il modello ideale per modellare una situazione come quella di un gioco multiplayer, in cui ogni utente è caratterizzato da una fase “attiva” di gioco in cui esegue delle azioni, ma anche una “passiva” (nel caso specifico di Machiavelli quella del turno dell’avversario) in cui rimane silente ricevendo solo gli aggiornamenti del server riguardanti le mosse degli altri giocatori.
+Ho lavorato anche sui file di configurazione di server e client per poter eseguire e testare il gioco in modalità multiplayer su una rete privata, e quindi non per forza su un unico computer.
+Questi file di configurazione sono stati anche utile per poter personalizzare e visualizzare i log di akka, utili in certe fase dello sviluppo per poter identificare alcuni problemi durante il gioco reale, non venuti a galla in precedenza con i vari unit test realizzati.
+L’altra componente di cui mi sono occupato è quella lato client della parte di Service sia dello lobby che di gioco, e strutture annesse:
+attori di lobby e di game per la comunicazione con il server
+History, per la gestione dello storico delle mosse effettuate durante il turno del giocatore e poterci navigare avanti e indietro.
+GameStateStore, per la memorizzazione e l’aggiornamento dello stato locale della partita
+Ho poi contribuito alla realizzazione e modifica di alcuni elementi del core, aiutando anche a risolvere problemi sorti durante lo sviluppo.
+In generale ho cercato sempre di curare la parte architetturale, facendo attenzione che le dipendenze tra classi e moduli dell’app venissero sempre rispettate.
+Ho cercato anche di mantenermi il più possibile aderente allo stile di programmazione funzionale, preferendo sempre l’utilizzo di funzioni di libreria immutabili, promuovendo l’utilizzo di espressioni lambda e l’utilizzo di monadi come Either e Option.
+Anche nelle classi realizzate ho cercato di seguire quando possibile il modello funzionale, prediligendo l’immutabilità, tranne in quei casi in cui a fronte di un’attenta analisi, ho optato per la creazione di strutture non totalmente funzionali con uso di side effect, come nei casi di classi caratterizzate dal fatto di mantenere uno stato locale aggiornato secondo delle funzioni esposte all’esterno, come il caso di LobbyManager lato server o GameStateStore sul client.
+
+
+\subsection{Luca}
+
+\subsection{Lorenzo}
+
+\subsection{Daniele}
+
+\subsubsection{Continuous Integration}
+Mi sono occupato di configurare opportunamente l'ambiente di CI scelto in modo da poter verificare la correttezza di ogni singola build, compilando ad ogni push su ogni branch e pull request.
+Inoltre, documentandomi online, ho trovato molto utile anche il sito \textit{Codecov.io}, che si occupa di mantenere delle statistiche sulla copertura dei test sul progetto.
+Per il rilascio della Doc e Scaladoc ad ogni rilascio sul branch di dev ho scelto \textit{Github Pages} in modo da renderlo disponibile per tutti, mentre per il rilascio dei pacchetti eseguibili degli applicativi server e client ad ogni push etichettata sul master ho scelto \textit{Github Releases}.
+Questa parte ha richiesto molto lavoro ancora prima di iniziare a sviluppare, ma successivamente tutto il team ne ha tratto beneficio.
+In corso d'opera, si e trattato solamente di adattare mano a mano la configurazione già esistente alle crescenti esigenze del progetto (sopratutto in quanto a riduzione dei tempi di compilazione).
+
+\subsubsection{Build automation}
+Mi sono occupato inoltre degli script necessari per eseguire agilmente una compilazione di tutto il progetto o di parte di esso in base alle esigenze.
+Tutto il progetto è stato incapsulato in moduli logicamente separati, seppur talvolta con dipendenze gli uni dagli altri.
+Questo ha permesso tante volte di ridurre tempi morti, compilando o testando solamente parti del progetto.
+
+\subsubsection{Core}
+Assieme a Lorenzo mi sono occupato dello sviluppo delle entità base del progetto e di tutti quegli elementi di gioco che riguardavano le regole del gioco e l'interazione tra di esse.
+
+\newpage
