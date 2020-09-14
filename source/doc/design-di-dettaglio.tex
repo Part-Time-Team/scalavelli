@@ -109,7 +109,7 @@ Tutti i metodi che agiscono sugli elementi già renderizzati dalla view e gli ag
 \subsubsection{Lobby}
 
 \paragraph{Controller}
-StarupController avvia la view che permette all’utente di selezionare la modalità con cui partecipare ad una lobby e l’inserimento dei suoi dati.
+StartupController avvia la view che permette all’utente di selezionare la modalità con cui partecipare ad una lobby e l’inserimento dei suoi dati.
 Una volta fatto questo, tramite l’interazione con StartupService comunica al server la scelta dell’utente e attende una risposta.
 
 \paragraph{View}
@@ -146,16 +146,18 @@ La connessione al server viene fatta tramite tramite il metodo actorSelection me
 I messaggi di risposta del server vengono invece ricevuti tramite l’attore StartupActor, creato all’inizializzazione dell’oggetto sempre tramite l’istanza di ActorSystem, il cui riferimento viene passato al server al momento della connessione.
 Questo attore ha l’unica funzione di ricevere i messaggi inviati dal server e di redirezionarli tramite il trait StartupServerResponsesListener che richiede in costruzione.
 La decisione di comunicare con il server su due vie separate è stata fatta per evitare duplicazione di messaggi: far fare tutto a StartupActor avrebbe richiesto l’invio di messaggi a quest’ultimo che a sua volta avrebbe dovuto inviarli al server.
-Il risutalti delle varie operazioni vengono poi notificati al controller attraverso la funzione notifyEvent richiesta in costruzione, a cui viene passato un oggetto di tipo GameStartupEvent.
+Il risultati delle varie operazioni vengono poi notificati al controller attraverso la funzione notifyEvent richiesta in costruzione, a cui viene passato un oggetto di tipo GameStartupEvent.
 Il risultato della fase di lobby è l’oggetto GameMatchInformations, che racchiude tutte le informazioni necessarie a poter avviare la partita lato client, come l'id del giocatore e la reference all'attore remoto del server.
 
 \paragraph{GameService}
-È il componente che si occupa di gestire lato client tutta la fase di gioco. Come il componente descritto in precedenza per la fase di lobby, anche questo consiste in un’interfaccia che espone tutti i metodi corrispondenti alle funzionalità rese disponibili dal client di gioco.
+È il componente che si occupa di gestire lato client tutta la fase di gioco.
+Come il componente descritto in precedenza per la fase di lobby, anche questo consiste in un’interfaccia che espone tutti i metodi corrispondenti alle funzionalità rese disponibili dal client di gioco.
 La sua implementazione GameServiceImpl è poi caratterizzata da diversi elementi, ciascuno dei quali gestisce una componente specifica del gioco.
 Il riferimento all’attore server remoto serverActorRef utilizzato per inviare messaggi al server
 ClientGameActorRef, il riferimento all’attore locale responsabile di ricevere i messaggi inviati dal server, con una struttura analoga a quella descritta precedentemente per la lobby.
 GameStateStore utilizzato per mantenere lo stato locale della partita ed aggiornarlo a seguito delle azioni compiute dall’utente o dagli aggiornamenti ricevuti dal server.
-History, una struttura dati immutabile utilizzata per salvare lo storico degli stati risultanti dalle mosse eseguite dall’utente durante il turno. In seguito ad ogni mossa effettuate dal giocatore durante il turno viene aggiornata e utilizzata poi per ripristinare lo stato a delle versioni precedenti a seguito delle azioni di undo/redo.
+History, una struttura dati immutabile utilizzata per salvare lo storico degli stati risultanti dalle mosse eseguite dall’utente durante il turno.
+In seguito ad ogni mossa effettuate dal giocatore durante il turno viene aggiornata e utilizzata poi per ripristinare lo stato a delle versioni precedenti a seguito delle azioni di undo/redo.
 GameInterface, l’interfaccia core utilizzata per eseguire in locale le azioni di gioco effettuate durante il turno.
 In costruzione riceve poi una funzione che utilizza per notificare al chiamante (in questo caso il controller) gli aggiornamenti di stato e gli altri eventi di sistema.
 %todo: Add GameService Diagram
