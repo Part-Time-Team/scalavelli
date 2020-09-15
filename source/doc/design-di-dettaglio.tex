@@ -204,7 +204,7 @@ La connessione al server viene fatta tramite tramite il metodo actorSelection me
 I messaggi di risposta del server vengono invece ricevuti tramite l’attore StartupActor, creato all’inizializzazione dell’oggetto sempre tramite l’istanza di ActorSystem, il cui riferimento viene passato al server al momento della connessione.
 Questo attore ha l’unica funzione di ricevere i messaggi inviati dal server e di redirezionarli tramite il trait StartupServerResponsesListener che richiede in costruzione.
 La decisione di comunicare con il server su due vie separate è stata fatta per evitare duplicazione di messaggi: far fare tutto a StartupActor avrebbe richiesto l’invio di messaggi a quest’ultimo che a sua volta avrebbe dovuto inviarli al server.
-Il risultati delle varie operazioni vengono poi notificati al controller attraverso la funzione notifyEvent richiesta in costruzione, a cui viene passato un oggetto di tipo GameStartupEvent.
+I risultati delle varie operazioni vengono poi notificati al controller attraverso la funzione notifyEvent richiesta in costruzione, a cui viene passato un oggetto di tipo GameStartupEvent.
 Il risultato della fase di lobby è l’oggetto GameMatchInformations, che racchiude tutte le informazioni necessarie a poter avviare la partita lato client, come l'id del giocatore e la reference all'attore remoto del server.
 
 \paragraph{GameService}
@@ -215,7 +215,7 @@ Il riferimento all’attore server remoto serverActorRef utilizzato per inviare 
 ClientGameActorRef, il riferimento all’attore locale responsabile di ricevere i messaggi inviati dal server, con una struttura analoga a quella descritta precedentemente per la lobby.
 GameStateStore utilizzato per mantenere lo stato locale della partita ed aggiornarlo a seguito delle azioni compiute dall’utente o dagli aggiornamenti ricevuti dal server.
 History, una struttura dati immutabile utilizzata per salvare lo storico degli stati risultanti dalle mosse eseguite dall’utente durante il turno.
-In seguito ad ogni mossa effettuate dal giocatore durante il turno viene aggiornata e utilizzata poi per ripristinare lo stato a delle versioni precedenti a seguito delle azioni di undo/redo.
+In seguito ad ogni mossa effettuata dal giocatore durante il turno, la History viene aggiornata e utilizzata per ripristinare lo stato delle versioni precedenti a seguito delle azioni di undo/redo.
 GameInterface, l’interfaccia core utilizzata per eseguire in locale le azioni di gioco effettuate durante il turno.
 In costruzione riceve poi una funzione che utilizza per notificare al chiamante (in questo caso il controller) gli aggiornamenti di stato e gli altri eventi di sistema.
 \begin{center}
@@ -233,16 +233,16 @@ Il grafico di cui sopra mostra la sequenza di operazioni che avvengono durante i
 Nel caso di una mossa eseguita in remoto la chiamata al \textit{GameInterface} è sostituita con un messaggio inviato al \textit{Server}, mentre manca l’aggiornamento della \textit{History} che viene utilizzata solamente durante la gestione locale del turno.
 
 \subsection{Server}
-È la componente che permette lo svolgersi del gioco in modalità multiplayer del gioco, ogni sessione utente è possibile distinguerla in 2 fasi principali:
+È la componente che permette lo svolgersi del gioco in modalità multiplayer.Ogni sessione utente è possibile distinguerla in 2 fasi principali:
 \begin{itemize}
     \item una fase di startup o lobby: in questa fase l’utente, una volta avviata l’applicazione, cerca di connettersi al server inviandogli i dati necessari per poter trovare una partita.
-    Il server dalla sua rimane costantemente in attesa di connessioni di client.
-    Una volta connessi e ottenute le loro informazioni di gioco li inserisce all’interno della lobby, in attesa che si verifichino le condizioni necessari affinché una partita possa essere generata.
-    Al raggiungimenti di tali condizioni, viene creata una partita, inserendo i giocatori che vengono rimossi dalla lobby.
-    \item una fase di gioco: questa fase gestisce lo svolgersi della partita ed è ulteriormente suddivisa in 2 sotto fasi
+    Il server contemporaneamente rimane in attesa di connessioni dei client.
+    Una volta connessi e ottenute le loro informazioni di gioco li inserisce all’interno della lobby, in attesa che si verifichino le condizioni necessarie affinché una partita possa essere generata.
+    Al raggiungimento di tali condizioni, viene creata una partita, inserendo i giocatori che vengono rimossi dalla lobby.
+    \item una fase di gioco: questa fase gestisce lo svolgersi della partita ed è ulteriormente suddivisa in 2 sotto fasi:
     \begin{itemize}
         \item Fase di inizializzazione, in cui i client ricevono un messaggio del fatto che la partita è stata trovata e ne danno conferma al server.
-        Il server aspetta i messaggi da tutti i client e una volta ricevuti, viene generato lo stato iniziale della partite e comunicato ai giocatori, dopo di che il gioco può iniziare.
+        Il server aspetta i messaggi da parte di tutti i client e una volta ricevuti, viene generato lo stato iniziale della partita, comunicato ai giocatori.Ora il gioco può iniziare.
         \item Fase di gioco, in cui il server si occupa di far proseguire il gioco, determinando il giocatore corrente, ricevendo le sue mosse, aggiornando lo stato in maniera ciclica, fino al verificarsi delle condizioni di terminazione del gioco.
         Il client si occupa di intercettare tutti le azioni effettuate dall’utente durante la partita, di comunicarle al server al termine del turno e di ricevere le varie informazioni sullo stato di avanzamento della partita.
     \end{itemize}
@@ -259,30 +259,30 @@ LobbyManager è invece il componente che si occupa di mantenere i riferimenti a 
 Per fare ciò mantiene una Lobby in corrispondenza di ogni LobbyType, che rappresenta l’informazione sulle caratteristiche di una lobby.
 
 \paragraph{Modellazione delle lobby private}
-La lobby privata presenta la caratteristica di una normale lobby di avere associato un valore corrispondente al numero di giocatori tale da poter essere estratti per formare un partita, oltre a questo ha un codice univoco per poterla identificare univocamente tra le tante.
-PrivateLobbyService supporta la creazione private, generando un id univoco ogni volta che ne viene richiesta una nuova.
+La lobby privata presenta la caratteristica di una normale lobby di avere associato un valore corrispondente al numero di giocatori tale da poter essere estratti per formare un partita.Oltre a questo, ha un codice univoco per poterla identificare univocamente tra le tante.
+PrivateLobbyService supporta la creazione di lobby private, generando un id univoco ogni volta che ne viene richiesta una nuova.
 
 \paragraph{Interazione con il client}
 \begin{center}
     \includegraphics[width=\textwidth]{server-diagramma-attivita-lobby}
 \end{center}
-La sequenza di operazioni necessaria poter entrare in lobby e partecipa ad una partita è la seguente:
+La sequenza di operazioni necessarie per poter entrare in una lobby e partecipare ad una partita è la seguente:
 \begin{itemize}
-    \item un client invia un messaggio Connect al server passandogli il riferimento all’attore client a cui quest’ultimo dovrà rispondere, a seguito del quale viene generato un id univoco che viene restituito al client
+    \item un client invia un messaggio Connect al server passandogli il riferimento all’attore client a cui quest’ultimo dovrà rispondere, a seguito del quale viene generato un id univoco che viene restituito al client;
     \item il client dopo aver scelto le preferenze di gioco, richiede al server di essere aggiunto ad una lobby (privata o pubblica) o di crearne una sua privata.
-    Il server aggiunge il client alla lobby corrispondente rispondendo al client con un messaggio di avvenuta aggiunta.
-    \item dopo aver aggiunto un giocatore ad una lobby, il server controlla se sono verificate le condizione per l’avvio di una nuova partita sulla lobby corrente tramite il metodo di LobbyManager attemptExtractPlayerForMatch che tenta di estrarre la lista di giocatori.
-    In caso positivo i giocatori vengono rimossi dal sistema di lobby, viene creato un attore specifico per la partita GameMatchActor a cui vengono passate i loro riferimenti e che da quel momento in poi si occuperà di tutta la fase di gioco.
+    Il server aggiunge il client alla lobby corrispondente rispondendo con un messaggio di avvenuta aggiunta.
+    \item dopo aver aggiunto un giocatore ad una lobby, il server controlla se si sono verificate le condizioni per l’avvio di una nuova partita sulla lobby corrente tramite il metodo di LobbyManager attemptExtractPlayerForMatch che tenta di estrarre la lista di giocatori.
+    In caso positivo i giocatori vengono rimossi dal sistema di lobby e viene creato un attore specifico per la partita GameMatchActor a cui vengono passati i loro riferimenti.Da quel momento in poi si occuperà di tutta la fase di gioco.
 \end{itemize}
 
 \subsubsection{Game}
 \begin{center}
     \includegraphics[width=\textwidth]{server-game-classes}
 \end{center}
-\textit{GameMatchActor} è l’attore server che occupa della gestione di una partita, creato dall’attore Lobby descritto in precedenza.
+\textit{GameMatchActor} è l’attore server che si occupa della gestione di una partita, creato dall’attore Lobby descritto in precedenza.
 Fa uso di due interfacce principali:
 \begin{itemize}
-    \item \textit{TurnManager} è la struttura che gestisce la rotazione dei turni dei giocatori, possiede la lista dei giocatore e la logica per determinare quello successivo a partire da quello corrente.
+    \item \textit{TurnManager} è la struttura che gestisce l'ordine del turno dei giocatori.Possiede la lista dei giocatori e la logica per determinare quello successivo a partire da quello corrente.
     \item \textit{GameHelper}, la cui implementazione è l’unica classe server che ha riferimento al core, espone i metodi necessari a creare lo stato iniziale della partita e a determinare lo stato successivo della partita sulla base dell’azione compiuta dal giocatore a fine turno.
 \end{itemize}
 Mantiene inoltre lo stato globale della partita, ad ogni suo aggiornamento lo trasmette a tutti giocatori connessi.
@@ -294,10 +294,10 @@ Per questioni di sicurezza, ad ogni giocatore non viene inviato lo stato globale
 \end{center}
 Una volta creato dall’attore lobby:
 \begin{itemize}
-    \item rimane in attesa di un messaggio di inizializzazione (GamePlayers) da parte di quest’ultimo, contenente le informazioni dei giocatori.
-    \item Notifica poi i giocatori che la partita è stata trovata tramite il messaggio MatchFound
-    \item rimane in attesa del loro messaggio di conferma Ready, contenente oltre all’id del giocatore il riferimento all’attore a cui inviare i successivi messaggi.
-    \item Ricevuti tutti i messaggi di conferma la partita viene inizializzata, viene generato lo stato iniziale ed inviato ai vari giocatori, determinato e notificato il giocatore in turno.
+    \item rimane in attesa di un messaggio di inizializzazione (GamePlayers) da parte di quest’ultimo, contenente le informazioni dei giocatori;
+    \item notifica i giocatori che la partita è stata trovata tramite il messaggio MatchFound;
+    \item rimane in attesa del loro messaggio di conferma Ready, contenente oltre all’id del giocatore il riferimento all’attore a cui inviare i successivi messaggi;
+    \item ricevuti tutti i messaggi di conferma la partita viene inizializzata, viene generato lo stato iniziale ed inviato ai vari giocatori.Inoltre viene inviata una notifica al giocatore del turno corrente.
 \end{itemize}
 
 \paragraph{Comunicazione durante il turno di gioco}
@@ -307,10 +307,10 @@ Una volta creato dall’attore lobby:
 Una volta inizializzato il gioco e stabilito il giocatore corrente, il server rimane in attesa dell’azione di fino turno (le restanti azioni effettuate durante il turno sono gestite in locale come descritto in precedenza).
 Dopodiché determina lo stato successivo sulla base dell’azione effettuata che può essere:
 \begin{itemize}
-    \item DrawCard: utente non effettua alcuna azione e decide di passare pescando una carta
-    \item PlayerMove(hand, board) : l’utente conclude il turno effettuando una o più mosse, con conseguente modifica della sua mano e del tavolo
+    \item DrawCard: utente non effettua alcuna azione e decide di passare pescando una carta;
+    \item PlayerMove(hand, board) : l’utente conclude il turno effettuando una o più mosse, con conseguente modifica della sua mano e del tavolo.
 \end{itemize}
-Determinato lo stato successivo, il server comunica la fine del turno fa broadcast dello stato corrente a tutti i giocatori, comunica la fine del turno al giocatore corrente e manda avanti la partita determinando il successivo.
+Determinato lo stato successivo, il server comunica la fine del turno facendo broadcast dello stato corrente a tutti i giocatori.Comunica la fine del turno al giocatore corrente e manda avanti la partita determinando il successivo.
 \newline
 Tutte queste operazioni verranno ripetute ciclicamente fino al verificarsi delle condizioni di vittoria, che comporta la notifica ai vari giocatori del termine della partita e la terminazione dell’attore server per la gestione della stessa.
 
@@ -319,12 +319,12 @@ In entrambe le componenti del server (lobby e gioco) si è cercato di rilevare e
 Per rilevare queste situazioni è stato utilizzata la funzionalità di supervisione e monitoraggio messa a disposizione da akka.
 Conoscendo il riferimento ad un attore è possibile ricevere mettersi in ascolto agli eventi di terminazioni, ricevendoli tramite messaggio il messaggio Terminated.
 L’attore lobby sfrutta questa funzionalità per rimuovere gli utenti terminati dalle code.
-L’attore responsabile delle partita invece rilevata la terminazione di uno dei giocatori, termina la partita stessa notificando gli altri.
+L’attore responsabile delle partita invece rileva la terminazione di uno dei giocatori, termina la partita stessa notificandola agli altri.
 
 \subsection[Errori]{Gestione degli errori}
 In tutte le componenti dell’applicazione si è cercato di evitare il più possibile la generazione di eccezioni qualora le funzioni avessero dovuto generare errori a causa dell’impossibilità di eseguire l’operazione richiesta.
 Sono stati utilizzati dei meccanismi comuni sfruttando le funzionalità e le classi messe a disposizione dal linguaggio akka.
-Option per evitare di valori null qualora la funzione non dovesse ritornare nulla.
+Option per evitare di avere valori null qualora la funzione non dovesse ritornare nulla.
 Either per poter tornare un errore specifico nel caso in cui la funzione andasse in errore.
 A questo scopo abbiamo creato delle classi di errore specifiche nei vari moduli.
 Ad esempio nel metodo playCombination di GameInterface, in caso ci sia un errore nei parametri di input forniti, al posto di lanciare un’eccezione o di tornare un errore generico come Throwable, viene ritornato un oggetto della classe GameError, come CombinationNotValid.
