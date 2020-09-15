@@ -71,7 +71,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       Board.empty,
       players.map(pair => Player(pair._2, pair._1, Hand(List(), List()))))
 
-    override def draw(deck: Deck): (Deck, Card) = (deck, FakeGameInterface.cardToDraw)
+    override def draw(deck: Deck): (Deck, Option[Card]) = (deck, Some(FakeGameInterface.cardToDraw))
 
     override def validateMove(board: Board, hand: Hand): Boolean = ???
 
