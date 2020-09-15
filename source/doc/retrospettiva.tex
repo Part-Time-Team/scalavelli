@@ -1,0 +1,75 @@
+\subsection{Organizzazione del processo di sviluppo}
+Il processo di sviluppo è stato suddiviso in un primo sprint iniziale per confrontarsi sul design architetturale da adottare e discutere delle interazioni che i vari componenti dovevano avere.
+In questo sprint abbiamo poi definito i quattro successivi di sviluppo del progetto.
+Ogni sprint (eccetto quello iniziale) ha avuto mediamente una durata di circa 1,5/2 settimane.
+
+\subsubsection{Preparazione iniziale}
+Durante questo fase ci siamo incontrati più volte per definire l’architettura e i requisiti base che il nostro progetto doveva soddisfare.
+Inoltre abbiamo individuato i componenti di gioco e le loro interazioni.
+In questo modo abbiamo avuto l'opportunità di confrontarci e discutere per una migliore organizzazione dei successivi sprint.
+Abbiamo inoltre configurato l’ambiente di sviluppo e assegnatoci i rispettivi compiti in base all’interesse di ognuno.
+Tutta questa fase è stata completamente da remoto con lunghe chiamate su Microsoft Teams, tranne per l’ultima riunione in cui siamo riusciti a vederci tutti insieme.
+
+\subsubsection{Sprint 1}
+Questo sprint consisteva nel sviluppare le seguenti funzionalità:
+\begin{itemize}
+    \item Visualizzazione di una view di base della lobby in cui l’utente può inserire un username e il numero di giocatori con cui vuole partecipare.
+    \item Per la parte server, creazione della lobby e gestione degli utenti in coda fino al raggiungimento necessario dei numeri di giocatori.
+    \item Per il core, modellazione delle entità di gioco sia in Scala che in Prolog: colore, seme, valore, carte e le regole di validazione.
+\end{itemize}
+In questa fase abbiamo notato che il carico di lavoro per il facimento del Core e del Prolog è stato maggiore rispetto agli altri, dato che su di essi si sarebbe basato molto del lavoro del successivo sprint, causando una maggiore pressione nei due membri del team a cui è stato assegnato questo compito.
+
+\subsubsection{Sprint 2}
+Questo sprint consisteva nel sviluppare le seguenti funzionalità:
+\begin{itemize}
+    \item Creazione della struttura del client, collegamento del client con server durante la fase di registrazione ad una lobby.
+    \item Inizio gioco: collegamento della lobby con lo stato iniziale della partita.
+    \item View di gioco con la visualizzazione del tavolo e delle carte in mano ad un giocatore.
+    \item Definizione dell’interfaccia core per la gestione del gioco.
+    \item Arricchimento la libreria prolog con l’aggiunta dell’ordinamento delle carte per seme e per valore che fino a quel momento erano state implementate in scala.
+\end{itemize}
+
+\subsubsection{Sprint 3}
+L’obiettivo di questo sprint era quello di collegare le singole parti sviluppate in modo da ottenere un collegamento tra client-core-server e view visualizzando le funzionalità delle partita.
+Abbiamo terminato tutta l’implementazione del Core con qualche piccolo aggiustamento.
+Da questo sprint in poi sono iniziati ad essere rilevati tanti problemi con la validazione delle combinazioni in Prolog, causati dalla molteplice valenza del valore Asso (come primo e ultimo valore di una scala e possibilità di essere presente in due copie).
+\newline
+Questo è stato lo sprint più importante di tutto il processo di sviluppo poiché sono stati completati molti task alla gestione del gioco.
+Inoltre, abbiamo notato il problema inverso rispetto al primo sprint: il carico di lavoro sul Server e sul Client è stato maggiore che sul resto.
+Tuttavia in questo caso è stato possibile per i due membri restanti aiutare gli altri nella realizzazione dei loro task.
+
+\subsubsection{Sprint 4}
+Nell’ultimo sprint ci siamo occupati di risolvere alcuni problemi legati al server come la disconnessione improvvisa da parte di un utente o l’abbandono della partita.
+Inoltre, lato client, abbiamo implementato la gestione del tempo che ogni giocatore ha a disposizione per completare il turno.
+In questa fase tutti i membri del team hanno contribuito a risolvere i bug e rifattorizzare il codice presente.
+
+\subsection{Sviluppi futuri}
+Di sicuro come prossimi sviluppi potrebbero essere affrontati tutti i punti opzionali che non siamo riusciti a svolgere entro il tempo del progetto, quali:
+\begin{itemize}
+    \item Funzionalità che suggerisca all'utente una possibile mossa da fare nel proprio turno.
+    \item Semplice AI contro cui giocare in locale.
+    \item Possibilità di personalizzare alcune caratteristiche di questo gioco.
+\end{itemize}
+Al di fuori di essi, principalmente si è pensato a:
+\begin{itemize}
+    \item modificare il server per poterlo installare su di un container da mettere su una macchina remoto raggiungibile da remoto in modo da poter estendere i possibili utenti utilizzatori del gioco, per creare partite più avvincenti ed un’esperienza d’uso più completa.
+    \item creare una base dati per la memorizzazione dei risultati delle partite e degli utenti in modo da generare periodicamente una classifica dei migliori giocatori.
+    \item migliorare la funzionalità di generazione di partite private per arrivare a creare dei veri e propri tornei.
+    Gli utenti, inseriti dentro a delle maxi lobby private, all’avvio del turno di un torneo, verrebbero accoppiati ad altri giocatori in base ai risultati delle partite precedenti.
+    Gli utenti tornerebbero nella stessa maxi lobby al termine del turno per poter di nuovo essere accoppiati.
+    Regole di gestione del torneo ulteriori, come ad esempio i gironi all’italiana o i punti della classifica potrebbero essere scelte direttamente dai gestori del torneo.
+\end{itemize}
+
+\subsection{Commenti finali}
+Ci siamo trovati bene a lavorare con la metodologia Agile imparata a lezione in questo corso. Avere degli obiettivi precisi da portare a termine in poco tempo proporzionati alle forze del team ha aiutato a ridurre drasticamente il classico stress dovuto all’approssimarsi delle scadenze. \newline \newline Anche l’uso di Trello ha contribuito, rendendo più veloce la comunicazione all’interno del team in termini di reporting delle issues e dei job per ogni membro.\newline \newline Il nome Part-Time-Team dato al gruppo non è stato a caso, il motivo per cui l’abbiamo scelto è che 3 componenti su 4 del gruppo sono lavoratori part-time che hanno anche richiesto l’estensione del piano di studi. Non sempre siamo riusciti a dedicare lo stesso lasso di tempo durante la giornata al progetto, quindi l’uso degli strumenti sopra citati è stato più essenziale che opzionale, permettendoci di lavorare in modo indipendente gli uni dagli altri. \newline \newline La tecnologia più ostica per tutto il gruppo è stato il Prolog, dato che ha richiesto di cambiare totalmente il modo di affrontare il problema. Alcune volte, si è pensato ad usare solamente il linguaggio Scala per lo svolgimento di tutte le funzionalità sviluppate invece di Prolog, credendo di risparmiare tempo prezioso. Nonostante le difficoltà, abbiamo comunque pensato che non fosse il caso di rinunciare a tutto il lavoro già svolto. 
+\paragraph{Daniele}
+Penso che partecipare a questo progetto sia stata una bellissima esperienza, sia per l’opportunità di lavorare con tecnologie che non conoscevo, sia per l’aver collaborato con dei bravissimi compagni. Penso che se una persona non conoscesse l’esistenza di queste tecnologie (prima fra tutti la CI) non le andrebbe a cercare tanto, non si sveglierebbe alla mattina pensando di inventare un sistema simile, ma una volta venutone a conoscenza, non ne potrebbe più fare a meno, proprio come è successo a me.
+\paragraph{Lorenzo}
+Partecipare a questo progetto mi ha aiutato ad approcciarmi con tecnologie che fin'ora non conoscevo e soprattutto mi ha permesso di acquisire nuove abilità sull'approccio funzionale e sulla programmazione in generale. Non avendo fatto ancora un'esperienza lavorativa, partecipare a questo progetto mi ha fatto capire, seppur in minima parte, cosa significa lavorare in un team.\newline Penso di aver raggiunto l'obiettivo finale di questo corso, anche grazie all'aiuto dei membri del team. Inoltre l'esperienza mi ha permesso di conoscere nuovi amici. Li ringrazio della fiducia iniziale che mi hanno dato.
+\paragraph{Matteo}
+La realizzazione del progetto e in generale il corso di PPS è stata un'esperienza molto positiva, mi ha permesso di approfondire aspetti della programmazione funzionale e soprattuto del testing che ho poi avuto modo di applicare anche al lavoro.
+Sicuramente il margine di miglioramento è ancora molto ampio visti i molteplici concetti toccati in un lasso di tempo così limitato, ma gli spunti sono tanti e piano piano cercherò di approfondirli al meglio uno ad uno, partendo dal libro "Clean Code" già pronto sulla mensola.
+\paragraph{Luca}
+La realizzazione di questo progetto è stata un’esperienza molto positiva. Certamente non sono mancate le difficoltà nel riuscire a incastrare gli impegni di tutti per poter incontrarsi di persona, essendo per la maggior parte lavoratori, ma nell’organizzazione degli sprint abbiamo tenuto conto sia di quello sia delle ferie estive che erano già state programmate. Avevamo lasciato anche un po’ di margine, che si è rivelato fondamentale per via di qualche ritardo nello sviluppo dovuto ad aspetti implementativi e di design che non avevamo considerato.
+Le volte in cui siamo riusciti ad incontrarci con il gruppo (sia su Teams, ma soprattutto di persona) sono state fondamentali, sia per condividere le difficoltà che ognuno di noi aveva, sia per fare un po’ di pair-programming, che ci ha dato qualche sicurezza in più quando si usavano costrutti non molto utilizzati fino ad ora.
+Esperienza che sicuramente mi ha fatto crescere dal punto di vista del lavoro in gruppo.
