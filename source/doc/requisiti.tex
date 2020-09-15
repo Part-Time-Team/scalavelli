@@ -9,9 +9,8 @@ L’utente medio utilizzatore potrà interagire solamente con il client (come de
 Le operazioni in fase di creazione della partita sono:
 \begin{itemize}
     \item Specificare il proprio username (per potersi registrare nel server) e il numero di giocatori di una partita pubblica;
-    \item Specificare il proprio username e il codice di una partita privata che gli è stato inviato;
-    \item Specificare il proprio username, il numero di giocatori e generare un codice per una partita privata;
-    \item Inserire o creare una lobby privata;
+    \item Specificare il proprio username, il numero di giocatori e generare o specificare un codice per una partita privata;
+    \item Creare una lobby privata;
     \item Connettersi ad una lobby e attendere il raggiungimento del numero di giocatori.
 \end{itemize}
 Dopo aver generato una partita ed esservi entrato, in una nuova schermata il giocatore potrà:
@@ -68,7 +67,7 @@ In ogni momento devono sempre essere visibili:
 
 \subsubsection{Scalabilità}
 Il server deve essere in grado di supportare un numero indefinito di utenti nell’insieme di tutte le partite.
-Nel caso in cui non ci siano abbastanza giocatori in coda per iniziare una partita, allora devono essere lasciati in attesa dell’arrivo di altri giocatori che vogliano giocare anche loro.
+Nel caso in cui non ci siano abbastanza giocatori in coda per iniziare una partita, allora questi devono essere lasciati in attesa dall’arrivo di altri giocatori che vogliano giocare anche loro.
 Il sistema non consente l’accesso ad altri utenti per una partita specifica quando questa ha raggiunto il numero di partecipanti richiesto.
 
 \subsubsection{Modularità}
@@ -85,7 +84,7 @@ Il sistema deve fornire agli utenti un'interfaccia chiara, semplice, ben organiz
 Il sistema deve poter consentire di giocare una partita senza ritardi e/o blocchi temporali dati dall’esecuzione degli algoritmi di validazione e controllo e dai protocolli di comunicazione.
 
 \subsubsection{Sicurezza}
-Il sistema deve aver sempre la possibilità di controllare lo stato attuale del gioco in modo da impedire che alcuni giocatori possano iniettarne uno non veritiero nella partita attuale.
+Il sistema deve aver sempre la possibilità di controllare lo stato attuale del gioco in modo da impedire che alcuni giocatori possano "iniettarne" uno non veritiero nella partita attuale.
 Per questo ad ogni fine turno deve essere validato da parte del server in modo che un client malevolo non possa rovinare l’esperienza di gioco agli altri giocatori.
 
 \subsection{Implementativi}
@@ -98,7 +97,7 @@ Principali tecnologie e modelli utilizzati sono:
 \begin{itemize}
     \item Scala: Il sistema deve essere prevalentemente sviluppato in scala.
     \item ScalaFX: Il sistema deve disporre di un’interfaccia grafica per poter interagire con il gioco e il server.
-    \item Prolog: Utilizzo del prolog per implementare l’ordinamento delle carte (per seme, valore e colore), le entità del gioco e la validazione della correttezza delle combinazioni di carte.
+    \item Prolog: Utilizzo del prolog per implementare l’ordinamento delle carte (per seme e valore), le entità del gioco e la validazione della correttezza delle combinazioni di carte.
     \item Akka: Utilizzo di varie componenti per implementare un server e un client che comunichino, secondo il paradigma di programmazione ad attori, per mezzo di messaggi asincroni.
     \item TDD (Test Driven Development): Ci siamo ispirati a questa tecnica di sviluppo per scrivere un codice più efficiente, efficace e il più possibile esente da problemi.
 \end{itemize}
