@@ -18,8 +18,6 @@ case object GameWon extends GameEndType
 case class GameLost(winnerUsername: String) extends GameEndType
 
 /**
-  * The game ended with an error.
-  *
-  * @param reason the reason why the game ended
+  * The game ended. Another player left the game.
   */
-case class GameEndWithError(reason: String) extends GameEndType
+case object GameEndPlayerLeft extends GameEndType

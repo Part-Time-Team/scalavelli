@@ -7,7 +7,7 @@ import scalafx.application.JFXApp
 /**
   * Controller responsible of the game initialization
   */
-trait StartUpController extends BaseController with GameStartUpListener {
+trait StartupController extends BaseController with StartupListener {
 
   def start(app: JFXApp, startGame: GameMatchInformations => Unit): Unit
 }

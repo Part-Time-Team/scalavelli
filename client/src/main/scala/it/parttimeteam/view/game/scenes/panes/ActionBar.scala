@@ -1,7 +1,7 @@
 package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.view.ViewConfig
-import it.parttimeteam.view.utils.MachiavelliButton
+import it.parttimeteam.view.utils.{ScalavelliButton, Strings}
 import scalafx.geometry.Insets
 import scalafx.scene.layout.HBox
 
@@ -43,7 +43,7 @@ trait ActionBarListener {
   /**
     * Clear selected cards
     */
-  def clearHandSelection(): Unit
+  def clearSelection(): Unit
 
   /**
     * The player pick a combination from the game board.
@@ -84,12 +84,12 @@ object ActionBar {
     this.spacing = ViewConfig.formSpacing
     this.padding = Insets(5)
 
-    val combinationBtn = MachiavelliButton("Make Combination", () => listener.makeCombination())
-    val clearHandSelectionBtn = MachiavelliButton("Clear Selection", () => listener.clearHandSelection())
-    val pickCardsBtn = MachiavelliButton("Pick Cards", () => listener.pickCards())
-    val updateCombinationBtn = MachiavelliButton("Update Combination", () => listener.updateCombination())
-    val sortBySuitBtn = MachiavelliButton("Sort Suit", () => listener.sortHandBySuit())
-    val sortByRankBtn = MachiavelliButton("Sort Rank", () => listener.sortHandByRank())
+    val combinationBtn = ScalavelliButton(Strings.MAKE_COMBINATION_BTN, () => listener.makeCombination())
+    val clearHandSelectionBtn = ScalavelliButton(Strings.CLEAR_SELECTION_BTN, () => listener.clearSelection())
+    val pickCardsBtn = ScalavelliButton(Strings.PICK_CARDS_BTN, () => listener.pickCards())
+    val updateCombinationBtn = ScalavelliButton(Strings.UPDATE_COMBINATION_BTN, () => listener.updateCombination())
+    val sortBySuitBtn = ScalavelliButton(Strings.SORT_SUIT_BTN, () => listener.sortHandBySuit())
+    val sortByRankBtn = ScalavelliButton(Strings.SORT_RANK_BTN, () => listener.sortHandByRank())
 
     combinationBtn.setDisable(true)
     clearHandSelectionBtn.setDisable(true)
@@ -119,7 +119,9 @@ object ActionBar {
     }
 
     /** @inheritdoc */
-    override def enableActions(): Unit = {}
+    override def enableActions(): Unit = {
+
+    }
   }
 
 }

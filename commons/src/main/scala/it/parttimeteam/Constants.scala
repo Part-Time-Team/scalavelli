@@ -3,8 +3,10 @@ package it.parttimeteam
 object Constants {
 
   object Client {
-    final val GAME_NAME = "Machiavelli"
+    final val GAME_NAME = "Scalavelli"
     final val TURN_TIMER_DURATION = 120
+    final val MIN_PLAYERS_NUM: Int = 2
+    final val MAX_PLAYERS_NUM: Int = 6
   }
 
   object Remote {

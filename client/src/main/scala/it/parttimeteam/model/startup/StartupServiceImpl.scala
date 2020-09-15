@@ -10,9 +10,9 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) extends StartupService {
+class StartupServiceImpl(private val notifyEvent: GameStartupEvent => Unit) extends StartupService {
 
-  private lazy val startupActorRef = ActorSystemManager.actorSystem.actorOf(StartUpActor.props(serverResponseListener), "client-lobby")
+  private lazy val startupActorRef = ActorSystemManager.actorSystem.actorOf(StartupActor.props(serverResponseListener), "client-lobby")
   private var serverLobbyRef: Option[ActorRef] = None
   private var clientGeneratedId: String = _
 
@@ -88,6 +88,4 @@ class StartupServiceImpl(private val notifyEvent: GameStartUpEvent => Unit) exte
       case None => this.notifyEvent(LobbyJoinErrorEvent(ErrorEvent.ServerNotFound))
     }
   }
-
-
 }

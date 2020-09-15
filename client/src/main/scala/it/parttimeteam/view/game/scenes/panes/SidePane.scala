@@ -4,7 +4,7 @@ import it.parttimeteam.gamestate.Opponent
 import it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl
 import it.parttimeteam.view.game.scenes.panes.OtherPlayersPane.OtherPlayersPaneImpl
 import it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl
-import it.parttimeteam.view.utils.{MachiavelliButton, MachiavelliLabel}
+import it.parttimeteam.view.utils.{ScalavelliButton, ScalavelliLabel, Strings}
 import scalafx.geometry.Insets
 import scalafx.scene.layout.{BorderPane, VBox}
 
@@ -12,7 +12,7 @@ import scalafx.scene.layout.{BorderPane, VBox}
   * Pane which contains turn and other players information.
   * Allows to navigate turn history and pass the turn to an other player.
   */
-trait GameInfoBar extends BorderPane with ActionGamePane {
+trait SidePane extends BorderPane with ActionGamePane {
 
   /**
     * Hide the timer countdown.
@@ -122,9 +122,9 @@ trait GameInfoBarListener {
 }
 
 
-object GameInfoBar {
+object SidePane {
 
-  class GameInfoBarImpl(val listener: GameInfoBarListener) extends GameInfoBar {
+  class SidePaneImpl(val listener: GameInfoBarListener) extends SidePane {
     padding = Insets(10d)
 
     this.getStyleClass.add("woodBack")
@@ -150,13 +150,13 @@ object GameInfoBar {
 
     val stateContainer = new VBox()
 
-    val messageLabel = MachiavelliLabel()
+    val messageLabel = ScalavelliLabel()
 
     timerPane.hide()
     stateContainer.children.addAll(messageLabel, timerPane)
 
-    val nextBtn = MachiavelliButton("Pass", () => listener.endTurn())
-    val leaveBtn = MachiavelliButton("Leave Game", () => listener.leaveGame())
+    val nextBtn = ScalavelliButton(Strings.PASS_BTN, () => listener.endTurn())
+    val leaveBtn = ScalavelliButton(Strings.LEAVE_GAME_BTN, () => listener.leaveGame())
 
     nextBtn.prefWidth <== rightBottom.width
     leaveBtn.prefWidth <== rightBottom.width
@@ -211,7 +211,7 @@ object GameInfoBar {
     override def updateTimer(minutes: Long, seconds: Long): Unit = timerPane.set(minutes, seconds)
 
     /** @inheritdoc*/
-    override def notifyTimerEnd(): Unit = timerPane.displayMessage("Your time is up!")
+    override def notifyTimerEnd(): Unit = timerPane.displayMessage(Strings.TIME_IS_UP)
 
     /** @inheritdoc*/
     override def hideTimer(): Unit = timerPane.hide()

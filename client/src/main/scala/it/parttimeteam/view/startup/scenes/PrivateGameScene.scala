@@ -2,8 +2,10 @@ package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.PrivateGameSubmitViewEvent
-import it.parttimeteam.view.startup.listeners.StartUpSceneListener
-import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
+import it.parttimeteam.view.startup.listeners.StartupSceneListener
+import it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl
+import it.parttimeteam.view.startup.scenes.StartupSceneTopBar.StartupSceneTopBarImpl
+import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField, Strings}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
@@ -15,15 +17,15 @@ import scalafx.stage.Stage
   *
   * @param listener to interact with parent stage
   */
-class PrivateGameStartUpScene(override val parentStage: Stage, val listener: StartUpSceneListener) extends BaseStartUpFormScene(parentStage) {
-  val topBar: StartUpSceneTopBar = new StartUpSceneTopBar(listener)
-  val bottomBar: StartUpSceneBottomBar = new StartUpSceneBottomBar(() => submit())
+class PrivateGameScene(val parentStage: Stage, val listener: StartupSceneListener) extends StartupFormScene(parentStage) {
+  val topBar: StartupSceneTopBar = new StartupSceneTopBarImpl(listener)
+  val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBarImpl(() => submit())
 
-  val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
-  val usernameField: TextField = MachiavelliTextField("Username")
+  val usernameLabel: Label = ScalavelliLabel(Strings.USERNAME, ViewConfig.formLabelFontSize)
+  val usernameField: TextField = ScalavelliTextField(Strings.USERNAME)
 
-  val codeLabel: Label = MachiavelliLabel("Code", ViewConfig.formLabelFontSize)
-  val codeField: TextField = MachiavelliTextField("Code")
+  val codeLabel: Label = ScalavelliLabel("Code", ViewConfig.formLabelFontSize)
+  val codeField: TextField = ScalavelliTextField("Code")
 
   val center: VBox = new VBox()
   center.spacing = ViewConfig.formSpacing
@@ -45,7 +47,8 @@ class PrivateGameStartUpScene(override val parentStage: Stage, val listener: Sta
   bottomBar.hideLoading()
   bottomBar.hideMessage()
 
-  val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and code.", AlertType.Warning)
+  val alert: Alert = ScalavelliAlert(Strings.INPUT_MISSING_DIALOG_TITLE, Strings.INPUT_MISSING_USER_CODE_DIALOG_MESSAGE, AlertType.Warning, parentStage)
+
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 
@@ -58,16 +61,22 @@ class PrivateGameStartUpScene(override val parentStage: Stage, val listener: Sta
     if (!username.isEmpty && !code.isEmpty) {
       listener.onSubmit(PrivateGameSubmitViewEvent(username, code))
       bottomBar.showLoading()
-      disableButtons()
+      disableActions()
     } else {
       alert.showAndWait()
     }
   }
 
-  override def disableButtons(): Unit = {
-    bottomBar.disableButtons()
+  override def disableActions(): Unit = {
+    bottomBar.disableActions()
     usernameField.setEditable(false)
     codeField.setEditable(false)
+  }
+
+  override def enableActions(): Unit = {
+    bottomBar.enableActions()
+    usernameField.setEditable(true)
+    codeField.setEditable(true)
   }
 
   override def resetScreen(): Unit = {
@@ -75,6 +84,6 @@ class PrivateGameStartUpScene(override val parentStage: Stage, val listener: Sta
     codeField.text = ""
     usernameField.setEditable(true)
     codeField.setEditable(true)
-    bottomBar.reset()
+    bottomBar.resetScreen()
   }
 }
