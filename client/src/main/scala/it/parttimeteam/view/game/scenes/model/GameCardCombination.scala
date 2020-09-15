@@ -4,7 +4,7 @@ import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.CardCombination
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 import it.parttimeteam.view.game.scenes.panes.ActionGamePane
-import it.parttimeteam.view.utils.Paths
+import it.parttimeteam.view.utils.ImagePaths
 import scalafx.geometry.Insets
 import scalafx.scene.control.Button
 import scalafx.scene.image.{Image, ImageView}
@@ -36,7 +36,7 @@ object GameCardCombination {
     combinationCards.spacing = 10d
 
     val pickBtn = new Button()
-    val img = new ImageView(new Image(Paths.PICK_ICON))
+    val img = new ImageView(new Image(ImagePaths.PICK_ICON))
     img.fitHeight = 15d
     img.preserveRatio = true
 

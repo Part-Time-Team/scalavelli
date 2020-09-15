@@ -29,10 +29,10 @@ object BoardPane {
     var tilePane: TilePane = new TilePane()
     tilePane.prefColumns = 2
     tilePane.prefWidth <= this.getWidth
-    tilePane.vgap = 20d
-    tilePane.hgap = 20d
+    tilePane.vgap = ViewConfig.BOARD_TILE_GAP
+    tilePane.hgap = ViewConfig.BOARD_TILE_GAP
 
-    tilePane.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.screenPadding, ViewConfig.screenPadding, ViewConfig.screenPadding)
+    tilePane.padding = Insets(ViewConfig.CARD_Y_TRANSLATION, ViewConfig.SCREEN_PADDING, ViewConfig.SCREEN_PADDING, ViewConfig.SCREEN_PADDING)
     content = tilePane
     this.setFitToWidth(true)
 

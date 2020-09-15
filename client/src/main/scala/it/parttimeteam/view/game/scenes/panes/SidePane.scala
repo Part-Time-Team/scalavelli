@@ -1,6 +1,7 @@
 package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.gamestate.Opponent
+import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl
 import it.parttimeteam.view.game.scenes.panes.OtherPlayersPane.OtherPlayersPaneImpl
 import it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl
@@ -141,7 +142,7 @@ object SidePane {
     })
 
     val btnContainer = new VBox()
-    btnContainer.spacing = 5d
+    btnContainer.spacing = ViewConfig.DEFAULT_SPACING
 
     historyNavigationPane.prefWidth <== btnContainer.width
 

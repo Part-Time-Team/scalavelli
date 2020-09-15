@@ -38,8 +38,8 @@ trait StartupStage extends BaseStage {
   * Companion object for ScalavelliStartupPrimaryStage
   */
 object StartupStage {
-  val windowWidth: Double = ViewConfig.screenWidth
-  val windowHeight: Double = ViewConfig.screenHeight
+  val windowWidth: Double = ViewConfig.SCREEN_WIDTH
+  val windowHeight: Double = ViewConfig.SCREEN_HEIGHT
 
   def apply(listener: StartupListener): StartupStage = new StartupStageImpl(listener)
 

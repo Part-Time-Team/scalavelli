@@ -6,6 +6,6 @@ import scalafx.application.JFXApp
 class BaseStage extends JFXApp.PrimaryStage {
   title = Constants.Client.GAME_NAME
   resizable = true
-  width = ViewConfig.screenWidth
-  height = ViewConfig.screenHeight
+  width = ViewConfig.SCREEN_WIDTH
+  height = ViewConfig.SCREEN_HEIGHT
 }
