@@ -5,8 +5,6 @@ import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import org.scalamock.matchers.Matchers
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funspec.AnyFunSpec
-import org.scalatest.matchers.must.Matchers.be
-import org.scalatest.matchers.should.Matchers.an
 
 class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
   describe("A game manager") {
@@ -39,14 +37,19 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
 
       it("Draw cards from a non empty deck") {
         val drawnDeck = Deck.cards2deck(deck.cards.tail)
-        assert(gameInterface.draw(deck) equals(drawnDeck, deck.cards.head))
+        assert(gameInterface.draw(deck) equals(drawnDeck, deck.cards.headOption))
       }
 
-      it("Throw an exception when drawing from an empty deck") {
+      it("Doesn't draw cards from an empty deck") {
+        val emptyDeck = Deck.empty
+        assert(gameInterface.draw(emptyDeck) equals(emptyDeck, None))
+      }
+
+      /*it("Throw an exception when drawing from an empty deck") {
         val emptyDeck = Deck.empty
         an[UnsupportedOperationException] should be thrownBy
           (gameInterface draw emptyDeck)
-      }
+      }*/
     }
 
     describe("Validate a move") {
