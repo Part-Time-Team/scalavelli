@@ -1,19 +1,24 @@
 package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.view.ViewConfig
+import it.parttimeteam.view.utils.Paths
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, StackPane}
 import scalafx.stage.Stage
 
-abstract class BaseStartUpScene(parentStage: Stage) extends Scene() {
+/**
+  * Extend by all the StartupScenes
+  *
+  * @param parentStage the parent stage
+  */
+abstract class BaseStartupScene(parentStage: Stage) extends Scene() {
 
-  val background: ImageView = new ImageView(new Image("/images/background.png")) {
+  val background: ImageView = new ImageView(new Image(Paths.STARTUP_BACKGROUND)) {
     fitWidth <== parentStage.width
     fitHeight <== parentStage.height
   }
-  background.preserveRatio = true
 
   val mainContent: BorderPane = new BorderPane()
 

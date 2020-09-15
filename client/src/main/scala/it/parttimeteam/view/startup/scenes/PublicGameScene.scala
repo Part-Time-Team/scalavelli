@@ -1,10 +1,12 @@
 package it.parttimeteam.view.startup.scenes
 
-import it.parttimeteam.GamePreferences
+import it.parttimeteam.Constants
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.PublicGameSubmitViewEvent
-import it.parttimeteam.view.startup.listeners.StartUpSceneListener
-import it.parttimeteam.view.utils.{MachiavelliAlert, MachiavelliLabel, MachiavelliTextField}
+import it.parttimeteam.view.startup.listeners.StartupSceneListener
+import it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl
+import it.parttimeteam.view.startup.scenes.StartupSceneTopBar.StartupSceneTopBarImpl
+import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField, Strings}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
@@ -16,18 +18,18 @@ import scalafx.stage.Stage
   *
   * @param listener to interact with parent stage
   */
-class PublicGameStartUpScene(override val parentStage: Stage, val listener: StartUpSceneListener) extends BaseStartUpFormScene(parentStage) {
-  val topBar: StartUpSceneTopBar = new StartUpSceneTopBar(listener)
-  val bottomBar: StartUpSceneBottomBar = new StartUpSceneBottomBar(() => submit())
+class PublicGameScene(val parentStage: Stage, val listener: StartupSceneListener) extends StartupFormScene(parentStage) {
+  val topBar: StartupSceneTopBar = new StartupSceneTopBarImpl(listener)
+  val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBarImpl(() => submit())
 
-  val usernameLabel: Label = MachiavelliLabel("Username", ViewConfig.formLabelFontSize)
-  val usernameField: TextField = MachiavelliTextField("Username")
+  val usernameLabel: Label = ScalavelliLabel(Strings.USERNAME, ViewConfig.formLabelFontSize)
+  val usernameField: TextField = ScalavelliTextField(Strings.USERNAME)
 
-  val options: Range = GamePreferences.MIN_PLAYERS_NUM to GamePreferences.MAX_PLAYERS_NUM by 1
+  val options: Range = Constants.Client.MIN_PLAYERS_NUM to Constants.Client.MAX_PLAYERS_NUM by 1
 
-  val selectPlayersLabel: Label = MachiavelliLabel("Select players number", ViewConfig.formLabelFontSize)
+  val selectPlayersLabel: Label = ScalavelliLabel(Strings.SELECT_PLAYERS_NUM, ViewConfig.formLabelFontSize)
   val comboBox = new ComboBox(options)
-  comboBox.setValue(GamePreferences.MIN_PLAYERS_NUM)
+  comboBox.setValue(Constants.Client.MIN_PLAYERS_NUM)
 
   val center: VBox = new VBox()
   center.spacing = ViewConfig.formSpacing
@@ -49,7 +51,7 @@ class PublicGameStartUpScene(override val parentStage: Stage, val listener: Star
 
   center.getChildren.addAll(usernameLabel, usernameField, selectPlayersLabel, comboBox)
 
-  val alert: Alert = MachiavelliAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
+  val alert: Alert = ScalavelliAlert(Strings.INPUT_MISSING_DIALOG_TITLE, Strings.INPUT_MISSING_USER_NUM_DIALOG_MESSAGE, AlertType.Warning, parentStage)
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 
@@ -59,25 +61,31 @@ class PublicGameStartUpScene(override val parentStage: Stage, val listener: Star
     val username: String = usernameField.getText
     val nPlayers: Int = comboBox.getValue
 
-    if (!username.isEmpty && nPlayers >= GamePreferences.MIN_PLAYERS_NUM) {
+    if (!username.isEmpty && nPlayers >= Constants.Client.MIN_PLAYERS_NUM) {
       listener.onSubmit(PublicGameSubmitViewEvent(username, nPlayers))
       bottomBar.showLoading()
-      disableButtons()
+      disableActions()
     } else {
       alert.showAndWait()
     }
   }
 
-  override def disableButtons(): Unit = {
-    bottomBar.disableButtons()
+  override def disableActions(): Unit = {
+    bottomBar.disableActions()
     usernameField.setEditable(false)
     comboBox.setDisable(true)
+  }
+
+  override def enableActions(): Unit = {
+    bottomBar.enableActions()
+    usernameField.setEditable(true)
+    comboBox.setDisable(false)
   }
 
   override def resetScreen(): Unit = {
     usernameField.setEditable(true)
     comboBox.setDisable(false)
     usernameField.text = ""
-    bottomBar.reset()
+    bottomBar.resetScreen()
   }
 }

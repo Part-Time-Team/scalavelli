@@ -19,7 +19,7 @@ object RemoteGameActor {
 
     def opponentInTurn(opponentName: String)
 
-    def gameEndedWithErrorEvent(reason: String)
+    def gameEndedBecausePlayerLeft()
 
     def gameWon()
 
@@ -53,7 +53,7 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
 
     case Lost(winnerName) => this.listener.gameLost(winnerName)
 
-    case GameEndedForPlayerLeft => this.listener.gameEndedWithErrorEvent("a player left the game")
+    case GameEndedForPlayerLeft => this.listener.gameEndedBecausePlayerLeft()
 
     case MatchErrorOccurred(error) => error match {
       case PlayerActionNotValid => this.listener.invalidPlayerAction()

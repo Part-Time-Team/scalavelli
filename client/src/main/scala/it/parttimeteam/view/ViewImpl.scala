@@ -1,6 +1,6 @@
 package it.parttimeteam.view
 
-import it.parttimeteam.view.startup.MachiavelliStartUpStage
+import it.parttimeteam.view.startup.StartupStage
 import scalafx.application.JFXApp
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
@@ -11,5 +11,5 @@ class ViewImpl(private val app: JFXApp) extends View {
   implicit val executionContextExecutor: ExecutionContextExecutor = ExecutionContext.global
 
   /** Setting the primary stage */
-  app.stage = MachiavelliStartUpStage()
+  app.stage = StartupStage()
 }

@@ -3,7 +3,7 @@ package it.parttimeteam.view.game.listeners
 import it.parttimeteam.core.cards.Card
 
 /**
-  * Actions which can be made by MachiavelliGameStage
+  * Actions which can be made by ScalavelliGameStage
   */
 trait GameStageListener {
   /**
