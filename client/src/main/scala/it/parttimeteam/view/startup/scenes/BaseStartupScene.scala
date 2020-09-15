@@ -7,6 +7,11 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{BorderPane, StackPane}
 import scalafx.stage.Stage
 
+/**
+  * Extend by all the StartupScenes
+  *
+  * @param parentStage the parent stage
+  */
 abstract class BaseStartupScene(parentStage: Stage) extends Scene() {
 
   val background: ImageView = new ImageView(new Image("/images/background.png")) {

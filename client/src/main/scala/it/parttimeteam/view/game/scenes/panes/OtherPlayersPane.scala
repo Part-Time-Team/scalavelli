@@ -6,8 +6,16 @@ import it.parttimeteam.view.utils.ScalavelliLabel
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{HBox, TilePane, VBox}
 
+/**
+  * Pane where other players info are displayed
+  */
 trait OtherPlayersPane extends VBox {
 
+  /**
+    * Sets the other players info inside the pane
+    *
+    * @param otherPlayers other players info
+    */
   def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit
 }
 

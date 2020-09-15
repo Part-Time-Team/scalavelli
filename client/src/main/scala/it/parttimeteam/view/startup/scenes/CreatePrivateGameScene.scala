@@ -80,7 +80,7 @@ class CreatePrivateGameStartupSceneImpl(override val parentStage: Stage, val lis
     if (!username.isEmpty && nPlayers >= GamePreferences.MIN_PLAYERS_NUM) {
       listener.onSubmit(CreatePrivateGameSubmitViewEvent(username, nPlayers))
       bottomBar.showLoading()
-      disableButtons()
+      disableActions()
     } else {
       alert.showAndWait()
     }
@@ -91,10 +91,10 @@ class CreatePrivateGameStartupSceneImpl(override val parentStage: Stage, val lis
     codeValue.setText(code)
   }
 
-  override def disableButtons(): Unit = {
+  override def disableActions(): Unit = {
     usernameField.setEditable(false)
     comboBox.setDisable(true)
-    bottomBar.disableButtons()
+    bottomBar.disableActions()
   }
 
   override def resetScreen(): Unit = {

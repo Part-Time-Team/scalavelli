@@ -62,14 +62,14 @@ class PublicGameScene(override val parentStage: Stage, val listener: StartupScen
     if (!username.isEmpty && nPlayers >= GamePreferences.MIN_PLAYERS_NUM) {
       listener.onSubmit(PublicGameSubmitViewEvent(username, nPlayers))
       bottomBar.showLoading()
-      disableButtons()
+      disableActions()
     } else {
       alert.showAndWait()
     }
   }
 
-  override def disableButtons(): Unit = {
-    bottomBar.disableButtons()
+  override def disableActions(): Unit = {
+    bottomBar.disableActions()
     usernameField.setEditable(false)
     comboBox.setDisable(true)
   }

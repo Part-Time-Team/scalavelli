@@ -43,13 +43,13 @@ object InitMatchDialog {
     this.setScene(dialogScene)
     this.initOwner(parentStage)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def showDialog(): Unit = {
       this.showAndWait()
       this.setAlwaysOnTop(true)
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def hideDialog(): Unit = {
       this.close()
     }

@@ -12,7 +12,7 @@ import scalafx.scene.layout.{BorderPane, VBox}
   * Pane which contains turn and other players information.
   * Allows to navigate turn history and pass the turn to an other player.
   */
-trait GameInfoBar extends BorderPane with ActionGamePane {
+trait SidePane extends BorderPane with ActionGamePane {
 
   /**
     * Hide the timer countdown.
@@ -122,9 +122,9 @@ trait GameInfoBarListener {
 }
 
 
-object GameInfoBar {
+object SidePane {
 
-  class GameInfoBarImpl(val listener: GameInfoBarListener) extends GameInfoBar {
+  class SidePaneImpl(val listener: GameInfoBarListener) extends SidePane {
     padding = Insets(10d)
 
     this.getStyleClass.add("woodBack")
@@ -169,51 +169,51 @@ object GameInfoBar {
     top = rightTop
     bottom = rightBottom
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def setMessage(message: String): Unit = messageLabel.text = message
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def disableActions(): Unit = {
       historyNavigationPane.disableActions()
       nextBtn.setDisable(true)
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def enableActions(): Unit = {
       nextBtn.setDisable(false)
       historyNavigationPane.enableActions()
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def setNextEnabled(enabled: Boolean): Unit = nextBtn.setDisable(!enabled)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def setOtherPlayers(opponents: Seq[Opponent]): Unit = otherPlayersPane.setOtherPlayers(opponents)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def setResetEnabled(enabled: Boolean): Unit = historyNavigationPane.setResetEnabled(enabled)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def setRedoEnabled(enabled: Boolean): Unit = historyNavigationPane.setRedoEnabled(enabled)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def setUndoEnabled(enabled: Boolean): Unit = historyNavigationPane.setUndoEnabled(enabled)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setNextText(text: String): Unit = {
       nextBtn.setText(text)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def showTimer(minutes: Long, seconds: Long): Unit = timerPane.show(minutes, seconds)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def updateTimer(minutes: Long, seconds: Long): Unit = timerPane.set(minutes, seconds)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def notifyTimerEnd(): Unit = timerPane.displayMessage("Your time is up!")
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def hideTimer(): Unit = timerPane.hide()
   }
 

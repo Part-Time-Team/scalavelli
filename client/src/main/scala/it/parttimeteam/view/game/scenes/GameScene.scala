@@ -35,10 +35,11 @@ trait GameScene extends Scene {
 
   /**
     * Show timer's up message
+    *
     * @return
     */
-  def notifyTimerEnd(): Unit 
-  
+  def notifyTimerEnd(): Unit
+
   /**
     * Enable all the view actions during the player turn.
     */

@@ -58,14 +58,14 @@ class PrivateGameScene(override val parentStage: Stage, val listener: StartupSce
     if (!username.isEmpty && !code.isEmpty) {
       listener.onSubmit(PrivateGameSubmitViewEvent(username, code))
       bottomBar.showLoading()
-      disableButtons()
+      disableActions()
     } else {
       alert.showAndWait()
     }
   }
 
-  override def disableButtons(): Unit = {
-    bottomBar.disableButtons()
+  override def disableActions(): Unit = {
+    bottomBar.disableActions()
     usernameField.setEditable(false)
     codeField.setEditable(false)
   }
