@@ -1,6 +1,8 @@
 Per gestire l'ambito multiplayer è stata realizzata un’architettura \textit{Client}-\textit{Server}.
 Ogni giocatore è rappresentato dal \textit{Client} mente un unico \textit{Server} si occupa di gestire le varie connessioni con i \textit{Client} e lo stato delle partite.
-
+\begin{center}
+    \includegraphics[scale=0.6]{architettura3.0}
+\end{center}
 \subsection[Architettura]{Architettura}
 \subsubsection{Core}
 E’ stato poi realizzato, in maniera indipendente dalle altre componenti, un modulo di gioco che si occupa della sola gestione del gioco stesso, ovvero Machiavelli.
@@ -19,11 +21,6 @@ E’ diviso internamente in più componenti ed è costituito da 2 componenti pri
     In fase di runtime ne saranno presenti molteplici attivi contemporaneamente, uno per ogni partita.
     Mantiene lo stato della partita corrente e di gestire i turni di gioco, ricevendo le azioni da ogni utente e comunicando a tutti gli altri ogni aggiornamento avvenuto.
 \end{itemize}
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.6]{architettura3.0}
-    \caption{Architettura}
-\end{figure}
 \subsubsection{Client - MVC}
 É utilizzato dall’utente per poter cercare una partita secondo le proprie preferenze e per giocare la stessa.
 Internamente realizzato seguendo il pattern MVC, è poi ulteriormente diviso in due macro parti che rispecchiano all’incirca quello già visto sul \textit{Server}:
@@ -35,14 +32,11 @@ Internamente realizzato seguendo il pattern MVC, è poi ulteriormente diviso in 
 Tra il \textit{Client} e il \textit{Server} si è scelto di utilizzare un modello di comunicazione a scambio di messaggi, realizzata grazie all’utilizzo del framework \textit{Akka}.
 Questa scelta ha permesso di gestire ad alto livello le comunicazioni tra le componenti senza preoccuparsi dei dettagli implementativi della comunicazione stessa.
 \subsubsection[Flussi di interazione]{Flusso di interazione client server}
-\begin{figure}
-    \centering
+\begin{center}
     \includegraphics[scale=0.5]{flusso-interazione-client-server}
-    \caption{Interazione client server}
-\end{figure}
+\end{center}
 Il grafico seguente riassume gli aspetti visti in precedenza nei paragrafi relativi alla parte \textit{Client} e \textit{Server}, mostrando come la parte del flusso di gioco del turno del giocatore venga gestito completamente in locale, mentre il \textit{Server} viene contattato solo al suo termine per validare le mosse effettuate dal giocatore e inviare lo stato aggiornato a tutti gli altri.
 Questa scelta è stata fatta per garantire ottime prestazioni durante il gioco.
 La fase del turno è infatti quella caratterizzata dalla frequenza più elevata di interazioni utente (riposizionamento carte, ordinamento della carte in mano, annullamento delle mosse precedenti ecc..), tutte operazioni non di rilevanza per gli altri giocatori connessi, a cui interessa più che altro lo stato finale del turno dell’avversario.
 Il sistema è stato comunque modellato in maniera tale da prevedere modifiche future anche sotto questo aspetto, in maniera da spostare tutto lato server o lato client a seconda delle esigenza (ad esempio in una modalità singolo giocatore vs AI).
-
 \newpage
