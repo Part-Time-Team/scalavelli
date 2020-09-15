@@ -32,10 +32,10 @@ Internamente realizzato seguendo il pattern MVC, è poi ulteriormente diviso in 
 Tra il \textit{Client} e il \textit{Server} si è scelto di utilizzare un modello di comunicazione a scambio di messaggi, realizzata grazie all’utilizzo del framework \textit{Akka}.
 Questa scelta ha permesso di gestire ad alto livello le comunicazioni tra le componenti senza preoccuparsi dei dettagli implementativi della comunicazione stessa.
 \subsubsection[Flussi di interazione]{Flusso di interazione client server}
+Il grafico seguente riassume gli aspetti visti in precedenza nei paragrafi relativi alla parte \textit{Client} e \textit{Server}, mostrando come la parte del flusso di gioco del turno del giocatore venga gestito completamente in locale, mentre il \textit{Server} viene contattato solo al suo termine per validare le mosse effettuate dal giocatore e inviare lo stato aggiornato a tutti gli altri.
 \begin{center}
     \includegraphics[scale=0.5]{flusso-interazione-client-server}
 \end{center}
-Il grafico seguente riassume gli aspetti visti in precedenza nei paragrafi relativi alla parte \textit{Client} e \textit{Server}, mostrando come la parte del flusso di gioco del turno del giocatore venga gestito completamente in locale, mentre il \textit{Server} viene contattato solo al suo termine per validare le mosse effettuate dal giocatore e inviare lo stato aggiornato a tutti gli altri.
 Questa scelta è stata fatta per garantire ottime prestazioni durante il gioco.
 La fase del turno è infatti quella caratterizzata dalla frequenza più elevata di interazioni utente (riposizionamento carte, ordinamento della carte in mano, annullamento delle mosse precedenti ecc..), tutte operazioni non di rilevanza per gli altri giocatori connessi, a cui interessa più che altro lo stato finale del turno dell’avversario.
 Il sistema è stato comunque modellato in maniera tale da prevedere modifiche future anche sotto questo aspetto, in maniera da spostare tutto lato server o lato client a seconda delle esigenza (ad esempio in una modalità singolo giocatore vs AI).
