@@ -16,7 +16,7 @@ object ScalavelliLabel {
   }
 
   def apply(text: String): Label = {
-    val label = this (text, ViewConfig.baseFontSize)
+    val label = this (text, ViewConfig.BASE_FONT_SIZE)
     label
   }
 

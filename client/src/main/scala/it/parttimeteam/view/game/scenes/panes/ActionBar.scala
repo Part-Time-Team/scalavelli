@@ -81,7 +81,7 @@ trait ActionBarListener {
 object ActionBar {
 
   class ActionBarImpl(listener: ActionBarListener) extends ActionBar {
-    this.spacing = ViewConfig.formSpacing
+    this.spacing = ViewConfig.FORM_SPACING
     this.padding = Insets(5)
 
     val combinationBtn = ScalavelliButton(Strings.MAKE_COMBINATION_BTN, () => listener.makeCombination())

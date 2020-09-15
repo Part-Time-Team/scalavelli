@@ -16,12 +16,12 @@ class MainControllerImpl(app: JFXApp) extends MainController {
     startUpController.start(app, startGame)
   }
 
-  def startGame(gameInfo: GameMatchInformations): Unit = {
+  private def startGame(gameInfo: GameMatchInformations): Unit = {
     startUpController.end()
     gameController.start(app, gameInfo)
   }
 
-  def playAgain(): Unit = {
+  private def playAgain(): Unit = {
     startUpController.start(app, startGame)
     gameController.end()
   }

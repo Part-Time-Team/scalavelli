@@ -21,15 +21,15 @@ class PrivateGameScene(val parentStage: Stage, val listener: StartupSceneListene
   val topBar: StartupSceneTopBar = new StartupSceneTopBarImpl(listener)
   val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBarImpl(() => submit())
 
-  val usernameLabel: Label = ScalavelliLabel(Strings.USERNAME, ViewConfig.formLabelFontSize)
+  val usernameLabel: Label = ScalavelliLabel(Strings.USERNAME, ViewConfig.FORM_LABEL_FONT_SIZE)
   val usernameField: TextField = ScalavelliTextField(Strings.USERNAME)
 
-  val codeLabel: Label = ScalavelliLabel("Code", ViewConfig.formLabelFontSize)
+  val codeLabel: Label = ScalavelliLabel("Code", ViewConfig.FORM_LABEL_FONT_SIZE)
   val codeField: TextField = ScalavelliTextField("Code")
 
   val center: VBox = new VBox()
-  center.spacing = ViewConfig.formSpacing
-  center.maxWidth = ViewConfig.formWidth
+  center.spacing = ViewConfig.FORM_SPACING
+  center.maxWidth = ViewConfig.FORM_WIDTH
 
   usernameLabel.maxWidth <== center.width
   usernameField.maxWidth <== center.width

@@ -11,5 +11,7 @@ case class CreatePrivateGameSubmitViewEvent(username: String, playersNumber: Int
 
 case object LeaveLobbyViewEvent extends StartupViewEvent
 
+case object RetryServerConnection extends StartupViewEvent
+
 
 

@@ -1,6 +1,7 @@
 package it.parttimeteam.view.game.scenes.panes
 
-import it.parttimeteam.view.utils.{Paths, ScalavelliButton, Strings}
+import it.parttimeteam.view.ViewConfig
+import it.parttimeteam.view.utils.{ImagePaths, ScalavelliButton, Strings}
 import scalafx.geometry.Pos
 import scalafx.scene.layout.HBox
 
@@ -56,39 +57,39 @@ trait HistoryNavigationListener {
 object HistoryNavigationPane {
 
   class HistoryNavigationPaneImpl(listener: HistoryNavigationListener) extends HistoryNavigationPane {
-    val undoBtn = ScalavelliButton("", () => listener.onUndoClick(), Paths.UNDO_BTN, 15d, 30d)
-    val redoBtn = ScalavelliButton("", () => listener.onRedoClick(), Paths.REDO_BTN, 15d, 30d)
-    val resetBtn = ScalavelliButton(Strings.RESET_BTN, () => listener.onResetClick(), 60d)
+    val undoBtn = ScalavelliButton("", () => listener.onUndoClick(), ImagePaths.UNDO_BTN, ViewConfig.BTN_ICON_HEIGHT, ViewConfig.HISTORY_BTN_MIN_WIDTH)
+    val redoBtn = ScalavelliButton("", () => listener.onRedoClick(), ImagePaths.REDO_BTN, ViewConfig.BTN_ICON_HEIGHT, ViewConfig.HISTORY_BTN_MIN_WIDTH)
+    val resetBtn = ScalavelliButton(Strings.RESET_BTN, () => listener.onResetClick(), ViewConfig.RESET_BTN_MIN_WIDTH)
 
     this.alignment = Pos.Center
-    this.spacing = 5d
+    this.spacing = ViewConfig.DEFAULT_SPACING
     this.children.addAll(undoBtn, redoBtn, resetBtn)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def disableActions(): Unit = {
       undoBtn.setDisable(true)
       redoBtn.setDisable(true)
       resetBtn.setDisable(true)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def enableActions(): Unit = {
       undoBtn.setDisable(false)
       redoBtn.setDisable(false)
       resetBtn.setDisable(false)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setRedoEnabled(enabled: Boolean): Unit = {
       redoBtn.setDisable(!enabled)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setUndoEnabled(enabled: Boolean): Unit = {
       undoBtn.setDisable(!enabled)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setResetEnabled(enabled: Boolean): Unit = {
       resetBtn.setDisable(!enabled)
     }

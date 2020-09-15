@@ -1,5 +1,6 @@
 package it.parttimeteam.view.game.scenes.panes
 
+import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.utils.Strings
 import scalafx.geometry.Pos
 import scalafx.scene.Scene
@@ -31,13 +32,13 @@ object InitMatchDialog {
     this.setResizable(false)
     this.initModality(Modality.WindowModal)
     this.setTitle(Strings.GAME_LOADING_TITLE)
-    this.setMinWidth(200)
-    this.setMinHeight(100)
+    this.setMinWidth(ViewConfig.INIT_MATCH_DIALOG_MIN_WIDTH)
+    this.setMinHeight(ViewConfig.INIT_MATCH_DIALOG_MIN_HEIGHT)
 
     val label = new Label(Strings.GAME_LOADING_MESSAGE)
 
     val vb = new VBox()
-    vb.setSpacing(5)
+    vb.setSpacing(ViewConfig.DEFAULT_SPACING)
     vb.setAlignment(Pos.Center)
     vb.getChildren.addAll(label, progressBar)
     val dialogScene = new Scene(vb)

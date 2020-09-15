@@ -39,46 +39,6 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     }
   })
 
-  override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
-    Platform.runLater({
-      gameStage = GameStage(this)
-      gameStage.initMatch()
-      app.stage = gameStage
-    })
-
-    this.gameService = new GameServiceImpl(gameInfo, notifyEvent, new GameInterfaceImpl())
-    this.gameService.playerReady()
-  }
-
-  def notifyEvent(serverGameEvent: GameEvent): Unit = serverGameEvent match {
-
-    case StateUpdatedEvent(state: ClientGameState) => {
-      currentState = state
-      Platform.runLater({
-        gameStage.matchReady()
-        gameStage.updateState(state)
-      })
-    }
-
-    case OpponentInTurnEvent(actualPlayerName) => gameStage.setMessage(ViewMessage.ActualPlayerTurn(actualPlayerName))
-
-    case InTurnEvent => gameStage.setInTurn()
-
-    case InfoEvent(message: String) => gameStage.notifyInfo(message)
-
-    case GameErrorEvent(error: ErrorEvent) => gameStage.notifyError(error)
-
-    case GameWonEvent => gameStage.notifyGameEnd(GameWon)
-
-    case GameLostEvent(winnerName: String) => gameStage.notifyGameEnd(GameLost(winnerName))
-
-    case GameEndedBecausePlayerLeft => gameStage.notifyGameEnd(GameEndPlayerLeft)
-
-    case TurnEndedEvent => gameStage.setTurnEnded()
-
-    case _ =>
-  }
-
   override def onViewEvent(viewEvent: ViewGameEvent): Unit = viewEvent match {
     case LeaveGameEvent => gameService.leaveGame()
 
@@ -112,6 +72,50 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     case PlayAgainEvent => playAgain()
 
     case TurnStartedEvent => turnTimer.start()
+  }
+
+  override def start(app: JFXApp, gameInfo: GameMatchInformations): Unit = {
+    Platform.runLater({
+      gameStage = GameStage(this)
+      gameStage.initMatch()
+      app.stage = gameStage
+    })
+
+    this.gameService = new GameServiceImpl(gameInfo, notifyEvent, new GameInterfaceImpl())
+    this.gameService.playerReady()
+  }
+
+  override def end(): Unit = {
+
+  }
+
+  private def notifyEvent(serverGameEvent: GameEvent): Unit = serverGameEvent match {
+
+    case StateUpdatedEvent(state: ClientGameState) => {
+      currentState = state
+      Platform.runLater({
+        gameStage.matchReady()
+        gameStage.updateState(state)
+      })
+    }
+
+    case OpponentInTurnEvent(actualPlayerName) => gameStage.setMessage(ViewMessage.ActualPlayerTurn(actualPlayerName))
+
+    case InTurnEvent => gameStage.setInTurn()
+
+    case InfoEvent(message: String) => gameStage.notifyInfo(message)
+
+    case GameErrorEvent(error: ErrorEvent) => gameStage.notifyError(error)
+
+    case GameWonEvent => gameStage.notifyGameEnd(GameWon)
+
+    case GameLostEvent(winnerName: String) => gameStage.notifyGameEnd(GameLost(winnerName))
+
+    case GameEndedBecausePlayerLeft => gameStage.notifyGameEnd(GameEndPlayerLeft)
+
+    case TurnEndedEvent => gameStage.setTurnEnded()
+
+    case _ =>
   }
 
   private def millisToMinutesAndSeconds(millis: Long): (Long, Long) = {
@@ -152,10 +156,5 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
     )
 
     ClientGameState(PlayerGameState(board, hand, players), true, true, true, true)
-  }
-
-
-  override def end(): Unit = {
-
   }
 }

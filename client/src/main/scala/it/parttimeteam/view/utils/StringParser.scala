@@ -31,5 +31,7 @@ object StringParser {
     case ActualPlayerTurn(playerName: String) => Strings.PLAYER_TURN_MESSAGE(playerName)
 
     case YourTurn => Strings.YOUR_TURN
+
+    case _ => ""
   }
 }

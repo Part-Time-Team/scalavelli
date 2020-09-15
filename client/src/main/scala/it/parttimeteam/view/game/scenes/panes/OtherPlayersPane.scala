@@ -2,7 +2,7 @@ package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.gamestate.Opponent
 import it.parttimeteam.view.ViewConfig
-import it.parttimeteam.view.utils.{Paths, ScalavelliLabel, Strings}
+import it.parttimeteam.view.utils.{ImagePaths, ScalavelliLabel, Strings}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{HBox, TilePane, VBox}
 
@@ -25,17 +25,17 @@ object OtherPlayersPane {
     var label = ScalavelliLabel(Strings.OTHER_PLAYERS)
     label.getStyleClass.add("boldText")
     var pane: TilePane = new TilePane()
-    pane.setPrefColumns(2)
+    pane.setPrefColumns(ViewConfig.OTHER_PLAYERS_COLUMNS)
 
-    this.prefWidth = 200d
+    this.prefWidth = ViewConfig.OTHER_PLAYERS_WIDTH
     this.children.addAll(label, pane)
 
 
     /** @inheritdoc */
     override def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
       pane.children.clear()
-      pane.hgap = ViewConfig.TILE_GAP
-      pane.vgap = ViewConfig.TILE_GAP
+      pane.hgap = ViewConfig.OTHER_PLAYERS_TILE_GAP
+      pane.vgap = ViewConfig.OTHER_PLAYERS_TILE_GAP
 
       for (player: Opponent <- otherPlayers) {
         val nameLabel = ScalavelliLabel(player.name)
@@ -44,7 +44,7 @@ object OtherPlayersPane {
         val playerInfoContainer: VBox = new VBox()
         val cardInfoContainer: HBox = new HBox()
 
-        val cardImage: ImageView = new ImageView(new Image(Paths.BLUE_BACK_CARD))
+        val cardImage: ImageView = new ImageView(new Image(ImagePaths.BLUE_BACK_CARD))
         cardImage.fitWidth = 20d
         cardImage.preserveRatio = true
 

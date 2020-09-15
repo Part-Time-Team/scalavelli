@@ -29,7 +29,7 @@ object HandBar {
     this.getStyleClass.add("transparent")
 
     val handCardsContainer = new HBox()
-    handCardsContainer.spacing = 5d
+    handCardsContainer.spacing = ViewConfig.DEFAULT_SPACING
     handCardsContainer.padding = Insets(ViewConfig.CARD_Y_TRANSLATION + ViewConfig.HAND_CARD_PADDING, ViewConfig.HAND_CARD_PADDING, ViewConfig.HAND_CARD_PADDING, ViewConfig.HAND_CARD_PADDING)
 
     this.setMinHeight(ViewConfig.HAND_CARD_HEIGHT + ViewConfig.CARD_Y_TRANSLATION + ViewConfig.HAND_PADDING)

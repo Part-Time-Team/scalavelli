@@ -22,18 +22,18 @@ class PublicGameScene(val parentStage: Stage, val listener: StartupSceneListener
   val topBar: StartupSceneTopBar = new StartupSceneTopBarImpl(listener)
   val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBarImpl(() => submit())
 
-  val usernameLabel: Label = ScalavelliLabel(Strings.USERNAME, ViewConfig.formLabelFontSize)
+  val usernameLabel: Label = ScalavelliLabel(Strings.USERNAME, ViewConfig.FORM_LABEL_FONT_SIZE)
   val usernameField: TextField = ScalavelliTextField(Strings.USERNAME)
 
   val options: Range = Constants.Client.MIN_PLAYERS_NUM to Constants.Client.MAX_PLAYERS_NUM by 1
 
-  val selectPlayersLabel: Label = ScalavelliLabel(Strings.SELECT_PLAYERS_NUM, ViewConfig.formLabelFontSize)
+  val selectPlayersLabel: Label = ScalavelliLabel(Strings.SELECT_PLAYERS_NUM, ViewConfig.FORM_LABEL_FONT_SIZE)
   val comboBox = new ComboBox(options)
   comboBox.setValue(Constants.Client.MIN_PLAYERS_NUM)
 
   val center: VBox = new VBox()
-  center.spacing = ViewConfig.formSpacing
-  center.maxWidth = ViewConfig.formWidth
+  center.spacing = ViewConfig.FORM_SPACING
+  center.maxWidth = ViewConfig.FORM_WIDTH
 
   selectPlayersLabel.maxWidth <== center.width
   usernameLabel.maxWidth <== center.width
