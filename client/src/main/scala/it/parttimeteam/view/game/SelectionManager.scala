@@ -43,15 +43,14 @@ object SelectionManager {
   class SelectionManagerImpl[T <: SelectableItem](allowOnlyOne: Boolean, private var selectedItems: Seq[T] = List.empty) extends SelectionManager[T] {
     /** @inheritdoc */
     override def onItemSelected(item: T): Unit = {
-      if (allowOnlyOne) {
-        this.clearSelection()
-        this.addItem(item)
+      if (selectedItems.contains(item)) {
+        this.removeItem(item)
       } else {
-        if (selectedItems.contains(item)) {
-          this.removeItem(item)
-        } else {
-          this.addItem(item)
+        if (allowOnlyOne){
+          this.clearSelection()
         }
+
+        this.addItem(item)
       }
 
       println(s"Selected cards: ${getSelectedItems.toString}")
