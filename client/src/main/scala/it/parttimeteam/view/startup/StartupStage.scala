@@ -2,13 +2,15 @@ package it.parttimeteam.view.startup
 
 import it.parttimeteam.controller.startup.StartupListener
 import it.parttimeteam.model.ErrorEvent
+import it.parttimeteam.model.ErrorEvent.ServerNotFound
 import it.parttimeteam.view.startup.listeners._
 import it.parttimeteam.view.startup.scenes._
 import it.parttimeteam.view.utils.{ScalavelliAlert, Strings}
 import it.parttimeteam.view.{BaseStage, ViewConfig}
 import scalafx.application.Platform
-import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.ButtonBar.ButtonData
+import scalafx.scene.control.{Alert, ButtonType}
 
 /**
   * Stage for startup scenes.
@@ -45,7 +47,7 @@ object StartupStage {
 
   def apply(): StartupStage = new StartupStageImpl(null)
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   class StartupStageImpl(gameStartupListener: StartupListener) extends StartupStage {
     private val mainScene: SelectScene = new SelectScene(this, new SelectSceneListener {
 
@@ -80,14 +82,8 @@ object StartupStage {
 
     var currentInnerScene: StartupFormScene = _
 
-
     onCloseRequest = _ => {
       System.exit(0)
-    }
-
-    def setCurrentScene(newScene: StartupFormScene): Unit = {
-      scene = newScene
-      currentInnerScene = newScene
     }
 
     // Controller actions
@@ -102,10 +98,34 @@ object StartupStage {
 
     override def notifyError(error: ErrorEvent): Unit = {
       Platform.runLater {
-        val alert: Alert = ScalavelliAlert(Strings.ERROR_DIALOG_TITLE, error, AlertType.Error, stage)
-        alert.showAndWait()
+        var alert: Alert = ScalavelliAlert(Strings.ERROR_DIALOG_TITLE, error, AlertType.Error, stage)
+
+        if (error == ServerNotFound) {
+          val buttonTypeRetry = new ButtonType(Strings.RETRY, ButtonData.Yes)
+          val buttonTypeCancel = new ButtonType(Strings.CLOSE, ButtonData.CancelClose)
+
+          alert.getButtonTypes.setAll(buttonTypeRetry, buttonTypeCancel)
+          alert.showAndWait match {
+            case Some(b) => {
+              if (b == buttonTypeRetry) {
+                gameStartupListener.onViewEvent(RetryServerConnection)
+              }
+            }
+
+            case None =>
+          }
+        } else {
+          alert = ScalavelliAlert(Strings.ERROR_DIALOG_TITLE, error, AlertType.Error, stage)
+          alert.showAndWait()
+        }
       }
     }
+
+    private def setCurrentScene(newScene: StartupFormScene): Unit = {
+      scene = newScene
+      currentInnerScene = newScene
+    }
+
   }
 
 }

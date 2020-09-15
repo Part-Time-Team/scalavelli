@@ -18,7 +18,7 @@ class StartupControllerImpl extends StartupController {
       app.stage = startUpStage
     })
     startGameFunction = startGame
-    this.startUpService.connect(Constants.Remote.SERVER_ADDRESS, Constants.Remote.SERVER_PORT)
+    connect()
   }
 
   override def onViewEvent(viewEvent: StartupViewEvent): Unit = viewEvent match {
@@ -31,10 +31,12 @@ class StartupControllerImpl extends StartupController {
 
     case LeaveLobbyViewEvent => this.startUpService.leaveLobby()
 
+    case RetryServerConnection => connect()
+
     case _ =>
   }
 
-  def notifyEvent(gameStartupEvent: GameStartupEvent): Unit = gameStartupEvent match {
+  private def notifyEvent(gameStartupEvent: GameStartupEvent): Unit = gameStartupEvent match {
 
     case LobbyJoinedEvent => {
       Platform.runLater({
@@ -62,6 +64,8 @@ class StartupControllerImpl extends StartupController {
     case _ =>
 
   }
+
+  private def connect(): Unit = this.startUpService.connect(Constants.Remote.SERVER_ADDRESS, Constants.Remote.SERVER_PORT)
 
   override def end(): Unit = {
 
