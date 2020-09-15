@@ -1,33 +1,13 @@
 package it.parttimeteam.view.startup.scenes
 
+import scalafx.stage.Stage
+
 /**
-  * Actions which each input scene must implement
+  * Extend by all the Startup form scenes
+  *
+  * @param parentStage the parent stage
   */
-trait StartupFormScene {
-  /**
-    * Display a message inside the scene
-    *
-    * @param message the message to be displayed
-    */
-  def showMessage(message: String): Unit
+abstract class StartupFormScene(parentStage: Stage) extends BaseStartupScene(parentStage) with BaseStartupFormScene {
 
-  /**
-    * Hide the message inside the scene
-    */
-  def hideMessage(): Unit
-
-  /**
-    * Disable actions inside the view
-    */
-  def disableActions(): Unit
-
-  /**
-    * Enable actions inside the view
-    */
-  def enableActions(): Unit
-
-  /**
-    * Clear user input and elements visibility
-    */
-  def resetScreen(): Unit
 }
+

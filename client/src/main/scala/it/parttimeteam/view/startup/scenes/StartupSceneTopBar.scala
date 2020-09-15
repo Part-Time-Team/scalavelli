@@ -8,8 +8,17 @@ import scalafx.scene.layout.HBox
 /**
   * Bottom bar for each Startup Scene
   */
-class StartupSceneTopBar(listener: StartupSceneListener) extends HBox {
-  val btnBack: Button = ScalavelliButton("<", () => listener.onBackPressed())
+trait StartupSceneTopBar extends HBox {
 
-  children.add(btnBack)
+}
+
+
+object StartupSceneTopBar {
+
+  class StartupSceneTopBarImpl(listener: StartupSceneListener) extends StartupSceneTopBar {
+    val btnBack: Button = ScalavelliButton("<", () => listener.onBackPressed())
+
+    children.add(btnBack)
+  }
+
 }

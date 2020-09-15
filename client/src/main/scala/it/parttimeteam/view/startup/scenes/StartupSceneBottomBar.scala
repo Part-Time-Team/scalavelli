@@ -9,7 +9,7 @@ import scalafx.scene.layout.HBox
 /**
   * Bottom bar for each Startup Scene
   */
-trait StartupSceneBottomBar extends HBox with StartupFormScene {
+trait StartupSceneBottomBar extends HBox with BaseStartupFormScene {
   /**
     * Show progress
     */

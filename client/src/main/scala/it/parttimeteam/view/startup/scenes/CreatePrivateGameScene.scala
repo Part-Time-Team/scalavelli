@@ -4,6 +4,8 @@ import it.parttimeteam.GamePreferences
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.CreatePrivateGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartupSceneListener
+import it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl
+import it.parttimeteam.view.startup.scenes.StartupSceneTopBar.StartupSceneTopBarImpl
 import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField}
 import javafx.scene.text.Font
 import scalafx.geometry.Pos.Center
@@ -27,9 +29,9 @@ trait CreatePrivateGameScene {
   *
   * @param listener to interact with parent stage
   */
-class CreatePrivateGameStartupSceneImpl(override val parentStage: Stage, val listener: StartupSceneListener) extends BaseStartupFormScene(parentStage) with CreatePrivateGameScene {
-  val topBar: StartupSceneTopBar = new StartupSceneTopBar(listener)
-  val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBar(() => submit())
+class CreatePrivateGameStartupSceneImpl(val parentStage: Stage, val listener: StartupSceneListener) extends StartupFormScene(parentStage) with CreatePrivateGameScene {
+  val topBar: StartupSceneTopBar = new StartupSceneTopBarImpl(listener)
+  val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBarImpl(() => submit())
 
   val usernameLabel: Label = ScalavelliLabel("Username", ViewConfig.formLabelFontSize)
   val usernameField: TextField = ScalavelliTextField("Username")
@@ -73,19 +75,6 @@ class CreatePrivateGameStartupSceneImpl(override val parentStage: Stage, val lis
 
   override def hideMessage(): Unit = bottomBar.hideMessage()
 
-  private def submit(): Unit = {
-    val username: String = usernameField.getText
-    val nPlayers: Int = comboBox.getValue
-
-    if (!username.isEmpty && nPlayers >= GamePreferences.MIN_PLAYERS_NUM) {
-      listener.onSubmit(CreatePrivateGameSubmitViewEvent(username, nPlayers))
-      bottomBar.showLoading()
-      disableActions()
-    } else {
-      alert.showAndWait()
-    }
-  }
-
   override def showCode(code: String): Unit = {
     codeContainer.setVisible(true)
     codeValue.setText(code)
@@ -97,12 +86,31 @@ class CreatePrivateGameStartupSceneImpl(override val parentStage: Stage, val lis
     bottomBar.disableActions()
   }
 
+  override def enableActions(): Unit = {
+    usernameField.setEditable(true)
+    comboBox.setDisable(false)
+    bottomBar.enableActions()
+  }
+
   override def resetScreen(): Unit = {
     usernameField.text = ""
     usernameField.setEditable(true)
     codeValue.text = ""
     codeContainer.setVisible(false)
     comboBox.setDisable(false)
-    bottomBar.reset()
+    bottomBar.resetScreen()
+  }
+
+  private def submit(): Unit = {
+    val username: String = usernameField.getText
+    val nPlayers: Int = comboBox.getValue
+
+    if (!username.isEmpty && nPlayers >= GamePreferences.MIN_PLAYERS_NUM) {
+      listener.onSubmit(CreatePrivateGameSubmitViewEvent(username, nPlayers))
+      bottomBar.showLoading()
+      disableActions()
+    } else {
+      alert.showAndWait()
+    }
   }
 }

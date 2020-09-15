@@ -3,6 +3,8 @@ package it.parttimeteam.view.startup.scenes
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.PrivateGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartupSceneListener
+import it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl
+import it.parttimeteam.view.startup.scenes.StartupSceneTopBar.StartupSceneTopBarImpl
 import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
@@ -15,9 +17,9 @@ import scalafx.stage.Stage
   *
   * @param listener to interact with parent stage
   */
-class PrivateGameScene(override val parentStage: Stage, val listener: StartupSceneListener) extends BaseStartupFormScene(parentStage) {
-  val topBar: StartupSceneTopBar = new StartupSceneTopBar(listener)
-  val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBar(() => submit())
+class PrivateGameScene(val parentStage: Stage, val listener: StartupSceneListener) extends StartupFormScene(parentStage) {
+  val topBar: StartupSceneTopBar = new StartupSceneTopBarImpl(listener)
+  val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBarImpl(() => submit())
 
   val usernameLabel: Label = ScalavelliLabel("Username", ViewConfig.formLabelFontSize)
   val usernameField: TextField = ScalavelliTextField("Username")
@@ -70,11 +72,17 @@ class PrivateGameScene(override val parentStage: Stage, val listener: StartupSce
     codeField.setEditable(false)
   }
 
+  override def enableActions(): Unit = {
+    bottomBar.enableActions()
+    usernameField.setEditable(true)
+    codeField.setEditable(true)
+  }
+
   override def resetScreen(): Unit = {
     usernameField.text = ""
     codeField.text = ""
     usernameField.setEditable(true)
     codeField.setEditable(true)
-    bottomBar.reset()
+    bottomBar.resetScreen()
   }
 }

@@ -14,18 +14,27 @@ import scalafx.scene.control.Alert.AlertType
   * Stage for startup scenes.
   */
 trait StartupStage extends BaseStage {
+  /**
+    * Display the private code generated
+    *
+    * @param privateCode the code to be displayed
+    */
   def notifyPrivateCode(privateCode: String): Unit
 
+  /**
+    * Notify the user the joined lobby event
+    */
   def notifyLobbyJoined(): Unit
 
+  /**
+    * Display an error alert
+    *
+    * @param result the error message
+    */
   def notifyError(result: String): Unit
 }
 
-/**
-  * Stage for startup scenes.
-  *
-  * @param gameStartupListener enables to call actions exposed by controller
-  */
+/** @inheritdoc */
 class StartupStageImpl(gameStartupListener: StartupListener) extends StartupStage {
   private val mainScene: SelectScene = new SelectScene(this, new SelectSceneListener {
 
@@ -55,7 +64,7 @@ class StartupStageImpl(gameStartupListener: StartupListener) extends StartupStag
   val privateGameScene: PrivateGameScene = new PrivateGameScene(this, listener)
   val createPrivateGame: CreatePrivateGameStartupSceneImpl = new CreatePrivateGameStartupSceneImpl(this, listener)
 
-  var currentInnerScene: BaseStartupFormScene = _
+  var currentInnerScene: StartupFormScene = _
 
   scene = mainScene
 
@@ -63,7 +72,7 @@ class StartupStageImpl(gameStartupListener: StartupListener) extends StartupStag
     System.exit(0)
   }
 
-  def setCurrentScene(newScene: BaseStartupFormScene): Unit = {
+  def setCurrentScene(newScene: StartupFormScene): Unit = {
     scene = newScene
     currentInnerScene = newScene
   }
