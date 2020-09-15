@@ -1,0 +1,743 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/startup/scenes/StartupSceneBottomBar.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.startup.scenes
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.view.utils.{ScalavelliButton, ScalavelliLabel, Strings}
+</span>4 <span style=''>import scalafx.application.Platform
+</span>5 <span style=''>import scalafx.geometry.Pos.BottomRight
+</span>6 <span style=''>import scalafx.scene.control.{Button, Label, ProgressIndicator}
+</span>7 <span style=''>import scalafx.scene.layout.HBox
+</span>8 <span style=''>
+</span>9 <span style=''>/**
+</span>10 <span style=''>  * Bottom bar for each Startup Scene
+</span>11 <span style=''>  */
+</span>12 <span style=''>trait StartupSceneBottomBar extends HBox with BaseStartupFormScene {
+</span>13 <span style=''>  /**
+</span>14 <span style=''>    * Show progress
+</span>15 <span style=''>    */
+</span>16 <span style=''>  def showLoading(): Unit
+</span>17 <span style=''>
+</span>18 <span style=''>  /**
+</span>19 <span style=''>    * Hide progress
+</span>20 <span style=''>    */
+</span>21 <span style=''>  def hideLoading(): Unit
+</span>22 <span style=''>}
+</span>23 <span style=''>
+</span>24 <span style=''>object StartupSceneBottomBar {
+</span>25 <span style=''>
+</span>26 <span style=''>  class StartupSceneBottomBarImpl(onSubmit: () =&gt; Unit) extends StartupSceneBottomBar {
+</span>27 <span style=''>    </span><span style='background: #F0ADAD'>alignment = BottomRight</span><span style=''>
+</span>28 <span style=''>
+</span>29 <span style=''>    val btnSubmit: Button = </span><span style='background: #F0ADAD'>ScalavelliButton(Strings.SEND, () =&gt; onSubmit())</span><span style=''>
+</span>30 <span style=''>    val progress: ProgressIndicator = </span><span style='background: #F0ADAD'>new ProgressIndicator()</span><span style=''>
+</span>31 <span style=''>    val messageContainer: Label = </span><span style='background: #F0ADAD'>ScalavelliLabel()</span><span style=''>
+</span>32 <span style=''>
+</span>33 <span style=''>    </span><span style='background: #F0ADAD'>progress.prefHeight &lt;== height</span><span style=''>
+</span>34 <span style=''>
+</span>35 <span style=''>    </span><span style='background: #F0ADAD'>children.addAll(messageContainer, progress, btnSubmit)</span><span style=''>
+</span>36 <span style=''>
+</span>37 <span style=''>    override def enableActions(): Unit = </span><span style='background: #F0ADAD'>btnSubmit.setDisable(false)</span><span style=''>
+</span>38 <span style=''>
+</span>39 <span style=''>    override def showLoading(): Unit = </span><span style='background: #F0ADAD'>progress.setVisible(true)</span><span style=''>
+</span>40 <span style=''>
+</span>41 <span style=''>    override def hideLoading(): Unit = </span><span style='background: #F0ADAD'>progress.setVisible(false)</span><span style=''>
+</span>42 <span style=''>
+</span>43 <span style=''>    override def disableActions(): Unit = </span><span style='background: #F0ADAD'>btnSubmit.setDisable(true)</span><span style=''>
+</span>44 <span style=''>
+</span>45 <span style=''>    override def showMessage(message: String): Unit = {
+</span>46 <span style=''>      </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>47 <span style=''></span><span style='background: #F0ADAD'>        messageContainer.setText(message)
+</span>48 <span style=''></span><span style='background: #F0ADAD'>        messageContainer.setVisible(true)
+</span>49 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>50 <span style=''>    }
+</span>51 <span style=''>
+</span>52 <span style=''>    override def hideMessage(): Unit = {
+</span>53 <span style=''>      </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>54 <span style=''></span><span style='background: #F0ADAD'>        messageContainer.setText(&quot;&quot;)
+</span>55 <span style=''></span><span style='background: #F0ADAD'>        messageContainer.setVisible(false)
+</span>56 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>57 <span style=''>    }
+</span>58 <span style=''>
+</span>59 <span style=''>    override def resetScreen(): Unit = {
+</span>60 <span style=''>      </span><span style='background: #F0ADAD'>enableActions()</span><span style=''>
+</span>61 <span style=''>      </span><span style='background: #F0ADAD'>hideLoading()</span><span style=''>
+</span>62 <span style=''>      </span><span style='background: #F0ADAD'>hideMessage()</span><span style=''>
+</span>63 <span style=''>    }
+</span>64 <span style=''>  }
+</span>65 <span style=''>
+</span>66 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          1106
+        </td>
+        <td>
+          672
+          -
+          683
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.geometry.Pos.BottomRight
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.geometry.Pos.BottomRight
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          2515
+        </td>
+        <td>
+          660
+          -
+          683
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.delegate.AlignmentDelegate.alignment_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.alignment_=(scalafx.geometry.Pos.BottomRight)
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1901
+        </td>
+        <td>
+          730
+          -
+          742
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.SEND
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.SEND
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1168
+        </td>
+        <td>
+          750
+          -
+          760
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function0.apply
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.onSubmit.apply()
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          2297
+        </td>
+        <td>
+          713
+          -
+          761
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliButton.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliButton.apply(it.parttimeteam.view.utils.Strings.SEND, (() =&gt; StartupSceneBottomBarImpl.this.onSubmit.apply()))
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1288
+        </td>
+        <td>
+          800
+          -
+          823
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.ProgressIndicator.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.control.ProgressIndicator(control.this.ProgressIndicator.&lt;init&gt;$default$1)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1604
+        </td>
+        <td>
+          800
+          -
+          800
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.ProgressIndicator.&lt;init&gt;$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ProgressIndicator.&lt;init&gt;$default$1
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          2404
+        </td>
+        <td>
+          858
+          -
+          875
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliLabel.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliLabel.apply()
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          1015
+        </td>
+        <td>
+          881
+          -
+          911
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.progress.prefHeight.&lt;==(StartupSceneBottomBarImpl.this.height)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          1732
+        </td>
+        <td>
+          905
+          -
+          911
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.Region.height
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.height
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          2287
+        </td>
+        <td>
+          951
+          -
+          959
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.ProgressIndicator.sfxProgressIndicator2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ProgressIndicator.sfxProgressIndicator2jfx(StartupSceneBottomBarImpl.this.progress)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1868
+        </td>
+        <td>
+          933
+          -
+          949
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Label.sfxLabel2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1294
+        </td>
+        <td>
+          961
+          -
+          970
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Button.sfxButton2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(StartupSceneBottomBarImpl.this.btnSubmit)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1574
+        </td>
+        <td>
+          961
+          -
+          970
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl.btnSubmit
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.btnSubmit
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          2214
+        </td>
+        <td>
+          933
+          -
+          949
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl.messageContainer
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.messageContainer
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1170
+        </td>
+        <td>
+          951
+          -
+          959
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl.progress
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.progress
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          2378
+        </td>
+        <td>
+          917
+          -
+          971
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.collections.ObservableList.addAll
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.children.addAll(control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer), control.this.ProgressIndicator.sfxProgressIndicator2jfx(StartupSceneBottomBarImpl.this.progress), control.this.Button.sfxButton2jfx(StartupSceneBottomBarImpl.this.btnSubmit))
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1735
+        </td>
+        <td>
+          1014
+          -
+          1041
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(StartupSceneBottomBarImpl.this.btnSubmit).setDisable(false)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1019
+        </td>
+        <td>
+          1082
+          -
+          1107
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setVisible
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ProgressIndicator.sfxProgressIndicator2jfx(StartupSceneBottomBarImpl.this.progress).setVisible(true)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          2137
+        </td>
+        <td>
+          1148
+          -
+          1174
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setVisible
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ProgressIndicator.sfxProgressIndicator2jfx(StartupSceneBottomBarImpl.this.progress).setVisible(false)
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          1814
+        </td>
+        <td>
+          1218
+          -
+          1244
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(StartupSceneBottomBarImpl.this.btnSubmit).setDisable(true)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1577
+        </td>
+        <td>
+          1308
+          -
+          1420
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer).setText(message);
+  control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer).setVisible(true)
+})
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1140
+        </td>
+        <td>
+          1336
+          -
+          1369
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Labeled.setText
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer).setText(message)
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          2344
+        </td>
+        <td>
+          1378
+          -
+          1411
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setVisible
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer).setVisible(true)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          1706
+        </td>
+        <td>
+          1475
+          -
+          1583
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer).setText(&quot;&quot;);
+  control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer).setVisible(false)
+})
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1344
+        </td>
+        <td>
+          1503
+          -
+          1531
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Labeled.setText
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer).setText(&quot;&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          2380
+        </td>
+        <td>
+          1540
+          -
+          1574
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setVisible
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(StartupSceneBottomBarImpl.this.messageContainer).setVisible(false)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          1104
+        </td>
+        <td>
+          1638
+          -
+          1653
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl.enableActions
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.enableActions()
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          2138
+        </td>
+        <td>
+          1660
+          -
+          1673
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl.hideLoading
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.hideLoading()
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          1858
+        </td>
+        <td>
+          1680
+          -
+          1693
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl.hideMessage
+        </td>
+        <td style="background: #F0ADAD">
+          StartupSceneBottomBarImpl.this.hideMessage()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

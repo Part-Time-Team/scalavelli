@@ -24,62 +24,63 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game.scenes.panes
 </span>2 <span style=''>
-</span>3 <span style=''>import scalafx.geometry.Pos
-</span>4 <span style=''>import scalafx.scene.Scene
-</span>5 <span style=''>import scalafx.scene.control.{Label, ProgressBar}
-</span>6 <span style=''>import scalafx.scene.layout.VBox
-</span>7 <span style=''>import scalafx.stage.{Modality, Stage, StageStyle}
-</span>8 <span style=''>
-</span>9 <span style=''>/**
-</span>10 <span style=''>  * Blocking dialog which can be displayed while setting up the game view.
-</span>11 <span style=''>  */
-</span>12 <span style=''>trait InitMatchDialog extends Stage {
-</span>13 <span style=''>
-</span>14 <span style=''>  /**
-</span>15 <span style=''>    * Allows to display the dialog.
-</span>16 <span style=''>    */
-</span>17 <span style=''>  def showDialog(): Unit
-</span>18 <span style=''>
-</span>19 <span style=''>  /**
-</span>20 <span style=''>    * Allows to hide the dialog.
-</span>21 <span style=''>    */
-</span>22 <span style=''>  def hideDialog(): Unit
-</span>23 <span style=''>}
-</span>24 <span style=''>
-</span>25 <span style=''>object InitMatchDialog {
-</span>26 <span style=''>
-</span>27 <span style=''>  class InitMatchDialogImpl(parentStage: Stage) extends InitMatchDialog {
-</span>28 <span style=''>    val progressBar: ProgressBar = </span><span style='background: #F0ADAD'>new ProgressBar()</span><span style=''>
-</span>29 <span style=''>    </span><span style='background: #F0ADAD'>this.initStyle(StageStyle.Decorated)</span><span style=''>
-</span>30 <span style=''>    </span><span style='background: #F0ADAD'>this.setResizable(false)</span><span style=''>
-</span>31 <span style=''>    </span><span style='background: #F0ADAD'>this.initModality(Modality.WindowModal)</span><span style=''>
-</span>32 <span style=''>    </span><span style='background: #F0ADAD'>this.setTitle(&quot;Game loading&quot;)</span><span style=''>
-</span>33 <span style=''>    </span><span style='background: #F0ADAD'>this.setMinWidth(200)</span><span style=''>
-</span>34 <span style=''>    </span><span style='background: #F0ADAD'>this.setMinHeight(100)</span><span style=''>
-</span>35 <span style=''>
-</span>36 <span style=''>    val label = </span><span style='background: #F0ADAD'>new Label(&quot;Preparing your cards...&quot;)</span><span style=''>
-</span>37 <span style=''>
-</span>38 <span style=''>    val vb = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
-</span>39 <span style=''>    </span><span style='background: #F0ADAD'>vb.setSpacing(5)</span><span style=''>
-</span>40 <span style=''>    </span><span style='background: #F0ADAD'>vb.setAlignment(Pos.Center)</span><span style=''>
-</span>41 <span style=''>    </span><span style='background: #F0ADAD'>vb.getChildren.addAll(label, progressBar)</span><span style=''>
-</span>42 <span style=''>    val dialogScene = </span><span style='background: #F0ADAD'>new Scene(vb)</span><span style=''>
-</span>43 <span style=''>    </span><span style='background: #F0ADAD'>this.setScene(dialogScene)</span><span style=''>
-</span>44 <span style=''>    </span><span style='background: #F0ADAD'>this.initOwner(parentStage)</span><span style=''>
-</span>45 <span style=''>
-</span>46 <span style=''>    /** @inheritdoc */
-</span>47 <span style=''>    override def showDialog(): Unit = {
-</span>48 <span style=''>      </span><span style='background: #F0ADAD'>this.showAndWait()</span><span style=''>
-</span>49 <span style=''>      </span><span style='background: #F0ADAD'>this.setAlwaysOnTop(true)</span><span style=''>
-</span>50 <span style=''>    }
-</span>51 <span style=''>
-</span>52 <span style=''>    /** @inheritdoc */
-</span>53 <span style=''>    override def hideDialog(): Unit = {
-</span>54 <span style=''>      </span><span style='background: #F0ADAD'>this.close()</span><span style=''>
-</span>55 <span style=''>    }
-</span>56 <span style=''>  }
-</span>57 <span style=''>
-</span>58 <span style=''>}
+</span>3 <span style=''>import it.parttimeteam.view.utils.Strings
+</span>4 <span style=''>import scalafx.geometry.Pos
+</span>5 <span style=''>import scalafx.scene.Scene
+</span>6 <span style=''>import scalafx.scene.control.{Label, ProgressBar}
+</span>7 <span style=''>import scalafx.scene.layout.VBox
+</span>8 <span style=''>import scalafx.stage.{Modality, Stage, StageStyle}
+</span>9 <span style=''>
+</span>10 <span style=''>/**
+</span>11 <span style=''>  * Blocking dialog which can be displayed while setting up the game view.
+</span>12 <span style=''>  */
+</span>13 <span style=''>trait InitMatchDialog extends Stage {
+</span>14 <span style=''>
+</span>15 <span style=''>  /**
+</span>16 <span style=''>    * Allows to display the dialog.
+</span>17 <span style=''>    */
+</span>18 <span style=''>  def showDialog(): Unit
+</span>19 <span style=''>
+</span>20 <span style=''>  /**
+</span>21 <span style=''>    * Allows to hide the dialog.
+</span>22 <span style=''>    */
+</span>23 <span style=''>  def hideDialog(): Unit
+</span>24 <span style=''>}
+</span>25 <span style=''>
+</span>26 <span style=''>object InitMatchDialog {
+</span>27 <span style=''>
+</span>28 <span style=''>  class InitMatchDialogImpl(parentStage: Stage) extends InitMatchDialog {
+</span>29 <span style=''>    val progressBar: ProgressBar = </span><span style='background: #F0ADAD'>new ProgressBar()</span><span style=''>
+</span>30 <span style=''>    </span><span style='background: #F0ADAD'>this.initStyle(StageStyle.Decorated)</span><span style=''>
+</span>31 <span style=''>    </span><span style='background: #F0ADAD'>this.setResizable(false)</span><span style=''>
+</span>32 <span style=''>    </span><span style='background: #F0ADAD'>this.initModality(Modality.WindowModal)</span><span style=''>
+</span>33 <span style=''>    </span><span style='background: #F0ADAD'>this.setTitle(Strings.GAME_LOADING_TITLE)</span><span style=''>
+</span>34 <span style=''>    </span><span style='background: #F0ADAD'>this.setMinWidth(200)</span><span style=''>
+</span>35 <span style=''>    </span><span style='background: #F0ADAD'>this.setMinHeight(100)</span><span style=''>
+</span>36 <span style=''>
+</span>37 <span style=''>    val label = </span><span style='background: #F0ADAD'>new Label(Strings.GAME_LOADING_MESSAGE)</span><span style=''>
+</span>38 <span style=''>
+</span>39 <span style=''>    val vb = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
+</span>40 <span style=''>    </span><span style='background: #F0ADAD'>vb.setSpacing(5)</span><span style=''>
+</span>41 <span style=''>    </span><span style='background: #F0ADAD'>vb.setAlignment(Pos.Center)</span><span style=''>
+</span>42 <span style=''>    </span><span style='background: #F0ADAD'>vb.getChildren.addAll(label, progressBar)</span><span style=''>
+</span>43 <span style=''>    val dialogScene = </span><span style='background: #F0ADAD'>new Scene(vb)</span><span style=''>
+</span>44 <span style=''>    </span><span style='background: #F0ADAD'>this.setScene(dialogScene)</span><span style=''>
+</span>45 <span style=''>    </span><span style='background: #F0ADAD'>this.initOwner(parentStage)</span><span style=''>
+</span>46 <span style=''>
+</span>47 <span style=''>    /** @inheritdoc*/
+</span>48 <span style=''>    override def showDialog(): Unit = {
+</span>49 <span style=''>      </span><span style='background: #F0ADAD'>this.showAndWait()</span><span style=''>
+</span>50 <span style=''>      </span><span style='background: #F0ADAD'>this.setAlwaysOnTop(true)</span><span style=''>
+</span>51 <span style=''>    }
+</span>52 <span style=''>
+</span>53 <span style=''>    /** @inheritdoc*/
+</span>54 <span style=''>    override def hideDialog(): Unit = {
+</span>55 <span style=''>      </span><span style='background: #F0ADAD'>this.close()</span><span style=''>
+</span>56 <span style=''>    }
+</span>57 <span style=''>  }
+</span>58 <span style=''>
+</span>59 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -93,15 +94,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          28
+          29
         </td>
         <td>
-          2027
+          1686
         </td>
         <td>
-          645
+          687
           -
-          645
+          687
         </td>
         <td>
           Select
@@ -114,15 +115,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          29
         </td>
         <td>
-          1339
+          904
         </td>
         <td>
-          645
+          687
           -
-          662
+          704
         </td>
         <td>
           Apply
@@ -135,36 +136,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          30
         </td>
         <td>
-          1781
+          2060
         </td>
         <td>
-          667
+          724
           -
-          703
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.stage.Stage.initStyle
-        </td>
-        <td style="background: #F0ADAD">
-          this.initStyle(scalafx.stage.StageStyle.Decorated)
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          2422
-        </td>
-        <td>
-          682
-          -
-          702
+          744
         </td>
         <td>
           Select
@@ -180,12 +160,33 @@
           30
         </td>
         <td>
-          1477
+          1405
         </td>
         <td>
-          708
+          709
           -
-          732
+          745
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.stage.Stage.initStyle
+        </td>
+        <td style="background: #F0ADAD">
+          this.initStyle(scalafx.stage.StageStyle.Decorated)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1085
+        </td>
+        <td>
+          750
+          -
+          774
         </td>
         <td>
           Apply
@@ -198,36 +199,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          32
         </td>
         <td>
-          1880
+          2251
         </td>
         <td>
-          737
+          797
           -
-          776
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.stage.Stage.initModality
-        </td>
-        <td style="background: #F0ADAD">
-          this.initModality(scalafx.stage.Modality.WindowModal)
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          2593
-        </td>
-        <td>
-          755
-          -
-          775
+          817
         </td>
         <td>
           Select
@@ -243,12 +223,54 @@
           32
         </td>
         <td>
-          1317
+          1485
         </td>
         <td>
-          781
+          779
           -
-          810
+          818
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.stage.Stage.initModality
+        </td>
+        <td style="background: #F0ADAD">
+          this.initModality(scalafx.stage.Modality.WindowModal)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          2621
+        </td>
+        <td>
+          837
+          -
+          863
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.GAME_LOADING_TITLE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.GAME_LOADING_TITLE
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          2330
+        </td>
+        <td>
+          823
+          -
+          864
         </td>
         <td>
           Apply
@@ -257,19 +279,19 @@
           javafx.stage.Stage.setTitle
         </td>
         <td style="background: #F0ADAD">
-          stage.this.Stage.sfxStage2jfx(this).setTitle(&quot;Game loading&quot;)
+          stage.this.Stage.sfxStage2jfx(this).setTitle(it.parttimeteam.view.utils.Strings.GAME_LOADING_TITLE)
         </td>
       </tr><tr>
         <td>
-          33
+          34
         </td>
         <td>
-          897
+          1571
         </td>
         <td>
-          815
+          869
           -
-          836
+          890
         </td>
         <td>
           Apply
@@ -282,15 +304,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          35
         </td>
         <td>
-          2034
+          964
         </td>
         <td>
-          841
+          895
           -
-          863
+          917
         </td>
         <td>
           Apply
@@ -303,15 +325,15 @@
         </td>
       </tr><tr>
         <td>
-          36
+          37
         </td>
         <td>
-          1416
+          1430
         </td>
         <td>
-          881
+          935
           -
-          917
+          974
         </td>
         <td>
           Apply
@@ -320,19 +342,40 @@
           scalafx.scene.control.Label.&lt;init&gt;
         </td>
         <td style="background: #F0ADAD">
-          new scalafx.scene.control.Label(&quot;Preparing your cards...&quot;)
+          new scalafx.scene.control.Label(it.parttimeteam.view.utils.Strings.GAME_LOADING_MESSAGE)
         </td>
       </tr><tr>
         <td>
-          38
+          37
         </td>
         <td>
-          2415
+          2064
         </td>
         <td>
-          932
+          945
           -
-          942
+          973
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.GAME_LOADING_MESSAGE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.GAME_LOADING_MESSAGE
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1091
+        </td>
+        <td>
+          989
+          -
+          999
         </td>
         <td>
           Apply
@@ -345,15 +388,15 @@
         </td>
       </tr><tr>
         <td>
-          39
+          40
         </td>
         <td>
-          1864
+          2193
         </td>
         <td>
-          947
+          1004
           -
-          963
+          1020
         </td>
         <td>
           Apply
@@ -366,36 +409,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          41
         </td>
         <td>
-          1447
+          1664
         </td>
         <td>
-          968
+          1025
           -
-          970
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl.vb
-        </td>
-        <td style="background: #F0ADAD">
-          InitMatchDialogImpl.this.vb
-        </td>
-      </tr><tr>
-        <td>
-          40
-        </td>
-        <td>
-          1291
-        </td>
-        <td>
-          968
-          -
-          995
+          1052
         </td>
         <td>
           Apply
@@ -408,15 +430,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          41
         </td>
         <td>
-          2597
+          2627
         </td>
         <td>
-          984
+          1041
           -
-          994
+          1051
         </td>
         <td>
           Select
@@ -429,57 +451,15 @@
         </td>
       </tr><tr>
         <td>
-          40
-        </td>
-        <td>
-          1884
-        </td>
-        <td>
-          984
-          -
-          994
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.delegate.SFXEnumDelegateCompanion.sfxEnum2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          geometry.this.Pos.sfxEnum2jfx(scalafx.geometry.Pos.Center)
-        </td>
-      </tr><tr>
-        <td>
           41
         </td>
         <td>
-          1420
+          1547
         </td>
         <td>
-          1022
+          1025
           -
           1027
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.control.Label.sfxLabel2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Label.sfxLabel2jfx(InitMatchDialogImpl.this.label)
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          977
-        </td>
-        <td>
-          1000
-          -
-          1002
         </td>
         <td>
           Select
@@ -495,75 +475,33 @@
           41
         </td>
         <td>
-          2065
+          2306
         </td>
         <td>
-          1022
-          -
-          1027
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl.label
-        </td>
-        <td style="background: #F0ADAD">
-          InitMatchDialogImpl.this.label
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          1526
-        </td>
-        <td>
-          1000
-          -
           1041
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.collections.ObservableList.addAll
-        </td>
-        <td style="background: #F0ADAD">
-          layout.this.VBox.sfxVBox2jfx(InitMatchDialogImpl.this.vb).getChildren().addAll(control.this.Label.sfxLabel2jfx(InitMatchDialogImpl.this.label), control.this.ProgressBar.sfxProgressBar2jfx(InitMatchDialogImpl.this.progressBar))
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          1843
-        </td>
-        <td>
-          1029
           -
-          1040
+          1051
         </td>
         <td>
           ApplyImplicitView
         </td>
         <td>
-          scalafx.scene.control.ProgressBar.sfxProgressBar2jfx
+          scalafx.delegate.SFXEnumDelegateCompanion.sfxEnum2jfx
         </td>
         <td style="background: #F0ADAD">
-          control.this.ProgressBar.sfxProgressBar2jfx(InitMatchDialogImpl.this.progressBar)
+          geometry.this.Pos.sfxEnum2jfx(scalafx.geometry.Pos.Center)
         </td>
       </tr><tr>
         <td>
-          41
+          42
         </td>
         <td>
-          2464
+          1097
         </td>
         <td>
-          1029
+          1086
           -
-          1040
+          1097
         </td>
         <td>
           Select
@@ -579,33 +517,117 @@
           42
         </td>
         <td>
-          1964
+          2164
         </td>
         <td>
-          1064
+          1086
           -
-          1077
+          1097
         </td>
         <td>
-          Apply
+          ApplyImplicitView
         </td>
         <td>
-          scalafx.scene.Scene.&lt;init&gt;
+          scalafx.scene.control.ProgressBar.sfxProgressBar2jfx
         </td>
         <td style="background: #F0ADAD">
-          new scalafx.scene.Scene(InitMatchDialogImpl.this.vb)
+          control.this.ProgressBar.sfxProgressBar2jfx(InitMatchDialogImpl.this.progressBar)
         </td>
       </tr><tr>
         <td>
           42
         </td>
         <td>
-          2599
+          1548
         </td>
         <td>
-          1074
+          1057
           -
-          1076
+          1098
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.collections.ObservableList.addAll
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.VBox.sfxVBox2jfx(InitMatchDialogImpl.this.vb).getChildren().addAll(control.this.Label.sfxLabel2jfx(InitMatchDialogImpl.this.label), control.this.ProgressBar.sfxProgressBar2jfx(InitMatchDialogImpl.this.progressBar))
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          970
+        </td>
+        <td>
+          1057
+          -
+          1059
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl.vb
+        </td>
+        <td style="background: #F0ADAD">
+          InitMatchDialogImpl.this.vb
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1433
+        </td>
+        <td>
+          1079
+          -
+          1084
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Label.sfxLabel2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(InitMatchDialogImpl.this.label)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          2117
+        </td>
+        <td>
+          1079
+          -
+          1084
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImpl.label
+        </td>
+        <td style="background: #F0ADAD">
+          InitMatchDialogImpl.this.label
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          2616
+        </td>
+        <td>
+          1131
+          -
+          1133
         </td>
         <td>
           Select
@@ -621,12 +643,33 @@
           43
         </td>
         <td>
-          2022
+          1998
         </td>
         <td>
-          1082
+          1121
           -
-          1108
+          1134
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.Scene.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.Scene(InitMatchDialogImpl.this.vb)
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          2119
+        </td>
+        <td>
+          1139
+          -
+          1165
         </td>
         <td>
           Apply
@@ -639,15 +682,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          44
         </td>
         <td>
-          1295
+          1598
         </td>
         <td>
-          1096
+          1153
           -
-          1107
+          1164
         </td>
         <td>
           Select
@@ -660,15 +703,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          44
         </td>
         <td>
-          2386
+          939
         </td>
         <td>
-          1096
+          1153
           -
-          1107
+          1164
         </td>
         <td>
           ApplyImplicitView
@@ -681,15 +724,15 @@
         </td>
       </tr><tr>
         <td>
-          44
+          45
         </td>
         <td>
-          2439
+          1060
         </td>
         <td>
-          1113
+          1170
           -
-          1140
+          1197
         </td>
         <td>
           Apply
@@ -702,15 +745,15 @@
         </td>
       </tr><tr>
         <td>
-          44
+          45
         </td>
         <td>
-          1426
+          1403
         </td>
         <td>
-          1128
+          1185
           -
-          1139
+          1196
         </td>
         <td>
           Select
@@ -723,15 +766,15 @@
         </td>
       </tr><tr>
         <td>
-          48
+          49
         </td>
         <td>
-          1850
+          2169
         </td>
         <td>
-          1211
+          1267
           -
-          1229
+          1285
         </td>
         <td>
           Apply
@@ -744,15 +787,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          50
         </td>
         <td>
-          1441
+          1523
         </td>
         <td>
-          1236
+          1292
           -
-          1261
+          1317
         </td>
         <td>
           Apply
@@ -765,15 +808,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          55
         </td>
         <td>
-          2558
+          2618
         </td>
         <td>
-          1338
+          1393
           -
-          1350
+          1405
         </td>
         <td>
           Apply

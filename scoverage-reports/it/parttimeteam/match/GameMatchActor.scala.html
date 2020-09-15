@@ -247,26 +247,25 @@
 </span>223 <span style=''>   */
 </span>224 <span style=''>  private def broadcastGameStateToPlayers(gameState: GameState) {
 </span>225 <span style=''>
-</span>226 <span style=''>    </span><span style='background: #AEF1AE'>println(gameState.toString)</span><span style=''>
-</span>227 <span style=''>    </span><span style='background: #AEF1AE'>this.players.foreach(player =&gt; {
-</span>228 <span style=''></span><span style='background: #AEF1AE'>      player.actorRef ! GameStateUpdated(PlayerGameState(
-</span>229 <span style=''></span><span style='background: #AEF1AE'>        gameState.board,
-</span>230 <span style=''></span><span style='background: #AEF1AE'>        gameState.players.find(_.id == player.id).get.hand,
-</span>231 <span style=''></span><span style='background: #AEF1AE'>        gameState.players.filter(_.id != player.id).map(p =&gt; Opponent(p.name, p.hand.playerCards.size))
-</span>232 <span style=''></span><span style='background: #AEF1AE'>      ))
-</span>233 <span style=''></span><span style='background: #AEF1AE'>
-</span>234 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
-</span>235 <span style=''>  }
+</span>226 <span style=''>    </span><span style='background: #AEF1AE'>this.players.foreach(player =&gt; {
+</span>227 <span style=''></span><span style='background: #AEF1AE'>      player.actorRef ! GameStateUpdated(PlayerGameState(
+</span>228 <span style=''></span><span style='background: #AEF1AE'>        gameState.board,
+</span>229 <span style=''></span><span style='background: #AEF1AE'>        gameState.players.find(_.id == player.id).get.hand,
+</span>230 <span style=''></span><span style='background: #AEF1AE'>        gameState.players.filter(_.id != player.id).map(p =&gt; Opponent(p.name, p.hand.playerCards.size))
+</span>231 <span style=''></span><span style='background: #AEF1AE'>      ))
+</span>232 <span style=''></span><span style='background: #AEF1AE'>
+</span>233 <span style=''></span><span style='background: #AEF1AE'>    })</span><span style=''>
+</span>234 <span style=''>  }
+</span>235 <span style=''>
 </span>236 <span style=''>
-</span>237 <span style=''>
-</span>238 <span style=''>  private def withPlayer(playerId: PlayerId)(f: GamePlayer =&gt; Unit): Unit = {
-</span>239 <span style=''>    </span><span style='background: #AEF1AE'>this.players.find(_.id == playerId)</span><span style=''> match {
-</span>240 <span style=''>      case Some(p) =&gt; </span><span style='background: #AEF1AE'>f(p)</span><span style=''>
-</span>241 <span style=''>      case None =&gt; </span><span style='background: #F0ADAD'>log.info(s&quot;Player id $playerId not found&quot;)</span><span style=''>
-</span>242 <span style=''>    }
-</span>243 <span style=''>  }
-</span>244 <span style=''>
-</span>245 <span style=''>}
+</span>237 <span style=''>  private def withPlayer(playerId: PlayerId)(f: GamePlayer =&gt; Unit): Unit = {
+</span>238 <span style=''>    </span><span style='background: #AEF1AE'>this.players.find(_.id == playerId)</span><span style=''> match {
+</span>239 <span style=''>      case Some(p) =&gt; </span><span style='background: #AEF1AE'>f(p)</span><span style=''>
+</span>240 <span style=''>      case None =&gt; </span><span style='background: #F0ADAD'>log.info(s&quot;Player id $playerId not found&quot;)</span><span style=''>
+</span>241 <span style=''>    }
+</span>242 <span style=''>  }
+</span>243 <span style=''>
+</span>244 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -304,7 +303,7 @@
           17
         </td>
         <td>
-          297
+          296
         </td>
         <td>
           662
@@ -325,7 +324,7 @@
           42
         </td>
         <td>
-          410
+          408
         </td>
         <td>
           1299
@@ -388,7 +387,7 @@
           51
         </td>
         <td>
-          340
+          338
         </td>
         <td>
           1515
@@ -409,7 +408,7 @@
           52
         </td>
         <td>
-          450
+          448
         </td>
         <td>
           1550
@@ -451,28 +450,7 @@
           53
         </td>
         <td>
-          116
-        </td>
-        <td>
-          1605
-          -
-          1630
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.actor.ActorContext.watch
-        </td>
-        <td style="background: #AEF1AE">
-          GameMatchActor.this.context.watch(p.actorRef)
-        </td>
-      </tr><tr>
-        <td>
-          53
-        </td>
-        <td>
-          287
+          286
         </td>
         <td>
           1619
@@ -490,24 +468,24 @@
         </td>
       </tr><tr>
         <td>
-          54
+          53
         </td>
         <td>
-          433
+          116
         </td>
         <td>
-          1638
+          1605
           -
-          1678
+          1630
         </td>
         <td>
           Apply
         </td>
         <td>
-          scala.Predef.require
+          akka.actor.ActorContext.watch
         </td>
         <td style="background: #AEF1AE">
-          scala.Predef.require(players.size.==(GameMatchActor.this.numberOfPlayers))
+          GameMatchActor.this.context.watch(p.actorRef)
         </td>
       </tr><tr>
         <td>
@@ -535,7 +513,7 @@
           54
         </td>
         <td>
-          308
+          306
         </td>
         <td>
           1662
@@ -553,24 +531,45 @@
         </td>
       </tr><tr>
         <td>
-          55
+          54
         </td>
         <td>
-          445
+          431
         </td>
         <td>
-          1685
+          1638
           -
-          1733
+          1678
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.match.GameMatchActor.broadcastMessageToPlayers
+          scala.Predef.require
         </td>
         <td style="background: #AEF1AE">
-          this.broadcastMessageToPlayers(it.parttimeteam.messages.LobbyMessages.MatchFound.apply(GameMatchActor.this.self))
+          scala.Predef.require(players.size.==(GameMatchActor.this.numberOfPlayers))
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          262
+        </td>
+        <td>
+          1727
+          -
+          1731
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchActor.this.self
         </td>
       </tr><tr>
         <td>
@@ -598,49 +597,28 @@
           55
         </td>
         <td>
-          263
+          443
         </td>
         <td>
-          1727
+          1685
           -
-          1731
+          1733
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          akka.actor.Actor.self
+          it.parttimeteam.match.GameMatchActor.broadcastMessageToPlayers
         </td>
         <td style="background: #AEF1AE">
-          GameMatchActor.this.self
+          this.broadcastMessageToPlayers(it.parttimeteam.messages.LobbyMessages.MatchFound.apply(GameMatchActor.this.self))
         </td>
       </tr><tr>
         <td>
           56
         </td>
         <td>
-          289
-        </td>
-        <td>
-          1768
-          -
-          1777
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.generic.GenericCompanion.empty
-        </td>
-        <td style="background: #AEF1AE">
-          scala.collection.Seq.empty[Nothing]
-        </td>
-      </tr><tr>
-        <td>
-          56
-        </td>
-        <td>
-          309
+          307
         </td>
         <td>
           1740
@@ -655,6 +633,27 @@
         </td>
         <td style="background: #AEF1AE">
           GameMatchActor.this.context.become(GameMatchActor.this.initializing(scala.collection.Seq.empty[Nothing]).orElse[Any, Unit](GameMatchActor.this.terminationBeforeGameStarted()))
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          288
+        </td>
+        <td>
+          1768
+          -
+          1777
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.generic.GenericCompanion.empty
+        </td>
+        <td style="background: #AEF1AE">
+          scala.collection.Seq.empty[Nothing]
         </td>
       </tr><tr>
         <td>
@@ -724,7 +723,7 @@
           67
         </td>
         <td>
-          257
+          256
         </td>
         <td>
           2041
@@ -760,48 +759,6 @@
           68
         </td>
         <td>
-          421
-        </td>
-        <td>
-          2087
-          -
-          2095
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;player &quot;
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          253
-        </td>
-        <td>
-          2107
-          -
-          2114
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot; ready&quot;
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
           148
         </td>
         <td>
@@ -823,28 +780,7 @@
           68
         </td>
         <td>
-          282
-        </td>
-        <td>
-          2076
-          -
-          2115
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.event.LoggingAdapter.info
-        </td>
-        <td style="background: #AEF1AE">
-          GameMatchActor.this.log.info(scala.StringContext.apply(&quot;player &quot;, &quot; ready&quot;).s(p.username))
-        </td>
-      </tr><tr>
-        <td>
-          68
-        </td>
-        <td>
-          446
+          444
         </td>
         <td>
           2085
@@ -859,6 +795,69 @@
         </td>
         <td style="background: #AEF1AE">
           scala.StringContext.apply(&quot;player &quot;, &quot; ready&quot;).s(p.username)
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          252
+        </td>
+        <td>
+          2107
+          -
+          2114
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot; ready&quot;
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          419
+        </td>
+        <td>
+          2087
+          -
+          2095
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;player &quot;
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          281
+        </td>
+        <td>
+          2076
+          -
+          2115
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.event.LoggingAdapter.info
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchActor.this.log.info(scala.StringContext.apply(&quot;player &quot;, &quot; ready&quot;).s(p.username))
         </td>
       </tr><tr>
         <td>
@@ -886,6 +885,27 @@
           70
         </td>
         <td>
+          295
+        </td>
+        <td>
+          2167
+          -
+          2189
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.copy
+        </td>
+        <td style="background: #AEF1AE">
+          p.copy(x$2, x$3, x$1)
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
           14
         </td>
         <td>
@@ -907,28 +927,7 @@
           70
         </td>
         <td>
-          129
-        </td>
-        <td>
-          2164
-          -
-          2164
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.Seq.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          collection.this.Seq.canBuildFrom[it.parttimeteam.common.GamePlayer]
-        </td>
-      </tr><tr>
-        <td>
-          70
-        </td>
-        <td>
-          413
+          411
         </td>
         <td>
           2151
@@ -954,28 +953,28 @@
           70
         </td>
         <td>
-          296
+          129
         </td>
         <td>
-          2167
+          2164
           -
-          2189
+          2164
         </td>
         <td>
-          Apply
+          TypeApply
         </td>
         <td>
-          it.parttimeteam.common.GamePlayer.copy
+          scala.collection.Seq.canBuildFrom
         </td>
         <td style="background: #AEF1AE">
-          p.copy(x$2, x$3, x$1)
+          collection.this.Seq.canBuildFrom[it.parttimeteam.common.GamePlayer]
         </td>
       </tr><tr>
         <td>
           72
         </td>
         <td>
-          255
+          254
         </td>
         <td>
           2233
@@ -1041,7 +1040,7 @@
           73
         </td>
         <td>
-          438
+          436
         </td>
         <td>
           2262
@@ -1062,7 +1061,7 @@
           74
         </td>
         <td>
-          288
+          287
         </td>
         <td>
           2302
@@ -1083,28 +1082,7 @@
           76
         </td>
         <td>
-          298
-        </td>
-        <td>
-          2385
-          -
-          2456
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.PartialFunction.orElse
-        </td>
-        <td style="background: #AEF1AE">
-          GameMatchActor.this.initializing(updatedReadyPlayers).orElse[Any, Unit](GameMatchActor.this.terminationBeforeGameStarted())
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          432
+          430
         </td>
         <td>
           2370
@@ -1119,6 +1097,48 @@
         </td>
         <td style="background: #AEF1AE">
           GameMatchActor.this.context.become(GameMatchActor.this.initializing(updatedReadyPlayers).orElse[Any, Unit](GameMatchActor.this.terminationBeforeGameStarted()))
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          378
+        </td>
+        <td>
+          2426
+          -
+          2456
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.GameMatchActor.terminationBeforeGameStarted
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchActor.this.terminationBeforeGameStarted()
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          297
+        </td>
+        <td>
+          2385
+          -
+          2456
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.PartialFunction.orElse
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchActor.this.initializing(updatedReadyPlayers).orElse[Any, Unit](GameMatchActor.this.terminationBeforeGameStarted())
         </td>
       </tr><tr>
         <td>
@@ -1140,27 +1160,6 @@
         </td>
         <td style="background: #AEF1AE">
           GameMatchActor.this.context.become(GameMatchActor.this.initializing(updatedReadyPlayers).orElse[Any, Unit](GameMatchActor.this.terminationBeforeGameStarted()))
-        </td>
-      </tr><tr>
-        <td>
-          76
-        </td>
-        <td>
-          380
-        </td>
-        <td>
-          2426
-          -
-          2456
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.match.GameMatchActor.terminationBeforeGameStarted
-        </td>
-        <td style="background: #AEF1AE">
-          GameMatchActor.this.terminationBeforeGameStarted()
         </td>
       </tr><tr>
         <td>
@@ -1188,28 +1187,7 @@
           88
         </td>
         <td>
-          439
-        </td>
-        <td>
-          2723
-          -
-          2740
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.==
-        </td>
-        <td style="background: #F0ADAD">
-          x$1.actorRef.==(ref)
-        </td>
-      </tr><tr>
-        <td>
-          88
-        </td>
-        <td>
-          281
+          280
         </td>
         <td>
           2705
@@ -1227,24 +1205,66 @@
         </td>
       </tr><tr>
         <td>
-          90
+          88
         </td>
         <td>
-          427
+          437
         </td>
         <td>
-          2791
+          2723
           -
-          2863
+          2740
         </td>
         <td>
           Apply
         </td>
         <td>
-          akka.event.LoggingAdapter.info
+          java.lang.Object.==
         </td>
         <td style="background: #F0ADAD">
-          GameMatchActor.this.log.info(scala.StringContext.apply(&quot;player &quot;, &quot; terminated before the game starts&quot;).s(player.username))
+          x$1.actorRef.==(ref)
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          379
+        </td>
+        <td>
+          2827
+          -
+          2862
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot; terminated before the game starts&quot;
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          310
+        </td>
+        <td>
+          2811
+          -
+          2826
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.username
+        </td>
+        <td style="background: #F0ADAD">
+          player.username
         </td>
       </tr><tr>
         <td>
@@ -1272,48 +1292,6 @@
           90
         </td>
         <td>
-          381
-        </td>
-        <td>
-          2827
-          -
-          2862
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot; terminated before the game starts&quot;
-        </td>
-      </tr><tr>
-        <td>
-          90
-        </td>
-        <td>
-          312
-        </td>
-        <td>
-          2811
-          -
-          2826
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.username
-        </td>
-        <td style="background: #F0ADAD">
-          player.username
-        </td>
-      </tr><tr>
-        <td>
-          90
-        </td>
-        <td>
           120
         </td>
         <td>
@@ -1332,10 +1310,31 @@
         </td>
       </tr><tr>
         <td>
+          90
+        </td>
+        <td>
+          425
+        </td>
+        <td>
+          2791
+          -
+          2863
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.event.LoggingAdapter.info
+        </td>
+        <td style="background: #F0ADAD">
+          GameMatchActor.this.log.info(scala.StringContext.apply(&quot;player &quot;, &quot; terminated before the game starts&quot;).s(player.username))
+        </td>
+      </tr><tr>
+        <td>
           93
         </td>
         <td>
-          254
+          253
         </td>
         <td>
           3040
@@ -1377,28 +1376,7 @@
           94
         </td>
         <td>
-          283
-        </td>
-        <td>
-          3074
-          -
-          3122
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.actor.ActorContext.become
-        </td>
-        <td style="background: #F0ADAD">
-          GameMatchActor.this.context.become(GameMatchActor.this.gameEndedWithErrorBeforeStarts())
-        </td>
-      </tr><tr>
-        <td>
-          94
-        </td>
-        <td>
-          452
+          450
         </td>
         <td>
           3089
@@ -1416,34 +1394,31 @@
         </td>
       </tr><tr>
         <td>
-          95
+          94
         </td>
         <td>
-          277
+          282
         </td>
         <td>
-          3133
+          3074
           -
-          3274
+          3122
         </td>
         <td>
-          ApplyToImplicitArgs
+          Apply
         </td>
         <td>
-          akka.actor.Scheduler.scheduleOnce
+          akka.actor.ActorContext.become
         </td>
         <td style="background: #F0ADAD">
-          GameMatchActor.this.context.system.scheduler.scheduleOnce(scala.concurrent.duration.`package`.DurationInt(20).second)({
-  GameMatchActor.this.log.info(&quot;Terminating game actor..&quot;);
-  actor.this.`package`.actorRef2Scala(GameMatchActor.this.self).!(akka.actor.PoisonPill)(GameMatchActor.this.self)
-})(GameMatchActor.this.context.dispatcher)
+          GameMatchActor.this.context.become(GameMatchActor.this.gameEndedWithErrorBeforeStarts())
         </td>
       </tr><tr>
         <td>
           95
         </td>
         <td>
-          399
+          397
         </td>
         <td>
           3171
@@ -1458,6 +1433,27 @@
         </td>
         <td style="background: #F0ADAD">
           scala.concurrent.duration.`package`.DurationInt(20).second
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          441
+        </td>
+        <td>
+          3182
+          -
+          3182
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.ActorContext.dispatcher
+        </td>
+        <td style="background: #F0ADAD">
+          GameMatchActor.this.context.dispatcher
         </td>
       </tr><tr>
         <td>
@@ -1485,21 +1481,24 @@
           95
         </td>
         <td>
-          443
+          276
         </td>
         <td>
-          3182
+          3133
           -
-          3182
+          3274
         </td>
         <td>
-          Select
+          ApplyToImplicitArgs
         </td>
         <td>
-          akka.actor.ActorContext.dispatcher
+          akka.actor.Scheduler.scheduleOnce
         </td>
         <td style="background: #F0ADAD">
-          GameMatchActor.this.context.dispatcher
+          GameMatchActor.this.context.system.scheduler.scheduleOnce(scala.concurrent.duration.`package`.DurationInt(20).second)({
+  GameMatchActor.this.log.info(&quot;Terminating game actor..&quot;);
+  actor.this.`package`.actorRef2Scala(GameMatchActor.this.self).!(akka.actor.PoisonPill)(GameMatchActor.this.self)
+})(GameMatchActor.this.context.dispatcher)
         </td>
       </tr><tr>
         <td>
@@ -1527,7 +1526,7 @@
           96
         </td>
         <td>
-          291
+          290
         </td>
         <td>
           3196
@@ -1548,7 +1547,28 @@
           97
         </td>
         <td>
-          256
+          426
+        </td>
+        <td>
+          3252
+          -
+          3262
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.PoisonPill
+        </td>
+        <td style="background: #F0ADAD">
+          akka.actor.PoisonPill
+        </td>
+      </tr><tr>
+        <td>
+          97
+        </td>
+        <td>
+          255
         </td>
         <td>
           3250
@@ -1590,27 +1610,6 @@
           97
         </td>
         <td>
-          428
-        </td>
-        <td>
-          3252
-          -
-          3262
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.PoisonPill
-        </td>
-        <td style="background: #F0ADAD">
-          akka.actor.PoisonPill
-        </td>
-      </tr><tr>
-        <td>
-          97
-        </td>
-        <td>
           81
         </td>
         <td>
@@ -1632,28 +1631,7 @@
           100
         </td>
         <td>
-          400
-        </td>
-        <td>
-          3316
-          -
-          3349
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;client with ref &quot;, &quot; not found&quot;).s(ref)
-        </td>
-      </tr><tr>
-        <td>
-          100
-        </td>
-        <td>
-          305
+          303
         </td>
         <td>
           3306
@@ -1671,10 +1649,31 @@
         </td>
       </tr><tr>
         <td>
+          100
+        </td>
+        <td>
+          398
+        </td>
+        <td>
+          3316
+          -
+          3349
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #F0ADAD">
+          scala.StringContext.apply(&quot;client with ref &quot;, &quot; not found&quot;).s(ref)
+        </td>
+      </tr><tr>
+        <td>
           109
         </td>
         <td>
-          233
+          232
         </td>
         <td>
           3497
@@ -1695,7 +1694,7 @@
           110
         </td>
         <td>
-          245
+          244
         </td>
         <td>
           3527
@@ -1716,7 +1715,7 @@
           110
         </td>
         <td>
-          430
+          428
         </td>
         <td>
           3545
@@ -1731,27 +1730,6 @@
         </td>
         <td style="background: #F0ADAD">
           x$2.actorRef.==(ref)
-        </td>
-      </tr><tr>
-        <td>
-          112
-        </td>
-        <td>
-          451
-        </td>
-        <td>
-          3643
-          -
-          3658
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot; left the game&quot;
         </td>
       </tr><tr>
         <td>
@@ -1800,28 +1778,7 @@
           112
         </td>
         <td>
-          279
-        </td>
-        <td>
-          3627
-          -
-          3642
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.username
-        </td>
-        <td style="background: #F0ADAD">
-          player.username
-        </td>
-      </tr><tr>
-        <td>
-          112
-        </td>
-        <td>
-          392
+          390
         </td>
         <td>
           3607
@@ -1836,6 +1793,48 @@
         </td>
         <td style="background: #F0ADAD">
           GameMatchActor.this.log.info(scala.StringContext.apply(&quot;Player &quot;, &quot; left the game&quot;).s(player.username))
+        </td>
+      </tr><tr>
+        <td>
+          112
+        </td>
+        <td>
+          449
+        </td>
+        <td>
+          3643
+          -
+          3658
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot; left the game&quot;
+        </td>
+      </tr><tr>
+        <td>
+          112
+        </td>
+        <td>
+          278
+        </td>
+        <td>
+          3627
+          -
+          3642
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.username
+        </td>
+        <td style="background: #F0ADAD">
+          player.username
         </td>
       </tr><tr>
         <td>
@@ -1884,28 +1883,28 @@
           114
         </td>
         <td>
-          423
+          245
         </td>
         <td>
-          3731
+          3738
           -
-          3735
+          3748
         </td>
         <td>
           Select
         </td>
         <td>
-          akka.actor.Actor.self
+          akka.actor.PoisonPill
         </td>
         <td style="background: #F0ADAD">
-          GameMatchActor.this.self
+          akka.actor.PoisonPill
         </td>
       </tr><tr>
         <td>
           114
         </td>
         <td>
-          453
+          451
         </td>
         <td>
           3731
@@ -1926,21 +1925,21 @@
           114
         </td>
         <td>
-          246
+          421
         </td>
         <td>
-          3738
+          3731
           -
-          3748
+          3735
         </td>
         <td>
           Select
         </td>
         <td>
-          akka.actor.PoisonPill
+          akka.actor.Actor.self
         </td>
         <td style="background: #F0ADAD">
-          akka.actor.PoisonPill
+          GameMatchActor.this.self
         </td>
       </tr><tr>
         <td>
@@ -1968,7 +1967,7 @@
           116
         </td>
         <td>
-          384
+          382
         </td>
         <td>
           3787
@@ -1993,21 +1992,21 @@
           117
         </td>
         <td>
-          232
+          268
         </td>
         <td>
-          3835
+          3837
           -
-          3877
+          3845
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          scala.StringContext.s
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          scala.StringContext.apply(&quot;Player &quot;, &quot; left the game&quot;).s(player.username)
+          &quot;Player &quot;
         </td>
       </tr><tr>
         <td>
@@ -2035,7 +2034,7 @@
           117
         </td>
         <td>
-          395
+          393
         </td>
         <td>
           3846
@@ -2056,21 +2055,21 @@
           117
         </td>
         <td>
-          269
+          231
         </td>
         <td>
-          3837
+          3835
           -
-          3845
+          3877
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          scala.StringContext.s
         </td>
         <td style="background: #F0ADAD">
-          &quot;Player &quot;
+          scala.StringContext.apply(&quot;Player &quot;, &quot; left the game&quot;).s(player.username)
         </td>
       </tr><tr>
         <td>
@@ -2098,7 +2097,28 @@
           118
         </td>
         <td>
-          238
+          427
+        </td>
+        <td>
+          3916
+          -
+          3938
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.messages.GameMessage.GameEndedForPlayerLeft
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.GameMessage.GameEndedForPlayerLeft
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          237
         </td>
         <td>
           3885
@@ -2116,24 +2136,24 @@
         </td>
       </tr><tr>
         <td>
-          118
+          119
         </td>
         <td>
-          429
+          289
         </td>
         <td>
-          3916
+          3951
           -
-          3938
+          3951
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.messages.GameMessage.GameEndedForPlayerLeft
+          akka.actor.Actor.self
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.messages.GameMessage.GameEndedForPlayerLeft
+          GameMatchActor.this.self
         </td>
       </tr><tr>
         <td>
@@ -2161,28 +2181,7 @@
           119
         </td>
         <td>
-          90
-        </td>
-        <td>
-          3946
-          -
-          3950
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.Actor.self
-        </td>
-        <td style="background: #F0ADAD">
-          GameMatchActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          119
-        </td>
-        <td>
-          434
+          432
         </td>
         <td>
           3953
@@ -2203,12 +2202,12 @@
           119
         </td>
         <td>
-          290
+          90
         </td>
         <td>
-          3951
+          3946
           -
-          3951
+          3950
         </td>
         <td>
           Select
@@ -2245,21 +2244,21 @@
           127
         </td>
         <td>
-          264
+          420
         </td>
         <td>
-          4163
+          4167
           -
-          4191
+          4167
         </td>
         <td>
-          ApplyToImplicitArgs
+          Select
         </td>
         <td>
-          akka.actor.ScalaActorRef.!
+          akka.actor.Actor.self
         </td>
         <td style="background: #F0ADAD">
-          actor.this.`package`.actorRef2Scala(ref).!(it.parttimeteam.messages.GameMessage.GameEndedForPlayerLeft)(GameMatchActor.this.self)
+          GameMatchActor.this.self
         </td>
       </tr><tr>
         <td>
@@ -2287,28 +2286,49 @@
           127
         </td>
         <td>
-          422
+          263
         </td>
         <td>
-          4167
+          4163
           -
-          4167
+          4191
         </td>
         <td>
-          Select
+          ApplyToImplicitArgs
         </td>
         <td>
-          akka.actor.Actor.self
+          akka.actor.ScalaActorRef.!
         </td>
         <td style="background: #F0ADAD">
-          GameMatchActor.this.self
+          actor.this.`package`.actorRef2Scala(ref).!(it.parttimeteam.messages.GameMessage.GameEndedForPlayerLeft)(GameMatchActor.this.self)
         </td>
       </tr><tr>
         <td>
           137
         </td>
         <td>
-          373
+          277
+        </td>
+        <td>
+          4510
+          -
+          4537
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ActorContext.unwatch
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchActor.this.context.unwatch(p.actorRef)
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          371
         </td>
         <td>
           4526
@@ -2347,31 +2367,10 @@
         </td>
       </tr><tr>
         <td>
-          137
-        </td>
-        <td>
-          278
-        </td>
-        <td>
-          4510
-          -
-          4537
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.actor.ActorContext.unwatch
-        </td>
-        <td style="background: #AEF1AE">
-          GameMatchActor.this.context.unwatch(p.actorRef)
-        </td>
-      </tr><tr>
-        <td>
           139
         </td>
         <td>
-          393
+          391
         </td>
         <td>
           4544
@@ -2386,27 +2385,6 @@
         </td>
         <td style="background: #AEF1AE">
           this.players_=(playersReady)
-        </td>
-      </tr><tr>
-        <td>
-          140
-        </td>
-        <td>
-          234
-        </td>
-        <td>
-          4586
-          -
-          4616
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #AEF1AE">
-          scala.StringContext.apply(&quot;ready players &quot;, &quot;&quot;).s(playersReady)
         </td>
       </tr><tr>
         <td>
@@ -2431,24 +2409,45 @@
         </td>
       </tr><tr>
         <td>
+          140
+        </td>
+        <td>
+          233
+        </td>
+        <td>
+          4586
+          -
+          4616
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.StringContext.s
+        </td>
+        <td style="background: #AEF1AE">
+          scala.StringContext.apply(&quot;ready players &quot;, &quot;&quot;).s(playersReady)
+        </td>
+      </tr><tr>
+        <td>
           141
         </td>
         <td>
-          424
+          271
         </td>
         <td>
-          4634
+          4622
           -
-          4651
+          4660
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          akka.event.LoggingAdapter.debug
         </td>
         <td style="background: #AEF1AE">
-          &quot;updated players &quot;
+          GameMatchActor.this.log.debug(scala.StringContext.apply(&quot;updated players &quot;, &quot;&quot;).s(GameMatchActor.this.players))
         </td>
       </tr><tr>
         <td>
@@ -2476,28 +2475,7 @@
           141
         </td>
         <td>
-          258
-        </td>
-        <td>
-          4658
-          -
-          4659
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          141
-        </td>
-        <td>
-          341
+          339
         </td>
         <td>
           4632
@@ -2518,42 +2496,42 @@
           141
         </td>
         <td>
-          272
+          422
         </td>
         <td>
-          4622
+          4634
           -
-          4660
+          4651
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          akka.event.LoggingAdapter.debug
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          GameMatchActor.this.log.debug(scala.StringContext.apply(&quot;updated players &quot;, &quot;&quot;).s(GameMatchActor.this.players))
+          &quot;updated players &quot;
         </td>
       </tr><tr>
         <td>
-          144
+          141
         </td>
         <td>
-          394
+          257
         </td>
         <td>
-          4740
+          4658
           -
-          4765
+          4659
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          akka.actor.ActorContext.watch
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #AEF1AE">
-          GameMatchActor.this.context.watch(p.actorRef)
+          &quot;&quot;
         </td>
       </tr><tr>
         <td>
@@ -2581,6 +2559,27 @@
           144
         </td>
         <td>
+          392
+        </td>
+        <td>
+          4740
+          -
+          4765
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.ActorContext.watch
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchActor.this.context.watch(p.actorRef)
+        </td>
+      </tr><tr>
+        <td>
+          144
+        </td>
+        <td>
           114
         </td>
         <td>
@@ -2602,10 +2601,10 @@
           146
         </td>
         <td>
-          415
+          259
         </td>
         <td>
-          4791
+          4772
           -
           4823
         </td>
@@ -2613,10 +2612,10 @@
           Apply
         </td>
         <td>
-          it.parttimeteam.match.TurnManager.apply
+          it.parttimeteam.match.GameMatchActor.turnManager_=
         </td>
         <td style="background: #AEF1AE">
-          TurnManager.apply[it.parttimeteam.common.GamePlayer](GameMatchActor.this.players)
+          this.turnManager_=(TurnManager.apply[it.parttimeteam.common.GamePlayer](GameMatchActor.this.players))
         </td>
       </tr><tr>
         <td>
@@ -2644,10 +2643,10 @@
           146
         </td>
         <td>
-          260
+          413
         </td>
         <td>
-          4772
+          4791
           -
           4823
         </td>
@@ -2655,10 +2654,10 @@
           Apply
         </td>
         <td>
-          it.parttimeteam.match.GameMatchActor.turnManager_=
+          it.parttimeteam.match.TurnManager.apply
         </td>
         <td style="background: #AEF1AE">
-          this.turnManager_=(TurnManager.apply[it.parttimeteam.common.GamePlayer](GameMatchActor.this.players))
+          TurnManager.apply[it.parttimeteam.common.GamePlayer](GameMatchActor.this.players)
         </td>
       </tr><tr>
         <td>
@@ -2686,42 +2685,21 @@
           148
         </td>
         <td>
-          382
+          349
         </td>
         <td>
-          4928
+          4935
           -
-          4928
-        </td>
-        <td>
-          TypeApply
-        </td>
-        <td>
-          scala.collection.Seq.canBuildFrom
-        </td>
-        <td style="background: #AEF1AE">
-          collection.this.Seq.canBuildFrom[(String, String)]
-        </td>
-      </tr><tr>
-        <td>
-          148
-        </td>
-        <td>
-          274
-        </td>
-        <td>
-          4941
-          -
-          4951
+          4939
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.common.GamePlayer.username
+          it.parttimeteam.common.GamePlayer.id
         </td>
         <td style="background: #AEF1AE">
-          p.username
+          p.id
         </td>
       </tr><tr>
         <td>
@@ -2770,21 +2748,21 @@
           148
         </td>
         <td>
-          351
+          273
         </td>
         <td>
-          4935
+          4941
           -
-          4939
+          4951
         </td>
         <td>
           Select
         </td>
         <td>
-          it.parttimeteam.common.GamePlayer.id
+          it.parttimeteam.common.GamePlayer.username
         </td>
         <td style="background: #AEF1AE">
-          p.id
+          p.username
         </td>
       </tr><tr>
         <td>
@@ -2809,10 +2787,31 @@
         </td>
       </tr><tr>
         <td>
+          148
+        </td>
+        <td>
+          380
+        </td>
+        <td>
+          4928
+          -
+          4928
+        </td>
+        <td>
+          TypeApply
+        </td>
+        <td>
+          scala.collection.Seq.canBuildFrom
+        </td>
+        <td style="background: #AEF1AE">
+          collection.this.Seq.canBuildFrom[(String, String)]
+        </td>
+      </tr><tr>
+        <td>
           149
         </td>
         <td>
-          417
+          415
         </td>
         <td>
           4959
@@ -2833,7 +2832,7 @@
           150
         </td>
         <td>
-          240
+          239
         </td>
         <td>
           5027
@@ -2875,6 +2874,27 @@
           151
         </td>
         <td>
+          283
+        </td>
+        <td>
+          5081
+          -
+          5081
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          akka.actor.Actor.self
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          151
+        </td>
+        <td>
           106
         </td>
         <td>
@@ -2896,7 +2916,7 @@
           151
         </td>
         <td>
-          371
+          369
         </td>
         <td>
           5083
@@ -2911,69 +2931,6 @@
         </td>
         <td style="background: #AEF1AE">
           it.parttimeteam.messages.GameMessage.PlayerTurn
-        </td>
-      </tr><tr>
-        <td>
-          151
-        </td>
-        <td>
-          284
-        </td>
-        <td>
-          5081
-          -
-          5081
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          akka.actor.Actor.self
-        </td>
-        <td style="background: #AEF1AE">
-          GameMatchActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          152
-        </td>
-        <td>
-          409
-        </td>
-        <td>
-          5098
-          -
-          5196
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.match.GameMatchActor.broadcastMessageToNonCurrentPlayers
-        </td>
-        <td style="background: #AEF1AE">
-          this.broadcastMessageToNonCurrentPlayers(currentPlayer.id)(it.parttimeteam.messages.GameMessage.OpponentInTurn.apply(currentPlayer.username))
-        </td>
-      </tr><tr>
-        <td>
-          152
-        </td>
-        <td>
-          385
-        </td>
-        <td>
-          5139
-          -
-          5155
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.id
-        </td>
-        <td style="background: #AEF1AE">
-          currentPlayer.id
         </td>
       </tr><tr>
         <td>
@@ -3019,24 +2976,45 @@
         </td>
       </tr><tr>
         <td>
-          153
+          152
         </td>
         <td>
-          236
+          383
         </td>
         <td>
-          5256
+          5139
           -
-          5285
+          5155
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.id
+        </td>
+        <td style="background: #AEF1AE">
+          currentPlayer.id
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          407
+        </td>
+        <td>
+          5098
+          -
+          5196
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.match.GameMatchActor.terminationAfterGameStarted
+          it.parttimeteam.match.GameMatchActor.broadcastMessageToNonCurrentPlayers
         </td>
         <td style="background: #AEF1AE">
-          GameMatchActor.this.terminationAfterGameStarted()
+          this.broadcastMessageToNonCurrentPlayers(currentPlayer.id)(it.parttimeteam.messages.GameMessage.OpponentInTurn.apply(currentPlayer.username))
         </td>
       </tr><tr>
         <td>
@@ -3064,7 +3042,28 @@
           153
         </td>
         <td>
-          362
+          235
+        </td>
+        <td>
+          5256
+          -
+          5285
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.match.GameMatchActor.terminationAfterGameStarted
+        </td>
+        <td style="background: #AEF1AE">
+          GameMatchActor.this.terminationAfterGameStarted()
+        </td>
+      </tr><tr>
+        <td>
+          153
+        </td>
+        <td>
+          360
         </td>
         <td>
           5201
@@ -3085,7 +3084,7 @@
           162
         </td>
         <td>
-          247
+          246
         </td>
         <td>
           5524
@@ -3148,6 +3147,48 @@
           164
         </td>
         <td>
+          223
+        </td>
+        <td>
+          5646
+          -
+          5653
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot; from &quot;
+        </td>
+      </tr><tr>
+        <td>
+          164
+        </td>
+        <td>
+          429
+        </td>
+        <td>
+          5654
+          -
+          5675
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.username
+        </td>
+        <td style="background: #AEF1AE">
+          playerInTurn.username
+        </td>
+      </tr><tr>
+        <td>
+          164
+        </td>
+        <td>
           46
         </td>
         <td>
@@ -3163,6 +3204,27 @@
         </td>
         <td style="background: #AEF1AE">
           &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          164
+        </td>
+        <td>
+          375
+        </td>
+        <td>
+          5623
+          -
+          5640
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          &quot;received action &quot;
         </td>
       </tr><tr>
         <td>
@@ -3190,7 +3252,7 @@
           164
         </td>
         <td>
-          261
+          260
         </td>
         <td>
           5621
@@ -3208,73 +3270,10 @@
         </td>
       </tr><tr>
         <td>
-          164
-        </td>
-        <td>
-          431
-        </td>
-        <td>
-          5654
-          -
-          5675
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.username
-        </td>
-        <td style="background: #AEF1AE">
-          playerInTurn.username
-        </td>
-      </tr><tr>
-        <td>
-          164
-        </td>
-        <td>
-          377
-        </td>
-        <td>
-          5623
-          -
-          5640
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;received action &quot;
-        </td>
-      </tr><tr>
-        <td>
-          164
-        </td>
-        <td>
-          224
-        </td>
-        <td>
-          5646
-          -
-          5653
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot; from &quot;
-        </td>
-      </tr><tr>
-        <td>
           165
         </td>
         <td>
-          364
+          362
         </td>
         <td>
           5685
@@ -3358,21 +3357,21 @@
           171
         </td>
         <td>
-          418
+          400
         </td>
         <td>
           5948
           -
-          5997
+          5969
         </td>
         <td>
-          ApplyToImplicitArgs
+          Select
         </td>
         <td>
-          akka.actor.ScalaActorRef.!
+          it.parttimeteam.common.GamePlayer.actorRef
         </td>
         <td style="background: #F0ADAD">
-          actor.this.`package`.actorRef2Scala(playerInTurn.actorRef).!(it.parttimeteam.messages.GameMessage.MatchErrorOccurred.apply(error))(GameMatchActor.this.self)
+          playerInTurn.actorRef
         </td>
       </tr><tr>
         <td>
@@ -3400,28 +3399,28 @@
           171
         </td>
         <td>
-          402
+          416
         </td>
         <td>
           5948
           -
-          5969
+          5997
         </td>
         <td>
-          Select
+          ApplyToImplicitArgs
         </td>
         <td>
-          it.parttimeteam.common.GamePlayer.actorRef
+          akka.actor.ScalaActorRef.!
         </td>
         <td style="background: #F0ADAD">
-          playerInTurn.actorRef
+          actor.this.`package`.actorRef2Scala(playerInTurn.actorRef).!(it.parttimeteam.messages.GameMessage.MatchErrorOccurred.apply(error))(GameMatchActor.this.self)
         </td>
       </tr><tr>
         <td>
           179
         </td>
         <td>
-          354
+          352
         </td>
         <td>
           6140
@@ -3532,6 +3531,27 @@
           184
         </td>
         <td>
+          394
+        </td>
+        <td>
+          6296
+          -
+          6317
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.actorRef
+        </td>
+        <td style="background: #AEF1AE">
+          playerInTurn.actorRef
+        </td>
+      </tr><tr>
+        <td>
+          184
+        </td>
+        <td>
           53
         </td>
         <td>
@@ -3547,27 +3567,6 @@
         </td>
         <td style="background: #AEF1AE">
           GameMatchActor.this.self
-        </td>
-      </tr><tr>
-        <td>
-          184
-        </td>
-        <td>
-          322
-        </td>
-        <td>
-          6296
-          -
-          6329
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!
-        </td>
-        <td style="background: #AEF1AE">
-          actor.this.`package`.actorRef2Scala(playerInTurn.actorRef).!(it.parttimeteam.messages.GameMessage.TurnEnded)(GameMatchActor.this.self)
         </td>
       </tr><tr>
         <td>
@@ -3595,28 +3594,28 @@
           184
         </td>
         <td>
-          396
+          320
         </td>
         <td>
           6296
           -
-          6317
+          6329
         </td>
         <td>
-          Select
+          ApplyToImplicitArgs
         </td>
         <td>
-          it.parttimeteam.common.GamePlayer.actorRef
+          akka.actor.ScalaActorRef.!
         </td>
         <td style="background: #AEF1AE">
-          playerInTurn.actorRef
+          actor.this.`package`.actorRef2Scala(playerInTurn.actorRef).!(it.parttimeteam.messages.GameMessage.TurnEnded)(GameMatchActor.this.self)
         </td>
       </tr><tr>
         <td>
           187
         </td>
         <td>
-          250
+          249
         </td>
         <td>
           6362
@@ -3700,7 +3699,7 @@
           190
         </td>
         <td>
-          347
+          345
         </td>
         <td>
           6479
@@ -3715,6 +3714,27 @@
         </td>
         <td style="background: #AEF1AE">
           it.parttimeteam.messages.GameMessage.PlayerTurn
+        </td>
+      </tr><tr>
+        <td>
+          191
+        </td>
+        <td>
+          373
+        </td>
+        <td>
+          6537
+          -
+          6566
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.id
+        </td>
+        <td style="background: #AEF1AE">
+          this.turnManager.getInTurn.id
         </td>
       </tr><tr>
         <td>
@@ -3763,28 +3783,7 @@
           191
         </td>
         <td>
-          375
-        </td>
-        <td>
-          6537
-          -
-          6566
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.id
-        </td>
-        <td style="background: #AEF1AE">
-          this.turnManager.getInTurn.id
-        </td>
-      </tr><tr>
-        <td>
-          191
-        </td>
-        <td>
-          323
+          321
         </td>
         <td>
           6496
@@ -3826,28 +3825,28 @@
           194
         </td>
         <td>
-          349
+          190
         </td>
         <td>
-          6678
+          6663
           -
-          6738
+          6739
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.match.GameMatchActor.inTurn
+          akka.actor.ActorContext.become
         </td>
         <td style="background: #AEF1AE">
-          GameMatchActor.this.inTurn(stateResult.updatedState, this.turnManager.getInTurn)
+          GameMatchActor.this.context.become(GameMatchActor.this.inTurn(stateResult.updatedState, this.turnManager.getInTurn))
         </td>
       </tr><tr>
         <td>
           194
         </td>
         <td>
-          241
+          240
         </td>
         <td>
           6685
@@ -3868,28 +3867,28 @@
           194
         </td>
         <td>
-          190
+          347
         </td>
         <td>
-          6663
+          6678
           -
-          6739
+          6738
         </td>
         <td>
           Apply
         </td>
         <td>
-          akka.actor.ActorContext.become
+          it.parttimeteam.match.GameMatchActor.inTurn
         </td>
         <td style="background: #AEF1AE">
-          GameMatchActor.this.context.become(GameMatchActor.this.inTurn(stateResult.updatedState, this.turnManager.getInTurn))
+          GameMatchActor.this.inTurn(stateResult.updatedState, this.turnManager.getInTurn)
         </td>
       </tr><tr>
         <td>
           196
         </td>
         <td>
-          248
+          247
         </td>
         <td>
           6752
@@ -3935,6 +3934,27 @@
           197
         </td>
         <td>
+          403
+        </td>
+        <td>
+          6771
+          -
+          6791
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Game ended, player &quot;
+        </td>
+      </tr><tr>
+        <td>
+          197
+        </td>
+        <td>
           47
         </td>
         <td>
@@ -3956,28 +3976,7 @@
           197
         </td>
         <td>
-          405
-        </td>
-        <td>
-          6771
-          -
-          6791
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Game ended, player &quot;
-        </td>
-      </tr><tr>
-        <td>
-          197
-        </td>
-        <td>
-          336
+          334
         </td>
         <td>
           6769
@@ -3998,7 +3997,7 @@
           197
         </td>
         <td>
-          243
+          242
         </td>
         <td>
           6760
@@ -4040,27 +4039,6 @@
           199
         </td>
         <td>
-          343
-        </td>
-        <td>
-          6871
-          -
-          6874
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.messages.GameMessage.Won
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.messages.GameMessage.Won
-        </td>
-      </tr><tr>
-        <td>
-          199
-        </td>
-        <td>
           192
         </td>
         <td>
@@ -4076,6 +4054,27 @@
         </td>
         <td style="background: #F0ADAD">
           GameMatchActor.this.self
+        </td>
+      </tr><tr>
+        <td>
+          199
+        </td>
+        <td>
+          341
+        </td>
+        <td>
+          6871
+          -
+          6874
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.messages.GameMessage.Won
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.messages.GameMessage.Won
         </td>
       </tr><tr>
         <td>
@@ -4103,27 +4102,6 @@
           200
         </td>
         <td>
-          406
-        </td>
-        <td>
-          6922
-          -
-          6937
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.id
-        </td>
-        <td style="background: #F0ADAD">
-          playerInTurn.id
-        </td>
-      </tr><tr>
-        <td>
-          200
-        </td>
-        <td>
           38
         </td>
         <td>
@@ -4145,7 +4123,28 @@
           200
         </td>
         <td>
-          337
+          404
+        </td>
+        <td>
+          6922
+          -
+          6937
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.id
+        </td>
+        <td style="background: #F0ADAD">
+          playerInTurn.id
+        </td>
+      </tr><tr>
+        <td>
+          200
+        </td>
+        <td>
+          335
         </td>
         <td>
           6881
@@ -4229,7 +4228,28 @@
           212
         </td>
         <td>
-          355
+          25
+        </td>
+        <td>
+          7157
+          -
+          7204
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.IterableLike.foreach
+        </td>
+        <td style="background: #AEF1AE">
+          this.players.foreach[Unit](((p: it.parttimeteam.common.GamePlayer) =&gt; actor.this.`package`.actorRef2Scala(p.actorRef).!(message)(GameMatchActor.this.self)))
+        </td>
+      </tr><tr>
+        <td>
+          212
+        </td>
+        <td>
+          353
         </td>
         <td>
           7194
@@ -4247,24 +4267,24 @@
         </td>
       </tr><tr>
         <td>
-          212
+          216
         </td>
         <td>
-          25
+          227
         </td>
         <td>
-          7157
+          7366
           -
-          7204
+          7376
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          scala.collection.IterableLike.foreach
+          it.parttimeteam.common.GamePlayer.actorRef
         </td>
         <td style="background: #AEF1AE">
-          this.players.foreach[Unit](((p: it.parttimeteam.common.GamePlayer) =&gt; actor.this.`package`.actorRef2Scala(p.actorRef).!(message)(GameMatchActor.this.self)))
+          x$4.actorRef
         </td>
       </tr><tr>
         <td>
@@ -4292,7 +4312,28 @@
           216
         </td>
         <td>
-          397
+          327
+        </td>
+        <td>
+          7366
+          -
+          7386
+        </td>
+        <td>
+          ApplyToImplicitArgs
+        </td>
+        <td>
+          akka.actor.ScalaActorRef.!
+        </td>
+        <td style="background: #AEF1AE">
+          actor.this.`package`.actorRef2Scala(x$4.actorRef).!(message)(GameMatchActor.this.self)
+        </td>
+      </tr><tr>
+        <td>
+          216
+        </td>
+        <td>
+          395
         </td>
         <td>
           7333
@@ -4307,27 +4348,6 @@
         </td>
         <td style="background: #AEF1AE">
           x$3.id.!=(currentPlayerId)
-        </td>
-      </tr><tr>
-        <td>
-          216
-        </td>
-        <td>
-          228
-        </td>
-        <td>
-          7366
-          -
-          7376
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.actorRef
-        </td>
-        <td style="background: #AEF1AE">
-          x$4.actorRef
         </td>
       </tr><tr>
         <td>
@@ -4352,78 +4372,15 @@
         </td>
       </tr><tr>
         <td>
-          216
-        </td>
-        <td>
-          329
-        </td>
-        <td>
-          7366
-          -
-          7386
-        </td>
-        <td>
-          ApplyToImplicitArgs
-        </td>
-        <td>
-          akka.actor.ScalaActorRef.!
-        </td>
-        <td style="background: #AEF1AE">
-          actor.this.`package`.actorRef2Scala(x$4.actorRef).!(message)(GameMatchActor.this.self)
-        </td>
-      </tr><tr>
-        <td>
           226
         </td>
         <td>
-          352
+          316
         </td>
         <td>
           7590
           -
-          7617
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Predef.println
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Predef.println(gameState.toString())
-        </td>
-      </tr><tr>
-        <td>
-          226
-        </td>
-        <td>
-          78
-        </td>
-        <td>
-          7598
-          -
-          7616
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.core.GameState.toString
-        </td>
-        <td style="background: #AEF1AE">
-          gameState.toString()
-        </td>
-      </tr><tr>
-        <td>
-          227
-        </td>
-        <td>
-          85
-        </td>
-        <td>
-          7622
-          -
-          7918
+          7886
         </td>
         <td>
           Apply
@@ -4436,36 +4393,57 @@
         </td>
       </tr><tr>
         <td>
-          228
+          227
         </td>
         <td>
-          185
+          5
         </td>
         <td>
-          7661
+          7664
           -
-          7676
+          7877
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          it.parttimeteam.common.GamePlayer.actorRef
+          it.parttimeteam.gamestate.PlayerGameState.apply
         </td>
         <td style="background: #AEF1AE">
-          player.actorRef
+          it.parttimeteam.gamestate.PlayerGameState.apply(gameState.board, gameState.players.find(((x$5: it.parttimeteam.core.player.Player) =&gt; x$5.id.==(player.id))).get.hand, gameState.players.filter(((x$6: it.parttimeteam.core.player.Player) =&gt; x$6.id.!=(player.id))).map[it.parttimeteam.gamestate.Opponent, Seq[it.parttimeteam.gamestate.Opponent]](((p: it.parttimeteam.core.player.Player) =&gt; it.parttimeteam.gamestate.Opponent.apply(p.name, p.hand.playerCards.size)))(collection.this.Seq.canBuildFrom[it.parttimeteam.gamestate.Opponent]))
         </td>
       </tr><tr>
         <td>
-          228
+          227
         </td>
         <td>
-          151
+          387
         </td>
         <td>
-          7661
+          7647
           -
-          7910
+          7878
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.messages.GameMessage.GameStateUpdated.apply
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.messages.GameMessage.GameStateUpdated.apply(it.parttimeteam.gamestate.PlayerGameState.apply(gameState.board, gameState.players.find(((x$5: it.parttimeteam.core.player.Player) =&gt; x$5.id.==(player.id))).get.hand, gameState.players.filter(((x$6: it.parttimeteam.core.player.Player) =&gt; x$6.id.!=(player.id))).map[it.parttimeteam.gamestate.Opponent, Seq[it.parttimeteam.gamestate.Opponent]](((p: it.parttimeteam.core.player.Player) =&gt; it.parttimeteam.gamestate.Opponent.apply(p.name, p.hand.playerCards.size)))(collection.this.Seq.canBuildFrom[it.parttimeteam.gamestate.Opponent])))
+        </td>
+      </tr><tr>
+        <td>
+          227
+        </td>
+        <td>
+          28
+        </td>
+        <td>
+          7629
+          -
+          7878
         </td>
         <td>
           ApplyToImplicitArgs
@@ -4478,15 +4456,36 @@
         </td>
       </tr><tr>
         <td>
-          228
+          227
         </td>
         <td>
-          318
+          78
         </td>
         <td>
-          7677
+          7629
           -
-          7677
+          7644
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.actorRef
+        </td>
+        <td style="background: #AEF1AE">
+          player.actorRef
+        </td>
+      </tr><tr>
+        <td>
+          227
+        </td>
+        <td>
+          224
+        </td>
+        <td>
+          7645
+          -
+          7645
         </td>
         <td>
           Select
@@ -4502,54 +4501,12 @@
           228
         </td>
         <td>
-          225
+          350
         </td>
         <td>
-          7696
+          7689
           -
-          7909
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.gamestate.PlayerGameState.apply
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.gamestate.PlayerGameState.apply(gameState.board, gameState.players.find(((x$5: it.parttimeteam.core.player.Player) =&gt; x$5.id.==(player.id))).get.hand, gameState.players.filter(((x$6: it.parttimeteam.core.player.Player) =&gt; x$6.id.!=(player.id))).map[it.parttimeteam.gamestate.Opponent, Seq[it.parttimeteam.gamestate.Opponent]](((p: it.parttimeteam.core.player.Player) =&gt; it.parttimeteam.gamestate.Opponent.apply(p.name, p.hand.playerCards.size)))(collection.this.Seq.canBuildFrom[it.parttimeteam.gamestate.Opponent]))
-        </td>
-      </tr><tr>
-        <td>
-          228
-        </td>
-        <td>
-          28
-        </td>
-        <td>
-          7679
-          -
-          7910
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.messages.GameMessage.GameStateUpdated.apply
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.messages.GameMessage.GameStateUpdated.apply(it.parttimeteam.gamestate.PlayerGameState.apply(gameState.board, gameState.players.find(((x$5: it.parttimeteam.core.player.Player) =&gt; x$5.id.==(player.id))).get.hand, gameState.players.filter(((x$6: it.parttimeteam.core.player.Player) =&gt; x$6.id.!=(player.id))).map[it.parttimeteam.gamestate.Opponent, Seq[it.parttimeteam.gamestate.Opponent]](((p: it.parttimeteam.core.player.Player) =&gt; it.parttimeteam.gamestate.Opponent.apply(p.name, p.hand.playerCards.size)))(collection.this.Seq.canBuildFrom[it.parttimeteam.gamestate.Opponent])))
-        </td>
-      </tr><tr>
-        <td>
-          229
-        </td>
-        <td>
-          15
-        </td>
-        <td>
-          7721
-          -
-          7736
+          7704
         </td>
         <td>
           Select
@@ -4562,15 +4519,15 @@
         </td>
       </tr><tr>
         <td>
-          230
+          229
         </td>
         <td>
-          387
+          185
         </td>
         <td>
-          7777
+          7745
           -
-          7786
+          7754
         </td>
         <td>
           Select
@@ -4583,15 +4540,36 @@
         </td>
       </tr><tr>
         <td>
-          230
+          229
         </td>
         <td>
-          199
+          385
         </td>
         <td>
-          7769
+          7714
           -
-          7786
+          7764
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.hand
+        </td>
+        <td style="background: #AEF1AE">
+          gameState.players.find(((x$5: it.parttimeteam.core.player.Player) =&gt; x$5.id.==(player.id))).get.hand
+        </td>
+      </tr><tr>
+        <td>
+          229
+        </td>
+        <td>
+          15
+        </td>
+        <td>
+          7737
+          -
+          7754
         </td>
         <td>
           Apply
@@ -4607,54 +4585,12 @@
           230
         </td>
         <td>
-          34
+          340
         </td>
         <td>
-          7746
+          7821
           -
-          7796
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.player.Player.hand
-        </td>
-        <td style="background: #AEF1AE">
-          gameState.players.find(((x$5: it.parttimeteam.core.player.Player) =&gt; x$5.id.==(player.id))).get.hand
-        </td>
-      </tr><tr>
-        <td>
-          231
-        </td>
-        <td>
-          331
-        </td>
-        <td>
-          7839
-          -
-          7848
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.common.GamePlayer.id
-        </td>
-        <td style="background: #AEF1AE">
-          player.id
-        </td>
-      </tr><tr>
-        <td>
-          231
-        </td>
-        <td>
-          5
-        </td>
-        <td>
-          7853
-          -
-          7853
+          7821
         </td>
         <td>
           TypeApply
@@ -4667,99 +4603,15 @@
         </td>
       </tr><tr>
         <td>
-          231
+          230
         </td>
         <td>
           175
         </td>
         <td>
-          7859
+          7774
           -
-          7900
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.gamestate.Opponent.apply
-        </td>
-        <td style="background: #AEF1AE">
-          it.parttimeteam.gamestate.Opponent.apply(p.name, p.hand.playerCards.size)
-        </td>
-      </tr><tr>
-        <td>
-          231
-        </td>
-        <td>
-          342
-        </td>
-        <td>
-          7876
-          -
-          7899
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scala.collection.SeqLike.size
-        </td>
-        <td style="background: #AEF1AE">
-          p.hand.playerCards.size
-        </td>
-      </tr><tr>
-        <td>
-          231
-        </td>
-        <td>
-          159
-        </td>
-        <td>
-          7831
-          -
-          7848
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.!=
-        </td>
-        <td style="background: #AEF1AE">
-          x$6.id.!=(player.id)
-        </td>
-      </tr><tr>
-        <td>
-          231
-        </td>
-        <td>
-          72
-        </td>
-        <td>
-          7868
-          -
-          7874
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.core.player.Player.name
-        </td>
-        <td style="background: #AEF1AE">
-          p.name
-        </td>
-      </tr><tr>
-        <td>
-          231
-        </td>
-        <td>
-          389
-        </td>
-        <td>
-          7806
-          -
-          7901
+          7869
         </td>
         <td>
           ApplyToImplicitArgs
@@ -4772,15 +4624,141 @@
         </td>
       </tr><tr>
         <td>
-          239
+          230
         </td>
         <td>
-          169
+          199
         </td>
         <td>
-          8007
+          7807
           -
-          8042
+          7816
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.common.GamePlayer.id
+        </td>
+        <td style="background: #AEF1AE">
+          player.id
+        </td>
+      </tr><tr>
+        <td>
+          230
+        </td>
+        <td>
+          34
+        </td>
+        <td>
+          7799
+          -
+          7816
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.!=
+        </td>
+        <td style="background: #AEF1AE">
+          x$6.id.!=(player.id)
+        </td>
+      </tr><tr>
+        <td>
+          230
+        </td>
+        <td>
+          159
+        </td>
+        <td>
+          7844
+          -
+          7867
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scala.collection.SeqLike.size
+        </td>
+        <td style="background: #AEF1AE">
+          p.hand.playerCards.size
+        </td>
+      </tr><tr>
+        <td>
+          230
+        </td>
+        <td>
+          72
+        </td>
+        <td>
+          7827
+          -
+          7868
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.gamestate.Opponent.apply
+        </td>
+        <td style="background: #AEF1AE">
+          it.parttimeteam.gamestate.Opponent.apply(p.name, p.hand.playerCards.size)
+        </td>
+      </tr><tr>
+        <td>
+          230
+        </td>
+        <td>
+          329
+        </td>
+        <td>
+          7836
+          -
+          7842
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.core.player.Player.name
+        </td>
+        <td style="background: #AEF1AE">
+          p.name
+        </td>
+      </tr><tr>
+        <td>
+          238
+        </td>
+        <td>
+          151
+        </td>
+        <td>
+          7993
+          -
+          8009
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.==
+        </td>
+        <td style="background: #AEF1AE">
+          x$7.id.==(playerId)
+        </td>
+      </tr><tr>
+        <td>
+          238
+        </td>
+        <td>
+          85
+        </td>
+        <td>
+          7975
+          -
+          8010
         </td>
         <td>
           Apply
@@ -4796,33 +4774,12 @@
           239
         </td>
         <td>
-          365
+          363
         </td>
         <td>
-          8025
-          -
           8041
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.==
-        </td>
-        <td style="background: #AEF1AE">
-          x$7.id.==(playerId)
-        </td>
-      </tr><tr>
-        <td>
-          240
-        </td>
-        <td>
-          7
-        </td>
-        <td>
-          8073
           -
-          8077
+          8045
         </td>
         <td>
           Apply
@@ -4835,36 +4792,15 @@
         </td>
       </tr><tr>
         <td>
-          241
+          240
         </td>
         <td>
-          227
+          169
         </td>
         <td>
-          8097
+          8074
           -
-          8139
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.event.LoggingAdapter.info
-        </td>
-        <td style="background: #F0ADAD">
-          GameMatchActor.this.log.info(scala.StringContext.apply(&quot;Player id &quot;, &quot; not found&quot;).s(playerId))
-        </td>
-      </tr><tr>
-        <td>
-          241
-        </td>
-        <td>
-          299
-        </td>
-        <td>
           8106
-          -
-          8138
         </td>
         <td>
           Apply
@@ -4874,6 +4810,27 @@
         </td>
         <td style="background: #F0ADAD">
           scala.StringContext.apply(&quot;Player id &quot;, &quot; not found&quot;).s(playerId)
+        </td>
+      </tr><tr>
+        <td>
+          240
+        </td>
+        <td>
+          7
+        </td>
+        <td>
+          8065
+          -
+          8107
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.event.LoggingAdapter.info
+        </td>
+        <td style="background: #F0ADAD">
+          GameMatchActor.this.log.info(scala.StringContext.apply(&quot;Player id &quot;, &quot; not found&quot;).s(playerId))
         </td>
       </tr>
     </table>

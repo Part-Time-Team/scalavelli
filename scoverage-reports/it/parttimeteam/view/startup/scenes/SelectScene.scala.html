@@ -26,7 +26,7 @@
 </span>2 <span style=''>
 </span>3 <span style=''>import it.parttimeteam.view.ViewConfig
 </span>4 <span style=''>import it.parttimeteam.view.startup.listeners.SelectSceneListener
-</span>5 <span style=''>import it.parttimeteam.view.utils.MachiavelliButton
+</span>5 <span style=''>import it.parttimeteam.view.utils.{Paths, ScalavelliButton, Strings}
 </span>6 <span style=''>import scalafx.geometry.Pos.Center
 </span>7 <span style=''>import scalafx.scene.control.Button
 </span>8 <span style=''>import scalafx.scene.image.{Image, ImageView}
@@ -39,8 +39,8 @@
 </span>15 <span style=''>  * @param parentStage the stage which contains the scene
 </span>16 <span style=''>  * @param listener    the listener which allow to select the modality
 </span>17 <span style=''>  */
-</span>18 <span style=''>class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) extends BaseStartUpScene(parentStage) {
-</span>19 <span style=''>  val title: ImageView = </span><span style='background: #F0ADAD'>new</span><span style=''> ImageView(new Image(&quot;/images/game_title.png&quot;)) {
+</span>18 <span style=''>class SelectScene(val parentStage: Stage, val listener: SelectSceneListener) extends BaseStartupScene(parentStage) {
+</span>19 <span style=''>  val title: ImageView = </span><span style='background: #F0ADAD'>new</span><span style=''> ImageView(new Image(Paths.GAME_TITLE)) {
 </span>20 <span style=''>    </span><span style='background: #F0ADAD'>fitWidth &lt;== parentStage.width / 3</span><span style=''>
 </span>21 <span style=''>    </span><span style='background: #F0ADAD'>preserveRatio = true</span><span style=''>
 </span>22 <span style=''>  }
@@ -50,9 +50,9 @@
 </span>26 <span style=''>  </span><span style='background: #F0ADAD'>center.spacing = ViewConfig.formSpacing</span><span style=''>
 </span>27 <span style=''>  </span><span style='background: #F0ADAD'>center.setMaxWidth(ViewConfig.formWidth)</span><span style=''>
 </span>28 <span style=''>
-</span>29 <span style=''>  val btnPublicGame: Button = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Start new game&quot;, () =&gt; listener.onSelectedPublicGame())</span><span style=''>
-</span>30 <span style=''>  val btnPrivateGame: Button = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Participate with a code&quot;, () =&gt; listener.onSelectedPrivateGame())</span><span style=''>
-</span>31 <span style=''>  val btnCreatePrivateGame: Button = </span><span style='background: #F0ADAD'>MachiavelliButton(&quot;Create new code&quot;, () =&gt; listener.onSelectedCreatePrivateGame())</span><span style=''>
+</span>29 <span style=''>  val btnPublicGame: Button = </span><span style='background: #F0ADAD'>ScalavelliButton(Strings.START_NEW_GAME, () =&gt; listener.onSelectedPublicGame())</span><span style=''>
+</span>30 <span style=''>  val btnPrivateGame: Button = </span><span style='background: #F0ADAD'>ScalavelliButton(Strings.JOIN_WITH_CODE, () =&gt; listener.onSelectedPrivateGame())</span><span style=''>
+</span>31 <span style=''>  val btnCreatePrivateGame: Button = </span><span style='background: #F0ADAD'>ScalavelliButton(Strings.CREATE_PRIVATE_CODE, () =&gt; listener.onSelectedCreatePrivateGame())</span><span style=''>
 </span>32 <span style=''>
 </span>33 <span style=''>  </span><span style='background: #F0ADAD'>btnPublicGame.prefWidth &lt;== center.width</span><span style=''>
 </span>34 <span style=''>  </span><span style='background: #F0ADAD'>btnPrivateGame.prefWidth &lt;== center.width</span><span style=''>
@@ -81,12 +81,12 @@
           19
         </td>
         <td>
-          1396
+          1980
         </td>
         <td>
-          720
+          737
           -
-          723
+          740
         </td>
         <td>
           Apply
@@ -102,12 +102,33 @@
           20
         </td>
         <td>
-          1321
+          2541
         </td>
         <td>
-          790
+          799
           -
-          811
+          820
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.binding.NumberExpression./
+        </td>
+        <td style="background: #F0ADAD">
+          SelectScene.this.parentStage.width./(3)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1853
+        </td>
+        <td>
+          799
+          -
+          820
         </td>
         <td>
           ApplyImplicitView
@@ -123,12 +144,12 @@
           20
         </td>
         <td>
-          2384
+          1191
         </td>
         <td>
-          777
+          786
           -
-          811
+          820
         </td>
         <td>
           Apply
@@ -141,36 +162,15 @@
         </td>
       </tr><tr>
         <td>
-          20
-        </td>
-        <td>
-          1959
-        </td>
-        <td>
-          790
-          -
-          811
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.beans.binding.NumberExpression./
-        </td>
-        <td style="background: #F0ADAD">
-          SelectScene.this.parentStage.width./(3)
-        </td>
-      </tr><tr>
-        <td>
           21
         </td>
         <td>
-          1657
+          2284
         </td>
         <td>
-          816
+          825
           -
-          836
+          845
         </td>
         <td>
           Apply
@@ -186,12 +186,12 @@
           24
         </td>
         <td>
-          2502
+          1318
         </td>
         <td>
-          863
+          872
           -
-          873
+          882
         </td>
         <td>
           Apply
@@ -207,33 +207,12 @@
           25
         </td>
         <td>
-          1866
+          1761
         </td>
         <td>
-          895
+          885
           -
-          901
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scalafx.geometry.Pos.Center
-        </td>
-        <td style="background: #F0ADAD">
-          scalafx.geometry.Pos.Center
-        </td>
-      </tr><tr>
-        <td>
-          25
-        </td>
-        <td>
-          1193
-        </td>
-        <td>
-          876
-          -
-          901
+          910
         </td>
         <td>
           Apply
@@ -246,15 +225,36 @@
         </td>
       </tr><tr>
         <td>
+          25
+        </td>
+        <td>
+          2429
+        </td>
+        <td>
+          904
+          -
+          910
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.geometry.Pos.Center
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.geometry.Pos.Center
+        </td>
+      </tr><tr>
+        <td>
           26
         </td>
         <td>
-          2199
+          1362
         </td>
         <td>
-          921
+          930
           -
-          943
+          952
         </td>
         <td>
           Select
@@ -270,12 +270,12 @@
           26
         </td>
         <td>
-          1930
+          2548
         </td>
         <td>
-          904
+          913
           -
-          943
+          952
         </td>
         <td>
           Apply
@@ -291,33 +291,12 @@
           27
         </td>
         <td>
-          1324
+          1195
         </td>
         <td>
-          946
+          974
           -
-          952
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.startup.scenes.SelectScene.center
-        </td>
-        <td style="background: #F0ADAD">
-          SelectScene.this.center
-        </td>
-      </tr><tr>
-        <td>
-          27
-        </td>
-        <td>
-          2358
-        </td>
-        <td>
-          965
-          -
-          985
+          994
         </td>
         <td>
           Select
@@ -333,12 +312,12 @@
           27
         </td>
         <td>
-          1717
+          2286
         </td>
         <td>
-          946
+          955
           -
-          986
+          995
         </td>
         <td>
           Apply
@@ -351,15 +330,57 @@
         </td>
       </tr><tr>
         <td>
+          27
+        </td>
+        <td>
+          1828
+        </td>
+        <td>
+          955
+          -
+          961
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.SelectScene.center
+        </td>
+        <td style="background: #F0ADAD">
+          SelectScene.this.center
+        </td>
+      </tr><tr>
+        <td>
           29
         </td>
         <td>
-          2471
+          2401
         </td>
         <td>
-          1060
+          1027
           -
-          1091
+          1106
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliButton.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliButton.apply(it.parttimeteam.view.utils.Strings.START_NEW_GAME, (() =&gt; SelectScene.this.listener.onSelectedPublicGame()))
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1255
+        </td>
+        <td>
+          1074
+          -
+          1105
         </td>
         <td>
           Apply
@@ -375,75 +396,75 @@
           29
         </td>
         <td>
-          1400
+          1926
         </td>
         <td>
-          1036
+          1044
           -
-          1052
+          1066
         </td>
         <td>
-          Literal
+          Select
         </td>
         <td>
-          &lt;nosymbol&gt;
+          it.parttimeteam.view.utils.Strings.START_NEW_GAME
         </td>
         <td style="background: #F0ADAD">
-          &quot;Start new game&quot;
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          1809
-        </td>
-        <td>
-          1018
-          -
-          1092
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.utils.MachiavelliButton.apply
-        </td>
-        <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;Start new game&quot;, (() =&gt; SelectScene.this.listener.onSelectedPublicGame()))
+          it.parttimeteam.view.utils.Strings.START_NEW_GAME
         </td>
       </tr><tr>
         <td>
           30
         </td>
         <td>
-          1934
+          2487
         </td>
         <td>
-          1124
+          1138
           -
-          1208
+          1218
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.view.utils.MachiavelliButton.apply
+          it.parttimeteam.view.utils.ScalavelliButton.apply
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;Participate with a code&quot;, (() =&gt; SelectScene.this.listener.onSelectedPrivateGame()))
+          it.parttimeteam.view.utils.ScalavelliButton.apply(it.parttimeteam.view.utils.Strings.JOIN_WITH_CODE, (() =&gt; SelectScene.this.listener.onSelectedPrivateGame()))
         </td>
       </tr><tr>
         <td>
           30
         </td>
         <td>
-          2220
+          1751
         </td>
         <td>
-          1175
+          1155
           -
-          1207
+          1177
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.JOIN_WITH_CODE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.JOIN_WITH_CODE
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1033
+        </td>
+        <td>
+          1185
+          -
+          1217
         </td>
         <td>
           Apply
@@ -456,36 +477,15 @@
         </td>
       </tr><tr>
         <td>
-          30
-        </td>
-        <td>
-          1175
-        </td>
-        <td>
-          1142
-          -
-          1167
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Participate with a code&quot;
-        </td>
-      </tr><tr>
-        <td>
           31
         </td>
         <td>
-          2359
+          1198
         </td>
         <td>
-          1289
+          1308
           -
-          1327
+          1346
         </td>
         <td>
           Apply
@@ -501,75 +501,54 @@
           31
         </td>
         <td>
-          1718
+          1829
         </td>
         <td>
-          1246
+          1273
           -
-          1328
+          1300
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          it.parttimeteam.view.utils.MachiavelliButton.apply
+          it.parttimeteam.view.utils.Strings.CREATE_PRIVATE_CODE
         </td>
         <td style="background: #F0ADAD">
-          it.parttimeteam.view.utils.MachiavelliButton.apply(&quot;Create new code&quot;, (() =&gt; SelectScene.this.listener.onSelectedCreatePrivateGame()))
+          it.parttimeteam.view.utils.Strings.CREATE_PRIVATE_CODE
         </td>
       </tr><tr>
         <td>
           31
         </td>
         <td>
-          1301
+          2261
         </td>
         <td>
-          1264
+          1256
           -
-          1281
+          1347
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          it.parttimeteam.view.utils.ScalavelliButton.apply
         </td>
         <td style="background: #F0ADAD">
-          &quot;Create new code&quot;
+          it.parttimeteam.view.utils.ScalavelliButton.apply(it.parttimeteam.view.utils.Strings.CREATE_PRIVATE_CODE, (() =&gt; SelectScene.this.listener.onSelectedCreatePrivateGame()))
         </td>
       </tr><tr>
         <td>
           33
         </td>
         <td>
-          1345
+          1311
         </td>
         <td>
-          1360
+          1351
           -
-          1372
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scalafx.scene.layout.Region.width
-        </td>
-        <td style="background: #F0ADAD">
-          SelectScene.this.center.width
-        </td>
-      </tr><tr>
-        <td>
-          33
-        </td>
-        <td>
-          2478
-        </td>
-        <td>
-          1332
-          -
-          1372
+          1391
         </td>
         <td>
           Apply
@@ -582,15 +561,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          33
         </td>
         <td>
-          1784
+          1932
         </td>
         <td>
-          1404
+          1379
           -
-          1416
+          1391
         </td>
         <td>
           Select
@@ -606,12 +585,12 @@
           34
         </td>
         <td>
-          1179
+          1701
         </td>
         <td>
-          1375
+          1394
           -
-          1416
+          1435
         </td>
         <td>
           Apply
@@ -624,36 +603,15 @@
         </td>
       </tr><tr>
         <td>
-          35
+          34
         </td>
         <td>
-          1882
+          2405
         </td>
         <td>
-          1419
+          1423
           -
-          1466
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.beans.property.Property.&lt;==
-        </td>
-        <td style="background: #F0ADAD">
-          SelectScene.this.btnCreatePrivateGame.prefWidth.&lt;==(SelectScene.this.center.width)
-        </td>
-      </tr><tr>
-        <td>
-          35
-        </td>
-        <td>
-          2222
-        </td>
-        <td>
-          1454
-          -
-          1466
+          1435
         </td>
         <td>
           Select
@@ -666,36 +624,57 @@
         </td>
       </tr><tr>
         <td>
-          37
+          35
         </td>
         <td>
-          2331
+          1016
         </td>
         <td>
-          1470
+          1473
           -
-          1497
+          1485
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.Region.width
+        </td>
+        <td style="background: #F0ADAD">
+          SelectScene.this.center.width
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          2540
+        </td>
+        <td>
+          1438
+          -
+          1485
         </td>
         <td>
           Apply
         </td>
         <td>
-          scalafx.scene.layout.BorderPane.center_=
+          scalafx.beans.property.Property.&lt;==
         </td>
         <td style="background: #F0ADAD">
-          SelectScene.this.mainContent.center_=(SelectScene.this.center)
+          SelectScene.this.btnCreatePrivateGame.prefWidth.&lt;==(SelectScene.this.center.width)
         </td>
       </tr><tr>
         <td>
           37
         </td>
         <td>
-          1238
+          1913
         </td>
         <td>
-          1491
+          1510
           -
-          1497
+          1516
         </td>
         <td>
           Select
@@ -708,141 +687,36 @@
         </td>
       </tr><tr>
         <td>
-          39
+          37
         </td>
         <td>
-          2335
+          1172
         </td>
         <td>
-          1565
+          1489
           -
-          1585
+          1516
         </td>
         <td>
-          ApplyImplicitView
+          Apply
         </td>
         <td>
-          scalafx.scene.control.Button.sfxButton2jfx
+          scalafx.scene.layout.BorderPane.center_=
         </td>
         <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(SelectScene.this.btnCreatePrivateGame)
+          SelectScene.this.mainContent.center_=(SelectScene.this.center)
         </td>
       </tr><tr>
         <td>
           39
         </td>
         <td>
-          2197
+          1788
         </td>
         <td>
-          1549
+          1553
           -
-          1563
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.startup.scenes.SelectScene.btnPrivateGame
-        </td>
-        <td style="background: #F0ADAD">
-          SelectScene.this.btnPrivateGame
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          1025
-        </td>
-        <td>
-          1527
-          -
-          1532
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.startup.scenes.SelectScene.title
-        </td>
-        <td style="background: #F0ADAD">
-          SelectScene.this.title
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          1294
-        </td>
-        <td>
-          1565
-          -
-          1585
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.startup.scenes.SelectScene.btnCreatePrivateGame
-        </td>
-        <td style="background: #F0ADAD">
-          SelectScene.this.btnCreatePrivateGame
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          1888
-        </td>
-        <td>
-          1549
-          -
-          1563
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.control.Button.sfxButton2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(SelectScene.this.btnPrivateGame)
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          2417
-        </td>
-        <td>
-          1527
-          -
-          1532
-        </td>
-        <td>
-          ApplyImplicitView
-        </td>
-        <td>
-          scalafx.scene.image.ImageView.sfxImageView2jfx
-        </td>
-        <td style="background: #F0ADAD">
-          image.this.ImageView.sfxImageView2jfx(SelectScene.this.title)
-        </td>
-      </tr><tr>
-        <td>
-          39
-        </td>
-        <td>
-          1182
-        </td>
-        <td>
-          1534
-          -
-          1547
+          1566
         </td>
         <td>
           ApplyImplicitView
@@ -858,12 +732,54 @@
           39
         </td>
         <td>
-          1660
+          2511
         </td>
         <td>
-          1501
+          1568
           -
-          1586
+          1582
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Button.sfxButton2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(SelectScene.this.btnPrivateGame)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1895
+        </td>
+        <td>
+          1584
+          -
+          1604
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.SelectScene.btnCreatePrivateGame
+        </td>
+        <td style="background: #F0ADAD">
+          SelectScene.this.btnCreatePrivateGame
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          2346
+        </td>
+        <td>
+          1520
+          -
+          1605
         </td>
         <td>
           Apply
@@ -879,12 +795,33 @@
           39
         </td>
         <td>
-          1708
+          1021
         </td>
         <td>
-          1501
+          1568
           -
-          1507
+          1582
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.SelectScene.btnPrivateGame
+        </td>
+        <td style="background: #F0ADAD">
+          SelectScene.this.btnPrivateGame
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          2264
+        </td>
+        <td>
+          1520
+          -
+          1526
         </td>
         <td>
           Select
@@ -900,12 +837,33 @@
           39
         </td>
         <td>
-          1785
+          1576
         </td>
         <td>
-          1534
+          1546
           -
-          1547
+          1551
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.SelectScene.title
+        </td>
+        <td style="background: #F0ADAD">
+          SelectScene.this.title
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          2473
+        </td>
+        <td>
+          1553
+          -
+          1566
         </td>
         <td>
           Select
@@ -918,57 +876,57 @@
         </td>
       </tr><tr>
         <td>
-          41
+          39
         </td>
         <td>
-          2470
+          1316
         </td>
         <td>
-          1616
+          1546
           -
-          1627
+          1551
         </td>
         <td>
-          Select
+          ApplyImplicitView
         </td>
         <td>
-          it.parttimeteam.view.startup.scenes.BaseStartUpScene.mainContent
+          scalafx.scene.image.ImageView.sfxImageView2jfx
         </td>
         <td style="background: #F0ADAD">
-          SelectScene.this.mainContent
+          image.this.ImageView.sfxImageView2jfx(SelectScene.this.title)
         </td>
       </tr><tr>
         <td>
-          41
+          39
         </td>
         <td>
-          1009
+          1193
         </td>
         <td>
+          1584
+          -
           1604
-          -
-          1614
         </td>
         <td>
-          Select
+          ApplyImplicitView
         </td>
         <td>
-          it.parttimeteam.view.startup.scenes.BaseStartUpScene.background
+          scalafx.scene.control.Button.sfxButton2jfx
         </td>
         <td style="background: #F0ADAD">
-          SelectScene.this.background
+          control.this.Button.sfxButton2jfx(SelectScene.this.btnCreatePrivateGame)
         </td>
       </tr><tr>
         <td>
           41
         </td>
         <td>
-          1869
+          2461
         </td>
         <td>
-          1600
+          1619
           -
-          1628
+          1647
         </td>
         <td>
           Apply
@@ -984,12 +942,54 @@
           41
         </td>
         <td>
-          1157
+          1634
         </td>
         <td>
-          1590
+          1623
           -
-          1628
+          1633
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupScene.background
+        </td>
+        <td style="background: #F0ADAD">
+          SelectScene.this.background
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1323
+        </td>
+        <td>
+          1635
+          -
+          1646
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupScene.mainContent
+        </td>
+        <td style="background: #F0ADAD">
+          SelectScene.this.mainContent
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1750
+        </td>
+        <td>
+          1609
+          -
+          1647
         </td>
         <td>
           Apply

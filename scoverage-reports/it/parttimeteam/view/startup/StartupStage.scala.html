@@ -1,0 +1,1048 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/startup/StartupStage.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.startup
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.controller.startup.StartupListener
+</span>4 <span style=''>import it.parttimeteam.model.ErrorEvent
+</span>5 <span style=''>import it.parttimeteam.view.startup.listeners._
+</span>6 <span style=''>import it.parttimeteam.view.startup.scenes._
+</span>7 <span style=''>import it.parttimeteam.view.utils.{ScalavelliAlert, Strings}
+</span>8 <span style=''>import it.parttimeteam.view.{BaseStage, ViewConfig}
+</span>9 <span style=''>import scalafx.application.Platform
+</span>10 <span style=''>import scalafx.scene.control.Alert
+</span>11 <span style=''>import scalafx.scene.control.Alert.AlertType
+</span>12 <span style=''>
+</span>13 <span style=''>/**
+</span>14 <span style=''>  * Stage for startup scenes.
+</span>15 <span style=''>  */
+</span>16 <span style=''>trait StartupStage extends BaseStage {
+</span>17 <span style=''>  /**
+</span>18 <span style=''>    * Display the private code generated
+</span>19 <span style=''>    *
+</span>20 <span style=''>    * @param privateCode the code to be displayed
+</span>21 <span style=''>    */
+</span>22 <span style=''>  def notifyPrivateCode(privateCode: String): Unit
+</span>23 <span style=''>
+</span>24 <span style=''>  /**
+</span>25 <span style=''>    * Notify the user the joined lobby event
+</span>26 <span style=''>    */
+</span>27 <span style=''>  def notifyLobbyJoined(): Unit
+</span>28 <span style=''>
+</span>29 <span style=''>  /**
+</span>30 <span style=''>    * Display an error alert
+</span>31 <span style=''>    *
+</span>32 <span style=''>    * @param error the error event
+</span>33 <span style=''>    */
+</span>34 <span style=''>  def notifyError(error: ErrorEvent): Unit
+</span>35 <span style=''>}
+</span>36 <span style=''>
+</span>37 <span style=''>/**
+</span>38 <span style=''>  * Companion object for ScalavelliStartupPrimaryStage
+</span>39 <span style=''>  */
+</span>40 <span style=''>object StartupStage {
+</span>41 <span style=''>  val windowWidth: Double = </span><span style='background: #F0ADAD'>ViewConfig.screenWidth</span><span style=''>
+</span>42 <span style=''>  val windowHeight: Double = </span><span style='background: #F0ADAD'>ViewConfig.screenHeight</span><span style=''>
+</span>43 <span style=''>
+</span>44 <span style=''>  def apply(listener: StartupListener): StartupStage = </span><span style='background: #F0ADAD'>new StartupStageImpl(listener)</span><span style=''>
+</span>45 <span style=''>
+</span>46 <span style=''>  def apply(): StartupStage = </span><span style='background: #F0ADAD'>new StartupStageImpl(null)</span><span style=''>
+</span>47 <span style=''>
+</span>48 <span style=''>  /** @inheritdoc*/
+</span>49 <span style=''>  class StartupStageImpl(gameStartupListener: StartupListener) extends StartupStage {
+</span>50 <span style=''>    private val mainScene: SelectScene = </span><span style='background: #F0ADAD'>new SelectScene(this, new SelectSceneListener {
+</span>51 <span style=''></span><span style='background: #F0ADAD'>
+</span>52 <span style=''></span><span style='background: #F0ADAD'>      override def onSelectedPublicGame(): Unit = setCurrentScene(publicGameScene)
+</span>53 <span style=''></span><span style='background: #F0ADAD'>
+</span>54 <span style=''></span><span style='background: #F0ADAD'>      override def onSelectedPrivateGame(): Unit = setCurrentScene(privateGameScene)
+</span>55 <span style=''></span><span style='background: #F0ADAD'>
+</span>56 <span style=''></span><span style='background: #F0ADAD'>      override def onSelectedCreatePrivateGame(): Unit = setCurrentScene(createPrivateGame)
+</span>57 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>58 <span style=''>
+</span>59 <span style=''>    val stage: StartupStage = this
+</span>60 <span style=''>
+</span>61 <span style=''>    val listener: StartupSceneListener = </span><span style='background: #F0ADAD'>new</span><span style=''> StartupSceneListener {
+</span>62 <span style=''>
+</span>63 <span style=''>      override def onBackPressed(): Unit = {
+</span>64 <span style=''>        </span><span style='background: #F0ADAD'>gameStartupListener.onViewEvent(LeaveLobbyViewEvent)</span><span style=''>
+</span>65 <span style=''>
+</span>66 <span style=''>        </span><span style='background: #F0ADAD'>currentInnerScene.resetScreen()</span><span style=''>
+</span>67 <span style=''>        </span><span style='background: #F0ADAD'>scene = mainScene</span><span style=''>
+</span>68 <span style=''>      }
+</span>69 <span style=''>
+</span>70 <span style=''>      override def onSubmit(viewEvent: StartupViewEvent): Unit = {
+</span>71 <span style=''>        </span><span style='background: #F0ADAD'>gameStartupListener.onViewEvent(viewEvent)</span><span style=''>
+</span>72 <span style=''>      }
+</span>73 <span style=''>    }
+</span>74 <span style=''>
+</span>75 <span style=''>    </span><span style='background: #F0ADAD'>scene = mainScene</span><span style=''>
+</span>76 <span style=''>
+</span>77 <span style=''>    val publicGameScene: PublicGameScene = </span><span style='background: #F0ADAD'>new PublicGameScene(this, listener)</span><span style=''>
+</span>78 <span style=''>    val privateGameScene: PrivateGameScene = </span><span style='background: #F0ADAD'>new PrivateGameScene(this, listener)</span><span style=''>
+</span>79 <span style=''>    val createPrivateGame: CreatePrivateGameStartupSceneImpl = </span><span style='background: #F0ADAD'>new CreatePrivateGameStartupSceneImpl(this, listener)</span><span style=''>
+</span>80 <span style=''>
+</span>81 <span style=''>    var currentInnerScene: StartupFormScene = _
+</span>82 <span style=''>
+</span>83 <span style=''>
+</span>84 <span style=''>    </span><span style='background: #F0ADAD'>onCloseRequest = _ =&gt; {
+</span>85 <span style=''></span><span style='background: #F0ADAD'>      System.exit(0)
+</span>86 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>87 <span style=''>
+</span>88 <span style=''>    def setCurrentScene(newScene: StartupFormScene): Unit = {
+</span>89 <span style=''>      </span><span style='background: #F0ADAD'>scene = newScene</span><span style=''>
+</span>90 <span style=''>      </span><span style='background: #F0ADAD'>currentInnerScene = newScene</span><span style=''>
+</span>91 <span style=''>    }
+</span>92 <span style=''>
+</span>93 <span style=''>    // Controller actions
+</span>94 <span style=''>    override def notifyPrivateCode(privateCode: String): Unit = {
+</span>95 <span style=''>      </span><span style='background: #F0ADAD'>Platform.runLater(createPrivateGame.showCode(privateCode))</span><span style=''>
+</span>96 <span style=''>      </span><span style='background: #F0ADAD'>notifyLobbyJoined()</span><span style=''>
+</span>97 <span style=''>    }
+</span>98 <span style=''>
+</span>99 <span style=''>    override def notifyLobbyJoined(): Unit = {
+</span>100 <span style=''>      </span><span style='background: #F0ADAD'>Platform.runLater(currentInnerScene.showMessage(Strings.WAITING_FOR_PLAYERS))</span><span style=''>
+</span>101 <span style=''>    }
+</span>102 <span style=''>
+</span>103 <span style=''>    override def notifyError(error: ErrorEvent): Unit = {
+</span>104 <span style=''>      </span><span style='background: #F0ADAD'>Platform.runLater {
+</span>105 <span style=''></span><span style='background: #F0ADAD'>        val alert: Alert = ScalavelliAlert(Strings.ERROR_DIALOG_TITLE, error, AlertType.Error, stage)
+</span>106 <span style=''></span><span style='background: #F0ADAD'>        alert.showAndWait()
+</span>107 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>108 <span style=''>    }
+</span>109 <span style=''>  }
+</span>110 <span style=''>
+</span>111 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1699
+        </td>
+        <td>
+          1033
+          -
+          1055
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.screenWidth
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.screenWidth
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1370
+        </td>
+        <td>
+          1085
+          -
+          1108
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.screenHeight
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.screenHeight
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          2573
+        </td>
+        <td>
+          1165
+          -
+          1195
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new StartupStage.this.StartupStageImpl(listener)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1830
+        </td>
+        <td>
+          1227
+          -
+          1253
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new StartupStage.this.StartupStageImpl(null)
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1375
+        </td>
+        <td>
+          1424
+          -
+          1427
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          2543
+        </td>
+        <td>
+          1402
+          -
+          1719
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.SelectScene.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.startup.scenes.SelectScene(this, {
+  final class $anon extends AnyRef with it.parttimeteam.view.startup.listeners.SelectSceneListener {
+    def &lt;init&gt;(): &lt;$anon: it.parttimeteam.view.startup.listeners.SelectSceneListener&gt; = {
+      $anon.super.&lt;init&gt;();
+      ()
+    };
+    override def onSelectedPublicGame(): Unit = StartupStageImpl.this.setCurrentScene(StartupStageImpl.this.publicGameScene);
+    override def onSelectedPrivateGame(): Unit = StartupStageImpl.this.setCurrentScene(StartupStageImpl.this.privateGameScene);
+    override def onSelectedCreatePrivateGame(): Unit = StartupStageImpl.this.setCurrentScene(StartupStageImpl.this.createPrivateGame)
+  };
+  new $anon()
+})
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1201
+        </td>
+        <td>
+          1517
+          -
+          1532
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.publicGameScene
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.publicGameScene
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          2262
+        </td>
+        <td>
+          1501
+          -
+          1533
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.setCurrentScene
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.setCurrentScene(StartupStageImpl.this.publicGameScene)
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1933
+        </td>
+        <td>
+          1602
+          -
+          1618
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.privateGameScene
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.privateGameScene
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1340
+        </td>
+        <td>
+          1586
+          -
+          1619
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.setCurrentScene
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.setCurrentScene(StartupStageImpl.this.privateGameScene)
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          2409
+        </td>
+        <td>
+          1694
+          -
+          1711
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.createPrivateGame
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.createPrivateGame
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          1702
+        </td>
+        <td>
+          1678
+          -
+          1712
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.setCurrentScene
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.setCurrentScene(StartupStageImpl.this.createPrivateGame)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          2474
+        </td>
+        <td>
+          1798
+          -
+          1801
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          1914
+        </td>
+        <td>
+          1879
+          -
+          1931
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.startup.StartupListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.gameStartupListener.onViewEvent(LeaveLobbyViewEvent)
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          1229
+        </td>
+        <td>
+          1941
+          -
+          1972
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupFormScene.resetScreen
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.currentInnerScene.resetScreen()
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          2266
+        </td>
+        <td>
+          1989
+          -
+          1998
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.mainScene
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.mainScene
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          1936
+        </td>
+        <td>
+          1981
+          -
+          1998
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.stage.Stage.scene_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.scene_=(StartupStageImpl.this.mainScene)
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          1317
+        </td>
+        <td>
+          2083
+          -
+          2125
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.startup.StartupListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.gameStartupListener.onViewEvent(viewEvent)
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          1789
+        </td>
+        <td>
+          2153
+          -
+          2162
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.mainScene
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.mainScene
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          1023
+        </td>
+        <td>
+          2145
+          -
+          2162
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.stage.Stage.scene_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.scene_=(StartupStageImpl.this.mainScene)
+        </td>
+      </tr><tr>
+        <td>
+          77
+        </td>
+        <td>
+          2547
+        </td>
+        <td>
+          2233
+          -
+          2241
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.listener
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.listener
+        </td>
+      </tr><tr>
+        <td>
+          77
+        </td>
+        <td>
+          1897
+        </td>
+        <td>
+          2207
+          -
+          2242
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.startup.scenes.PublicGameScene(this, StartupStageImpl.this.listener)
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          2269
+        </td>
+        <td>
+          2288
+          -
+          2324
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PrivateGameScene.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.startup.scenes.PrivateGameScene(this, StartupStageImpl.this.listener)
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          1194
+        </td>
+        <td>
+          2315
+          -
+          2323
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.listener
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.listener
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          1324
+        </td>
+        <td>
+          2388
+          -
+          2441
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.CreatePrivateGameStartupSceneImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.startup.scenes.CreatePrivateGameStartupSceneImpl(this, StartupStageImpl.this.listener)
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          1958
+        </td>
+        <td>
+          2432
+          -
+          2440
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.listener
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.listener
+        </td>
+      </tr><tr>
+        <td>
+          84
+        </td>
+        <td>
+          1752
+        </td>
+        <td>
+          2497
+          -
+          2547
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.stage.Window.onCloseRequest_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.onCloseRequest_=(((x$1: javafx.stage.WindowEvent) =&gt; java.lang.System.exit(0)))
+        </td>
+      </tr><tr>
+        <td>
+          85
+        </td>
+        <td>
+          2400
+        </td>
+        <td>
+          2527
+          -
+          2541
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.System.exit
+        </td>
+        <td style="background: #F0ADAD">
+          java.lang.System.exit(0)
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          1026
+        </td>
+        <td>
+          2617
+          -
+          2633
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.stage.Stage.scene_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.scene_=(newScene)
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          2518
+        </td>
+        <td>
+          2640
+          -
+          2668
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.currentInnerScene_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.currentInnerScene_=(newScene)
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          1197
+        </td>
+        <td>
+          2774
+          -
+          2832
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](StartupStageImpl.this.createPrivateGame.showCode(privateCode))
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          1902
+        </td>
+        <td>
+          2792
+          -
+          2831
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.CreatePrivateGameStartupSceneImpl.showCode
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.createPrivateGame.showCode(privateCode)
+        </td>
+      </tr><tr>
+        <td>
+          96
+        </td>
+        <td>
+          2298
+        </td>
+        <td>
+          2839
+          -
+          2858
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.notifyLobbyJoined
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.notifyLobbyJoined()
+        </td>
+      </tr><tr>
+        <td>
+          100
+        </td>
+        <td>
+          1291
+        </td>
+        <td>
+          2937
+          -
+          2995
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupFormScene.showMessage
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.currentInnerScene.showMessage(it.parttimeteam.view.utils.Strings.WAITING_FOR_PLAYERS)
+        </td>
+      </tr><tr>
+        <td>
+          100
+        </td>
+        <td>
+          2406
+        </td>
+        <td>
+          2919
+          -
+          2996
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](StartupStageImpl.this.currentInnerScene.showMessage(it.parttimeteam.view.utils.Strings.WAITING_FOR_PLAYERS))
+        </td>
+      </tr><tr>
+        <td>
+          100
+        </td>
+        <td>
+          1962
+        </td>
+        <td>
+          2967
+          -
+          2994
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.WAITING_FOR_PLAYERS
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.WAITING_FOR_PLAYERS
+        </td>
+      </tr><tr>
+        <td>
+          104
+        </td>
+        <td>
+          2299
+        </td>
+        <td>
+          3068
+          -
+          3225
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Option[scalafx.scene.control.ButtonType]]({
+  val alert: scalafx.scene.control.Alert = it.parttimeteam.view.utils.ScalavelliAlert.apply(it.parttimeteam.view.utils.Strings.ERROR_DIALOG_TITLE, error, scalafx.scene.control.Alert.AlertType.Error, StartupStageImpl.this.stage);
+  alert.showAndWait()
+})
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          1813
+        </td>
+        <td>
+          3115
+          -
+          3189
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliAlert.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliAlert.apply(it.parttimeteam.view.utils.Strings.ERROR_DIALOG_TITLE, error, scalafx.scene.control.Alert.AlertType.Error, StartupStageImpl.this.stage)
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          2522
+        </td>
+        <td>
+          3183
+          -
+          3188
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.StartupStageImpl.stage
+        </td>
+        <td style="background: #F0ADAD">
+          StartupStageImpl.this.stage
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          1753
+        </td>
+        <td>
+          3131
+          -
+          3157
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.ERROR_DIALOG_TITLE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.ERROR_DIALOG_TITLE
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          1017
+        </td>
+        <td>
+          3166
+          -
+          3181
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.Alert.AlertType.Error
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.Alert.AlertType.Error
+        </td>
+      </tr><tr>
+        <td>
+          106
+        </td>
+        <td>
+          1171
+        </td>
+        <td>
+          3198
+          -
+          3217
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.showAndWait
+        </td>
+        <td style="background: #F0ADAD">
+          alert.showAndWait()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

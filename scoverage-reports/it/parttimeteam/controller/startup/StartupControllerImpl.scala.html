@@ -1,0 +1,622 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/controller/startup/StartupControllerImpl.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.controller.startup
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.Constants
+</span>4 <span style=''>import it.parttimeteam.model.ErrorEvent
+</span>5 <span style=''>import it.parttimeteam.model.startup._
+</span>6 <span style=''>import it.parttimeteam.view.startup._
+</span>7 <span style=''>import scalafx.application.{JFXApp, Platform}
+</span>8 <span style=''>
+</span>9 <span style=''>class StartupControllerImpl extends StartupController {
+</span>10 <span style=''>
+</span>11 <span style=''>  private var startUpStage: StartupStage = _
+</span>12 <span style=''>  private val startUpService: StartupService = </span><span style='background: #F0ADAD'>new StartupServiceImpl(notifyEvent)</span><span style=''>
+</span>13 <span style=''>  private var startGameFunction: GameMatchInformations =&gt; Unit = _
+</span>14 <span style=''>
+</span>15 <span style=''>  override def start(app: JFXApp, startGame: GameMatchInformations =&gt; Unit): Unit = {
+</span>16 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>17 <span style=''></span><span style='background: #F0ADAD'>      startUpStage = StartupStage(this)
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      app.stage = startUpStage
+</span>19 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>20 <span style=''>    </span><span style='background: #F0ADAD'>startGameFunction = startGame</span><span style=''>
+</span>21 <span style=''>    </span><span style='background: #F0ADAD'>this.startUpService.connect(Constants.Remote.SERVER_ADDRESS, Constants.Remote.SERVER_PORT)</span><span style=''>
+</span>22 <span style=''>  }
+</span>23 <span style=''>
+</span>24 <span style=''>  override def onViewEvent(viewEvent: StartupViewEvent): Unit = viewEvent match {
+</span>25 <span style=''>
+</span>26 <span style=''>    case PublicGameSubmitViewEvent(username, playersNumber) =&gt; </span><span style='background: #F0ADAD'>this.startUpService.joinPublicLobby(username, playersNumber)</span><span style=''>
+</span>27 <span style=''>
+</span>28 <span style=''>    case PrivateGameSubmitViewEvent(username, code) =&gt; </span><span style='background: #F0ADAD'>this.startUpService.joinPrivateLobby(username, code)</span><span style=''>
+</span>29 <span style=''>
+</span>30 <span style=''>    case CreatePrivateGameSubmitViewEvent(username, playersNumber) =&gt; </span><span style='background: #F0ADAD'>this.startUpService.createPrivateLobby(username, playersNumber)</span><span style=''>
+</span>31 <span style=''>
+</span>32 <span style=''>    case LeaveLobbyViewEvent =&gt; </span><span style='background: #F0ADAD'>this.startUpService.leaveLobby()</span><span style=''>
+</span>33 <span style=''>
+</span>34 <span style=''>    case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>35 <span style=''>  }
+</span>36 <span style=''>
+</span>37 <span style=''>  def notifyEvent(gameStartupEvent: GameStartupEvent): Unit = gameStartupEvent match {
+</span>38 <span style=''>
+</span>39 <span style=''>    case LobbyJoinedEvent =&gt; {
+</span>40 <span style=''>      </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>41 <span style=''></span><span style='background: #F0ADAD'>        startUpStage.notifyLobbyJoined()
+</span>42 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>43 <span style=''>    }
+</span>44 <span style=''>
+</span>45 <span style=''>    case PrivateLobbyCreatedEvent(privateCode: String) =&gt; {
+</span>46 <span style=''>      </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>47 <span style=''></span><span style='background: #F0ADAD'>        startUpStage.notifyPrivateCode(privateCode)
+</span>48 <span style=''></span><span style='background: #F0ADAD'>        startUpStage.notifyLobbyJoined()
+</span>49 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>50 <span style=''>    }
+</span>51 <span style=''>
+</span>52 <span style=''>    case LobbyJoinErrorEvent(error: ErrorEvent) =&gt; {
+</span>53 <span style=''>      </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>54 <span style=''></span><span style='background: #F0ADAD'>        startUpStage.notifyError(error)
+</span>55 <span style=''></span><span style='background: #F0ADAD'>      })</span><span style=''>
+</span>56 <span style=''>    }
+</span>57 <span style=''>
+</span>58 <span style=''>    case GameStartedEvent(gameInfo: GameMatchInformations) =&gt; {
+</span>59 <span style=''>      </span><span style='background: #F0ADAD'>startGameFunction(gameInfo)</span><span style=''>
+</span>60 <span style=''>    }
+</span>61 <span style=''>
+</span>62 <span style=''>    case _ </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>63 <span style=''>
+</span>64 <span style=''>  }
+</span>65 <span style=''>
+</span>66 <span style=''>  override def end(): Unit = </span><span style='background: #F0ADAD'>{
+</span>67 <span style=''></span><span style='background: #F0ADAD'>
+</span>68 <span style=''></span><span style='background: #F0ADAD'>  }</span><span style=''>
+</span>69 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          916
+        </td>
+        <td>
+          413
+          -
+          424
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.startup.StartupControllerImpl.notifyEvent
+        </td>
+        <td style="background: #F0ADAD">
+          StartupControllerImpl.this.notifyEvent(gameStartupEvent)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          2132
+        </td>
+        <td>
+          390
+          -
+          425
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupServiceImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.model.startup.StartupServiceImpl({
+  ((gameStartupEvent: it.parttimeteam.model.startup.GameStartupEvent) =&gt; StartupControllerImpl.this.notifyEvent(gameStartupEvent))
+})
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          2684
+        </td>
+        <td>
+          584
+          -
+          681
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  StartupControllerImpl.this.startUpStage_=(it.parttimeteam.view.startup.StartupStage.apply(this));
+  app.stage_=(StartupControllerImpl.this.startUpStage)
+})
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1450
+        </td>
+        <td>
+          625
+          -
+          643
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.startup.StartupStage.apply(this)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          2546
+        </td>
+        <td>
+          610
+          -
+          643
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.startup.StartupControllerImpl.startUpStage_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupControllerImpl.this.startUpStage_=(it.parttimeteam.view.startup.StartupStage.apply(this))
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          2215
+        </td>
+        <td>
+          662
+          -
+          674
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.controller.startup.StartupControllerImpl.startUpStage
+        </td>
+        <td style="background: #F0ADAD">
+          StartupControllerImpl.this.startUpStage
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1504
+        </td>
+        <td>
+          650
+          -
+          674
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.JFXApp.stage_=
+        </td>
+        <td style="background: #F0ADAD">
+          app.stage_=(StartupControllerImpl.this.startUpStage)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1957
+        </td>
+        <td>
+          686
+          -
+          715
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.startup.StartupControllerImpl.startGameFunction_=
+        </td>
+        <td style="background: #F0ADAD">
+          StartupControllerImpl.this.startGameFunction_=(startGame)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1608
+        </td>
+        <td>
+          720
+          -
+          810
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupService.connect
+        </td>
+        <td style="background: #F0ADAD">
+          this.startUpService.connect(&quot;localhost&quot;, 5150)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          920
+        </td>
+        <td>
+          962
+          -
+          1022
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupService.joinPublicLobby
+        </td>
+        <td style="background: #F0ADAD">
+          this.startUpService.joinPublicLobby(username, playersNumber)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          2085
+        </td>
+        <td>
+          1079
+          -
+          1131
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupService.joinPrivateLobby
+        </td>
+        <td style="background: #F0ADAD">
+          this.startUpService.joinPrivateLobby(username, code)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1409
+        </td>
+        <td>
+          1203
+          -
+          1266
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupService.createPrivateLobby
+        </td>
+        <td style="background: #F0ADAD">
+          this.startUpService.createPrivateLobby(username, playersNumber)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          2551
+        </td>
+        <td>
+          1300
+          -
+          1332
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupService.leaveLobby
+        </td>
+        <td style="background: #F0ADAD">
+          this.startUpService.leaveLobby()
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          2142
+        </td>
+        <td>
+          1345
+          -
+          1347
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          2637
+        </td>
+        <td>
+          1478
+          -
+          1547
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](StartupControllerImpl.this.startUpStage.notifyLobbyJoined())
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1506
+        </td>
+        <td>
+          1506
+          -
+          1538
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.notifyLobbyJoined
+        </td>
+        <td style="background: #F0ADAD">
+          StartupControllerImpl.this.startUpStage.notifyLobbyJoined()
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          899
+        </td>
+        <td>
+          1621
+          -
+          1742
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  StartupControllerImpl.this.startUpStage.notifyPrivateCode(privateCode);
+  StartupControllerImpl.this.startUpStage.notifyLobbyJoined()
+})
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1961
+        </td>
+        <td>
+          1649
+          -
+          1692
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.notifyPrivateCode
+        </td>
+        <td style="background: #F0ADAD">
+          StartupControllerImpl.this.startUpStage.notifyPrivateCode(privateCode)
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1610
+        </td>
+        <td>
+          1701
+          -
+          1733
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.notifyLobbyJoined
+        </td>
+        <td style="background: #F0ADAD">
+          StartupControllerImpl.this.startUpStage.notifyLobbyJoined()
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          1442
+        </td>
+        <td>
+          1809
+          -
+          1877
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](StartupControllerImpl.this.startUpStage.notifyError(error))
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          2087
+        </td>
+        <td>
+          1837
+          -
+          1868
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.StartupStage.notifyError
+        </td>
+        <td style="background: #F0ADAD">
+          StartupControllerImpl.this.startUpStage.notifyError(error)
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          2520
+        </td>
+        <td>
+          1955
+          -
+          1982
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Function1.apply
+        </td>
+        <td style="background: #F0ADAD">
+          StartupControllerImpl.this.startGameFunction.apply(gameInfo)
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          2144
+        </td>
+        <td>
+          2001
+          -
+          2003
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          1474
+        </td>
+        <td>
+          2039
+          -
+          2045
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

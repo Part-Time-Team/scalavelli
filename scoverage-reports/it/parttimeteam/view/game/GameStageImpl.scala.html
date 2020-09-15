@@ -1,0 +1,2482 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/game/GameStageImpl.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.game
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.controller.ViewMessage
+</span>4 <span style=''>import it.parttimeteam.controller.game.GameListener
+</span>5 <span style=''>import it.parttimeteam.core.cards.Card
+</span>6 <span style=''>import it.parttimeteam.model.ErrorEvent
+</span>7 <span style=''>import it.parttimeteam.model.game.ClientGameState
+</span>8 <span style=''>import it.parttimeteam.view.game.listeners.GameStageListener
+</span>9 <span style=''>import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
+</span>10 <span style=''>import it.parttimeteam.view.utils.{ScalavelliAlert, StringParser, Strings}
+</span>11 <span style=''>import scalafx.application.Platform
+</span>12 <span style=''>import scalafx.scene.control.Alert.AlertType
+</span>13 <span style=''>import scalafx.scene.control.{Alert, ButtonType}
+</span>14 <span style=''>
+</span>15 <span style=''>/**
+</span>16 <span style=''>  * GameStage implementation
+</span>17 <span style=''>  *
+</span>18 <span style=''>  * @param gameListener listener for view actions
+</span>19 <span style=''>  */
+</span>20 <span style=''>class GameStageImpl(gameListener: GameListener) extends GameStage {
+</span>21 <span style=''>  val stage: GameStage = this
+</span>22 <span style=''>
+</span>23 <span style=''>  val listener: GameStageListener = </span><span style='background: #F0ADAD'>new</span><span style=''> GameStageListener() {
+</span>24 <span style=''>    /** @inheritdoc */
+</span>25 <span style=''>    override def pickCombination(combinationId: String): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(PickCardCombinationEvent(combinationId))</span><span style=''>
+</span>26 <span style=''>
+</span>27 <span style=''>    /** @inheritdoc */
+</span>28 <span style=''>    override def endTurn(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(EndTurnEvent)</span><span style=''>
+</span>29 <span style=''>
+</span>30 <span style=''>    /** @inheritdoc */
+</span>31 <span style=''>    override def nextState(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(RedoEvent)</span><span style=''>
+</span>32 <span style=''>
+</span>33 <span style=''>    /** @inheritdoc */
+</span>34 <span style=''>    override def previousState(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(UndoEvent)</span><span style=''>
+</span>35 <span style=''>
+</span>36 <span style=''>    /** @inheritdoc */
+</span>37 <span style=''>    override def makeCombination(cards: Seq[Card]): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(MakeCombinationEvent(cards))</span><span style=''>
+</span>38 <span style=''>
+</span>39 <span style=''>    /** @inheritdoc */
+</span>40 <span style=''>    override def pickCards(cards: Seq[Card]): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(PickCardsEvent(cards))</span><span style=''>
+</span>41 <span style=''>
+</span>42 <span style=''>    /** @inheritdoc */
+</span>43 <span style=''>    override def sortHandBySuit(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(SortHandBySuitEvent)</span><span style=''>
+</span>44 <span style=''>
+</span>45 <span style=''>    /** @inheritdoc */
+</span>46 <span style=''>    override def sortHandByRank(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(SortHandByRankEvent)</span><span style=''>
+</span>47 <span style=''>
+</span>48 <span style=''>    /** @inheritdoc */
+</span>49 <span style=''>    override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(UpdateCardCombinationEvent(combinationId, cards))</span><span style=''>
+</span>50 <span style=''>
+</span>51 <span style=''>    /** @inheritdoc */
+</span>52 <span style=''>    override def leaveGame(): Unit = {
+</span>53 <span style=''>      val alert: Alert = </span><span style='background: #F0ADAD'>ScalavelliAlert(Strings.LEAVE_GAME_DIALOG_TITLE, Strings.LEAVE_GAME_DIALOG_MESSAGE, AlertType.Confirmation, stage)</span><span style=''>
+</span>54 <span style=''>
+</span>55 <span style=''>      </span><span style='background: #F0ADAD'>alert.showAndWait</span><span style=''> match {
+</span>56 <span style=''>        case Some(b) =&gt;
+</span>57 <span style=''>          if (</span><span style='background: #F0ADAD'>b == ButtonType.OK</span><span style=''>) </span><span style='background: #F0ADAD'>{
+</span>58 <span style=''></span><span style='background: #F0ADAD'>            gameListener.onViewEvent(LeaveGameEvent)
+</span>59 <span style=''></span><span style='background: #F0ADAD'>            System.exit(0)
+</span>60 <span style=''></span><span style='background: #F0ADAD'>          }</span><span style=''>
+</span>61 <span style=''>
+</span>62 <span style=''>        case None </span><span style='background: #F0ADAD'>=&gt;</span><span style=''>
+</span>63 <span style=''>      }
+</span>64 <span style=''>    }
+</span>65 <span style=''>
+</span>66 <span style=''>    /** @inheritdoc */
+</span>67 <span style=''>    override def resetHistory(): Unit = </span><span style='background: #F0ADAD'>gameListener.onViewEvent(ResetEvent)</span><span style=''>
+</span>68 <span style=''>
+</span>69 <span style=''>  }
+</span>70 <span style=''>
+</span>71 <span style=''>  val gameScene: GameScene = </span><span style='background: #F0ADAD'>new GameSceneImpl(stage, listener)</span><span style=''>
+</span>72 <span style=''>
+</span>73 <span style=''>  </span><span style='background: #F0ADAD'>scene = gameScene</span><span style=''>
+</span>74 <span style=''>
+</span>75 <span style=''>  </span><span style='background: #F0ADAD'>onCloseRequest = _ =&gt; System.exit(0)</span><span style=''>
+</span>76 <span style=''>
+</span>77 <span style=''>  /** @inheritdoc*/
+</span>78 <span style=''>  override def setMessage(message: ViewMessage): Unit = {
+</span>79 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>80 <span style=''></span><span style='background: #F0ADAD'>      gameScene.setMessage(StringParser.parseMessage(message))
+</span>81 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>82 <span style=''>  }
+</span>83 <span style=''>
+</span>84 <span style=''>  /** @inheritdoc*/
+</span>85 <span style=''>  override def updateState(viewGameState: ClientGameState): Unit = {
+</span>86 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>87 <span style=''></span><span style='background: #F0ADAD'>      gameScene.setState(viewGameState)
+</span>88 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>89 <span style=''>  }
+</span>90 <span style=''>
+</span>91 <span style=''>  /** @inheritdoc*/
+</span>92 <span style=''>  override def initMatch(): Unit = {
+</span>93 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>94 <span style=''></span><span style='background: #F0ADAD'>      gameScene.disableActions()
+</span>95 <span style=''></span><span style='background: #F0ADAD'>      gameScene.showInitMatch()
+</span>96 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>97 <span style=''>  }
+</span>98 <span style=''>
+</span>99 <span style=''>  /** @inheritdoc*/
+</span>100 <span style=''>  override def matchReady(): Unit = {
+</span>101 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>102 <span style=''></span><span style='background: #F0ADAD'>      gameScene.hideInitMatch()
+</span>103 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>104 <span style=''>  }
+</span>105 <span style=''>
+</span>106 <span style=''>  /** @inheritdoc*/
+</span>107 <span style=''>  override def notifyGameEnd(gameEndType: GameEndType): Unit = {
+</span>108 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>109 <span style=''></span><span style='background: #F0ADAD'>      val message: String = gameEndType match {
+</span>110 <span style=''></span><span style='background: #F0ADAD'>        case GameWon =&gt; Strings.GAME_WON_ALERT_MESSAGE
+</span>111 <span style=''></span><span style='background: #F0ADAD'>
+</span>112 <span style=''></span><span style='background: #F0ADAD'>        case GameLost(winnerUsername: String) =&gt; Strings.GAME_LOST_ALERT_MESSAGE(winnerUsername)
+</span>113 <span style=''></span><span style='background: #F0ADAD'>
+</span>114 <span style=''></span><span style='background: #F0ADAD'>        case GameEndPlayerLeft =&gt; Strings.GAME_END_PLAYER_LEFT_MESSAGE
+</span>115 <span style=''></span><span style='background: #F0ADAD'>
+</span>116 <span style=''></span><span style='background: #F0ADAD'>        case _ =&gt; &quot;&quot;
+</span>117 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>118 <span style=''></span><span style='background: #F0ADAD'>
+</span>119 <span style=''></span><span style='background: #F0ADAD'>      val alert = ScalavelliAlert(Strings.GAME_ENDED_ALERT_TITLE, message, AlertType.Information, this)
+</span>120 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait match {
+</span>121 <span style=''></span><span style='background: #F0ADAD'>        case Some(b) =&gt;
+</span>122 <span style=''></span><span style='background: #F0ADAD'>          if (b == ButtonType.OK) {
+</span>123 <span style=''></span><span style='background: #F0ADAD'>            gameListener.onViewEvent(PlayAgainEvent)
+</span>124 <span style=''></span><span style='background: #F0ADAD'>          } else {
+</span>125 <span style=''></span><span style='background: #F0ADAD'>            System.exit(0)
+</span>126 <span style=''></span><span style='background: #F0ADAD'>          }
+</span>127 <span style=''></span><span style='background: #F0ADAD'>
+</span>128 <span style=''></span><span style='background: #F0ADAD'>        case None =&gt;
+</span>129 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>130 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>131 <span style=''>  }
+</span>132 <span style=''>
+</span>133 <span style=''>  /** @inheritdoc*/
+</span>134 <span style=''>  override def enableActions(): Unit = {
+</span>135 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>136 <span style=''></span><span style='background: #F0ADAD'>      gameScene.enableActions()
+</span>137 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>138 <span style=''>  }
+</span>139 <span style=''>
+</span>140 <span style=''>  /** @inheritdoc*/
+</span>141 <span style=''>  override def disableActions(): Unit = {
+</span>142 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>143 <span style=''></span><span style='background: #F0ADAD'>      gameScene.disableActions()
+</span>144 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>145 <span style=''>  }
+</span>146 <span style=''>
+</span>147 <span style=''>  /** @inheritdoc*/
+</span>148 <span style=''>  override def notifyError(error: ErrorEvent): Unit = {
+</span>149 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>150 <span style=''></span><span style='background: #F0ADAD'>      val alert: Alert = ScalavelliAlert(Strings.ERROR_DIALOG_TITLE, error, AlertType.Error, this)
+</span>151 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait()
+</span>152 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>153 <span style=''>  }
+</span>154 <span style=''>
+</span>155 <span style=''>  /** @inheritdoc*/
+</span>156 <span style=''>  override def notifyInfo(message: String): Unit = {
+</span>157 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>158 <span style=''></span><span style='background: #F0ADAD'>      val alert: Alert = ScalavelliAlert(&quot;&quot;, message, AlertType.Information, this)
+</span>159 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait()
+</span>160 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>161 <span style=''>  }
+</span>162 <span style=''>
+</span>163 <span style=''>  /** @inheritdoc*/
+</span>164 <span style=''>  override def setInTurn(): Unit = {
+</span>165 <span style=''>    </span><span style='background: #F0ADAD'>gameScene.setInTurn(true)</span><span style=''>
+</span>166 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>167 <span style=''></span><span style='background: #F0ADAD'>      val alert = ScalavelliAlert(&quot;&quot;, Strings.YOUR_TURN_ALERT_MESSAGE, AlertType.Information, this)
+</span>168 <span style=''></span><span style='background: #F0ADAD'>      alert.showAndWait match {
+</span>169 <span style=''></span><span style='background: #F0ADAD'>        case Some(b) =&gt;
+</span>170 <span style=''></span><span style='background: #F0ADAD'>          if (b == ButtonType.OK) {
+</span>171 <span style=''></span><span style='background: #F0ADAD'>            gameListener.onViewEvent(TurnStartedEvent)
+</span>172 <span style=''></span><span style='background: #F0ADAD'>          } else {
+</span>173 <span style=''></span><span style='background: #F0ADAD'>            System.exit(0)
+</span>174 <span style=''></span><span style='background: #F0ADAD'>          }
+</span>175 <span style=''></span><span style='background: #F0ADAD'>
+</span>176 <span style=''></span><span style='background: #F0ADAD'>        case None =&gt;
+</span>177 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>178 <span style=''></span><span style='background: #F0ADAD'>
+</span>179 <span style=''></span><span style='background: #F0ADAD'>      setMessage(ViewMessage.YourTurn)
+</span>180 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>181 <span style=''>  }
+</span>182 <span style=''>
+</span>183 <span style=''>  /** @inheritdoc*/
+</span>184 <span style=''>  override def setTurnEnded(): Unit = {
+</span>185 <span style=''>    </span><span style='background: #F0ADAD'>gameScene.setInTurn(false)</span><span style=''>
+</span>186 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>187 <span style=''></span><span style='background: #F0ADAD'>      gameScene.setMessage(&quot;&quot;)
+</span>188 <span style=''></span><span style='background: #F0ADAD'>      gameScene.hideTimer()
+</span>189 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>190 <span style=''>  }
+</span>191 <span style=''>
+</span>192 <span style=''>  /** @inheritdoc*/
+</span>193 <span style=''>  override def showTimer(minutes: Long, seconds: Long): Unit = {
+</span>194 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>195 <span style=''></span><span style='background: #F0ADAD'>      gameScene.showTimer(minutes, seconds)
+</span>196 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>197 <span style=''>  }
+</span>198 <span style=''>
+</span>199 <span style=''>  /** @inheritdoc*/
+</span>200 <span style=''>  override def updateTimer(minutes: Long, seconds: Long): Unit = {
+</span>201 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>202 <span style=''></span><span style='background: #F0ADAD'>      gameScene.updateTimer(minutes, seconds)
+</span>203 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>204 <span style=''>  }
+</span>205 <span style=''>
+</span>206 <span style=''>  /** @inheritdoc*/
+</span>207 <span style=''>  override def notifyTimerEnded(): Unit = {
+</span>208 <span style=''>    </span><span style='background: #F0ADAD'>Platform.runLater({
+</span>209 <span style=''></span><span style='background: #F0ADAD'>      gameScene.notifyTimerEnd()
+</span>210 <span style=''></span><span style='background: #F0ADAD'>      notifyInfo(Strings.TIMER_END_INFO_MESSAGE)
+</span>211 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>212 <span style=''>  }
+</span>213 <span style=''>
+</span>214 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1381
+        </td>
+        <td>
+          823
+          -
+          826
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameStageImpl.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          2038
+        </td>
+        <td>
+          961
+          -
+          1000
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.PickCardCombinationEvent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          PickCardCombinationEvent.apply(combinationId)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1426
+        </td>
+        <td>
+          936
+          -
+          1001
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(PickCardCombinationEvent.apply(combinationId))
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          2517
+        </td>
+        <td>
+          1061
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(EndTurnEvent)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1862
+        </td>
+        <td>
+          1161
+          -
+          1196
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(RedoEvent)
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          1541
+        </td>
+        <td>
+          1262
+          -
+          1297
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(UndoEvent)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          2603
+        </td>
+        <td>
+          1406
+          -
+          1433
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.MakeCombinationEvent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          MakeCombinationEvent.apply(cards)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1990
+        </td>
+        <td>
+          1381
+          -
+          1434
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(MakeCombinationEvent.apply(cards))
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          2439
+        </td>
+        <td>
+          1512
+          -
+          1559
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(PickCardsEvent.apply(cards))
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          1290
+        </td>
+        <td>
+          1537
+          -
+          1558
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.PickCardsEvent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          PickCardsEvent.apply(cards)
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          2044
+        </td>
+        <td>
+          1626
+          -
+          1671
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(SortHandBySuitEvent)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1371
+        </td>
+        <td>
+          1738
+          -
+          1783
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(SortHandByRankEvent)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1871
+        </td>
+        <td>
+          1896
+          -
+          1970
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(UpdateCardCombinationEvent.apply(combinationId, cards))
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          2497
+        </td>
+        <td>
+          1921
+          -
+          1969
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.UpdateCardCombinationEvent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          UpdateCardCombinationEvent.apply(combinationId, cards)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          2012
+        </td>
+        <td>
+          2143
+          -
+          2165
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.Alert.AlertType.Confirmation
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.Alert.AlertType.Confirmation
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          2609
+        </td>
+        <td>
+          2108
+          -
+          2141
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.LEAVE_GAME_DIALOG_MESSAGE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.LEAVE_GAME_DIALOG_MESSAGE
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          2444
+        </td>
+        <td>
+          2059
+          -
+          2173
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliAlert.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliAlert.apply(it.parttimeteam.view.utils.Strings.LEAVE_GAME_DIALOG_TITLE, it.parttimeteam.view.utils.Strings.LEAVE_GAME_DIALOG_MESSAGE, scalafx.scene.control.Alert.AlertType.Confirmation, GameStageImpl.this.stage)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          1137
+        </td>
+        <td>
+          2075
+          -
+          2106
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.LEAVE_GAME_DIALOG_TITLE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.LEAVE_GAME_DIALOG_TITLE
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          1259
+        </td>
+        <td>
+          2167
+          -
+          2172
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameStageImpl.stage
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.stage
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          2131
+        </td>
+        <td>
+          2181
+          -
+          2198
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.showAndWait
+        </td>
+        <td style="background: #F0ADAD">
+          alert.showAndWait()
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1982
+        </td>
+        <td>
+          2241
+          -
+          2241
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1345
+        </td>
+        <td>
+          2241
+          -
+          2241
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          2577
+        </td>
+        <td>
+          2245
+          -
+          2263
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.==
+        </td>
+        <td style="background: #F0ADAD">
+          b.==(scalafx.scene.control.ButtonType.OK)
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          2612
+        </td>
+        <td>
+          2265
+          -
+          2358
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          {
+  GameStageImpl.this.gameListener.onViewEvent(LeaveGameEvent);
+  java.lang.System.exit(0)
+}
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          1377
+        </td>
+        <td>
+          2250
+          -
+          2263
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.ButtonType.OK
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.ButtonType.OK
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          1835
+        </td>
+        <td>
+          2279
+          -
+          2319
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(LeaveGameEvent)
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          1141
+        </td>
+        <td>
+          2332
+          -
+          2346
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.System.exit
+        </td>
+        <td style="background: #F0ADAD">
+          java.lang.System.exit(0)
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          2475
+        </td>
+        <td>
+          2378
+          -
+          2380
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          2134
+        </td>
+        <td>
+          2459
+          -
+          2495
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(ResetEvent)
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          2550
+        </td>
+        <td>
+          2549
+          -
+          2554
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameStageImpl.stage
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.stage
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          1916
+        </td>
+        <td>
+          2556
+          -
+          2564
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameStageImpl.listener
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.listener
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          1230
+        </td>
+        <td>
+          2531
+          -
+          2565
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameSceneImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.game.scenes.GameSceneImpl(GameStageImpl.this.stage, GameStageImpl.this.listener)
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          1987
+        </td>
+        <td>
+          2569
+          -
+          2586
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.stage.Stage.scene_=
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.scene_=(GameStageImpl.this.gameScene)
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          2686
+        </td>
+        <td>
+          2577
+          -
+          2586
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameStageImpl.gameScene
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          2434
+        </td>
+        <td>
+          2590
+          -
+          2626
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.stage.Window.onCloseRequest_=
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.onCloseRequest_=(((x$1: javafx.stage.WindowEvent) =&gt; java.lang.System.exit(0)))
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          1325
+        </td>
+        <td>
+          2612
+          -
+          2626
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.System.exit
+        </td>
+        <td style="background: #F0ADAD">
+          java.lang.System.exit(0)
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          2557
+        </td>
+        <td>
+          2710
+          -
+          2799
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameStageImpl.this.gameScene.setMessage(it.parttimeteam.view.utils.StringParser.parseMessage(message)))
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          1411
+        </td>
+        <td>
+          2736
+          -
+          2792
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.setMessage
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.setMessage(it.parttimeteam.view.utils.StringParser.parseMessage(message))
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          1716
+        </td>
+        <td>
+          2757
+          -
+          2791
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.StringParser.parseMessage
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.StringParser.parseMessage(message)
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1200
+        </td>
+        <td>
+          2898
+          -
+          2964
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameStageImpl.this.gameScene.setState(viewGameState))
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1831
+        </td>
+        <td>
+          2924
+          -
+          2957
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.setState
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.setState(viewGameState)
+        </td>
+      </tr><tr>
+        <td>
+          93
+        </td>
+        <td>
+          1330
+        </td>
+        <td>
+          3031
+          -
+          3122
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  GameStageImpl.this.gameScene.disableActions();
+  GameStageImpl.this.gameScene.showInitMatch()
+})
+        </td>
+      </tr><tr>
+        <td>
+          94
+        </td>
+        <td>
+          2585
+        </td>
+        <td>
+          3057
+          -
+          3083
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.disableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.disableActions()
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          1963
+        </td>
+        <td>
+          3090
+          -
+          3115
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.showInitMatch
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.showInitMatch()
+        </td>
+      </tr><tr>
+        <td>
+          101
+        </td>
+        <td>
+          1755
+        </td>
+        <td>
+          3190
+          -
+          3248
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameStageImpl.this.gameScene.hideInitMatch())
+        </td>
+      </tr><tr>
+        <td>
+          102
+        </td>
+        <td>
+          2407
+        </td>
+        <td>
+          3216
+          -
+          3241
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.hideInitMatch
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.hideInitMatch()
+        </td>
+      </tr><tr>
+        <td>
+          108
+        </td>
+        <td>
+          1248
+        </td>
+        <td>
+          3343
+          -
+          4010
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  val message: String = gameEndType match {
+    case GameWon =&gt; it.parttimeteam.view.utils.Strings.GAME_WON_ALERT_MESSAGE
+    case (winnerUsername: String)it.parttimeteam.view.game.GameLost((winnerUsername @ (_: String))) =&gt; it.parttimeteam.view.utils.Strings.GAME_LOST_ALERT_MESSAGE(winnerUsername)
+    case GameEndPlayerLeft =&gt; it.parttimeteam.view.utils.Strings.GAME_END_PLAYER_LEFT_MESSAGE
+    case _ =&gt; &quot;&quot;
+  };
+  val alert: scalafx.scene.control.Alert = it.parttimeteam.view.utils.ScalavelliAlert.apply(it.parttimeteam.view.utils.Strings.GAME_ENDED_ALERT_TITLE, message, scalafx.scene.control.Alert.AlertType.Information, this);
+  alert.showAndWait() match {
+    case (value: scalafx.scene.control.ButtonType)Some[scalafx.scene.control.ButtonType]((b @ _)) =&gt; if (b.==(scalafx.scene.control.ButtonType.OK))
+      GameStageImpl.this.gameListener.onViewEvent(PlayAgainEvent)
+    else
+      java.lang.System.exit(0)
+    case scala.None =&gt; ()
+  }
+})
+        </td>
+      </tr><tr>
+        <td>
+          110
+        </td>
+        <td>
+          1413
+        </td>
+        <td>
+          3435
+          -
+          3465
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.GAME_WON_ALERT_MESSAGE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.GAME_WON_ALERT_MESSAGE
+        </td>
+      </tr><tr>
+        <td>
+          112
+        </td>
+        <td>
+          2526
+        </td>
+        <td>
+          3516
+          -
+          3563
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.GAME_LOST_ALERT_MESSAGE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.GAME_LOST_ALERT_MESSAGE(winnerUsername)
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          1834
+        </td>
+        <td>
+          3599
+          -
+          3635
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.GAME_END_PLAYER_LEFT_MESSAGE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.GAME_END_PLAYER_LEFT_MESSAGE
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          1204
+        </td>
+        <td>
+          3655
+          -
+          3657
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          1246
+        </td>
+        <td>
+          3685
+          -
+          3770
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliAlert.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliAlert.apply(it.parttimeteam.view.utils.Strings.GAME_ENDED_ALERT_TITLE, message, scalafx.scene.control.Alert.AlertType.Information, this)
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          2680
+        </td>
+        <td>
+          3701
+          -
+          3731
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.GAME_ENDED_ALERT_TITLE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.GAME_ENDED_ALERT_TITLE
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          1968
+        </td>
+        <td>
+          3742
+          -
+          3763
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.Alert.AlertType.Information
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.Alert.AlertType.Information
+        </td>
+      </tr><tr>
+        <td>
+          120
+        </td>
+        <td>
+          2414
+        </td>
+        <td>
+          3777
+          -
+          3794
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.showAndWait
+        </td>
+        <td style="background: #F0ADAD">
+          alert.showAndWait()
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1451
+        </td>
+        <td>
+          3841
+          -
+          3859
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.==
+        </td>
+        <td style="background: #F0ADAD">
+          b.==(scalafx.scene.control.ButtonType.OK)
+        </td>
+      </tr><tr>
+        <td>
+          122
+        </td>
+        <td>
+          1756
+        </td>
+        <td>
+          3846
+          -
+          3859
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.ButtonType.OK
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.ButtonType.OK
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          2528
+        </td>
+        <td>
+          3875
+          -
+          3915
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(PlayAgainEvent)
+        </td>
+      </tr><tr>
+        <td>
+          123
+        </td>
+        <td>
+          1839
+        </td>
+        <td>
+          3875
+          -
+          3915
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(PlayAgainEvent)
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          1178
+        </td>
+        <td>
+          3947
+          -
+          3961
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.System.exit
+        </td>
+        <td style="background: #F0ADAD">
+          java.lang.System.exit(0)
+        </td>
+      </tr><tr>
+        <td>
+          125
+        </td>
+        <td>
+          2268
+        </td>
+        <td>
+          3947
+          -
+          3961
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          java.lang.System.exit
+        </td>
+        <td style="background: #F0ADAD">
+          java.lang.System.exit(0)
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          2019
+        </td>
+        <td>
+          3993
+          -
+          3995
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          135
+        </td>
+        <td>
+          1791
+        </td>
+        <td>
+          4081
+          -
+          4139
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameStageImpl.this.gameScene.enableActions())
+        </td>
+      </tr><tr>
+        <td>
+          136
+        </td>
+        <td>
+          2420
+        </td>
+        <td>
+          4107
+          -
+          4132
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.enableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.enableActions()
+        </td>
+      </tr><tr>
+        <td>
+          142
+        </td>
+        <td>
+          2516
+        </td>
+        <td>
+          4211
+          -
+          4270
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameStageImpl.this.gameScene.disableActions())
+        </td>
+      </tr><tr>
+        <td>
+          143
+        </td>
+        <td>
+          1455
+        </td>
+        <td>
+          4237
+          -
+          4263
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.disableActions
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.disableActions()
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          1327
+        </td>
+        <td>
+          4356
+          -
+          4507
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Option[scalafx.scene.control.ButtonType]]({
+  val alert: scalafx.scene.control.Alert = it.parttimeteam.view.utils.ScalavelliAlert.apply(it.parttimeteam.view.utils.Strings.ERROR_DIALOG_TITLE, error, scalafx.scene.control.Alert.AlertType.Error, this);
+  alert.showAndWait()
+})
+        </td>
+      </tr><tr>
+        <td>
+          150
+        </td>
+        <td>
+          1817
+        </td>
+        <td>
+          4417
+          -
+          4443
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.ERROR_DIALOG_TITLE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.ERROR_DIALOG_TITLE
+        </td>
+      </tr><tr>
+        <td>
+          150
+        </td>
+        <td>
+          1185
+        </td>
+        <td>
+          4452
+          -
+          4467
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.Alert.AlertType.Error
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.Alert.AlertType.Error
+        </td>
+      </tr><tr>
+        <td>
+          150
+        </td>
+        <td>
+          2351
+        </td>
+        <td>
+          4401
+          -
+          4474
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliAlert.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliAlert.apply(it.parttimeteam.view.utils.Strings.ERROR_DIALOG_TITLE, error, scalafx.scene.control.Alert.AlertType.Error, this)
+        </td>
+      </tr><tr>
+        <td>
+          151
+        </td>
+        <td>
+          2022
+        </td>
+        <td>
+          4481
+          -
+          4500
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.showAndWait
+        </td>
+        <td style="background: #F0ADAD">
+          alert.showAndWait()
+        </td>
+      </tr><tr>
+        <td>
+          157
+        </td>
+        <td>
+          1904
+        </td>
+        <td>
+          4590
+          -
+          4725
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Option[scalafx.scene.control.ButtonType]]({
+  val alert: scalafx.scene.control.Alert = it.parttimeteam.view.utils.ScalavelliAlert.apply(&quot;&quot;, message, scalafx.scene.control.Alert.AlertType.Information, this);
+  alert.showAndWait()
+})
+        </td>
+      </tr><tr>
+        <td>
+          158
+        </td>
+        <td>
+          2389
+        </td>
+        <td>
+          4651
+          -
+          4653
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          158
+        </td>
+        <td>
+          1798
+        </td>
+        <td>
+          4664
+          -
+          4685
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.Alert.AlertType.Information
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.Alert.AlertType.Information
+        </td>
+      </tr><tr>
+        <td>
+          158
+        </td>
+        <td>
+          1113
+        </td>
+        <td>
+          4635
+          -
+          4692
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliAlert.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliAlert.apply(&quot;&quot;, message, scalafx.scene.control.Alert.AlertType.Information, this)
+        </td>
+      </tr><tr>
+        <td>
+          159
+        </td>
+        <td>
+          2523
+        </td>
+        <td>
+          4699
+          -
+          4718
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.showAndWait
+        </td>
+        <td style="background: #F0ADAD">
+          alert.showAndWait()
+        </td>
+      </tr><tr>
+        <td>
+          165
+        </td>
+        <td>
+          1219
+        </td>
+        <td>
+          4792
+          -
+          4817
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.setInTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.setInTurn(true)
+        </td>
+      </tr><tr>
+        <td>
+          166
+        </td>
+        <td>
+          1007
+        </td>
+        <td>
+          4822
+          -
+          5223
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  val alert: scalafx.scene.control.Alert = it.parttimeteam.view.utils.ScalavelliAlert.apply(&quot;&quot;, it.parttimeteam.view.utils.Strings.YOUR_TURN_ALERT_MESSAGE, scalafx.scene.control.Alert.AlertType.Information, this);
+  alert.showAndWait() match {
+    case (value: scalafx.scene.control.ButtonType)Some[scalafx.scene.control.ButtonType]((b @ _)) =&gt; if (b.==(scalafx.scene.control.ButtonType.OK))
+      GameStageImpl.this.gameListener.onViewEvent(TurnStartedEvent)
+    else
+      java.lang.System.exit(0)
+    case scala.None =&gt; ()
+  };
+  GameStageImpl.this.setMessage(it.parttimeteam.controller.ViewMessage.YourTurn)
+})
+        </td>
+      </tr><tr>
+        <td>
+          167
+        </td>
+        <td>
+          1297
+        </td>
+        <td>
+          4913
+          -
+          4934
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.Alert.AlertType.Information
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.Alert.AlertType.Information
+        </td>
+      </tr><tr>
+        <td>
+          167
+        </td>
+        <td>
+          2359
+        </td>
+        <td>
+          4876
+          -
+          4878
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;&quot;
+        </td>
+      </tr><tr>
+        <td>
+          167
+        </td>
+        <td>
+          1949
+        </td>
+        <td>
+          4880
+          -
+          4911
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.YOUR_TURN_ALERT_MESSAGE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.YOUR_TURN_ALERT_MESSAGE
+        </td>
+      </tr><tr>
+        <td>
+          167
+        </td>
+        <td>
+          2465
+        </td>
+        <td>
+          4860
+          -
+          4941
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliAlert.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliAlert.apply(&quot;&quot;, it.parttimeteam.view.utils.Strings.YOUR_TURN_ALERT_MESSAGE, scalafx.scene.control.Alert.AlertType.Information, this)
+        </td>
+      </tr><tr>
+        <td>
+          168
+        </td>
+        <td>
+          1771
+        </td>
+        <td>
+          4948
+          -
+          4965
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.showAndWait
+        </td>
+        <td style="background: #F0ADAD">
+          alert.showAndWait()
+        </td>
+      </tr><tr>
+        <td>
+          170
+        </td>
+        <td>
+          1117
+        </td>
+        <td>
+          5017
+          -
+          5030
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.ButtonType.OK
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.ButtonType.OK
+        </td>
+      </tr><tr>
+        <td>
+          170
+        </td>
+        <td>
+          2527
+        </td>
+        <td>
+          5012
+          -
+          5030
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.==
+        </td>
+        <td style="background: #F0ADAD">
+          b.==(scalafx.scene.control.ButtonType.OK)
+        </td>
+      </tr><tr>
+        <td>
+          171
+        </td>
+        <td>
+          1876
+        </td>
+        <td>
+          5046
+          -
+          5088
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(TurnStartedEvent)
+        </td>
+      </tr><tr>
+        <td>
+          171
+        </td>
+        <td>
+          1176
+        </td>
+        <td>
+          5046
+          -
+          5088
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          it.parttimeteam.controller.game.GameListener.onViewEvent
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameListener.onViewEvent(TurnStartedEvent)
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          2323
+        </td>
+        <td>
+          5120
+          -
+          5134
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.System.exit
+        </td>
+        <td style="background: #F0ADAD">
+          java.lang.System.exit(0)
+        </td>
+      </tr><tr>
+        <td>
+          173
+        </td>
+        <td>
+          1950
+        </td>
+        <td>
+          5120
+          -
+          5134
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          java.lang.System.exit
+        </td>
+        <td style="background: #F0ADAD">
+          java.lang.System.exit(0)
+        </td>
+      </tr><tr>
+        <td>
+          176
+        </td>
+        <td>
+          1302
+        </td>
+        <td>
+          5166
+          -
+          5168
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          179
+        </td>
+        <td>
+          2381
+        </td>
+        <td>
+          5195
+          -
+          5215
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.controller.ViewMessage.YourTurn
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.controller.ViewMessage.YourTurn
+        </td>
+      </tr><tr>
+        <td>
+          179
+        </td>
+        <td>
+          1741
+        </td>
+        <td>
+          5184
+          -
+          5216
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameStageImpl.setMessage
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.setMessage(it.parttimeteam.controller.ViewMessage.YourTurn)
+        </td>
+      </tr><tr>
+        <td>
+          185
+        </td>
+        <td>
+          2500
+        </td>
+        <td>
+          5293
+          -
+          5319
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.setInTurn
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.setInTurn(false)
+        </td>
+      </tr><tr>
+        <td>
+          186
+        </td>
+        <td>
+          2290
+        </td>
+        <td>
+          5324
+          -
+          5409
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  GameStageImpl.this.gameScene.setMessage(&quot;&quot;);
+  GameStageImpl.this.gameScene.hideTimer()
+})
+        </td>
+      </tr><tr>
+        <td>
+          187
+        </td>
+        <td>
+          1879
+        </td>
+        <td>
+          5350
+          -
+          5374
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.setMessage
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.setMessage(&quot;&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          188
+        </td>
+        <td>
+          1147
+        </td>
+        <td>
+          5381
+          -
+          5402
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.hideTimer
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.hideTimer()
+        </td>
+      </tr><tr>
+        <td>
+          194
+        </td>
+        <td>
+          1267
+        </td>
+        <td>
+          5504
+          -
+          5574
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameStageImpl.this.gameScene.showTimer(minutes, seconds))
+        </td>
+      </tr><tr>
+        <td>
+          195
+        </td>
+        <td>
+          1615
+        </td>
+        <td>
+          5530
+          -
+          5567
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.showTimer
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.showTimer(minutes, seconds)
+        </td>
+      </tr><tr>
+        <td>
+          201
+        </td>
+        <td>
+          1715
+        </td>
+        <td>
+          5671
+          -
+          5743
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit](GameStageImpl.this.gameScene.updateTimer(minutes, seconds))
+        </td>
+      </tr><tr>
+        <td>
+          202
+        </td>
+        <td>
+          2386
+        </td>
+        <td>
+          5697
+          -
+          5736
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.updateTimer
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.updateTimer(minutes, seconds)
+        </td>
+      </tr><tr>
+        <td>
+          208
+        </td>
+        <td>
+          1150
+        </td>
+        <td>
+          5817
+          -
+          5925
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.application.Platform.runLater
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.application.Platform.runLater[Unit]({
+  GameStageImpl.this.gameScene.notifyTimerEnd();
+  GameStageImpl.this.notifyInfo(it.parttimeteam.view.utils.Strings.TIMER_END_INFO_MESSAGE)
+})
+        </td>
+      </tr><tr>
+        <td>
+          209
+        </td>
+        <td>
+          1110
+        </td>
+        <td>
+          5843
+          -
+          5869
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.GameScene.notifyTimerEnd
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.gameScene.notifyTimerEnd()
+        </td>
+      </tr><tr>
+        <td>
+          210
+        </td>
+        <td>
+          1917
+        </td>
+        <td>
+          5876
+          -
+          5918
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.GameStageImpl.notifyInfo
+        </td>
+        <td style="background: #F0ADAD">
+          GameStageImpl.this.notifyInfo(it.parttimeteam.view.utils.Strings.TIMER_END_INFO_MESSAGE)
+        </td>
+      </tr><tr>
+        <td>
+          210
+        </td>
+        <td>
+          2503
+        </td>
+        <td>
+          5887
+          -
+          5917
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.TIMER_END_INFO_MESSAGE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.TIMER_END_INFO_MESSAGE
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

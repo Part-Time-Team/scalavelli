@@ -67,49 +67,46 @@
 </span>43 <span style=''>  class SelectionManagerImpl[T &lt;: SelectableItem](allowOnlyOne: Boolean, private var selectedItems: Seq[T] = List.empty) extends SelectionManager[T] {
 </span>44 <span style=''>    /** @inheritdoc */
 </span>45 <span style=''>    override def onItemSelected(item: T): Unit = {
-</span>46 <span style=''>      if (</span><span style='background: #AEF1AE'>allowOnlyOne</span><span style=''>) </span><span style='background: #AEF1AE'>{
-</span>47 <span style=''></span><span style='background: #AEF1AE'>        this.clearSelection()
-</span>48 <span style=''></span><span style='background: #AEF1AE'>        this.addItem(item)
-</span>49 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''> else {
-</span>50 <span style=''>        </span><span style='background: #AEF1AE'>if (selectedItems.contains(item)) {
-</span>51 <span style=''></span><span style='background: #AEF1AE'>          this.removeItem(item)
-</span>52 <span style=''></span><span style='background: #AEF1AE'>        } else {
-</span>53 <span style=''></span><span style='background: #AEF1AE'>          this.addItem(item)
-</span>54 <span style=''></span><span style='background: #AEF1AE'>        }</span><span style=''>
-</span>55 <span style=''>      }
+</span>46 <span style=''>      if (</span><span style='background: #AEF1AE'>selectedItems.contains(item)</span><span style=''>) {
+</span>47 <span style=''>        </span><span style='background: #AEF1AE'>this.removeItem(item)</span><span style=''>
+</span>48 <span style=''>      } else </span><span style='background: #AEF1AE'>{
+</span>49 <span style=''></span><span style='background: #AEF1AE'>        if (allowOnlyOne){
+</span>50 <span style=''></span><span style='background: #AEF1AE'>          this.clearSelection()
+</span>51 <span style=''></span><span style='background: #AEF1AE'>        }
+</span>52 <span style=''></span><span style='background: #AEF1AE'>
+</span>53 <span style=''></span><span style='background: #AEF1AE'>        this.addItem(item)
+</span>54 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
+</span>55 <span style=''>    }
 </span>56 <span style=''>
-</span>57 <span style=''>      </span><span style='background: #AEF1AE'>println(s&quot;Selected cards: ${getSelectedItems.toString}&quot;)</span><span style=''>
-</span>58 <span style=''>    }
+</span>57 <span style=''>    /** @inheritdoc */
+</span>58 <span style=''>    override def getSelectedItems: Seq[T] = </span><span style='background: #AEF1AE'>selectedItems</span><span style=''>
 </span>59 <span style=''>
 </span>60 <span style=''>    /** @inheritdoc */
-</span>61 <span style=''>    override def getSelectedItems: Seq[T] = </span><span style='background: #AEF1AE'>selectedItems</span><span style=''>
+</span>61 <span style=''>    override def isSelectionEmpty: Boolean = </span><span style='background: #AEF1AE'>selectedItems.isEmpty</span><span style=''>
 </span>62 <span style=''>
 </span>63 <span style=''>    /** @inheritdoc */
-</span>64 <span style=''>    override def isSelectionEmpty: Boolean = </span><span style='background: #AEF1AE'>selectedItems.isEmpty</span><span style=''>
-</span>65 <span style=''>
-</span>66 <span style=''>    /** @inheritdoc */
-</span>67 <span style=''>    override def clearSelection(): Unit = {
-</span>68 <span style=''>      </span><span style='background: #AEF1AE'>unselectAll()</span><span style=''>
-</span>69 <span style=''>      </span><span style='background: #AEF1AE'>selectedItems = List.empty</span><span style=''>
-</span>70 <span style=''>    }
-</span>71 <span style=''>
-</span>72 <span style=''>    private def unselectAll(): Unit = {
-</span>73 <span style=''>      </span><span style='background: #AEF1AE'>for (item: SelectableItem &lt;- selectedItems) {
-</span>74 <span style=''></span><span style='background: #AEF1AE'>        item.setSelected(false)</span><span style=''>
-</span>75 <span style=''>      }
-</span>76 <span style=''>    }
-</span>77 <span style=''>
-</span>78 <span style=''>    private def removeItem(item: T): Unit = {
-</span>79 <span style=''>      </span><span style='background: #AEF1AE'>selectedItems = selectedItems.filter(i =&gt; i != item)</span><span style=''>
-</span>80 <span style=''>      </span><span style='background: #AEF1AE'>item.setSelected(false)</span><span style=''>
-</span>81 <span style=''>    }
-</span>82 <span style=''>
-</span>83 <span style=''>    private def addItem(item: T): Unit = {
-</span>84 <span style=''>      </span><span style='background: #AEF1AE'>selectedItems = selectedItems :+ item</span><span style=''>
-</span>85 <span style=''>      </span><span style='background: #AEF1AE'>item.setSelected(true)</span><span style=''>
-</span>86 <span style=''>    }
-</span>87 <span style=''>  }
-</span>88 <span style=''>}
+</span>64 <span style=''>    override def clearSelection(): Unit = {
+</span>65 <span style=''>      </span><span style='background: #AEF1AE'>unselectAll()</span><span style=''>
+</span>66 <span style=''>      </span><span style='background: #AEF1AE'>selectedItems = List.empty</span><span style=''>
+</span>67 <span style=''>    }
+</span>68 <span style=''>
+</span>69 <span style=''>    private def unselectAll(): Unit = {
+</span>70 <span style=''>      </span><span style='background: #AEF1AE'>for (item: SelectableItem &lt;- selectedItems) {
+</span>71 <span style=''></span><span style='background: #AEF1AE'>        item.setSelected(false)</span><span style=''>
+</span>72 <span style=''>      }
+</span>73 <span style=''>    }
+</span>74 <span style=''>
+</span>75 <span style=''>    private def removeItem(item: T): Unit = {
+</span>76 <span style=''>      </span><span style='background: #AEF1AE'>selectedItems = selectedItems.filter(i =&gt; i != item)</span><span style=''>
+</span>77 <span style=''>      </span><span style='background: #AEF1AE'>item.setSelected(false)</span><span style=''>
+</span>78 <span style=''>    }
+</span>79 <span style=''>
+</span>80 <span style=''>    private def addItem(item: T): Unit = {
+</span>81 <span style=''>      </span><span style='background: #AEF1AE'>selectedItems = selectedItems :+ item</span><span style=''>
+</span>82 <span style=''>      </span><span style='background: #AEF1AE'>item.setSelected(true)</span><span style=''>
+</span>83 <span style=''>    }
+</span>84 <span style=''>  }
+</span>85 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -126,28 +123,7 @@
           41
         </td>
         <td>
-          1611
-        </td>
-        <td>
-          810
-          -
-          851
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.&lt;init&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          new it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl[T](allowOnlyOne, SelectionManager.this.SelectionManagerImpl.&lt;init&gt;$default$2[T])
-        </td>
-      </tr><tr>
-        <td>
-          41
-        </td>
-        <td>
-          2261
+          2293
         </td>
         <td>
           810
@@ -165,102 +141,36 @@
         </td>
       </tr><tr>
         <td>
-          46
+          41
         </td>
         <td>
-          1068
+          1678
         </td>
         <td>
-          1102
+          810
           -
-          1168
+          851
         </td>
         <td>
-          Block
+          Apply
         </td>
         <td>
-          &lt;nosymbol&gt;
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.&lt;init&gt;
         </td>
         <td style="background: #AEF1AE">
-          {
-  this.clearSelection();
-  this.addItem(item)
-}
+          new it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl[T](allowOnlyOne, SelectionManager.this.SelectionManagerImpl.&lt;init&gt;$default$2[T])
         </td>
       </tr><tr>
         <td>
           46
         </td>
         <td>
-          1247
+          1271
         </td>
         <td>
           1088
           -
-          1100
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.allowOnlyOne
-        </td>
-        <td style="background: #AEF1AE">
-          SelectionManagerImpl.this.allowOnlyOne
-        </td>
-      </tr><tr>
-        <td>
-          47
-        </td>
-        <td>
-          2380
-        </td>
-        <td>
-          1112
-          -
-          1133
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.clearSelection
-        </td>
-        <td style="background: #AEF1AE">
-          this.clearSelection()
-        </td>
-      </tr><tr>
-        <td>
-          48
-        </td>
-        <td>
-          1715
-        </td>
-        <td>
-          1142
-          -
-          1160
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.addItem
-        </td>
-        <td style="background: #AEF1AE">
-          this.addItem(item)
-        </td>
-      </tr><tr>
-        <td>
-          50
-        </td>
-        <td>
-          2102
-        </td>
-        <td>
-          1188
-          -
-          1216
+          1116
         </td>
         <td>
           Apply
@@ -273,102 +183,189 @@
         </td>
       </tr><tr>
         <td>
+          47
+        </td>
+        <td>
+          2479
+        </td>
+        <td>
+          1128
+          -
+          1149
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.removeItem
+        </td>
+        <td style="background: #AEF1AE">
+          this.removeItem(item)
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1721
+        </td>
+        <td>
+          1128
+          -
+          1149
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.removeItem
+        </td>
+        <td style="background: #AEF1AE">
+          this.removeItem(item)
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1261
+        </td>
+        <td>
+          1163
+          -
+          1269
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          {
+  if (SelectionManagerImpl.this.allowOnlyOne)
+    this.clearSelection()
+  else
+    ();
+  this.addItem(item)
+}
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1115
+        </td>
+        <td>
+          1177
+          -
+          1189
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.allowOnlyOne
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.allowOnlyOne
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          2320
+        </td>
+        <td>
+          1173
+          -
+          1173
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1158
+        </td>
+        <td>
+          1173
+          -
+          1173
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #AEF1AE">
+          ()
+        </td>
+      </tr><tr>
+        <td>
           50
         </td>
         <td>
-          930
+          2245
         </td>
         <td>
-          1184
+          1202
           -
-          1307
-        </td>
-        <td>
-          If
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          if (SelectionManagerImpl.this.selectedItems.contains[T](item))
-  this.removeItem(item)
-else
-  this.addItem(item)
-        </td>
-      </tr><tr>
-        <td>
-          51
-        </td>
-        <td>
-          1799
-        </td>
-        <td>
-          1230
-          -
-          1251
+          1223
         </td>
         <td>
           Apply
         </td>
         <td>
-          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.removeItem
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.clearSelection
         </td>
         <td style="background: #AEF1AE">
-          this.removeItem(item)
+          this.clearSelection()
         </td>
       </tr><tr>
         <td>
-          51
+          50
         </td>
         <td>
-          1192
+          1807
         </td>
         <td>
-          1230
+          1202
           -
-          1251
+          1223
         </td>
         <td>
           Block
         </td>
         <td>
-          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.removeItem
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.clearSelection
         </td>
         <td style="background: #AEF1AE">
-          this.removeItem(item)
+          this.clearSelection()
         </td>
       </tr><tr>
         <td>
           53
         </td>
         <td>
-          1617
+          1682
         </td>
         <td>
-          1279
+          1243
           -
-          1297
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.addItem
-        </td>
-        <td style="background: #AEF1AE">
-          this.addItem(item)
-        </td>
-      </tr><tr>
-        <td>
-          53
-        </td>
-        <td>
-          2239
-        </td>
-        <td>
-          1279
-          -
-          1297
+          1261
         </td>
         <td>
           Apply
@@ -381,120 +378,15 @@ else
         </td>
       </tr><tr>
         <td>
-          57
+          58
         </td>
         <td>
-          2353
+          2370
         </td>
         <td>
-          1333
+          1344
           -
-          1350
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;Selected cards: &quot;
-        </td>
-      </tr><tr>
-        <td>
-          57
-        </td>
-        <td>
-          1677
-        </td>
-        <td>
-          1377
-          -
-          1378
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #AEF1AE">
-          &quot;&quot;
-        </td>
-      </tr><tr>
-        <td>
-          57
-        </td>
-        <td>
-          2104
-        </td>
-        <td>
-          1331
-          -
-          1378
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.StringContext.s
-        </td>
-        <td style="background: #AEF1AE">
-          scala.StringContext.apply(&quot;Selected cards: &quot;, &quot;&quot;).s(SelectionManagerImpl.this.getSelectedItems.toString())
-        </td>
-      </tr><tr>
-        <td>
-          57
-        </td>
-        <td>
-          1042
-        </td>
-        <td>
-          1351
-          -
-          1376
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.collection.SeqLike.toString
-        </td>
-        <td style="background: #AEF1AE">
-          SelectionManagerImpl.this.getSelectedItems.toString()
-        </td>
-      </tr><tr>
-        <td>
-          57
-        </td>
-        <td>
-          1803
-        </td>
-        <td>
-          1323
-          -
-          1379
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scala.Predef.println
-        </td>
-        <td style="background: #AEF1AE">
-          scala.Predef.println(scala.StringContext.apply(&quot;Selected cards: &quot;, &quot;&quot;).s(SelectionManagerImpl.this.getSelectedItems.toString()))
-        </td>
-      </tr><tr>
-        <td>
-          61
-        </td>
-        <td>
-          1219
-        </td>
-        <td>
-          1454
-          -
-          1467
+          1357
         </td>
         <td>
           Select
@@ -507,15 +399,15 @@ else
         </td>
       </tr><tr>
         <td>
-          64
+          61
         </td>
         <td>
-          2214
+          1724
         </td>
         <td>
-          1537
+          1427
           -
-          1558
+          1448
         </td>
         <td>
           Select
@@ -528,15 +420,15 @@ else
         </td>
       </tr><tr>
         <td>
-          68
+          65
         </td>
         <td>
-          1585
+          1075
         </td>
         <td>
-          1633
+          1523
           -
-          1646
+          1536
         </td>
         <td>
           Apply
@@ -549,15 +441,15 @@ else
         </td>
       </tr><tr>
         <td>
-          69
+          66
         </td>
         <td>
-          2356
+          1838
         </td>
         <td>
-          1653
+          1543
           -
-          1679
+          1569
         </td>
         <td>
           Apply
@@ -570,15 +462,15 @@ else
         </td>
       </tr><tr>
         <td>
-          69
+          66
         </td>
         <td>
-          934
+          2247
         </td>
         <td>
-          1669
+          1559
           -
-          1679
+          1569
         </td>
         <td>
           TypeApply
@@ -591,15 +483,15 @@ else
         </td>
       </tr><tr>
         <td>
-          73
+          70
         </td>
         <td>
-          1023
+          2326
         </td>
         <td>
-          1733
+          1623
           -
-          1810
+          1700
         </td>
         <td>
           Apply
@@ -615,15 +507,15 @@ else
         </td>
       </tr><tr>
         <td>
-          74
+          71
         </td>
         <td>
-          1760
+          1129
         </td>
         <td>
-          1787
+          1677
           -
-          1810
+          1700
         </td>
         <td>
           Apply
@@ -636,15 +528,15 @@ else
         </td>
       </tr><tr>
         <td>
-          79
+          76
         </td>
         <td>
-          1778
+          1264
         </td>
         <td>
-          1894
+          1784
           -
-          1930
+          1820
         </td>
         <td>
           Apply
@@ -657,36 +549,15 @@ else
         </td>
       </tr><tr>
         <td>
-          79
+          76
         </td>
         <td>
-          2108
+          2450
         </td>
         <td>
-          1920
+          1768
           -
-          1929
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.lang.Object.!=
-        </td>
-        <td style="background: #AEF1AE">
-          i.!=(item)
-        </td>
-      </tr><tr>
-        <td>
-          79
-        </td>
-        <td>
-          1112
-        </td>
-        <td>
-          1878
-          -
-          1930
+          1820
         </td>
         <td>
           Apply
@@ -699,15 +570,36 @@ else
         </td>
       </tr><tr>
         <td>
-          80
+          76
         </td>
         <td>
-          2297
+          1651
         </td>
         <td>
-          1937
+          1810
           -
-          1960
+          1819
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.lang.Object.!=
+        </td>
+        <td style="background: #AEF1AE">
+          i.!=(item)
+        </td>
+      </tr><tr>
+        <td>
+          77
+        </td>
+        <td>
+          1758
+        </td>
+        <td>
+          1827
+          -
+          1850
         </td>
         <td>
           Apply
@@ -720,36 +612,15 @@ else
         </td>
       </tr><tr>
         <td>
-          84
+          81
         </td>
         <td>
-          2398
+          2158
         </td>
         <td>
-          2017
+          1923
           -
-          2054
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.selectedItems_=
-        </td>
-        <td style="background: #AEF1AE">
-          SelectionManagerImpl.this.selectedItems_=(SelectionManagerImpl.this.selectedItems.:+[T, Seq[T]](item)(collection.this.Seq.canBuildFrom[T]))
-        </td>
-      </tr><tr>
-        <td>
-          84
-        </td>
-        <td>
-          937
-        </td>
-        <td>
-          2033
-          -
-          2054
+          1944
         </td>
         <td>
           ApplyToImplicitArgs
@@ -762,15 +633,15 @@ else
         </td>
       </tr><tr>
         <td>
-          84
+          81
         </td>
         <td>
-          1607
+          1081
         </td>
         <td>
-          2047
+          1937
           -
-          2047
+          1937
         </td>
         <td>
           TypeApply
@@ -783,15 +654,36 @@ else
         </td>
       </tr><tr>
         <td>
-          85
+          81
         </td>
         <td>
-          1650
+          1843
         </td>
         <td>
-          2061
+          1907
           -
-          2083
+          1944
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.game.SelectionManager.SelectionManagerImpl.selectedItems_=
+        </td>
+        <td style="background: #AEF1AE">
+          SelectionManagerImpl.this.selectedItems_=(SelectionManagerImpl.this.selectedItems.:+[T, Seq[T]](item)(collection.this.Seq.canBuildFrom[T]))
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          1208
+        </td>
+        <td>
+          1951
+          -
+          1973
         </td>
         <td>
           Apply

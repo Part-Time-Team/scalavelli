@@ -1,0 +1,619 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/startup/scenes/BaseStartupScene.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.startup.scenes
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.view.ViewConfig
+</span>4 <span style=''>import it.parttimeteam.view.utils.Paths
+</span>5 <span style=''>import scalafx.geometry.Insets
+</span>6 <span style=''>import scalafx.scene.Scene
+</span>7 <span style=''>import scalafx.scene.image.{Image, ImageView}
+</span>8 <span style=''>import scalafx.scene.layout.{BorderPane, StackPane}
+</span>9 <span style=''>import scalafx.stage.Stage
+</span>10 <span style=''>
+</span>11 <span style=''>/**
+</span>12 <span style=''>  * Extend by all the StartupScenes
+</span>13 <span style=''>  *
+</span>14 <span style=''>  * @param parentStage the parent stage
+</span>15 <span style=''>  */
+</span>16 <span style=''>abstract class BaseStartupScene(parentStage: Stage) extends Scene() {
+</span>17 <span style=''>
+</span>18 <span style=''>  val background: ImageView = </span><span style='background: #F0ADAD'>new</span><span style=''> ImageView(new Image(Paths.STARTUP_BACKGROUND)) {
+</span>19 <span style=''>    </span><span style='background: #F0ADAD'>fitWidth &lt;== parentStage.width</span><span style=''>
+</span>20 <span style=''>    </span><span style='background: #F0ADAD'>fitHeight &lt;== parentStage.height</span><span style=''>
+</span>21 <span style=''>  }
+</span>22 <span style=''>
+</span>23 <span style=''>  val mainContent: BorderPane = </span><span style='background: #F0ADAD'>new BorderPane()</span><span style=''>
+</span>24 <span style=''>
+</span>25 <span style=''>  </span><span style='background: #F0ADAD'>mainContent.prefWidth &lt;== parentStage.width</span><span style=''>
+</span>26 <span style=''>  </span><span style='background: #F0ADAD'>mainContent.maxHeight &lt;== parentStage.height</span><span style=''>
+</span>27 <span style=''>  </span><span style='background: #F0ADAD'>mainContent.setPadding(Insets(ViewConfig.screenPadding))</span><span style=''>
+</span>28 <span style=''>
+</span>29 <span style=''>  val rootContent = </span><span style='background: #F0ADAD'>new StackPane()</span><span style=''>
+</span>30 <span style=''>  </span><span style='background: #F0ADAD'>rootContent.getChildren.addAll(background, mainContent)</span><span style=''>
+</span>31 <span style=''>  </span><span style='background: #F0ADAD'>root = rootContent</span><span style=''>
+</span>32 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1020
+        </td>
+        <td>
+          498
+          -
+          501
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupScene.$anon.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new $anon()
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1575
+        </td>
+        <td>
+          568
+          -
+          585
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.stage.Window.width
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.parentStage.width
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1298
+        </td>
+        <td>
+          555
+          -
+          585
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          $anon.this.fitWidth.&lt;==(BaseStartupScene.this.parentStage.width)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1737
+        </td>
+        <td>
+          590
+          -
+          622
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          $anon.this.fitHeight.&lt;==(BaseStartupScene.this.parentStage.height)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          2410
+        </td>
+        <td>
+          604
+          -
+          622
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.stage.Window.height
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.parentStage.height
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1815
+        </td>
+        <td>
+          660
+          -
+          676
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.BorderPane(layout.this.BorderPane.&lt;init&gt;$default$1)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          2579
+        </td>
+        <td>
+          660
+          -
+          660
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.&lt;init&gt;$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.BorderPane.&lt;init&gt;$default$1
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1177
+        </td>
+        <td>
+          706
+          -
+          723
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.stage.Window.width
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.parentStage.width
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          2345
+        </td>
+        <td>
+          680
+          -
+          723
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.mainContent.prefWidth.&lt;==(BaseStartupScene.this.parentStage.width)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1578
+        </td>
+        <td>
+          752
+          -
+          770
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.stage.Window.height
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.parentStage.height
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1280
+        </td>
+        <td>
+          726
+          -
+          770
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.mainContent.maxHeight.&lt;==(BaseStartupScene.this.parentStage.height)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          1743
+        </td>
+        <td>
+          803
+          -
+          827
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.screenPadding
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          1105
+        </td>
+        <td>
+          796
+          -
+          828
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.geometry.Insets.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.screenPadding)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          2382
+        </td>
+        <td>
+          773
+          -
+          784
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupScene.mainContent
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.mainContent
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          1900
+        </td>
+        <td>
+          773
+          -
+          829
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.layout.Region.setPadding
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.BorderPane.sfxBorderPane2jfx(BaseStartupScene.this.mainContent).setPadding(geometry.this.Insets.sfxInsets2jfx(scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.screenPadding)))
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          2139
+        </td>
+        <td>
+          796
+          -
+          828
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.geometry.Insets.sfxInsets2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          geometry.this.Insets.sfxInsets2jfx(scalafx.geometry.Insets.apply(it.parttimeteam.view.ViewConfig.screenPadding))
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          2350
+        </td>
+        <td>
+          851
+          -
+          866
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.StackPane.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.StackPane(layout.this.StackPane.&lt;init&gt;$default$1)
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1148
+        </td>
+        <td>
+          851
+          -
+          851
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.StackPane.&lt;init&gt;$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.StackPane.&lt;init&gt;$default$1
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1674
+        </td>
+        <td>
+          869
+          -
+          880
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupScene.rootContent
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.rootContent
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1109
+        </td>
+        <td>
+          912
+          -
+          923
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.sfxBorderPane2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.BorderPane.sfxBorderPane2jfx(BaseStartupScene.this.mainContent)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1769
+        </td>
+        <td>
+          912
+          -
+          923
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupScene.mainContent
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.mainContent
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1287
+        </td>
+        <td>
+          900
+          -
+          910
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupScene.background
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.background
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          2464
+        </td>
+        <td>
+          900
+          -
+          910
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.image.ImageView.sfxImageView2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          image.this.ImageView.sfxImageView2jfx(BaseStartupScene.this.background)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          2141
+        </td>
+        <td>
+          869
+          -
+          924
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.collections.ObservableList.addAll
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.StackPane.sfxStackPane2jfx(BaseStartupScene.this.rootContent).getChildren().addAll(image.this.ImageView.sfxImageView2jfx(BaseStartupScene.this.background), layout.this.BorderPane.sfxBorderPane2jfx(BaseStartupScene.this.mainContent))
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1218
+        </td>
+        <td>
+          927
+          -
+          945
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.Scene.root_=
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.root_=(BaseStartupScene.this.rootContent)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1867
+        </td>
+        <td>
+          934
+          -
+          945
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupScene.rootContent
+        </td>
+        <td style="background: #F0ADAD">
+          BaseStartupScene.this.rootContent
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

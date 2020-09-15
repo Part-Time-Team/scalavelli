@@ -28,108 +28,109 @@
 </span>4 <span style=''>import it.parttimeteam.core.collections.CardCombination
 </span>5 <span style=''>import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 </span>6 <span style=''>import it.parttimeteam.view.game.scenes.panes.ActionGamePane
-</span>7 <span style=''>import scalafx.geometry.Insets
-</span>8 <span style=''>import scalafx.scene.control.Button
-</span>9 <span style=''>import scalafx.scene.image.{Image, ImageView}
-</span>10 <span style=''>import scalafx.scene.layout.{BorderPane, HBox}
-</span>11 <span style=''>
-</span>12 <span style=''>/**
-</span>13 <span style=''>  * Represents the CardCombination wrapped inside a BorderPane.
-</span>14 <span style=''>  * Allows the player to select the CardCombination or to pick it from the game board.
-</span>15 <span style=''>  */
-</span>16 <span style=''>trait GameCardCombination extends BorderPane with ActionGamePane with SelectableItem {
-</span>17 <span style=''>
-</span>18 <span style=''>  /**
-</span>19 <span style=''>    * Return the CardCombination wrapper by GameCardCombination
-</span>20 <span style=''>    *
-</span>21 <span style=''>    * @return the CardCombination entity
-</span>22 <span style=''>    */
-</span>23 <span style=''>  def getCombination: CardCombination
-</span>24 <span style=''>}
-</span>25 <span style=''>
-</span>26 <span style=''>object GameCardCombination {
-</span>27 <span style=''>
-</span>28 <span style=''>  class GameCardCombinationImpl(combination: CardCombination, boardListener: BoardListener) extends GameCardCombination {
-</span>29 <span style=''>
-</span>30 <span style=''>    override def toString: String = </span><span style='background: #F0ADAD'>combination.toString</span><span style=''>
-</span>31 <span style=''>
-</span>32 <span style=''>    </span><span style='background: #F0ADAD'>this.padding = Insets(10d)</span><span style=''>
-</span>33 <span style=''>
-</span>34 <span style=''>    val combinationCards = </span><span style='background: #F0ADAD'>new HBox()</span><span style=''>
-</span>35 <span style=''>    </span><span style='background: #F0ADAD'>combinationCards.spacing = 10d</span><span style=''>
-</span>36 <span style=''>
-</span>37 <span style=''>    val pickBtn = </span><span style='background: #F0ADAD'>new Button()</span><span style=''>
-</span>38 <span style=''>    val img = </span><span style='background: #F0ADAD'>new ImageView(new Image(&quot;images/pick.png&quot;))</span><span style=''>
-</span>39 <span style=''>    </span><span style='background: #F0ADAD'>img.fitHeight = 15d</span><span style=''>
-</span>40 <span style=''>    </span><span style='background: #F0ADAD'>img.preserveRatio = true</span><span style=''>
-</span>41 <span style=''>
-</span>42 <span style=''>    </span><span style='background: #F0ADAD'>pickBtn.setGraphic(img)</span><span style=''>
-</span>43 <span style=''>    </span><span style='background: #F0ADAD'>pickBtn.onAction = _ =&gt; boardListener.onPickCombinationClick(this)</span><span style=''>
-</span>44 <span style=''>
-</span>45 <span style=''>    </span><span style='background: #F0ADAD'>pickBtn.margin = Insets(0, 0, 0, 5)</span><span style=''>
-</span>46 <span style=''>
-</span>47 <span style=''>    </span><span style='background: #F0ADAD'>this.left = combinationCards</span><span style=''>
-</span>48 <span style=''>    </span><span style='background: #F0ADAD'>this.right = pickBtn</span><span style=''>
-</span>49 <span style=''>    </span><span style='background: #F0ADAD'>this.getStyleClass.add(&quot;combination&quot;)</span><span style=''>
-</span>50 <span style=''>
-</span>51 <span style=''>    </span><span style='background: #F0ADAD'>this.setOnMouseEntered(_ =&gt; {
-</span>52 <span style=''></span><span style='background: #F0ADAD'>      this.getStyleClass.add(&quot;combinationHover&quot;)
-</span>53 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>54 <span style=''>
-</span>55 <span style=''>    </span><span style='background: #F0ADAD'>this.setOnMouseExited(_ =&gt; {
-</span>56 <span style=''></span><span style='background: #F0ADAD'>      this.getStyleClass.remove(&quot;combinationHover&quot;)
-</span>57 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
-</span>58 <span style=''>
-</span>59 <span style=''>    </span><span style='background: #F0ADAD'>this.setOnMouseClicked(_ =&gt; boardListener.onCombinationClicked(this))</span><span style=''>
-</span>60 <span style=''>
-</span>61 <span style=''>    </span><span style='background: #F0ADAD'>for (card: Card &lt;- combination.cards) {
-</span>62 <span style=''></span><span style='background: #F0ADAD'>      val playerCard: GameCard = GameCard(card, boardListener)
-</span>63 <span style=''></span><span style='background: #F0ADAD'>
-</span>64 <span style=''></span><span style='background: #F0ADAD'>      combinationCards.children.add(playerCard)
-</span>65 <span style=''></span><span style='background: #F0ADAD'>
-</span>66 <span style=''></span><span style='background: #F0ADAD'>      playerCard.setOnMouseClicked(e =&gt; {
-</span>67 <span style=''></span><span style='background: #F0ADAD'>        e.consume()
-</span>68 <span style=''></span><span style='background: #F0ADAD'>        boardListener.onCardClicked(playerCard)
-</span>69 <span style=''></span><span style='background: #F0ADAD'>      })
-</span>70 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>71 <span style=''>
-</span>72 <span style=''>    /**
-</span>73 <span style=''>      * @inheritdoc
-</span>74 <span style=''>      */
-</span>75 <span style=''>    override def setSelected(selected: Boolean): Unit = {
-</span>76 <span style=''>      if (selected) {
-</span>77 <span style=''>        </span><span style='background: #F0ADAD'>this.getStyleClass.add(&quot;combinationSelected&quot;)</span><span style=''>
-</span>78 <span style=''>      } else {
-</span>79 <span style=''>        </span><span style='background: #F0ADAD'>this.getStyleClass.remove(&quot;combinationSelected&quot;)</span><span style=''>
-</span>80 <span style=''>      }
-</span>81 <span style=''>    }
-</span>82 <span style=''>
-</span>83 <span style=''>    /**
-</span>84 <span style=''>      * @inheritdoc
-</span>85 <span style=''>      */
-</span>86 <span style=''>    override def getCombination: CardCombination = </span><span style='background: #F0ADAD'>combination</span><span style=''>
-</span>87 <span style=''>
-</span>88 <span style=''>    /**
-</span>89 <span style=''>      * @inheritdoc
-</span>90 <span style=''>      */
-</span>91 <span style=''>    override def disableActions(): Unit = {
-</span>92 <span style=''>      </span><span style='background: #F0ADAD'>combinationCards.children.forEach(playerCard =&gt; playerCard.setOnMouseClicked(e =&gt; {
-</span>93 <span style=''></span><span style='background: #F0ADAD'>        e.consume()
-</span>94 <span style=''></span><span style='background: #F0ADAD'>      }))</span><span style=''>
-</span>95 <span style=''>    }
-</span>96 <span style=''>
-</span>97 <span style=''>    /**
-</span>98 <span style=''>      * @inheritdoc
-</span>99 <span style=''>      */
-</span>100 <span style=''>    override def enableActions(): Unit = {
-</span>101 <span style=''>      </span><span style='background: #F0ADAD'>combinationCards.children.forEach(playerCard =&gt; playerCard.setOnMouseClicked(e =&gt; {
-</span>102 <span style=''></span><span style='background: #F0ADAD'>        e.consume()
-</span>103 <span style=''></span><span style='background: #F0ADAD'>        boardListener.onCardClicked(playerCard.asInstanceOf[GameCard])
-</span>104 <span style=''></span><span style='background: #F0ADAD'>      }))</span><span style=''>
-</span>105 <span style=''>    }
-</span>106 <span style=''>  }
-</span>107 <span style=''>
-</span>108 <span style=''>}
+</span>7 <span style=''>import it.parttimeteam.view.utils.Paths
+</span>8 <span style=''>import scalafx.geometry.Insets
+</span>9 <span style=''>import scalafx.scene.control.Button
+</span>10 <span style=''>import scalafx.scene.image.{Image, ImageView}
+</span>11 <span style=''>import scalafx.scene.layout.{BorderPane, HBox}
+</span>12 <span style=''>
+</span>13 <span style=''>/**
+</span>14 <span style=''>  * Represents the CardCombination wrapped inside a BorderPane.
+</span>15 <span style=''>  * Allows the player to select the CardCombination or to pick it from the game board.
+</span>16 <span style=''>  */
+</span>17 <span style=''>trait GameCardCombination extends BorderPane with ActionGamePane with SelectableItem {
+</span>18 <span style=''>
+</span>19 <span style=''>  /**
+</span>20 <span style=''>    * Return the CardCombination wrapper by GameCardCombination
+</span>21 <span style=''>    *
+</span>22 <span style=''>    * @return the CardCombination entity
+</span>23 <span style=''>    */
+</span>24 <span style=''>  def getCombination: CardCombination
+</span>25 <span style=''>}
+</span>26 <span style=''>
+</span>27 <span style=''>object GameCardCombination {
+</span>28 <span style=''>
+</span>29 <span style=''>  class GameCardCombinationImpl(combination: CardCombination, boardListener: BoardListener) extends GameCardCombination {
+</span>30 <span style=''>
+</span>31 <span style=''>    override def toString: String = </span><span style='background: #F0ADAD'>combination.toString</span><span style=''>
+</span>32 <span style=''>
+</span>33 <span style=''>    </span><span style='background: #F0ADAD'>this.padding = Insets(10d)</span><span style=''>
+</span>34 <span style=''>
+</span>35 <span style=''>    val combinationCards = </span><span style='background: #F0ADAD'>new HBox()</span><span style=''>
+</span>36 <span style=''>    </span><span style='background: #F0ADAD'>combinationCards.spacing = 10d</span><span style=''>
+</span>37 <span style=''>
+</span>38 <span style=''>    val pickBtn = </span><span style='background: #F0ADAD'>new Button()</span><span style=''>
+</span>39 <span style=''>    val img = </span><span style='background: #F0ADAD'>new ImageView(new Image(Paths.PICK_ICON))</span><span style=''>
+</span>40 <span style=''>    </span><span style='background: #F0ADAD'>img.fitHeight = 15d</span><span style=''>
+</span>41 <span style=''>    </span><span style='background: #F0ADAD'>img.preserveRatio = true</span><span style=''>
+</span>42 <span style=''>
+</span>43 <span style=''>    </span><span style='background: #F0ADAD'>pickBtn.setGraphic(img)</span><span style=''>
+</span>44 <span style=''>    </span><span style='background: #F0ADAD'>pickBtn.onAction = _ =&gt; boardListener.onPickCombinationClick(this)</span><span style=''>
+</span>45 <span style=''>
+</span>46 <span style=''>    </span><span style='background: #F0ADAD'>pickBtn.margin = Insets(0, 0, 0, 5)</span><span style=''>
+</span>47 <span style=''>
+</span>48 <span style=''>    </span><span style='background: #F0ADAD'>this.left = combinationCards</span><span style=''>
+</span>49 <span style=''>    </span><span style='background: #F0ADAD'>this.right = pickBtn</span><span style=''>
+</span>50 <span style=''>    </span><span style='background: #F0ADAD'>this.getStyleClass.add(&quot;combination&quot;)</span><span style=''>
+</span>51 <span style=''>
+</span>52 <span style=''>    </span><span style='background: #F0ADAD'>this.setOnMouseEntered(_ =&gt; {
+</span>53 <span style=''></span><span style='background: #F0ADAD'>      this.getStyleClass.add(&quot;combinationHover&quot;)
+</span>54 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>55 <span style=''>
+</span>56 <span style=''>    </span><span style='background: #F0ADAD'>this.setOnMouseExited(_ =&gt; {
+</span>57 <span style=''></span><span style='background: #F0ADAD'>      this.getStyleClass.remove(&quot;combinationHover&quot;)
+</span>58 <span style=''></span><span style='background: #F0ADAD'>    })</span><span style=''>
+</span>59 <span style=''>
+</span>60 <span style=''>    </span><span style='background: #F0ADAD'>this.setOnMouseClicked(_ =&gt; boardListener.onCombinationClicked(this))</span><span style=''>
+</span>61 <span style=''>
+</span>62 <span style=''>    </span><span style='background: #F0ADAD'>for (card: Card &lt;- combination.cards) {
+</span>63 <span style=''></span><span style='background: #F0ADAD'>      val playerCard: GameCard = GameCard(card, boardListener)
+</span>64 <span style=''></span><span style='background: #F0ADAD'>
+</span>65 <span style=''></span><span style='background: #F0ADAD'>      combinationCards.children.add(playerCard)
+</span>66 <span style=''></span><span style='background: #F0ADAD'>
+</span>67 <span style=''></span><span style='background: #F0ADAD'>      playerCard.setOnMouseClicked(e =&gt; {
+</span>68 <span style=''></span><span style='background: #F0ADAD'>        e.consume()
+</span>69 <span style=''></span><span style='background: #F0ADAD'>        boardListener.onCardClicked(playerCard)
+</span>70 <span style=''></span><span style='background: #F0ADAD'>      })
+</span>71 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>72 <span style=''>
+</span>73 <span style=''>    /**
+</span>74 <span style=''>      * @inheritdoc
+</span>75 <span style=''>      */
+</span>76 <span style=''>    override def setSelected(selected: Boolean): Unit = {
+</span>77 <span style=''>      if (selected) {
+</span>78 <span style=''>        </span><span style='background: #F0ADAD'>this.getStyleClass.add(&quot;combinationSelected&quot;)</span><span style=''>
+</span>79 <span style=''>      } else {
+</span>80 <span style=''>        </span><span style='background: #F0ADAD'>this.getStyleClass.remove(&quot;combinationSelected&quot;)</span><span style=''>
+</span>81 <span style=''>      }
+</span>82 <span style=''>    }
+</span>83 <span style=''>
+</span>84 <span style=''>    /**
+</span>85 <span style=''>      * @inheritdoc
+</span>86 <span style=''>      */
+</span>87 <span style=''>    override def getCombination: CardCombination = </span><span style='background: #F0ADAD'>combination</span><span style=''>
+</span>88 <span style=''>
+</span>89 <span style=''>    /**
+</span>90 <span style=''>      * @inheritdoc
+</span>91 <span style=''>      */
+</span>92 <span style=''>    override def disableActions(): Unit = {
+</span>93 <span style=''>      </span><span style='background: #F0ADAD'>combinationCards.children.forEach(playerCard =&gt; playerCard.setOnMouseClicked(e =&gt; {
+</span>94 <span style=''></span><span style='background: #F0ADAD'>        e.consume()
+</span>95 <span style=''></span><span style='background: #F0ADAD'>      }))</span><span style=''>
+</span>96 <span style=''>    }
+</span>97 <span style=''>
+</span>98 <span style=''>    /**
+</span>99 <span style=''>      * @inheritdoc
+</span>100 <span style=''>      */
+</span>101 <span style=''>    override def enableActions(): Unit = {
+</span>102 <span style=''>      </span><span style='background: #F0ADAD'>combinationCards.children.forEach(playerCard =&gt; playerCard.setOnMouseClicked(e =&gt; {
+</span>103 <span style=''></span><span style='background: #F0ADAD'>        e.consume()
+</span>104 <span style=''></span><span style='background: #F0ADAD'>        boardListener.onCardClicked(playerCard.asInstanceOf[GameCard])
+</span>105 <span style=''></span><span style='background: #F0ADAD'>      }))</span><span style=''>
+</span>106 <span style=''>    }
+</span>107 <span style=''>  }
+</span>108 <span style=''>
+</span>109 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -143,15 +144,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          30
+          31
         </td>
         <td>
-          1423
+          2634
         </td>
         <td>
-          1031
+          1071
           -
-          1051
+          1091
         </td>
         <td>
           Apply
@@ -164,36 +165,15 @@
         </td>
       </tr><tr>
         <td>
-          32
+          33
         </td>
         <td>
-          2505
+          1285
         </td>
         <td>
-          1072
+          1097
           -
-          1083
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.geometry.Insets.apply
-        </td>
-        <td style="background: #F0ADAD">
-          scalafx.geometry.Insets.apply(10.0)
-        </td>
-      </tr><tr>
-        <td>
-          32
-        </td>
-        <td>
-          1847
-        </td>
-        <td>
-          1057
-          -
-          1083
+          1123
         </td>
         <td>
           Apply
@@ -206,15 +186,36 @@
         </td>
       </tr><tr>
         <td>
-          34
+          33
         </td>
         <td>
-          1535
+          2004
         </td>
         <td>
           1112
           -
-          1122
+          1123
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.geometry.Insets.apply
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.geometry.Insets.apply(10.0)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          2402
+        </td>
+        <td>
+          1152
+          -
+          1162
         </td>
         <td>
           Apply
@@ -227,15 +228,15 @@
         </td>
       </tr><tr>
         <td>
-          35
+          36
         </td>
         <td>
-          2585
+          2042
         </td>
         <td>
-          1127
+          1167
           -
-          1157
+          1197
         </td>
         <td>
           Apply
@@ -248,36 +249,15 @@
         </td>
       </tr><tr>
         <td>
-          37
+          38
         </td>
         <td>
-          1969
+          2488
         </td>
         <td>
-          1177
+          1217
           -
-          1177
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          scalafx.scene.control.Button.&lt;init&gt;$default$1
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.&lt;init&gt;$default$1
-        </td>
-      </tr><tr>
-        <td>
-          37
-        </td>
-        <td>
-          1326
-        </td>
-        <td>
-          1177
-          -
-          1189
+          1229
         </td>
         <td>
           Apply
@@ -293,12 +273,54 @@
           38
         </td>
         <td>
-          2389
+          1440
         </td>
         <td>
-          1218
+          1217
           -
-          1246
+          1217
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.Button.&lt;init&gt;$default$1
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.&lt;init&gt;$default$1
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1865
+        </td>
+        <td>
+          1268
+          -
+          1283
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Paths.PICK_ICON
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Paths.PICK_ICON
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1472
+        </td>
+        <td>
+          1258
+          -
+          1284
         </td>
         <td>
           Apply
@@ -307,19 +329,19 @@
           scalafx.scene.image.Image.&lt;init&gt;
         </td>
         <td style="background: #F0ADAD">
-          new scalafx.scene.image.Image(&quot;images/pick.png&quot;)
+          new scalafx.scene.image.Image(it.parttimeteam.view.utils.Paths.PICK_ICON)
         </td>
       </tr><tr>
         <td>
-          38
+          39
         </td>
         <td>
-          2077
+          2605
         </td>
         <td>
-          1204
+          1244
           -
-          1247
+          1285
         </td>
         <td>
           Apply
@@ -328,19 +350,19 @@
           scalafx.scene.image.ImageView.&lt;init&gt;
         </td>
         <td style="background: #F0ADAD">
-          new scalafx.scene.image.ImageView(new scalafx.scene.image.Image(&quot;images/pick.png&quot;))
+          new scalafx.scene.image.ImageView(new scalafx.scene.image.Image(it.parttimeteam.view.utils.Paths.PICK_ICON))
         </td>
       </tr><tr>
         <td>
-          39
+          40
         </td>
         <td>
-          1402
+          2008
         </td>
         <td>
-          1252
+          1290
           -
-          1271
+          1309
         </td>
         <td>
           Apply
@@ -353,15 +375,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          41
         </td>
         <td>
-          2508
+          1244
         </td>
         <td>
-          1276
+          1314
           -
-          1300
+          1338
         </td>
         <td>
           Apply
@@ -374,36 +396,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          43
         </td>
         <td>
-          1940
+          2047
         </td>
         <td>
-          1306
+          1363
           -
-          1329
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          javafx.scene.control.Labeled.setGraphic
-        </td>
-        <td style="background: #F0ADAD">
-          control.this.Button.sfxButton2jfx(GameCardCombinationImpl.this.pickBtn).setGraphic(image.this.ImageView.sfxImageView2jfx(GameCardCombinationImpl.this.img))
-        </td>
-      </tr><tr>
-        <td>
-          42
-        </td>
-        <td>
-          1195
-        </td>
-        <td>
-          1325
-          -
-          1328
+          1366
         </td>
         <td>
           Select
@@ -416,15 +417,36 @@
         </td>
       </tr><tr>
         <td>
-          42
+          43
         </td>
         <td>
-          2588
+          2575
         </td>
         <td>
-          1325
+          1344
           -
-          1328
+          1367
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Labeled.setGraphic
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Button.sfxButton2jfx(GameCardCombinationImpl.this.pickBtn).setGraphic(image.this.ImageView.sfxImageView2jfx(GameCardCombinationImpl.this.img))
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          1444
+        </td>
+        <td>
+          1363
+          -
+          1366
         </td>
         <td>
           ApplyImplicitView
@@ -437,15 +459,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          43
         </td>
         <td>
-          1812
+          2377
         </td>
         <td>
-          1306
+          1344
           -
-          1313
+          1351
         </td>
         <td>
           Select
@@ -458,36 +480,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          44
         </td>
         <td>
-          2362
+          1891
         </td>
         <td>
-          1334
+          1396
           -
-          1400
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          scalafx.scene.control.ButtonBase.onAction_=
-        </td>
-        <td style="background: #F0ADAD">
-          GameCardCombinationImpl.this.pickBtn.onAction_=(((x$1: javafx.event.ActionEvent) =&gt; GameCardCombinationImpl.this.boardListener.onPickCombinationClick(this)))
-        </td>
-      </tr><tr>
-        <td>
-          43
-        </td>
-        <td>
-          1265
-        </td>
-        <td>
-          1358
-          -
-          1400
+          1438
         </td>
         <td>
           Apply
@@ -500,36 +501,36 @@
         </td>
       </tr><tr>
         <td>
-          45
+          44
         </td>
         <td>
-          1404
+          1567
         </td>
         <td>
-          1406
+          1372
           -
-          1441
+          1438
         </td>
         <td>
           Apply
         </td>
         <td>
-          scalafx.scene.Node.margin_=
+          scalafx.scene.control.ButtonBase.onAction_=
         </td>
         <td style="background: #F0ADAD">
-          GameCardCombinationImpl.this.pickBtn.margin_=(scalafx.geometry.Insets.apply(0.0, 0.0, 0.0, 5.0))
+          GameCardCombinationImpl.this.pickBtn.onAction_=(((x$1: javafx.event.ActionEvent) =&gt; GameCardCombinationImpl.this.boardListener.onPickCombinationClick(this)))
         </td>
       </tr><tr>
         <td>
-          45
+          46
         </td>
         <td>
-          1990
+          2661
         </td>
         <td>
-          1423
+          1461
           -
-          1441
+          1479
         </td>
         <td>
           Apply
@@ -542,36 +543,36 @@
         </td>
       </tr><tr>
         <td>
-          47
+          46
         </td>
         <td>
-          2483
+          2015
         </td>
         <td>
-          1459
+          1444
           -
-          1475
+          1479
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl.combinationCards
+          scalafx.scene.Node.margin_=
         </td>
         <td style="background: #F0ADAD">
-          GameCardCombinationImpl.this.combinationCards
+          GameCardCombinationImpl.this.pickBtn.margin_=(scalafx.geometry.Insets.apply(0.0, 0.0, 0.0, 5.0))
         </td>
       </tr><tr>
         <td>
-          47
+          48
         </td>
         <td>
-          1816
+          2459
         </td>
         <td>
-          1447
+          1485
           -
-          1475
+          1513
         </td>
         <td>
           Apply
@@ -587,12 +588,33 @@
           48
         </td>
         <td>
-          2532
+          1343
         </td>
         <td>
-          1480
+          1497
           -
-          1500
+          1513
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.game.scenes.model.GameCardCombination.GameCardCombinationImpl.combinationCards
+        </td>
+        <td style="background: #F0ADAD">
+          GameCardCombinationImpl.this.combinationCards
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1423
+        </td>
+        <td>
+          1518
+          -
+          1538
         </td>
         <td>
           Apply
@@ -605,15 +627,15 @@
         </td>
       </tr><tr>
         <td>
-          48
+          49
         </td>
         <td>
-          1199
+          2133
         </td>
         <td>
-          1493
+          1531
           -
-          1500
+          1538
         </td>
         <td>
           Select
@@ -626,15 +648,15 @@
         </td>
       </tr><tr>
         <td>
-          49
+          50
         </td>
         <td>
-          1943
+          2578
         </td>
         <td>
-          1505
+          1543
           -
-          1542
+          1580
         </td>
         <td>
           Apply
@@ -647,15 +669,15 @@
         </td>
       </tr><tr>
         <td>
-          51
+          52
         </td>
         <td>
-          1692
+          2664
         </td>
         <td>
-          1548
+          1586
           -
-          1633
+          1671
         </td>
         <td>
           Apply
@@ -671,36 +693,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          53
         </td>
         <td>
-          2368
+          1856
         </td>
         <td>
-          1606
+          1622
           -
-          1606
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          52
-        </td>
-        <td>
-          1240
-        </td>
-        <td>
-          1584
-          -
-          1626
+          1664
         </td>
         <td>
           Apply
@@ -713,15 +714,36 @@
         </td>
       </tr><tr>
         <td>
-          55
+          53
         </td>
         <td>
-          1788
+          1211
         </td>
         <td>
-          1639
+          1644
           -
-          1726
+          1644
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          2432
+        </td>
+        <td>
+          1677
+          -
+          1764
         </td>
         <td>
           Apply
@@ -737,36 +759,15 @@
         </td>
       </tr><tr>
         <td>
-          56
+          57
         </td>
         <td>
-          1356
+          1282
         </td>
         <td>
-          1674
+          1737
           -
-          1719
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.util.List.remove
-        </td>
-        <td style="background: #F0ADAD">
-          layout.this.BorderPane.sfxBorderPane2jfx(this).getStyleClass().remove(&quot;combinationHover&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          56
-        </td>
-        <td>
-          2426
-        </td>
-        <td>
-          1699
-          -
-          1699
+          1737
         </td>
         <td>
           Literal
@@ -779,15 +780,36 @@
         </td>
       </tr><tr>
         <td>
-          59
+          57
         </td>
         <td>
-          2538
+          1986
         </td>
         <td>
-          1732
+          1712
           -
-          1801
+          1757
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.remove
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.BorderPane.sfxBorderPane2jfx(this).getStyleClass().remove(&quot;combinationHover&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          1425
+        </td>
+        <td>
+          1770
+          -
+          1839
         </td>
         <td>
           Apply
@@ -800,15 +822,15 @@
         </td>
       </tr><tr>
         <td>
-          59
+          60
         </td>
         <td>
-          1121
+          2037
         </td>
         <td>
-          1760
+          1798
           -
-          1800
+          1838
         </td>
         <td>
           Apply
@@ -821,15 +843,15 @@
         </td>
       </tr><tr>
         <td>
-          61
+          62
         </td>
         <td>
-          1127
+          1733
         </td>
         <td>
-          1807
+          1845
           -
-          2084
+          2122
         </td>
         <td>
           Apply
@@ -852,15 +874,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          63
         </td>
         <td>
-          1891
+          2553
         </td>
         <td>
-          1895
+          1933
           -
-          1908
+          1946
         </td>
         <td>
           Select
@@ -873,15 +895,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          63
         </td>
         <td>
-          1241
+          1860
         </td>
         <td>
-          1880
+          1918
           -
-          1909
+          1947
         </td>
         <td>
           Apply
@@ -894,15 +916,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          65
         </td>
         <td>
-          2371
+          1215
         </td>
         <td>
-          1947
+          1985
           -
-          1957
+          1995
         </td>
         <td>
           ApplyImplicitView
@@ -915,15 +937,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          65
         </td>
         <td>
-          1662
+          2602
         </td>
         <td>
-          1917
+          1955
           -
-          1958
+          1996
         </td>
         <td>
           Apply
@@ -936,15 +958,15 @@
         </td>
       </tr><tr>
         <td>
-          66
+          67
         </td>
         <td>
-          1793
+          2438
         </td>
         <td>
-          1966
+          2004
           -
-          2078
+          2116
         </td>
         <td>
           Apply
@@ -960,15 +982,15 @@
         </td>
       </tr><tr>
         <td>
-          67
+          68
         </td>
         <td>
-          1359
+          1989
         </td>
         <td>
-          2010
+          2048
           -
-          2021
+          2059
         </td>
         <td>
           Apply
@@ -981,15 +1003,15 @@
         </td>
       </tr><tr>
         <td>
-          68
+          69
         </td>
         <td>
-          2472
+          1257
         </td>
         <td>
-          2030
+          2068
           -
-          2069
+          2107
         </td>
         <td>
           Apply
@@ -1002,36 +1024,36 @@
         </td>
       </tr><tr>
         <td>
-          77
+          78
         </td>
         <td>
-          2607
+          2496
         </td>
         <td>
-          2211
+          2271
           -
-          2256
+          2271
         </td>
         <td>
-          Apply
+          Literal
         </td>
         <td>
-          java.util.List.add
+          &lt;nosymbol&gt;
         </td>
         <td style="background: #F0ADAD">
-          layout.this.BorderPane.sfxBorderPane2jfx(this).getStyleClass().add(&quot;combinationSelected&quot;)
+          ()
         </td>
       </tr><tr>
         <td>
-          77
+          78
         </td>
         <td>
-          1304
+          1832
         </td>
         <td>
-          2211
+          2249
           -
-          2256
+          2294
         </td>
         <td>
           Block
@@ -1047,15 +1069,57 @@
         </td>
       </tr><tr>
         <td>
-          77
+          78
         </td>
         <td>
-          1935
+          1373
         </td>
         <td>
-          2233
+          2249
           -
-          2233
+          2294
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.add
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.BorderPane.sfxBorderPane2jfx(this).getStyleClass().add(&quot;combinationSelected&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          1136
+        </td>
+        <td>
+          2318
+          -
+          2366
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          java.util.List.remove
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.BorderPane.sfxBorderPane2jfx(this).getStyleClass().remove(&quot;combinationSelected&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          2608
+        </td>
+        <td>
+          2343
+          -
+          2343
         </td>
         <td>
           Literal
@@ -1068,15 +1132,15 @@
         </td>
       </tr><tr>
         <td>
-          79
+          80
         </td>
         <td>
-          1432
+          1935
         </td>
         <td>
-          2280
+          2318
           -
-          2328
+          2366
         </td>
         <td>
           Block
@@ -1092,57 +1156,15 @@
         </td>
       </tr><tr>
         <td>
-          79
+          87
         </td>
         <td>
-          1667
+          1258
         </td>
         <td>
-          2305
+          2470
           -
-          2305
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;nosymbol&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          ()
-        </td>
-      </tr><tr>
-        <td>
-          79
-        </td>
-        <td>
-          2345
-        </td>
-        <td>
-          2280
-          -
-          2328
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          java.util.List.remove
-        </td>
-        <td style="background: #F0ADAD">
-          layout.this.BorderPane.sfxBorderPane2jfx(this).getStyleClass().remove(&quot;combinationSelected&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          86
-        </td>
-        <td>
-          2479
-        </td>
-        <td>
-          2432
-          -
-          2443
+          2481
         </td>
         <td>
           Select
@@ -1155,15 +1177,15 @@
         </td>
       </tr><tr>
         <td>
-          92
+          93
         </td>
         <td>
-          1215
+          1703
         </td>
         <td>
-          2580
+          2618
           -
-          2644
+          2682
         </td>
         <td>
           Apply
@@ -1176,15 +1198,15 @@
         </td>
       </tr><tr>
         <td>
-          92
+          93
         </td>
         <td>
-          2207
+          1376
         </td>
         <td>
-          2532
+          2570
           -
-          2645
+          2683
         </td>
         <td>
           Apply
@@ -1197,15 +1219,15 @@
         </td>
       </tr><tr>
         <td>
-          93
+          94
         </td>
         <td>
-          1871
+          2441
         </td>
         <td>
-          2624
+          2662
           -
-          2635
+          2673
         </td>
         <td>
           Apply
@@ -1218,15 +1240,15 @@
         </td>
       </tr><tr>
         <td>
-          101
+          102
         </td>
         <td>
-          1389
+          1981
         </td>
         <td>
-          2739
+          2777
           -
-          2923
+          2961
         </td>
         <td>
           Apply
@@ -1242,15 +1264,15 @@
         </td>
       </tr><tr>
         <td>
-          101
+          102
         </td>
         <td>
-          1750
+          2683
         </td>
         <td>
-          2787
+          2825
           -
-          2922
+          2960
         </td>
         <td>
           Apply
@@ -1266,15 +1288,15 @@
         </td>
       </tr><tr>
         <td>
-          102
+          103
         </td>
         <td>
-          1913
+          2542
         </td>
         <td>
-          2831
+          2869
           -
-          2842
+          2880
         </td>
         <td>
           Apply
@@ -1287,15 +1309,15 @@
         </td>
       </tr><tr>
         <td>
-          103
+          104
         </td>
         <td>
-          2365
+          1142
         </td>
         <td>
-          2851
+          2889
           -
-          2913
+          2951
         </td>
         <td>
           Apply
@@ -1308,15 +1330,15 @@
         </td>
       </tr><tr>
         <td>
-          103
+          104
         </td>
         <td>
-          1309
+          1837
         </td>
         <td>
-          2879
+          2917
           -
-          2912
+          2950
         </td>
         <td>
           TypeApply

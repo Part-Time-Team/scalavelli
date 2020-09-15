@@ -1,0 +1,1798 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/startup/scenes/PublicGameScene.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.startup.scenes
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.Constants
+</span>4 <span style=''>import it.parttimeteam.view.ViewConfig
+</span>5 <span style=''>import it.parttimeteam.view.startup.PublicGameSubmitViewEvent
+</span>6 <span style=''>import it.parttimeteam.view.startup.listeners.StartupSceneListener
+</span>7 <span style=''>import it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl
+</span>8 <span style=''>import it.parttimeteam.view.startup.scenes.StartupSceneTopBar.StartupSceneTopBarImpl
+</span>9 <span style=''>import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField, Strings}
+</span>10 <span style=''>import scalafx.geometry.Pos.Center
+</span>11 <span style=''>import scalafx.scene.control.Alert.AlertType
+</span>12 <span style=''>import scalafx.scene.control._
+</span>13 <span style=''>import scalafx.scene.layout.VBox
+</span>14 <span style=''>import scalafx.stage.Stage
+</span>15 <span style=''>
+</span>16 <span style=''>/**
+</span>17 <span style=''>  * Allow to participate to a game by selecting the number of players to play with.
+</span>18 <span style=''>  *
+</span>19 <span style=''>  * @param listener to interact with parent stage
+</span>20 <span style=''>  */
+</span>21 <span style=''>class PublicGameScene(val parentStage: Stage, val listener: StartupSceneListener) extends StartupFormScene(parentStage) {
+</span>22 <span style=''>  val topBar: StartupSceneTopBar = </span><span style='background: #F0ADAD'>new StartupSceneTopBarImpl(listener)</span><span style=''>
+</span>23 <span style=''>  val bottomBar: StartupSceneBottomBar = </span><span style='background: #F0ADAD'>new StartupSceneBottomBarImpl(() =&gt; submit())</span><span style=''>
+</span>24 <span style=''>
+</span>25 <span style=''>  val usernameLabel: Label = </span><span style='background: #F0ADAD'>ScalavelliLabel(Strings.USERNAME, ViewConfig.formLabelFontSize)</span><span style=''>
+</span>26 <span style=''>  val usernameField: TextField = </span><span style='background: #F0ADAD'>ScalavelliTextField(Strings.USERNAME)</span><span style=''>
+</span>27 <span style=''>
+</span>28 <span style=''>  val options: Range = </span><span style='background: #F0ADAD'>Constants.Client.MIN_PLAYERS_NUM to Constants.Client.MAX_PLAYERS_NUM by 1</span><span style=''>
+</span>29 <span style=''>
+</span>30 <span style=''>  val selectPlayersLabel: Label = </span><span style='background: #F0ADAD'>ScalavelliLabel(Strings.SELECT_PLAYERS_NUM, ViewConfig.formLabelFontSize)</span><span style=''>
+</span>31 <span style=''>  val comboBox = </span><span style='background: #F0ADAD'>new ComboBox(options)</span><span style=''>
+</span>32 <span style=''>  </span><span style='background: #F0ADAD'>comboBox.setValue(Constants.Client.MIN_PLAYERS_NUM)</span><span style=''>
+</span>33 <span style=''>
+</span>34 <span style=''>  val center: VBox = </span><span style='background: #F0ADAD'>new VBox()</span><span style=''>
+</span>35 <span style=''>  </span><span style='background: #F0ADAD'>center.spacing = ViewConfig.formSpacing</span><span style=''>
+</span>36 <span style=''>  </span><span style='background: #F0ADAD'>center.maxWidth = ViewConfig.formWidth</span><span style=''>
+</span>37 <span style=''>
+</span>38 <span style=''>  </span><span style='background: #F0ADAD'>selectPlayersLabel.maxWidth &lt;== center.width</span><span style=''>
+</span>39 <span style=''>  </span><span style='background: #F0ADAD'>usernameLabel.maxWidth &lt;== center.width</span><span style=''>
+</span>40 <span style=''>
+</span>41 <span style=''>  </span><span style='background: #F0ADAD'>comboBox.maxWidth &lt;== center.width</span><span style=''>
+</span>42 <span style=''>
+</span>43 <span style=''>  </span><span style='background: #F0ADAD'>center.alignment = Center</span><span style=''>
+</span>44 <span style=''>
+</span>45 <span style=''>  </span><span style='background: #F0ADAD'>mainContent.center = center</span><span style=''>
+</span>46 <span style=''>  </span><span style='background: #F0ADAD'>mainContent.top = topBar</span><span style=''>
+</span>47 <span style=''>  </span><span style='background: #F0ADAD'>mainContent.bottom = bottomBar</span><span style=''>
+</span>48 <span style=''>
+</span>49 <span style=''>  </span><span style='background: #F0ADAD'>bottomBar.hideLoading()</span><span style=''>
+</span>50 <span style=''>  </span><span style='background: #F0ADAD'>bottomBar.hideMessage()</span><span style=''>
+</span>51 <span style=''>
+</span>52 <span style=''>  </span><span style='background: #F0ADAD'>center.getChildren.addAll(usernameLabel, usernameField, selectPlayersLabel, comboBox)</span><span style=''>
+</span>53 <span style=''>
+</span>54 <span style=''>  val alert: Alert = </span><span style='background: #F0ADAD'>ScalavelliAlert(Strings.INPUT_MISSING_DIALOG_TITLE, Strings.INPUT_MISSING_USER_NUM_DIALOG_MESSAGE, AlertType.Warning, parentStage)</span><span style=''>
+</span>55 <span style=''>
+</span>56 <span style=''>  override def showMessage(message: String): Unit = </span><span style='background: #F0ADAD'>bottomBar.showMessage(message)</span><span style=''>
+</span>57 <span style=''>
+</span>58 <span style=''>  override def hideMessage(): Unit = </span><span style='background: #F0ADAD'>bottomBar.hideMessage()</span><span style=''>
+</span>59 <span style=''>
+</span>60 <span style=''>  private def submit(): Unit = {
+</span>61 <span style=''>    val username: String = </span><span style='background: #F0ADAD'>usernameField.getText</span><span style=''>
+</span>62 <span style=''>    val nPlayers: Int = </span><span style='background: #F0ADAD'>comboBox.getValue</span><span style=''>
+</span>63 <span style=''>
+</span>64 <span style=''>    if (</span><span style='background: #F0ADAD'>!username.isEmpty &amp;&amp; nPlayers &gt;= Constants.Client.MIN_PLAYERS_NUM</span><span style=''>) </span><span style='background: #F0ADAD'>{
+</span>65 <span style=''></span><span style='background: #F0ADAD'>      listener.onSubmit(PublicGameSubmitViewEvent(username, nPlayers))
+</span>66 <span style=''></span><span style='background: #F0ADAD'>      bottomBar.showLoading()
+</span>67 <span style=''></span><span style='background: #F0ADAD'>      disableActions()
+</span>68 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''> else {
+</span>69 <span style=''>      </span><span style='background: #F0ADAD'>alert.showAndWait()</span><span style=''>
+</span>70 <span style=''>    }
+</span>71 <span style=''>  }
+</span>72 <span style=''>
+</span>73 <span style=''>  override def disableActions(): Unit = {
+</span>74 <span style=''>    </span><span style='background: #F0ADAD'>bottomBar.disableActions()</span><span style=''>
+</span>75 <span style=''>    </span><span style='background: #F0ADAD'>usernameField.setEditable(false)</span><span style=''>
+</span>76 <span style=''>    </span><span style='background: #F0ADAD'>comboBox.setDisable(true)</span><span style=''>
+</span>77 <span style=''>  }
+</span>78 <span style=''>
+</span>79 <span style=''>  override def enableActions(): Unit = {
+</span>80 <span style=''>    </span><span style='background: #F0ADAD'>bottomBar.enableActions()</span><span style=''>
+</span>81 <span style=''>    </span><span style='background: #F0ADAD'>usernameField.setEditable(true)</span><span style=''>
+</span>82 <span style=''>    </span><span style='background: #F0ADAD'>comboBox.setDisable(false)</span><span style=''>
+</span>83 <span style=''>  }
+</span>84 <span style=''>
+</span>85 <span style=''>  override def resetScreen(): Unit = {
+</span>86 <span style=''>    </span><span style='background: #F0ADAD'>usernameField.setEditable(true)</span><span style=''>
+</span>87 <span style=''>    </span><span style='background: #F0ADAD'>comboBox.setDisable(false)</span><span style=''>
+</span>88 <span style=''>    </span><span style='background: #F0ADAD'>usernameField.text = &quot;&quot;</span><span style=''>
+</span>89 <span style=''>    </span><span style='background: #F0ADAD'>bottomBar.resetScreen()</span><span style=''>
+</span>90 <span style=''>  }
+</span>91 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          2649
+        </td>
+        <td>
+          997
+          -
+          1033
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneTopBar.StartupSceneTopBarImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.startup.scenes.StartupSceneTopBar.StartupSceneTopBarImpl(PublicGameScene.this.listener)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1484
+        </td>
+        <td>
+          1024
+          -
+          1032
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.listener
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.listener
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1309
+        </td>
+        <td>
+          1075
+          -
+          1120
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl((() =&gt; PublicGameScene.this.submit()))
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1972
+        </td>
+        <td>
+          1111
+          -
+          1119
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.submit
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.submit()
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          2066
+        </td>
+        <td>
+          1185
+          -
+          1213
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.formLabelFontSize
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.formLabelFontSize
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          908
+        </td>
+        <td>
+          1167
+          -
+          1183
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.USERNAME
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.USERNAME
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1353
+        </td>
+        <td>
+          1151
+          -
+          1214
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliLabel.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliLabel.apply(it.parttimeteam.view.utils.Strings.USERNAME, it.parttimeteam.view.ViewConfig.formLabelFontSize)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1888
+        </td>
+        <td>
+          1248
+          -
+          1285
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliTextField.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliTextField.apply(it.parttimeteam.view.utils.Strings.USERNAME)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          2536
+        </td>
+        <td>
+          1268
+          -
+          1284
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.USERNAME
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.USERNAME
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          1489
+        </td>
+        <td>
+          1310
+          -
+          1383
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.collection.immutable.Range.by
+        </td>
+        <td style="background: #F0ADAD">
+          scala.Predef.intWrapper(it.parttimeteam.Constants.Client.MIN_PLAYERS_NUM).to(it.parttimeteam.Constants.Client.MAX_PLAYERS_NUM).by(1)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1919
+        </td>
+        <td>
+          1463
+          -
+          1491
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.formLabelFontSize
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.formLabelFontSize
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          2653
+        </td>
+        <td>
+          1435
+          -
+          1461
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.SELECT_PLAYERS_NUM
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.SELECT_PLAYERS_NUM
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1250
+        </td>
+        <td>
+          1419
+          -
+          1492
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliLabel.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliLabel.apply(it.parttimeteam.view.utils.Strings.SELECT_PLAYERS_NUM, it.parttimeteam.view.ViewConfig.formLabelFontSize)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          2073
+        </td>
+        <td>
+          1510
+          -
+          1531
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.ComboBox.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.control.ComboBox[Int](PublicGameScene.this.options)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          2395
+        </td>
+        <td>
+          1523
+          -
+          1530
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.options
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.options
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1906
+        </td>
+        <td>
+          1534
+          -
+          1585
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.ComboBoxBase.setValue
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ComboBox.sfxComboBox2jfx[Int](PublicGameScene.this.comboBox).setValue(it.parttimeteam.Constants.Client.MIN_PLAYERS_NUM)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1355
+        </td>
+        <td>
+          1534
+          -
+          1542
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.comboBox
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.comboBox
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          2482
+        </td>
+        <td>
+          1552
+          -
+          1584
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.Constants.Client.MIN_PLAYERS_NUM
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.Constants.Client.MIN_PLAYERS_NUM
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          1498
+        </td>
+        <td>
+          1608
+          -
+          1618
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.VBox.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.layout.VBox()
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1922
+        </td>
+        <td>
+          1621
+          -
+          1660
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.VBox.spacing_=
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.center.spacing_=(it.parttimeteam.view.ViewConfig.formSpacing)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          2668
+        </td>
+        <td>
+          1638
+          -
+          1660
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.formSpacing
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.formSpacing
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          2466
+        </td>
+        <td>
+          1663
+          -
+          1701
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.Region.maxWidth_=
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.center.maxWidth_=(it.parttimeteam.view.ViewConfig.formWidth)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1241
+        </td>
+        <td>
+          1681
+          -
+          1701
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.ViewConfig.formWidth
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.ViewConfig.formWidth
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          1435
+        </td>
+        <td>
+          1705
+          -
+          1749
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.selectPlayersLabel.maxWidth.&lt;==(PublicGameScene.this.center.width)
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          2081
+        </td>
+        <td>
+          1737
+          -
+          1749
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.Region.width
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.center.width
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          2484
+        </td>
+        <td>
+          1779
+          -
+          1791
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.Region.width
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.center.width
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1884
+        </td>
+        <td>
+          1752
+          -
+          1791
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.usernameLabel.maxWidth.&lt;==(PublicGameScene.this.center.width)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          2671
+        </td>
+        <td>
+          1795
+          -
+          1829
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.beans.property.Property.&lt;==
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.comboBox.maxWidth.&lt;==(PublicGameScene.this.center.width)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1552
+        </td>
+        <td>
+          1817
+          -
+          1829
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.layout.Region.width
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.center.width
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          1306
+        </td>
+        <td>
+          1833
+          -
+          1858
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.delegate.AlignmentDelegate.alignment_=
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.center.alignment_=(scalafx.geometry.Pos.Center)
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          2002
+        </td>
+        <td>
+          1852
+          -
+          1858
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.geometry.Pos.Center
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.geometry.Pos.Center
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          2062
+        </td>
+        <td>
+          1862
+          -
+          1889
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.center_=
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.mainContent.center_=(PublicGameScene.this.center)
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          2467
+        </td>
+        <td>
+          1883
+          -
+          1889
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.center
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.center
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1438
+        </td>
+        <td>
+          1910
+          -
+          1916
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.topBar
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.topBar
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          2568
+        </td>
+        <td>
+          1892
+          -
+          1916
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.top_=
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.mainContent.top_=(PublicGameScene.this.topBar)
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1886
+        </td>
+        <td>
+          1940
+          -
+          1949
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.bottomBar
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.bottomBar
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1220
+        </td>
+        <td>
+          1919
+          -
+          1949
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.layout.BorderPane.bottom_=
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.mainContent.bottom_=(PublicGameScene.this.bottomBar)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          2622
+        </td>
+        <td>
+          1953
+          -
+          1976
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.hideLoading
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.bottomBar.hideLoading()
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          2007
+        </td>
+        <td>
+          1979
+          -
+          2002
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupFormScene.hideMessage
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.bottomBar.hideMessage()
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1387
+        </td>
+        <td>
+          2047
+          -
+          2060
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.usernameField
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.usernameField
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          2628
+        </td>
+        <td>
+          2082
+          -
+          2090
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.comboBox
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.comboBox
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1276
+        </td>
+        <td>
+          2006
+          -
+          2091
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.collections.ObservableList.addAll
+        </td>
+        <td style="background: #F0ADAD">
+          layout.this.VBox.sfxVBox2jfx(PublicGameScene.this.center).getChildren().addAll(control.this.Label.sfxLabel2jfx(PublicGameScene.this.usernameLabel), control.this.TextField.sfxTextField2jfx(PublicGameScene.this.usernameField), control.this.Label.sfxLabel2jfx(PublicGameScene.this.selectPlayersLabel), control.this.ComboBox.sfxComboBox2jfx[Int](PublicGameScene.this.comboBox))
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          2508
+        </td>
+        <td>
+          2047
+          -
+          2060
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.TextField.sfxTextField2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.TextField.sfxTextField2jfx(PublicGameScene.this.usernameField)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1210
+        </td>
+        <td>
+          2062
+          -
+          2080
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Label.sfxLabel2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(PublicGameScene.this.selectPlayersLabel)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          2071
+        </td>
+        <td>
+          2032
+          -
+          2045
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.Label.sfxLabel2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Label.sfxLabel2jfx(PublicGameScene.this.usernameLabel)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1942
+        </td>
+        <td>
+          2082
+          -
+          2090
+        </td>
+        <td>
+          ApplyImplicitView
+        </td>
+        <td>
+          scalafx.scene.control.ComboBox.sfxComboBox2jfx
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ComboBox.sfxComboBox2jfx[Int](PublicGameScene.this.comboBox)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1890
+        </td>
+        <td>
+          2062
+          -
+          2080
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.selectPlayersLabel
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.selectPlayersLabel
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          2455
+        </td>
+        <td>
+          2032
+          -
+          2045
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.usernameLabel
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.usernameLabel
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1274
+        </td>
+        <td>
+          2006
+          -
+          2012
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.center
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.center
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1728
+        </td>
+        <td>
+          2166
+          -
+          2211
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.INPUT_MISSING_USER_NUM_DIALOG_MESSAGE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.INPUT_MISSING_USER_NUM_DIALOG_MESSAGE
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1392
+        </td>
+        <td>
+          2213
+          -
+          2230
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          scalafx.scene.control.Alert.AlertType.Warning
+        </td>
+        <td style="background: #F0ADAD">
+          scalafx.scene.control.Alert.AlertType.Warning
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1855
+        </td>
+        <td>
+          2114
+          -
+          2244
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.ScalavelliAlert.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.ScalavelliAlert.apply(it.parttimeteam.view.utils.Strings.INPUT_MISSING_DIALOG_TITLE, it.parttimeteam.view.utils.Strings.INPUT_MISSING_USER_NUM_DIALOG_MESSAGE, scalafx.scene.control.Alert.AlertType.Warning, PublicGameScene.this.parentStage)
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          2483
+        </td>
+        <td>
+          2232
+          -
+          2243
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.parentStage
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.parentStage
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          2458
+        </td>
+        <td>
+          2130
+          -
+          2164
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.view.utils.Strings.INPUT_MISSING_DIALOG_TITLE
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.utils.Strings.INPUT_MISSING_DIALOG_TITLE
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          1165
+        </td>
+        <td>
+          2298
+          -
+          2328
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupFormScene.showMessage
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.bottomBar.showMessage(message)
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          2592
+        </td>
+        <td>
+          2367
+          -
+          2390
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupFormScene.hideMessage
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.bottomBar.hideMessage()
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          2000
+        </td>
+        <td>
+          2452
+          -
+          2473
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.TextInputControl.getText
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.TextField.sfxTextField2jfx(PublicGameScene.this.usernameField).getText()
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          1243
+        </td>
+        <td>
+          2498
+          -
+          2515
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.ComboBoxBase.getValue
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ComboBox.sfxComboBox2jfx[Int](PublicGameScene.this.comboBox).getValue()
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          2430
+        </td>
+        <td>
+          2558
+          -
+          2590
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          it.parttimeteam.Constants.Client.MIN_PLAYERS_NUM
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.Constants.Client.MIN_PLAYERS_NUM
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          2005
+        </td>
+        <td>
+          2592
+          -
+          2723
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          {
+  PublicGameScene.this.listener.onSubmit(it.parttimeteam.view.startup.PublicGameSubmitViewEvent.apply(username, nPlayers));
+  PublicGameScene.this.bottomBar.showLoading();
+  PublicGameScene.this.disableActions()
+}
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          1729
+        </td>
+        <td>
+          2546
+          -
+          2590
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Int.&gt;=
+        </td>
+        <td style="background: #F0ADAD">
+          nPlayers.&gt;=(it.parttimeteam.Constants.Client.MIN_PLAYERS_NUM)
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          1364
+        </td>
+        <td>
+          2525
+          -
+          2590
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scala.Boolean.&amp;&amp;
+        </td>
+        <td style="background: #F0ADAD">
+          username.isEmpty().unary_!.&amp;&amp;(nPlayers.&gt;=(it.parttimeteam.Constants.Client.MIN_PLAYERS_NUM))
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          2567
+        </td>
+        <td>
+          2618
+          -
+          2663
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.PublicGameSubmitViewEvent.apply
+        </td>
+        <td style="background: #F0ADAD">
+          it.parttimeteam.view.startup.PublicGameSubmitViewEvent.apply(username, nPlayers)
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1810
+        </td>
+        <td>
+          2600
+          -
+          2664
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.listeners.StartupSceneListener.onSubmit
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.listener.onSubmit(it.parttimeteam.view.startup.PublicGameSubmitViewEvent.apply(username, nPlayers))
+        </td>
+      </tr><tr>
+        <td>
+          66
+        </td>
+        <td>
+          1134
+        </td>
+        <td>
+          2671
+          -
+          2694
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.showLoading
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.bottomBar.showLoading()
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          2601
+        </td>
+        <td>
+          2701
+          -
+          2717
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.PublicGameScene.disableActions
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.disableActions()
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1698
+        </td>
+        <td>
+          2737
+          -
+          2756
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          {
+  PublicGameScene.this.alert.showAndWait();
+  ()
+}
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          2454
+        </td>
+        <td>
+          2754
+          -
+          2754
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;nosymbol&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          ()
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          1338
+        </td>
+        <td>
+          2737
+          -
+          2756
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.showAndWait
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.alert.showAndWait()
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          1417
+        </td>
+        <td>
+          2814
+          -
+          2840
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupFormScene.disableActions
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.bottomBar.disableActions()
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          2572
+        </td>
+        <td>
+          2845
+          -
+          2877
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.TextInputControl.setEditable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.TextField.sfxTextField2jfx(PublicGameScene.this.usernameField).setEditable(false)
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          1910
+        </td>
+        <td>
+          2882
+          -
+          2907
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ComboBox.sfxComboBox2jfx[Int](PublicGameScene.this.comboBox).setDisable(true)
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          1209
+        </td>
+        <td>
+          2958
+          -
+          2983
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupFormScene.enableActions
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.bottomBar.enableActions()
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          2263
+        </td>
+        <td>
+          2988
+          -
+          3019
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.TextInputControl.setEditable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.TextField.sfxTextField2jfx(PublicGameScene.this.usernameField).setEditable(true)
+        </td>
+      </tr><tr>
+        <td>
+          82
+        </td>
+        <td>
+          1976
+        </td>
+        <td>
+          3024
+          -
+          3050
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ComboBox.sfxComboBox2jfx[Int](PublicGameScene.this.comboBox).setDisable(false)
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1341
+        </td>
+        <td>
+          3099
+          -
+          3130
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.TextInputControl.setEditable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.TextField.sfxTextField2jfx(PublicGameScene.this.usernameField).setEditable(true)
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          2428
+        </td>
+        <td>
+          3135
+          -
+          3161
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.Node.setDisable
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.ComboBox.sfxComboBox2jfx[Int](PublicGameScene.this.comboBox).setDisable(false)
+        </td>
+      </tr><tr>
+        <td>
+          88
+        </td>
+        <td>
+          1760
+        </td>
+        <td>
+          3166
+          -
+          3189
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.TextInputControl.text_=
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.usernameField.text_=(&quot;&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          1421
+        </td>
+        <td>
+          3194
+          -
+          3217
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.startup.scenes.BaseStartupFormScene.resetScreen
+        </td>
+        <td style="background: #F0ADAD">
+          PublicGameScene.this.bottomBar.resetScreen()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

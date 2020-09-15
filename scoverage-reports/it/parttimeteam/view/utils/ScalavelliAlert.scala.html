@@ -1,0 +1,261 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          it/parttimeteam/view/utils/ScalavelliAlert.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package it.parttimeteam.view.utils
+</span>2 <span style=''>
+</span>3 <span style=''>import it.parttimeteam.model.ErrorEvent
+</span>4 <span style=''>import scalafx.scene.control.Alert
+</span>5 <span style=''>import scalafx.scene.control.Alert.AlertType
+</span>6 <span style=''>import scalafx.stage.Stage
+</span>7 <span style=''>
+</span>8 <span style=''>/**
+</span>9 <span style=''>  * Builder for a default Alert dialog
+</span>10 <span style=''>  */
+</span>11 <span style=''>object ScalavelliAlert {
+</span>12 <span style=''>
+</span>13 <span style=''>  def apply(title: String, message: String, alertType: AlertType, parent: Stage): Alert = {
+</span>14 <span style=''>    val alert: Alert = </span><span style='background: #F0ADAD'>new Alert(alertType)</span><span style=''>
+</span>15 <span style=''>    </span><span style='background: #F0ADAD'>alert.setTitle(title)</span><span style=''>
+</span>16 <span style=''>    </span><span style='background: #F0ADAD'>alert.setHeaderText(null)</span><span style=''>
+</span>17 <span style=''>    </span><span style='background: #F0ADAD'>alert.setContentText(message)</span><span style=''>
+</span>18 <span style=''>    //alert.initOwner(parent) // this break dialogs content
+</span>19 <span style=''>    alert
+</span>20 <span style=''>  }
+</span>21 <span style=''>
+</span>22 <span style=''>  def apply(title: String, error: ErrorEvent, alertType: AlertType, parent: Stage): Alert = {
+</span>23 <span style=''>    val alert: Alert = </span><span style='background: #F0ADAD'>new Alert(alertType)</span><span style=''>
+</span>24 <span style=''>    </span><span style='background: #F0ADAD'>alert.setTitle(title)</span><span style=''>
+</span>25 <span style=''>    </span><span style='background: #F0ADAD'>alert.setHeaderText(null)</span><span style=''>
+</span>26 <span style=''>    </span><span style='background: #F0ADAD'>alert.setContentText(StringParser.parseError(error))</span><span style=''>
+</span>27 <span style=''>    //alert.initOwner(parent) // this break dialogs content
+</span>28 <span style=''>    alert
+</span>29 <span style=''>  }
+</span>30 <span style=''>
+</span>31 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1232
+        </td>
+        <td>
+          373
+          -
+          393
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.control.Alert(alertType)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          2273
+        </td>
+        <td>
+          398
+          -
+          419
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Dialog.setTitle
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Alert.sfxAlert2jfx(alert).setTitle(title)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1639
+        </td>
+        <td>
+          424
+          -
+          449
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Dialog.setHeaderText
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Alert.sfxAlert2jfx(alert).setHeaderText(null)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          999
+        </td>
+        <td>
+          454
+          -
+          483
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Dialog.setContentText
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Alert.sfxAlert2jfx(alert).setContentText(message)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          2050
+        </td>
+        <td>
+          676
+          -
+          696
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          scalafx.scene.control.Alert.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new scalafx.scene.control.Alert(alertType)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1795
+        </td>
+        <td>
+          701
+          -
+          722
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Dialog.setTitle
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Alert.sfxAlert2jfx(alert).setTitle(title)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1067
+        </td>
+        <td>
+          727
+          -
+          752
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Dialog.setHeaderText
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Alert.sfxAlert2jfx(alert).setHeaderText(null)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          2242
+        </td>
+        <td>
+          778
+          -
+          808
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.view.utils.StringParser.parseError
+        </td>
+        <td style="background: #F0ADAD">
+          StringParser.parseError(error)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1564
+        </td>
+        <td>
+          757
+          -
+          809
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          javafx.scene.control.Dialog.setContentText
+        </td>
+        <td style="background: #F0ADAD">
+          control.this.Alert.sfxAlert2jfx(alert).setContentText(StringParser.parseError(error))
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

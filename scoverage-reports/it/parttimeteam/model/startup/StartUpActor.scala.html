@@ -27,8 +27,8 @@
 </span>3 <span style=''>import akka.actor.{Actor, ActorLogging, Props}
 </span>4 <span style=''>import it.parttimeteam.messages.LobbyMessages._
 </span>5 <span style=''>
-</span>6 <span style=''>object StartUpActor {
-</span>7 <span style=''>  def props(serverResponsesListener: StartupServerResponsesListener): Props = </span><span style='background: #F0ADAD'>Props(new StartUpActor(serverResponsesListener))</span><span style=''>
+</span>6 <span style=''>object StartupActor {
+</span>7 <span style=''>  def props(serverResponsesListener: StartupServerResponsesListener): Props = </span><span style='background: #F0ADAD'>Props(new StartupActor(serverResponsesListener))</span><span style=''>
 </span>8 <span style=''>}
 </span>9 <span style=''>
 </span>10 <span style=''>/**
@@ -36,7 +36,7 @@
 </span>12 <span style=''> *
 </span>13 <span style=''> * @param serverResponsesListener function user to notify back about the received event
 </span>14 <span style=''> */
-</span>15 <span style=''>class StartUpActor(private val serverResponsesListener: StartupServerResponsesListener) extends Actor with ActorLogging {
+</span>15 <span style=''>class StartupActor(private val serverResponsesListener: StartupServerResponsesListener) extends Actor with ActorLogging {
 </span>16 <span style=''>
 </span>17 <span style=''>  override def receive: Receive = {
 </span>18 <span style=''>    case Connected(id) =&gt; </span><span style='background: #F0ADAD'>this.serverResponsesListener.connected(id, sender())</span><span style=''>
@@ -68,28 +68,7 @@
           7
         </td>
         <td>
-          1011
-        </td>
-        <td>
-          241
-          -
-          282
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          it.parttimeteam.model.startup.StartUpActor.&lt;init&gt;
-        </td>
-        <td style="background: #F0ADAD">
-          new StartUpActor(serverResponsesListener)
-        </td>
-      </tr><tr>
-        <td>
-          7
-        </td>
-        <td>
-          2099
+          1632
         </td>
         <td>
           235
@@ -103,14 +82,35 @@
           akka.actor.Props.apply
         </td>
         <td style="background: #F0ADAD">
-          akka.actor.Props.apply[it.parttimeteam.model.startup.StartUpActor](new StartUpActor(serverResponsesListener))((ClassTag.apply[it.parttimeteam.model.startup.StartUpActor](classOf[it.parttimeteam.model.startup.StartUpActor]): scala.reflect.ClassTag[it.parttimeteam.model.startup.StartUpActor]))
+          akka.actor.Props.apply[it.parttimeteam.model.startup.StartupActor](new StartupActor(serverResponsesListener))((ClassTag.apply[it.parttimeteam.model.startup.StartupActor](classOf[it.parttimeteam.model.startup.StartupActor]): scala.reflect.ClassTag[it.parttimeteam.model.startup.StartupActor]))
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          2312
+        </td>
+        <td>
+          241
+          -
+          282
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          it.parttimeteam.model.startup.StartupActor.&lt;init&gt;
+        </td>
+        <td style="background: #F0ADAD">
+          new StartupActor(serverResponsesListener)
         </td>
       </tr><tr>
         <td>
           17
         </td>
         <td>
-          2147
+          1638
         </td>
         <td>
           600
@@ -121,7 +121,7 @@
           Apply
         </td>
         <td>
-          it.parttimeteam.model.startup.StartUpActor.$anonfun.&lt;init&gt;
+          it.parttimeteam.model.startup.StartupActor.$anonfun.&lt;init&gt;
         </td>
         <td style="background: #F0ADAD">
           new $anonfun()
@@ -131,28 +131,7 @@
           18
         </td>
         <td>
-          1478
-        </td>
-        <td>
-          671
-          -
-          679
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          akka.actor.Actor.sender
-        </td>
-        <td style="background: #F0ADAD">
-          StartUpActor.this.sender()
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          2524
+          2040
         </td>
         <td>
           628
@@ -166,14 +145,35 @@
           it.parttimeteam.model.startup.StartupServerResponsesListener.connected
         </td>
         <td style="background: #F0ADAD">
-          this.serverResponsesListener.connected(id, StartUpActor.this.sender())
+          this.serverResponsesListener.connected(id, StartupActor.this.sender())
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          945
+        </td>
+        <td>
+          671
+          -
+          679
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          akka.actor.Actor.sender
+        </td>
+        <td style="background: #F0ADAD">
+          StartupActor.this.sender()
         </td>
       </tr><tr>
         <td>
           19
         </td>
         <td>
-          1881
+          1416
         </td>
         <td>
           712
@@ -194,7 +194,7 @@
           20
         </td>
         <td>
-          1593
+          1064
         </td>
         <td>
           799
@@ -215,7 +215,7 @@
           21
         </td>
         <td>
-          922
+          2174
         </td>
         <td>
           892
@@ -236,7 +236,7 @@
           23
         </td>
         <td>
-          2070
+          1529
         </td>
         <td>
           1042
@@ -257,7 +257,7 @@
           24
         </td>
         <td>
-          1350
+          2607
         </td>
         <td>
           1111
@@ -278,7 +278,7 @@
           26
         </td>
         <td>
-          2499
+          1975
         </td>
         <td>
           1142
@@ -292,7 +292,7 @@
           akka.event.LoggingAdapter.debug
         </td>
         <td style="background: #F0ADAD">
-          StartUpActor.this.log.debug(m)
+          StartupActor.this.log.debug(m)
         </td>
       </tr>
     </table>
