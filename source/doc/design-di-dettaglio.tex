@@ -189,7 +189,7 @@ Ciascuna scena che estende \textit{BaseStartupFormScene} si compone di 3 parti:
 \end{itemize}
 
 \begin{center}
-    \includegraphics[scale=0.3]{create_join_lobby}
+    \includegraphics[scale=0.26]{create_join_lobby}
 \end{center}
 \newpage
 \paragraph{Game}
@@ -253,6 +253,7 @@ La sua funzione primaria, essendo la lobby gestita totalmente lato server, è qu
 I messaggi di risposta del server vengono invece ricevuti tramite l’attore \textit{StartupActor}, creato all’inizializzazione dell’oggetto sempre tramite l’istanza di \textit{ActorSystem}, il cui riferimento viene passato al server al momento della connessione.\newline Questo attore ha l’unica funzione di ricevere i messaggi inviati dal server e di redirezionarli tramite il trait \textit{StartupServerResponsesListener} che richiede in costruzione.\newline
 La decisione di comunicare con il server su due vie separate è stata fatta per evitare duplicazione di messaggi: far fare tutto a StartupActor avrebbe richiesto l’invio di messaggi a quest’ultimo che a sua volta avrebbe dovuto inviarli al server.
 I risultati delle varie operazioni vengono poi notificati al controller attraverso la funzione \textit{notifyEvent} richiesta in costruzione, a cui viene passato un oggetto di tipo \textit{GameStartupEvent}.\newline Il risultato della fase di lobby è l’oggetto \textit{GameMatchInformations}, che racchiude tutte le informazioni necessarie a poter avviare la partita lato client, come l'id del giocatore e la reference all'attore remoto del server.
+\newpage
 \paragraph{GameService}
 \begin{center}
     \includegraphics[scale=0.5]{game-service}
