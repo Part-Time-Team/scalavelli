@@ -5,8 +5,6 @@ import it.parttimeteam.core.collections.{Board, CardCombination, Deck, Hand}
 import org.scalamock.matchers.Matchers
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funspec.AnyFunSpec
-import org.scalatest.matchers.must.Matchers.be
-import org.scalatest.matchers.should.Matchers.an
 
 class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
   describe("A game manager") {
@@ -39,14 +37,19 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
 
       it("Draw cards from a non empty deck") {
         val drawnDeck = Deck.cards2deck(deck.cards.tail)
-        assert(gameInterface.draw(deck) equals(drawnDeck, deck.cards.head))
+        assert(gameInterface.draw(deck) equals(drawnDeck, deck.cards.headOption))
       }
 
-      it("Throw an exception when drawing from an empty deck") {
+      it("Doesn't draw cards from an empty deck") {
+        val emptyDeck = Deck.empty
+        assert(gameInterface.draw(emptyDeck) equals(emptyDeck, None))
+      }
+
+      /*it("Throw an exception when drawing from an empty deck") {
         val emptyDeck = Deck.empty
         an[UnsupportedOperationException] should be thrownBy
           (gameInterface draw emptyDeck)
-      }
+      }*/
     }
 
     describe("Validate a move") {
@@ -115,7 +118,7 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
       it("Play a combination with a royal flush") {
 
         val handSeq = Seq(ACE_CLUBS_RED, TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS, SIX_CLUBS, SEVEN_CLUBS, EIGHT_CLUBS, NINE_CLUBS, TEN_CLUBS, JACK_CLUBS, ACE_CLUBS_BLUE, QUEEN_CLUBS, KING_CLUBS)
-        val cards =   Seq(ACE_CLUBS_RED, TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS, SIX_CLUBS, SEVEN_CLUBS, EIGHT_CLUBS, NINE_CLUBS, TEN_CLUBS, JACK_CLUBS, ACE_CLUBS_BLUE, QUEEN_CLUBS, KING_CLUBS)
+        val cards = Seq(ACE_CLUBS_RED, TWO_CLUBS, THREE_CLUBS, FOUR_CLUBS, FIVE_CLUBS, SIX_CLUBS, SEVEN_CLUBS, EIGHT_CLUBS, NINE_CLUBS, TEN_CLUBS, JACK_CLUBS, ACE_CLUBS_BLUE, QUEEN_CLUBS, KING_CLUBS)
         val result = gameInterface.playCombination(Hand(handSeq), state.board, cards)
         assert(result.isRight)
       }
@@ -163,6 +166,14 @@ class GameInterfaceSuite extends AnyFunSpec with MockFactory with Matchers {
 
         val res = gameInterface.putCardsInCombination(hand, board.right.get, "#1", Seq(THREE_CLUBS, FOUR_CLUBS))
         assertResult(Board(Seq(comb)))(res.right.get._2)
+      }
+
+      it("Update a jack, queen, king combination") {
+        val hand = Hand(Seq(ACE_CLUBS_BLUE, FIVE_DIAMONDS, EIGHT_CLUBS))
+        val comb = CardCombination("#1", Seq(JACK_CLUBS, QUEEN_CLUBS, KING_CLUBS))
+
+        val res = gameInterface.putCardsInCombination(hand, Board(Seq(comb)), "#1", Seq(ACE_CLUBS_BLUE))
+        assertResult(Board(Seq(CardCombination("#1", Seq(JACK_CLUBS, QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE)))))(res.right.get._2)
       }
     }
   }

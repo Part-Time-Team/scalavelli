@@ -13,7 +13,7 @@ object CardUtils {
     * @return the card image path
     */
   def getCardPath(card: Card): String = {
-    val path: String = "/images/cards/"
+    val path: String = ImagePaths.CARDS_BASE_PATH
     val suitPath = card.suit match {
       case Hearts() => "H"
       case Diamonds() => "D"

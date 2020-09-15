@@ -1,5 +1,7 @@
 package it.parttimeteam.view.game.scenes.panes
 
+import it.parttimeteam.view.ViewConfig
+import it.parttimeteam.view.utils.Strings
 import scalafx.geometry.Pos
 import scalafx.scene.Scene
 import scalafx.scene.control.{Label, ProgressBar}
@@ -29,27 +31,27 @@ object InitMatchDialog {
     this.initStyle(StageStyle.Decorated)
     this.setResizable(false)
     this.initModality(Modality.WindowModal)
-    this.setTitle("Game loading")
-    this.setMinWidth(200)
-    this.setMinHeight(100)
+    this.setTitle(Strings.GAME_LOADING_TITLE)
+    this.setMinWidth(ViewConfig.INIT_MATCH_DIALOG_MIN_WIDTH)
+    this.setMinHeight(ViewConfig.INIT_MATCH_DIALOG_MIN_HEIGHT)
 
-    val label = new Label("Preparing your cards...")
+    val label = new Label(Strings.GAME_LOADING_MESSAGE)
 
     val vb = new VBox()
-    vb.setSpacing(5)
+    vb.setSpacing(ViewConfig.DEFAULT_SPACING)
     vb.setAlignment(Pos.Center)
     vb.getChildren.addAll(label, progressBar)
     val dialogScene = new Scene(vb)
     this.setScene(dialogScene)
     this.initOwner(parentStage)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def showDialog(): Unit = {
       this.showAndWait()
       this.setAlwaysOnTop(true)
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def hideDialog(): Unit = {
       this.close()
     }

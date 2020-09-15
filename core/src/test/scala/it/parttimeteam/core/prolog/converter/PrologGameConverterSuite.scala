@@ -38,11 +38,11 @@ class PrologGameConverterSuite extends AnyFunSuite {
 
   test("It replaces the Ace value card in the Overflow Ace card in specific cases") {
 
-    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE.copy(rank = "14")))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE)))
+    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE.copy(rank = "14")))(prologConverter.optionalValueAce(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE)))
 
-    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE.copy(rank = "14"), ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE, ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS)))
+    assertResult(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE.copy(rank = "14"), ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueAce(Seq(QUEEN_CLUBS, KING_CLUBS, ACE_CLUBS_BLUE, ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS)))
 
-    assertResult(Seq(ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueCards(Seq(ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS)))
+    assertResult(Seq(ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS))(prologConverter.optionalValueAce(Seq(ACE_CLUBS_BLUE, TWO_CLUBS, THREE_CLUBS)))
   }
 
   test("Convert a tuple sequence into string") {

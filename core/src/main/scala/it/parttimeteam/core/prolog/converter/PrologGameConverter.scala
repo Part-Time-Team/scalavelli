@@ -48,7 +48,7 @@ class PrologGameConverter extends PrologConverter {
   /**
    * @inheritdoc
    */
-  override def optionalValueCards(cards: Seq[Card]): Seq[Card] = {
+  override def optionalValueAce(cards: Seq[Card]): Seq[Card] = {
 
     // List where overflowaces are converted into ace
     val convertList: Seq[Card] = cards.map(card => if (card.rank == OverflowAce()) card.copy(rank = Ace()) else card)

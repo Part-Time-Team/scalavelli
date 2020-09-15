@@ -72,7 +72,7 @@ object Rank {
    * The optional OverflowAce with value 14
    */
   case class OverflowAce() extends Rank(14, "Ace", "14")
-  
+
   /**
    * The second rank.
    */
