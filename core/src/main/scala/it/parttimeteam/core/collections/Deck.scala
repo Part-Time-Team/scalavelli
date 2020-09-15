@@ -11,7 +11,10 @@ case class Deck(cards: Seq[Card]) {
    *
    * @return Tuple (new Deck, Card drawn).
    */
-  def draw(): (Deck, Card) = (this.copy(cards = cards.tail), cards.head)
+  def draw(): (Deck, Option[Card]) = if (cards.isEmpty)
+    (this, None)
+  else
+    (copy(cards = cards.tail), Some(cards.head))
 
   /**
    * Draw any number of cards from the top of the deck and return them.
@@ -21,8 +24,10 @@ case class Deck(cards: Seq[Card]) {
    */
   def draw(number: Int): (Deck, Seq[Card]) = (0 until number).foldLeft((this, Seq.empty[Card])) {
     (acc, _) => {
-      val drawn = acc._1 draw()
-      (drawn._1, drawn._2 +: acc._2)
+      acc._1 draw() match {
+        case (deck, Some(card)) => (deck, card +: acc._2)
+        case (deck, None) => (deck, acc._2)
+      }
     }
   }
 

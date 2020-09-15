@@ -21,7 +21,7 @@ trait GameInterface {
    * @param deck Deck to draw.
    * @return Deck tail and card drawn.
    */
-  def draw(deck: Deck): (Deck, Card)
+  def draw(deck: Deck): (Deck, Option[Card])
 
   /**
    * Validate a card sequence.
@@ -104,7 +104,7 @@ class GameInterfaceImpl extends GameInterface {
   /**
    * @inheritdoc
    */
-  override def draw(deck: Deck): (Deck, Card) = deck.draw()
+  override def draw(deck: Deck): (Deck, Option[Card]) = deck.draw()
 
   /**
    * @inheritdoc

@@ -1,12 +1,12 @@
 package it.parttimeteam.`match`
 
-import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, StateResult}
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.collections.{Board, Hand}
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
 import it.parttimeteam.core.{GameInterface, GameState}
 import it.parttimeteam.messages.GameMessage.MatchError
+import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 
 class GameHelper(private val gameApi: GameInterface) {
 
@@ -55,12 +55,12 @@ class GameHelper(private val gameApi: GameInterface) {
     val updatedState = currentState
       .getPlayer(playerInTurn.id)
       .map(p => currentState.updatePlayer(p.copy(
-        hand = p.hand.copy(playerCards = cardDrawn +: p.hand.playerCards))))
+        hand = p.hand.copy(playerCards = cardDrawn.map(_ +: p.hand.playerCards).getOrElse(p.hand.playerCards)))))
       .get.copy(deck = updateDeck)
 
     Right(StateResult(
       updatedState = updatedState,
-      additionalInformation = Some(CardDrawnInfo(cardDrawn))
-    ))
+      additionalInformation = cardDrawn.map(CardDrawnInfo))
+    )
   }
 }
