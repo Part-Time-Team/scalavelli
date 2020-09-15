@@ -1,13 +1,14 @@
 package it.parttimeteam.`match`
 
-import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
-import it.parttimeteam.`match`.GameMatchManagerActor.{CardDrawnInfo, StateResult}
+import it.parttimeteam.`match`.GameMatchActor.{CardDrawnInfo, StateResult}
 import it.parttimeteam.common.GamePlayer
 import it.parttimeteam.core.collections.{Board, Hand}
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
 import it.parttimeteam.core.{GameInterface, GameState}
+import it.parttimeteam.messages.GameMessage.MatchError
+import it.parttimeteam.{DrawCard, PlayedMove, PlayerAction}
 
-class GameMatchManager(private val gameApi: GameInterface) {
+class GameHelper(private val gameApi: GameInterface) {
 
 
   def retrieveInitialState(players: Seq[(PlayerId, PlayerName)]): GameState =
@@ -22,17 +23,10 @@ class GameMatchManager(private val gameApi: GameInterface) {
    * @param playerAction action made my the player
    * @return a state result or a string representing an error
    */
-  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[String, StateResult] = {
+  def determineNextState(currentState: GameState, playerInTurn: GamePlayer, playerAction: PlayerAction): Either[MatchError, StateResult] = {
     playerAction match {
-      case DrawCard => {
-        nextStateOnCardDrawn(currentState, playerInTurn)
-      }
-
-      case PlayedMove(updatedHand, updatedBoard) => {
-        nextStateOnPlayerMove(currentState, playerInTurn, updatedHand, updatedBoard)
-      }
-
-      case _ => Left("Non supported action")
+      case DrawCard => nextStateOnCardDrawn(currentState, playerInTurn)
+      case PlayedMove(updatedHand, updatedBoard) => nextStateOnPlayerMove(currentState, playerInTurn, updatedHand, updatedBoard)
     }
   }
 
@@ -50,7 +44,7 @@ class GameMatchManager(private val gameApi: GameInterface) {
       ))
 
     } else {
-      Left("Non valid plays")
+      Left(MatchError.PlayerActionNotValid)
     }
   }
 
@@ -61,12 +55,12 @@ class GameMatchManager(private val gameApi: GameInterface) {
     val updatedState = currentState
       .getPlayer(playerInTurn.id)
       .map(p => currentState.updatePlayer(p.copy(
-        hand = p.hand.copy(playerCards = cardDrawn +: p.hand.playerCards))))
+        hand = p.hand.copy(playerCards = cardDrawn.map(_ +: p.hand.playerCards).getOrElse(p.hand.playerCards)))))
       .get.copy(deck = updateDeck)
 
     Right(StateResult(
       updatedState = updatedState,
-      additionalInformation = Some(CardDrawnInfo(cardDrawn))
-    ))
+      additionalInformation = cardDrawn.map(CardDrawnInfo))
+    )
   }
 }

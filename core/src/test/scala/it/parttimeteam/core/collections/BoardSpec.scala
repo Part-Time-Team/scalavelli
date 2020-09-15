@@ -1,5 +1,6 @@
 package it.parttimeteam.core.collections
 
+import it.parttimeteam.core.GameError
 import it.parttimeteam.core.cards.Card
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -20,7 +21,7 @@ class BoardSpec extends AnyFunSuite {
   test("Pick a combination from empty board") {
     val res = board.pickCards(TWO_CLUBS +: Nil)
     assert(res.isLeft)
-    assert(res.left.get == "No cards in the board")
+    assert(res.left.get == GameError.NoCardInBoard)
   }
 
   test("Add combination to game board") {

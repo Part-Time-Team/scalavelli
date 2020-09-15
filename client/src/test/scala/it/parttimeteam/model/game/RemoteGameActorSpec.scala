@@ -33,34 +33,28 @@ class RemoteGameActorSpec extends TestKit(ActorSystem("test", ConfigFactory.load
       (mockListener.gameStateUpdated _).verify(*).once()
     }
 
-    "notify the lister on turn started" in {
+    "notify the listener on turn started" in {
       actor ! PlayerTurn
       (mockListener.turnStarted _).verify().once()
     }
 
-    "notify the lister on opponent turn started" in {
+    "notify the listener on opponent turn started" in {
       val name = "sampleName"
       actor ! OpponentInTurn(name)
       (mockListener.opponentInTurn _).verify(name).once()
     }
 
-    "notify the lister on turn ended" in {
+    "notify the listener on turn ended" in {
       actor ! TurnEnded
       (mockListener.turnEnded _).verify().once()
     }
 
-    "notify the lister on turn ended with card drawn" in {
-      val sampleCard = Card.string2card("2CR")
-      actor ! CardDrawn(sampleCard)
-      (mockListener.turnEndedWithCartDrawn _).verify(sampleCard).once()
-    }
-
-    "notify the lister on game finished with a win" in {
+    "notify the listener on game finished with a win" in {
       actor ! Won
       (mockListener.gameWon _).verify().once()
     }
 
-    "notify the lister on game finished with a lost " in {
+    "notify the listener on game finished with a lost " in {
       val winnerName = "winner"
       actor ! Lost(winnerName)
       (mockListener.gameLost _).verify(winnerName).once()

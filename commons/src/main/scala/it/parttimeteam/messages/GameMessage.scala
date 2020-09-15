@@ -57,13 +57,6 @@ object GameMessage {
   case class MatchErrorOccurred(errorType: MatchError)
 
   /**
-   * Send the drawn card to the current player
-   *
-   * @param card drawn card
-   */
-  case class CardDrawn(card: Card) // TODO MATTEOC remove
-
-  /**
    * Tells the current player his turn is finished
    */
   case object TurnEnded
@@ -91,8 +84,6 @@ object GameMessage {
   sealed class MatchError
 
   object MatchError {
-
-    case object InvalidPlays extends MatchError
 
     case object PlayerActionNotValid extends MatchError
 

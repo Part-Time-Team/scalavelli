@@ -1,6 +1,7 @@
 package it.parttimeteam.view.game
 
 import it.parttimeteam.controller.game.GameListener
+import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view._
 import it.parttimeteam.view.game.listeners.GameStageListener
@@ -98,7 +99,7 @@ trait MachiavelliGameStage extends BaseStage with GameStageListener {
     *
     * @param error the error occurred
     */
-  def notifyError(error: String): Unit
+  def notifyError(error: ErrorEvent): Unit
 }
 
 /**

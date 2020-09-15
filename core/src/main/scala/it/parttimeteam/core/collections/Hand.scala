@@ -1,5 +1,6 @@
 package it.parttimeteam.core.collections
 
+import it.parttimeteam.core.GameError
 import it.parttimeteam.core.cards.Card
 
 /**
@@ -42,13 +43,13 @@ case class Hand(playerCards: Seq[Card] = Seq.empty, boardCards: Seq[Card] = Seq.
    * @param cards Cards to remove from Hand.
    * @return New Hand without Cards or a string with the error.
    */
-  def removeCards(cards: Seq[Card]): Either[String, Hand] = {
+  def removeCards(cards: Seq[Card]): Either[GameError, Hand] = {
     val updatePlayerCards: Seq[Card] = playerCards.filterNot(card => cards contains card)
     val updateBoardCards: Seq[Card] = boardCards.filterNot(card => cards contains card)
 
     Either.cond(cards forall (c => this containsCards c),
       this.copy(playerCards = updatePlayerCards, boardCards = updateBoardCards),
-      "Hand doesn't contain given cards")
+      GameError.HandNotContainCard)
   }
 
   /**
@@ -72,5 +73,4 @@ case class Hand(playerCards: Seq[Card] = Seq.empty, boardCards: Seq[Card] = Seq.
       playerCards = playerCards.sortBySuit(),
       boardCards = boardCards.sortBySuit()
     )
-
 }

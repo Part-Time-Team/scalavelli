@@ -1,7 +1,7 @@
 package it.parttimeteam.core.prolog.converter
 
 import alice.tuprolog.{Term, Var}
-import it.parttimeteam.core.cards.{Card, Rank, Suit}
+import it.parttimeteam.core.cards.Card
 
 /**
  * Helper facilities to improve conversions results in prolog
@@ -41,7 +41,7 @@ trait PrologConverter {
    * @param cards sequence of cards
    * @return new sequence of cards
    */
-  def optionalValueCards(cards: Seq[Card]): Seq[Card]
+  def optionalValueAce(cards: Seq[Card]): Seq[Card]
 
   /**
    * Convert tuple sequence in a prolog list

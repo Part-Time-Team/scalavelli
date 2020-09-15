@@ -34,6 +34,6 @@ trait StartupServerResponsesListener {
    */
   def matchFound(matchRef: ActorRef)
 
-  // TODO error
+  def privateLobbyCodeNotValid()
 
 }

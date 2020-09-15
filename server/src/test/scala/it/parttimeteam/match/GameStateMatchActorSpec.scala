@@ -3,12 +3,12 @@ package it.parttimeteam.`match`
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.typesafe.config.ConfigFactory
-import it.parttimeteam.`match`.GameMatchManagerActor.GamePlayers
+import it.parttimeteam.`match`.GameMatchActor.GamePlayers
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, Deck, Hand}
 import it.parttimeteam.core.player.Player
 import it.parttimeteam.core.player.Player.{PlayerId, PlayerName}
-import it.parttimeteam.core.{GameInterface, GameState}
+import it.parttimeteam.core.{GameError, GameInterface, GameState}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.messages.LobbyMessages.MatchFound
@@ -30,7 +30,8 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
   "a game actor" should {
 
     "accept players and notify game started with initial state" in {
-      val gameActor = TestActorRef[GameMatchManagerActor](GameMatchManagerActor.props(NUMBER_OF_PLAYERS, new FakeGameInterface()))
+      val gameActor = TestActorRef[GameMatchActor](GameMatchActor.props(NUMBER_OF_PLAYERS, new GameHelper(new FakeGameInterface())
+      ))
       val player1 = TestProbe()
       val player2 = TestProbe()
 
@@ -48,7 +49,7 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       player1.expectMsgType[GameStateUpdated]
       player2.expectMsgType[OpponentInTurn]
       player1.expectMsg(TurnEnded)
-      player2.expectMsg(GameStateUpdated(PlayerGameState(Board(List()),Hand(List(),List()),List(Opponent("player1",1))))
+      player2.expectMsg(GameStateUpdated(PlayerGameState(Board(List()), Hand(List(), List()), List(Opponent("player1", 1))))
       )
     }
 
@@ -70,17 +71,17 @@ class GameStateMatchActorSpec extends TestKit(ActorSystem("test", ConfigFactory.
       Board.empty,
       players.map(pair => Player(pair._2, pair._1, Hand(List(), List()))))
 
-    override def draw(deck: Deck): (Deck, Card) = (deck, FakeGameInterface.cardToDraw)
+    override def draw(deck: Deck): (Deck, Option[Card]) = (deck, Some(FakeGameInterface.cardToDraw))
 
     override def validateMove(board: Board, hand: Hand): Boolean = ???
 
     override def validateCombination(cards: Seq[Card]): Boolean = ???
 
-    override def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
+    override def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[GameError, (Hand, Board)] = ???
 
-    override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
+    override def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[GameError, (Hand, Board)] = ???
 
-    override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): Either[String, (Hand, Board)] = ???
+    override def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): Either[GameError, (Hand, Board)] = ???
 
     override def validateTurn(board: Board, startBoard: Board, hand: Hand, startHand: Hand): Boolean = ???
   }

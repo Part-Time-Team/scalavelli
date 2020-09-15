@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import it.parttimeteam.Constants
 import it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl
-import it.parttimeteam.core.GameInterfaceImpl
+import it.parttimeteam.core.{GameError, GameInterfaceImpl}
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
@@ -69,7 +69,9 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
     case InfoEvent(message: String) => gameStage.notifyInfo(message)
 
-    case ErrorEvent(reason: String) => gameStage.notifyError(reason)
+    case GameErrorEvent(reason: GameError) => {
+      gameStage.notifyError(reason)
+    }
 
     case GameWonEvent => gameStage.notifyGameEnd(GameWon)
 

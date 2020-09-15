@@ -21,7 +21,7 @@ trait GameInterface {
    * @param deck Deck to draw.
    * @return Deck tail and card drawn.
    */
-  def draw(deck: Deck): (Deck, Card)
+  def draw(deck: Deck): (Deck, Option[Card])
 
   /**
    * Validate a card sequence.
@@ -62,7 +62,7 @@ trait GameInterface {
    * @param cards Cards to pick.
    * @return An Either with a possible error or the Hand and Board updated.
    */
-  def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
+  def pickBoardCards(hand: Hand, board: Board, cards: Seq[Card]): Either[GameError, (Hand, Board)]
 
   /**
    * Play cards from hand to board.
@@ -72,7 +72,7 @@ trait GameInterface {
    * @param cards Cards to play.
    * @return Hand and Board updated. If there was an error, return it.
    */
-  def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[String, (Hand, Board)]
+  def playCombination(hand: Hand, board: Board, cards: Seq[Card]): Either[GameError, (Hand, Board)]
 
   /**
    * Update a combination in the board by his id with some cards.
@@ -83,7 +83,7 @@ trait GameInterface {
    * @param cards Cards to put in the combination.
    * @return Updated Board and Hand.
    */
-  def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): Either[String, (Hand, Board)]
+  def putCardsInCombination(hand: Hand, board: Board, id: String, cards: Seq[Card]): Either[GameError, (Hand, Board)]
 }
 
 class GameInterfaceImpl extends GameInterface {
@@ -104,7 +104,7 @@ class GameInterfaceImpl extends GameInterface {
   /**
    * @inheritdoc
    */
-  override def draw(deck: Deck): (Deck, Card) = deck.draw()
+  override def draw(deck: Deck): (Deck, Option[Card]) = deck.draw()
 
   /**
    * @inheritdoc
@@ -130,7 +130,7 @@ class GameInterfaceImpl extends GameInterface {
    */
   override def pickBoardCards(hand: Hand,
                               board: Board,
-                              cards: Seq[Card]): Either[String, (Hand, Board)] = {
+                              cards: Seq[Card]): Either[GameError, (Hand, Board)] = {
     board.pickCards(cards).map(updatedBoard => (hand.addBoardCards(cards), updatedBoard))
   }
 
@@ -139,12 +139,12 @@ class GameInterfaceImpl extends GameInterface {
    */
   override def playCombination(hand: Hand,
                                board: Board,
-                               cards: Seq[Card]): Either[String, (Hand, Board)] = {
+                               cards: Seq[Card]): Either[GameError, (Hand, Board)] = {
     val orderedCards = cards sortByRank()
     if (this.validateCombination(orderedCards)) {
       hand.removeCards(cards).map(updateHand => (updateHand, board.putCombination(orderedCards)))
     } else {
-      Left("Combination not valid")
+      Left(GameError.CombinationNotValid)
     }
   }
 
@@ -154,7 +154,7 @@ class GameInterfaceImpl extends GameInterface {
   override def putCardsInCombination(hand: Hand,
                                      board: Board,
                                      id: String,
-                                     cards: Seq[Card]): Either[String, (Hand, Board)] = {
+                                     cards: Seq[Card]): Either[GameError, (Hand, Board)] = {
 
     val combBoard: CardCombination = board.combinations.filter(_.id == id).head
 
@@ -165,7 +165,7 @@ class GameInterfaceImpl extends GameInterface {
         case Left(error) => Left(error)
       }
     } else {
-      Left("Combination not valid")
+      Left(GameError.CombinationNotValid)
     }
   }
 }

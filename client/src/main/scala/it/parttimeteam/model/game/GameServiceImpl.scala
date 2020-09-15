@@ -4,6 +4,8 @@ import it.parttimeteam.core.GameInterface
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
 import it.parttimeteam.messages.GameMessage.{LeaveGame, PlayerActionMade, Ready}
+import it.parttimeteam.model.ErrorEvent
+import it.parttimeteam.model.ErrorEvent.NoValidTurnPlay
 import it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener
 import it.parttimeteam.model.startup.GameMatchInformations
 import it.parttimeteam.{ActorSystemManager, DrawCard, PlayedMove}
@@ -57,18 +59,13 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def opponentInTurn(opponentName: String): Unit = notifyEvent(OpponentInTurnEvent(opponentName))
 
-    override def turnEndedWithCartDrawn(card: Card): Unit = {
-      turnHistory = turnHistory.clear()
-      notifyEvent(StateUpdatedEvent(generateClientGameState(storeOpt.get.onCardDrawn(card), turnHistory)))
-      notifyEvent(TurnEndedEvent)
-    }
-
     override def gameWon(): Unit = notifyEvent(GameWonEvent)
 
     override def gameLost(winnerName: String): Unit = notifyEvent(GameLostEvent(winnerName))
 
     override def gameEndedWithErrorEvent(reason: String): Unit = notifyEvent(GameEndedWithErrorEvent(reason))
 
+    override def invalidPlayerAction(): Unit = notifyEvent(GameErrorEvent(NoValidTurnPlay))
   }
 
   private val gameClientActorRef = ActorSystemManager.actorSystem.actorOf(RemoteGameActor.props(this.matchServerResponseListener))
@@ -92,7 +89,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
         remoteMatchGameRef ! PlayerActionMade(this.playerId, PlayedMove(currentState.hand, currentState.board))
       }
       else {
-        this.notifyEvent(ErrorEvent("Non valid turn play"))
+        this.notifyEvent(GameErrorEvent(ErrorEvent.NoValidTurnPlay))
       }
     }
   }
@@ -104,7 +101,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           val updatedState = storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
           this.updateHistoryAndNotify(updatedState)
 
-        case Left(error) => this.notifyEvent(ErrorEvent(error))
+        case Left(error) => this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
       }
 
     }
@@ -117,7 +114,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           val updatedState = storeOpt.get.onLocalTurnStateChanged(hand, board)
           this.updateHistoryAndNotify(updatedState)
         }
-        case Left(error) => this.notifyEvent(ErrorEvent(error))
+        case Left(error) => this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
       }
     }
   }
@@ -129,7 +126,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
           this.updateHistoryAndNotify(updatedState)
         }
-        case Left(error) => this.notifyEvent(ErrorEvent(error))
+        case Left(error) => this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
       }
     }
   }
@@ -154,7 +151,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
           val updatedState = this.storeOpt.get.onLocalTurnStateChanged(updatedHand, updatedBoard)
           this.updateHistoryAndNotify(updatedState)
         }
-        case Left(error) => this.notifyEvent(ErrorEvent(error))
+        case Left(error) => this.notifyEvent(GameErrorEvent(ErrorEvent.mapError(error)))
       }
     }
   }

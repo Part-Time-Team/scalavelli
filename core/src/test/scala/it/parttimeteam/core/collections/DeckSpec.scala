@@ -23,7 +23,7 @@ class DeckSpec extends AnyFunSpec {
         assert(before equals 104)
         val cardDrawn = deck.draw()
         assert(cardDrawn._1.remaining equals 103)
-        assert(!(cardDrawn._2.name equals ""))
+        assert(cardDrawn._2.isDefined)
       }
 
       it("Must be empty if all cards are drawn") {
