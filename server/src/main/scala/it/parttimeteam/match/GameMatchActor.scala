@@ -223,7 +223,6 @@ class GameMatchActor(numberOfPlayers: Int, private val gameHelper: GameHelper)
    */
   private def broadcastGameStateToPlayers(gameState: GameState) {
 
-    println(gameState.toString)
     this.players.foreach(player => {
       player.actorRef ! GameStateUpdated(PlayerGameState(
         gameState.board,

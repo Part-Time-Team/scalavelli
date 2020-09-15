@@ -25,21 +25,16 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
 
     override def onStart(): Unit = {
       val time = millisToMinutesAndSeconds(Constants.Client.TURN_TIMER_DURATION * 1000)
-      println(s"TIMER -> Timer started: ${time._1}:${time._2}")
       gameStage.showTimer(time._1, time._2)
     }
 
     override def onEnd(): Unit = {
-      println(s"TIMER -> Timer ended")
       gameStage.notifyTimerEnded()
       gameService.endTurnDrawingACard()
     }
 
     override def onTick(millis: Long): Unit = {
       val time = millisToMinutesAndSeconds(millis)
-
-      println(s"TIMER -> Timer tick: ${time._1}:${time._2}")
-
       gameStage.updateTimer(time._1, time._2)
     }
   })

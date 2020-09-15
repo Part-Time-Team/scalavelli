@@ -52,8 +52,6 @@ object SelectionManager {
 
         this.addItem(item)
       }
-
-      println(s"Selected cards: ${getSelectedItems.toString}")
     }
 
     /** @inheritdoc */

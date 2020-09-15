@@ -91,8 +91,8 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
     }
 
     /** @inheritdoc*/
-    override def clearHandSelection(): Unit = {
-      handSelectionManager.clearSelection()
+    override def clearSelection(): Unit = {
+      clearAllSelections()
       updateActionBarButtons()
     }
 
@@ -130,11 +130,15 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
 
   root = borderPane
 
-  /** @inheritdoc */
-  override def setState(clientGameState: ClientGameState): Unit = {
+  def clearAllSelections(): Unit = {
     this.handSelectionManager.clearSelection()
     this.boardSelectionManager.clearSelection()
     this.combinationSelectionManager.clearSelection()
+    updateActionBarButtons()
+  }
+
+  /** @inheritdoc */
+  override def setState(clientGameState: ClientGameState): Unit = {
     Platform.runLater({
       centerPane.setBoard(clientGameState.playerGameState.board)
       handBar.setHand(clientGameState.playerGameState.hand)
@@ -144,6 +148,8 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
       rightBar.setResetEnabled(inTurn && clientGameState.canReset)
       rightBar.setNextEnabled(inTurn)
       rightBar.setNextText(if (clientGameState.canDrawCard) Strings.PASS_AND_DRAW_BTN else Strings.PASS_BTN)
+
+      clearAllSelections()
     })
   }
 
@@ -178,7 +184,7 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
   /** @inheritdoc */
   private def updateActionBarButtons(): Unit = {
     actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty && inTurn)
-    actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty)
+    actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty || !boardSelectionManager.isSelectionEmpty || !combinationSelectionManager.isSelectionEmpty)
     actionBar.enableUpdateCardCombination(combinationSelectionManager.getSelectedItems.size == 1 && handSelectionManager.getSelectedItems.size == 1 && inTurn)
     actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty && inTurn)
   }

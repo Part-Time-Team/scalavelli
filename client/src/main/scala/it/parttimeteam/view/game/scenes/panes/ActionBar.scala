@@ -43,7 +43,7 @@ trait ActionBarListener {
   /**
     * Clear selected cards
     */
-  def clearHandSelection(): Unit
+  def clearSelection(): Unit
 
   /**
     * The player pick a combination from the game board.
@@ -85,7 +85,7 @@ object ActionBar {
     this.padding = Insets(5)
 
     val combinationBtn = ScalavelliButton(Strings.MAKE_COMBINATION_BTN, () => listener.makeCombination())
-    val clearHandSelectionBtn = ScalavelliButton(Strings.CLEAR_SELECTION_BTN, () => listener.clearHandSelection())
+    val clearHandSelectionBtn = ScalavelliButton(Strings.CLEAR_SELECTION_BTN, () => listener.clearSelection())
     val pickCardsBtn = ScalavelliButton(Strings.PICK_CARDS_BTN, () => listener.pickCards())
     val updateCombinationBtn = ScalavelliButton(Strings.UPDATE_COMBINATION_BTN, () => listener.updateCombination())
     val sortBySuitBtn = ScalavelliButton(Strings.SORT_SUIT_BTN, () => listener.sortHandBySuit())
