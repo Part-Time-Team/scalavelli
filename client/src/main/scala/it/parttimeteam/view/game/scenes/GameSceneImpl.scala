@@ -130,13 +130,6 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
 
   root = borderPane
 
-  def clearAllSelections(): Unit = {
-    this.handSelectionManager.clearSelection()
-    this.boardSelectionManager.clearSelection()
-    this.combinationSelectionManager.clearSelection()
-    updateActionBarButtons()
-  }
-
   /** @inheritdoc */
   override def setState(clientGameState: ClientGameState): Unit = {
     Platform.runLater({
@@ -181,14 +174,6 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
     rightBar.setNextEnabled(inTurn)
   }
 
-  /** @inheritdoc */
-  private def updateActionBarButtons(): Unit = {
-    actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty && inTurn)
-    actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty || !boardSelectionManager.isSelectionEmpty || !combinationSelectionManager.isSelectionEmpty)
-    actionBar.enableUpdateCardCombination(combinationSelectionManager.getSelectedItems.size == 1 && handSelectionManager.getSelectedItems.size == 1 && inTurn)
-    actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty && inTurn)
-  }
-
   /** @inheritdoc*/
   override def disableActions(): Unit = {
     rightBar.disableActions()
@@ -216,4 +201,18 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
 
   /** @inheritdoc*/
   override def hideTimer(): Unit = rightBar.hideTimer()
+
+  private def updateActionBarButtons(): Unit = {
+    actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty && inTurn)
+    actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty || !boardSelectionManager.isSelectionEmpty || !combinationSelectionManager.isSelectionEmpty)
+    actionBar.enableUpdateCardCombination(combinationSelectionManager.getSelectedItems.size == 1 && handSelectionManager.getSelectedItems.size == 1 && inTurn)
+    actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty && inTurn)
+  }
+
+  private def clearAllSelections(): Unit = {
+    this.handSelectionManager.clearSelection()
+    this.boardSelectionManager.clearSelection()
+    this.combinationSelectionManager.clearSelection()
+    updateActionBarButtons()
+  }
 }
