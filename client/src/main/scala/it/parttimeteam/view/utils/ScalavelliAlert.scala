@@ -15,7 +15,7 @@ object ScalavelliAlert {
     alert.setTitle(title)
     alert.setHeaderText(null)
     alert.setContentText(message)
-    alert.initOwner(parent)
+    //alert.initOwner(parent) // this break dialogs content
     alert
   }
 
@@ -24,7 +24,7 @@ object ScalavelliAlert {
     alert.setTitle(title)
     alert.setHeaderText(null)
     alert.setContentText(StringParser.parseError(error))
-    alert.initOwner(parent)
+    //alert.initOwner(parent) // this break dialogs content
     alert
   }
 
