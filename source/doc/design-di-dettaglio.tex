@@ -19,7 +19,7 @@ Il core modella al suo interno tutte le entità del gioco Machiavelli reale, com
 Le entità di gioco sono:
 \begin{itemize}
     \item la card, corredata da tre case class: un rank (valore nominale), un seme e un colore.
-    All’interno del Rank si sono definiti tutti i possibili valori che una carta può assumere (da 1 a 13). Inoltre è stato modellato anche il caso del rank asso come 14-esimo valore, chiamato \textit{overflowAce}, per poterne effettuare la validazione qualora si trovasse dopo il Re (13-esimo valore) in una combinazione.
+    All’interno del Rank si sono definiti tutti i possibili valori che una carta può assumere (da 1 a 13). Inoltre è stato modellato anche il caso del rank asso come 14-esimo valore, chiamato \textit{overflowAce}, per poterne effettuare la validazione qualora si trovasse dopo il Re (13-esimo valore) in una combinazione. 
     All’interno della case class Suit sono stati definiti i quattro semi disponibili (Cuori, Picche, Quadri e Fiori) mentre nel Color abbiamo modellato il colore rosso e blu. Le cards e le relative case class sono contenute nel package \textit{core.cards};
     \item il Player composto da un username (necessario per essere memorizzato nel server), un id e  una mano di gioco. Tale entità è contenuta nel package \textit{core.player}.
 \end{itemize}
@@ -42,12 +42,12 @@ All’interno del package \textit{core.collections} abbiamo modellato le entità
     \item Board, è costituita da una sequenza di CardCombination valide. A livello di gioco rappresenta il tavolo nella quale sono contenute le combinazioni. Le funzioni definite sono:
     \begin{itemize}
         \item \textit{putCombination}: permette di aggiungere una combinazione valida alla Board;
-        \item \textit{pickCards}: permette di prendere delle Cards dalla Board;
+        \item \textit{pickCards}: permette di prendere delle Cards dalla Board; 
         \item \textit{putCards}: permette di aggiungere una Card alla Board;
         \item \textit{cardsInBoard}: verifica se è presente almeno una combinazione nella Board.
     \end{itemize}
 \end{itemize}
-
+\newpage
 \subsubsection{Prolog}
 Per la gestione delle regole di validazione, si è deciso di utilizzare questo linguaggio poichè è possibile esprimerle in maniera totalmente dichiarativa ed efficiente. La libreria utilizzata è TuProlog.
 \newline
@@ -146,7 +146,7 @@ Ciascun controller setta nella view il proprio Stage e istanzia la classe Servic
 \end{center}
 Come si può notare dallo schema, il controller, per notificare eventi alla view, avendo creato il relativo \textit{Stage}, richiama i metodi che questo espone.
 \newline
-Allo stesso tempo, in creazione passa anche \textit{onViewEvent()}, una funzione che viene invocata dalla view ogni qualvolta debba notificare un evento al controller.
+Allo stesso tempo, in creazione passa anche \textit{onViewEvent()}, una funzione che viene invocata dalla view ogni qualvolta debba notificare un evento al controller. 
 Questa funzione prende in input un oggetto di tipo case class/object che estende la sealed class \textit{ViewEvent}.\newline
 Questa scelta di utilizzare da una parte l’interfaccia e dall’altra un metodo a callback è dovuta al fatto che logicamente, la view può notificare al controller qualsiasi tipo di evento, e sarà il controller a decidere quale di questi gestire; al contrario la view espone solamente le funzionalità che espone nella propria interfaccia.
 \newline \newline
@@ -191,7 +191,7 @@ Ciascuna scena che estende \textit{BaseStartupFormScene} si compone di 3 parti:
 \begin{center}
     \includegraphics[scale=0.3]{create_join_lobby}
 \end{center}
-
+\newpage
 \paragraph{Game}
 \begin{center}
     \includegraphics[scale=0.4]{game}
@@ -217,7 +217,7 @@ Ciascun Pane è stato pensato in modo da racchiudere poche funzionalità simili 
     \end{itemize}
 \end{itemize}
 Ciascun \textit{Pane}, sul quale è possibile abilitare o disabilitare le azioni quando non è il turno del giocatore, estende il trait \textit{ActionGamePane}.
-\newline
+\newline 
 \begin{center}
     \includegraphics[scale=0.2]{gameViewArchitecture}
 \end{center}
@@ -241,11 +241,12 @@ Anche in questo caso, quando l’utente compie un'azione, viene generato un even
 \newline \newline Oltre a fare da collante tra Service e View, a \textit{GameController} è lasciata la responsabilità della gestione del timer durante il turno del giocatore. \newline Questo timer, per scelta a livello di design è stato lasciato solamente lato client, ed è implementato sfruttando le librerie Timer e TimerTask di java.utils. \newline \newline Espone tramite interfaccia i metodi \textit{start()} e \textit{stop()}, con i quali si avviano i due task che vengono eseguiti per ciascun turno. \newline Il primo task, chiamato tickTask, ha un periodo di 1000ms e permette di notificare un evento ogni secondo. Il secondo invece, chiamato endTask ha il compito di far scattare un evento allo scadere del tempo definito all’interno del file Constants.\newline Quando un utente inizia il proprio turno, il timer viene avviato, mentre sia quando scade, sia quando un utente passa prima del termine del turno, viene stoppato, azione con la quale si fa la \textit{cancel()} di entrambi i task e la \textit{purge()} del timer. \newline \newline
 Al timer vengono passati in costruzione la durata prevista e un listener che contiene le callback che vengono triggerate dai vari task. Tra queste c’è la \textit{onStart()}, che viene chiamata all’avvio del timer, la \textit{onEnd()}, che viene chiamata allo scadere di endTask, e la onTick() che viene invece chiamata a ogni passaggio di tickTask. \newline \newline Il controller ha anche il compito di decidere se al passaggio di turno, l’utente dovrà pescare o passare semplicemente. Per farlo si affida all’ultimo aggiornamento di stato ricevuto, facendone una copia di volta in volta, e controlla se in questo l’utente doveva pescare oppure no.
 \subsubsection{Model}
-La parte di model del client è rappresentata dai trait StartupService e GameService con tutte le strutture a loro collegate. Rappresentano il punto in cui risiede tutta la business logic del client. Sono entrambi delle interfacce che espongono tutte le funzionalità rese disponibili dall’applicazione, su cui in controller si appoggiano per eseguire tutte le operazioni risultanti dalle azioni utente effettuate attraverso l’interazione con la view. \newline Permettono quindi di astrarre ai componenti utilizzatori le modalità con cui le varie azioni vengono risolte, ad esempio decidere se risolverle in locale o in remote contattando il server.
+La parte di model del client è rappresentata dai trait StartupService e GameService con tutte le strutture a loro collegate. Rappresentano il punto in cui risiede tutta la business logic del client. Sono entrambi delle interfacce che espongono tutte le funzionalità rese disponibili dall’applicazione, su cui in controller si appoggiano per eseguire tutte le operazioni risultanti dalle azioni utente effettuate attraverso l’interazione con la view. \newline Permettono quindi di astrarre ai componenti utilizzatori le modalità con cui le varie azioni vengono risolte, ad esempio decidere se risolverle in locale o in remote contattando il server. 
 È solamente in questa parte del codice client che sono presenti riferimenti al framework akka. A differenza del server, il client non è stato modellato totalmente ad attori: questi sono stati utilizzati solo per la parte di comunicazione con il server tramite scambio di messaggi.
+\newpage
 \paragraph{StartupService}
 \begin{center}
-    \includegraphics[scale=0.5]{server-startup-service}
+    \includegraphics[scale=0.5]{startup-service}
 \end{center}
 È il componente che si occupa della gestione della lobby.
 La sua funzione primaria, essendo la lobby gestita totalmente lato server, è quella di comunicare con quest’ultimo. \newline La connessione al server viene fatta tramite tramite il metodo \textit{actorSelection} messo a disposizione dall’unica istanza dell’oggetto \textit{ActorSystem} presente nell’object \textit{ActorSystemManager}, in caso di connessione avvenuta, si ottiene il riferimento all’attore remoto \textit{serverLobbyRef} responsabile per la gestione delle lobby, che viene utilizzato per l’invio dei successivi messaggi di richiesta di aggiunta alla lobby. \newline
@@ -254,7 +255,7 @@ La decisione di comunicare con il server su due vie separate è stata fatta per 
 I risultati delle varie operazioni vengono poi notificati al controller attraverso la funzione \textit{notifyEvent} richiesta in costruzione, a cui viene passato un oggetto di tipo \textit{GameStartupEvent}.\newline Il risultato della fase di lobby è l’oggetto \textit{GameMatchInformations}, che racchiude tutte le informazioni necessarie a poter avviare la partita lato client, come l'id del giocatore e la reference all'attore remoto del server.
 \paragraph{GameService}
 \begin{center}
-    \includegraphics[scale=0.5]{server-game-service}
+    \includegraphics[scale=0.5]{game-service}
 \end{center}
 È il componente che si occupa di gestire lato client tutta la fase di gioco.
 Come il componente descritto in precedenza per la fase di lobby, anche questo consiste in un’interfaccia che espone tutti i metodi corrispondenti alle funzionalità rese disponibili dal client di gioco.\newline La sua implementazione \textit{GameServiceImpl} è poi caratterizzata da diversi elementi, ciascuno dei quali gestisce una componente specifica del gioco.\newline Il riferimento all’attore server remoto \textit{serverActorRef} utilizzato per inviare messaggi al server. \textit{ClientGameActorRef}, il riferimento all’attore locale, responsabile di ricevere i messaggi inviati dal server, con una struttura analoga a quella descritta precedentemente per la lobby.
@@ -299,7 +300,7 @@ Per fare ciò mantiene una Lobby in corrispondenza di ogni LobbyType, che rappre
 \paragraph{Modellazione delle lobby private}
 La lobby privata presenta la caratteristica di una normale lobby di avere associato un valore corrispondente al numero di giocatori tale da poter essere estratti per formare un partita.Oltre a questo, ha un codice univoco per poterla identificare univocamente tra le tante.
 PrivateLobbyService supporta la creazione di lobby private, generando un id univoco ogni volta che ne viene richiesta una nuova.
-
+\newpage
 \paragraph{Interazione con il client}
 \begin{center}
     \includegraphics[width=\textwidth]{server-diagramma-attivita-lobby}
@@ -337,7 +338,7 @@ Una volta creato dall’attore lobby, l’attore responsabile della gestione del
     \item rimane in attesa del loro messaggio di conferma Ready, contenente oltre all’id del giocatore il riferimento all’attore a cui inviare i successivi messaggi;
     \item ricevuti tutti i messaggi di conferma la partita viene inizializzata, viene generato lo stato iniziale ed inviato ai vari giocatori.Inoltre viene inviata una notifica al giocatore del turno corrente.
 \end{itemize}
-
+\newpage
 \paragraph{Comunicazione durante il turno di gioco}
 \begin{center}
     \includegraphics[width=\textwidth]{server-sequence-diagram-turno}
