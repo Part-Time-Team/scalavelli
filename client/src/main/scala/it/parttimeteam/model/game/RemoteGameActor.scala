@@ -1,8 +1,8 @@
 package it.parttimeteam.model.game
 
 import akka.actor.{Actor, ActorLogging, Props}
-import it.parttimeteam.core.cards.Card
 import it.parttimeteam.gamestate.PlayerGameState
+import it.parttimeteam.messages.GameMessage.MatchError.PlayerActionNotValid
 import it.parttimeteam.messages.GameMessage._
 import it.parttimeteam.model.game.RemoteGameActor.MatchServerResponseListener
 
@@ -19,13 +19,13 @@ object RemoteGameActor {
 
     def opponentInTurn(opponentName: String)
 
-    def turnEndedWithCartDrawn(card: Card)
-
     def gameEndedWithErrorEvent(reason: String)
 
     def gameWon()
 
     def gameLost(winnerName: String)
+
+    def invalidPlayerAction()
 
   }
 
@@ -47,8 +47,6 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
 
     case OpponentInTurn(name) => this.listener.opponentInTurn(name)
 
-    case CardDrawn(card) => this.listener.turnEndedWithCartDrawn(card)
-
     case TurnEnded => this.listener.turnEnded()
 
     case Won => this.listener.gameWon()
@@ -57,7 +55,10 @@ class RemoteGameActor(private val listener: MatchServerResponseListener) extends
 
     case GameEndedForPlayerLeft => this.listener.gameEndedWithErrorEvent("a player left the game")
 
-    case MatchErrorOccurred(_) =>
+    case MatchErrorOccurred(error) => error match {
+      case PlayerActionNotValid => this.listener.invalidPlayerAction()
+      case _ =>
+    }
   }
 }
 

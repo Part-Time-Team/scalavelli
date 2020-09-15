@@ -41,7 +41,7 @@ trait PrologConverter {
    * @param cards sequence of cards
    * @return new sequence of cards
    */
-  def optionalValueCards(cards: Seq[Card]): Seq[Card]
+  def optionalValueAce(cards: Seq[Card]): Seq[Card]
 
   /**
    * Convert tuple sequence in a prolog list

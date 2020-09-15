@@ -2,6 +2,7 @@ package it.parttimeteam.model.startup
 
 import akka.actor.ActorRef
 import it.parttimeteam.messages.LobbyMessages.{JoinPublicLobby, _}
+import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.{ActorSystemManager, Constants}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,6 +31,9 @@ class StartupServiceImpl(private val notifyEvent: GameStartupEvent => Unit) exte
     override def matchFound(matchRef: ActorRef): Unit =
       notifyEvent(GameStartedEvent(GameMatchInformations(clientGeneratedId, matchRef)))
 
+    override def privateLobbyCodeNotValid(): Unit =
+      notifyEvent(LobbyJoinErrorEvent(ErrorEvent.LobbyCodeNotValid))
+
   }
 
   override def connect(address: String, port: Int): Unit = {
@@ -38,8 +42,7 @@ class StartupServiceImpl(private val notifyEvent: GameStartupEvent => Unit) exte
         ref ! Connect(startupActorRef)
       }
       case Failure(t) => {
-        // TODO MATTEOC notify
-        this.notifyEvent(LobbyJoinErrorEvent("Server not found error"))
+        this.notifyEvent(LobbyJoinErrorEvent(ErrorEvent.ServerNotFound))
       }
 
     }
@@ -67,13 +70,6 @@ class StartupServiceImpl(private val notifyEvent: GameStartupEvent => Unit) exte
       _ ! LeaveLobby(clientGeneratedId)
     }
 
-  //  case JoinPublicLobby => notifyEvent(LobbyJoinedEvent(""))
-  //  case PrivateLobbyCreatedEvent(generatedUserId: String, lobbyCode: String) => notifyEvent(PrivateLobbyCreatedEvent(generatedUserId, lobbyCode))
-  //  case MatchFound(gameRoom: ActorRef) => notifyEvent(GameStartedEvent(gameRoom))
-  //  case LobbyJoinError(reason: String) => notifyEvent(LobbyJoinErrorEvent(reason))
-  //  case Stop() => context.stop(self)
-  //  case _ =>
-
   // endregion
 
   private def generateServerActorPath(address: String, port: Int): String =
@@ -89,7 +85,7 @@ class StartupServiceImpl(private val notifyEvent: GameStartupEvent => Unit) exte
   private def withServerLobbyRef(f: (ActorRef) => Unit): Unit = {
     this.serverLobbyRef match {
       case Some(ref) => f(ref)
-      case None => this.notifyEvent(LobbyJoinErrorEvent("Server not found error"))
+      case None => this.notifyEvent(LobbyJoinErrorEvent(ErrorEvent.ServerNotFound))
     }
   }
 

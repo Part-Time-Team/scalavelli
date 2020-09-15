@@ -1,6 +1,8 @@
 package it.parttimeteam.model.startup
 
-sealed class GameStartupEvent
+import it.parttimeteam.model.ErrorEvent
+
+sealed class GameStartUpEvent
 
 case object LobbyJoinedEvent extends GameStartupEvent
 
@@ -8,6 +10,6 @@ case class PrivateLobbyCreatedEvent(privateCode: String) extends GameStartupEven
 
 case class GameStartedEvent(gameInfo: GameMatchInformations) extends GameStartupEvent
 
-case class LobbyJoinErrorEvent(result: String) extends GameStartupEvent
+case class LobbyJoinErrorEvent(error: ErrorEvent) extends GameStartUpEvent
 
 
