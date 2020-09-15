@@ -23,18 +23,18 @@ Durante lo sviluppo, invece, ho lavorato sulla parte client dell’applicazione,
 \subsubsection{Interazioni nel MVC}
 Sempre assieme a Matteo, il quale ha lavorato sulla parte di Model che interagisce con il Controller, ho valutato attentamente in quali casi fosse opportuno esporre una interfaccia di metodi e in quali passare una funzione con un evento come parametro. La scelta è ricaduta sul primo approccio per la comunicazione Controller-View e Controller-Model, mentre invece si è scelto il secondo per quella View-Controller e Model-Controller, in quanto View e Model generano comunque eventi e deve essere il controller a decidere quali gestire ed in che modo. Così facendo, è stato possibile aggiungere funzionalità alla View e al Model semplicemente dichiarando il nuovo tipo di evento, che sarebbe poi stato gestito alla necessità.\newline \newline Durante lo sviluppo ho poi fatto lavorato su GameService e History per riuscire ad ottenere le informazioni sulla possibilità di navigare la History da parte dell’utente. A tal proposito, assieme a Matteo si è deciso di creare l’oggetto ClientGameState che racchiudesse tutte le informazioni necessarie all’aggiornamento dello stato.
 \subsection{Lorenzo}
-Durante lo sviluppo del progetto ho cercato di mantenermi il più possibile consono allo stile della programmazione funzionale, cercando di mantenere uno stato immutabile nei punti in cui fosse necessario. Mi sono occupato principalmente della parte core del progetto: lavorando sulle entità che lo compongono e su tutta la logica correlata alla gestione delle regole necessarie per poter implementare il gioco. Quest’ultima parte è stata realizzata integrando Prolog con Scala.
-\subsubsection{Entità Core}
-Assieme a Daniele ho definito e implementato le entità base per l’interazione tra esse e altri componenti del progetto.
+Durante lo sviluppo del progetto ho cercato di mantenermi il più possibile consono allo stile della programmazione funzionale, cercando di mantenere uno stato immutabile nei punti in cui fosse necessario. \newline \newline Mi sono occupato principalmente della parte core del progetto: lavorando sulle entità che lo compongono e su tutta la logica correlata alla gestione delle regole necessarie per poter implementare il gioco. Quest’ultima parte è stata realizzata integrando Prolog con Scala.
+\subsubsection{Entità - Core}
+Assieme a Daniele ho definito e implementato le entità base per l’interazione tra esse e altri componenti del progetto.\newline Negli Sprint 3 e 4, ho revisionato questa parte per ottimizzare il codice.
 \subsubsection{Prolog - Core}
 La creazione delle entità e gestione delle regole è stata realizzata tramite il linguaggio Prolog.
 In particolare ho creato il file rules.pl in cui ho definito tutte le regole di validazione che il gioco ammette (tris, poker e scale), ho realizzato l’ordinamento delle carte nella mano di un giocatore per seme e per valore e ho creato le entità di base del gioco.
 Ho implementato tutta la parte in scala di gestione al prolog utilizzando la libreria TuProlog.
-In quest'ultimo caso è stato necessario definire la classe PrologGameEngine in grado di risolvere i vari goals dati in input ed ottenere i rispettivi risultati.
-Ho definito la classe PrologGameConverter che converte i risultati ottenuti da prolog in un formato conforme alle entità del progetto.
+In quest'ultimo caso è stato necessario definire la classe \textit{PrologGameEngine} in grado di risolvere i vari goals dati in input ed ottenere i rispettivi risultati.
+Ho definito la classe \textit{PrologGameConverter} che converte i risultati ottenuti da prolog in un formato conforme alle entità del progetto.
 Quest’ultima classe non è stata banale implementarla poiché ho riscontrato alcuni errori della libreria TuProlog.
 Questo accadeva quando il predicato specificato per risolvere un goal conteneva una lista di tuple.
-Per questo motivo ho creato un oggetto ad-hoc, PrologUtils, in grado di poter definire delle funzioni che permettevano di ‘pulire’ il risultato ottenuto con specifici caratteri per poterlo convertire nel formato richiesto (ad esempio una carta).
+Per questo motivo ho creato un oggetto ad-hoc, \textit{PrologUtils}, in grado di poter definire delle funzioni che permettevano di ‘pulire’ il risultato ottenuto con specifici caratteri per poterlo convertire nel formato richiesto (ad esempio una carta).
 Infine ho aiutato gli altri membri nella realizzazione di alcuni task.
 \subsection{Daniele}
 \subsubsection{Continuous Integration}
