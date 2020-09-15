@@ -4,6 +4,7 @@ import it.parttimeteam.controller.game.GameListener
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.model.game.ClientGameState
+import it.parttimeteam.view.game.listeners.GameStageListener
 import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
 import it.parttimeteam.view.utils.ScalavelliAlert
 import scalafx.application.Platform
@@ -13,33 +14,80 @@ import scalafx.scene.control.{Alert, ButtonType}
 /**
   * GameStage implementation
   *
-  * @param gameListener
+  * @param gameListener listener for view actions
   */
 class GameStageImpl(gameListener: GameListener) extends GameStage {
   val stage: GameStage = this
 
-  val gameScene: GameScene = new GameSceneImpl(stage)
+  val listener: GameStageListener = new GameStageListener() {
+    /** @inheritdoc*/
+    override def pickCombination(combinationId: String): Unit = gameListener.onViewEvent(PickCardCombinationEvent(combinationId))
+
+    /** @inheritdoc*/
+    override def endTurn(): Unit = gameListener.onViewEvent(EndTurnEvent)
+
+    /** @inheritdoc*/
+    override def nextState(): Unit = gameListener.onViewEvent(RedoEvent)
+
+    /** @inheritdoc*/
+    override def previousState(): Unit = gameListener.onViewEvent(UndoEvent)
+
+    /** @inheritdoc*/
+    override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationEvent(cards))
+
+    /** @inheritdoc*/
+    override def pickCards(cards: Seq[Card]): Unit = gameListener.onViewEvent(PickCardsEvent(cards))
+
+    /** @inheritdoc*/
+    override def sortHandBySuit(): Unit = gameListener.onViewEvent(SortHandBySuitEvent)
+
+    /** @inheritdoc*/
+    override def sortHandByRank(): Unit = gameListener.onViewEvent(SortHandByRankEvent)
+
+    /** @inheritdoc*/
+    override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = gameListener.onViewEvent(UpdateCardCombinationEvent(combinationId, cards))
+
+    /** @inheritdoc*/
+    override def leaveGame(): Unit = {
+      val alert: Alert = ScalavelliAlert("Leave the game", "Are you sure you want to leave the game? The action cannot be undone.", AlertType.Confirmation)
+
+      alert.showAndWait match {
+        case Some(b) =>
+          if (b == ButtonType.OK) {
+            gameListener.onViewEvent(LeaveGameEvent)
+            System.exit(0)
+          }
+
+        case None =>
+      }
+    }
+
+    /** @inheritdoc*/
+    override def resetHistory(): Unit = gameListener.onViewEvent(ResetEvent)
+
+  }
+
+  val gameScene: GameScene = new GameSceneImpl(stage, listener)
 
   scene = gameScene
 
   onCloseRequest = _ => System.exit(0)
 
-
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def setMessage(message: String): Unit = {
     Platform.runLater({
       gameScene.setMessage(message)
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def updateState(viewGameState: ClientGameState): Unit = {
     Platform.runLater({
       gameScene.setState(viewGameState)
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def initMatch(): Unit = {
     Platform.runLater({
       gameScene.disableActions()
@@ -47,14 +95,14 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def matchReady(): Unit = {
     Platform.runLater({
       gameScene.hideInitMatch()
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def notifyGameEnd(gameEndType: GameEndType): Unit = {
     Platform.runLater({
       val message: String = gameEndType match {
@@ -81,21 +129,21 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def enableActions(): Unit = {
     Platform.runLater({
       gameScene.enableActions()
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def disableActions(): Unit = {
     Platform.runLater({
       gameScene.disableActions()
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def notifyError(result: ErrorEvent): Unit = {
     // TODO create string error
     Platform.runLater({
@@ -104,7 +152,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def notifyInfo(message: String): Unit = {
     Platform.runLater({
       val alert: Alert = ScalavelliAlert("", message, AlertType.Information)
@@ -112,7 +160,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def setInTurn(): Unit = {
     gameScene.setInTurn(true)
     Platform.runLater({
@@ -132,7 +180,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def setTurnEnded(): Unit = {
     gameScene.setInTurn(false)
     Platform.runLater({
@@ -141,67 +189,21 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  // view actions
   /** @inheritdoc */
-  override def pickCombination(combinationId: String): Unit = gameListener.onViewEvent(PickCardCombinationEvent(combinationId))
-
-  /** @inheritdoc */
-  override def endTurn(): Unit = gameListener.onViewEvent(EndTurnEvent)
-
-  /** @inheritdoc */
-  override def nextState(): Unit = gameListener.onViewEvent(RedoEvent)
-
-  /** @inheritdoc */
-  override def previousState(): Unit = gameListener.onViewEvent(UndoEvent)
-
-  /** @inheritdoc */
-  override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationEvent(cards))
-
-  /** @inheritdoc */
-  override def pickCards(cards: Seq[Card]): Unit = gameListener.onViewEvent(PickCardsEvent(cards))
-
-  /** @inheritdoc */
-  override def sortHandBySuit(): Unit = gameListener.onViewEvent(SortHandBySuitEvent)
-
-  /** @inheritdoc */
-  override def sortHandByRank(): Unit = gameListener.onViewEvent(SortHandByRankEvent)
-
-  /** @inheritdoc */
-  override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = gameListener.onViewEvent(UpdateCardCombinationEvent(combinationId, cards))
-
-  /** @inheritdoc */
-  override def leaveGame(): Unit = {
-    val alert: Alert = ScalavelliAlert("Leave the game", "Are you sure you want to leave the game? The action cannot be undone.", AlertType.Confirmation)
-
-    alert.showAndWait match {
-      case Some(b) =>
-        if (b == ButtonType.OK) {
-          gameListener.onViewEvent(LeaveGameEvent)
-          System.exit(0)
-        }
-
-      case None =>
-    }
-  }
-
-  /** @inheritdoc */
-  override def resetHistory(): Unit = gameListener.onViewEvent(ResetEvent)
-
-  /** @inheritdoc*/
   override def showTimer(minutes: Long, seconds: Long): Unit = {
     Platform.runLater({
       gameScene.showTimer(minutes, seconds)
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def updateTimer(minutes: Long, seconds: Long): Unit = {
     Platform.runLater({
       gameScene.updateTimer(minutes, seconds)
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def notifyTimerEnded(): Unit = {
     Platform.runLater({
       gameScene.notifyTimerEnd()

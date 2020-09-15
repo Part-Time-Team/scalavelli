@@ -4,12 +4,11 @@ import it.parttimeteam.controller.game.GameListener
 import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view._
-import it.parttimeteam.view.game.listeners.GameStageListener
 
 /**
   * Main stage for the game view, interacts with GameScene
   */
-trait GameStage extends BaseStage with GameStageListener {
+trait GameStage extends BaseStage {
   /**
     * Set the current user turn
     *

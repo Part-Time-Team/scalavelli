@@ -2,6 +2,7 @@ package it.parttimeteam.view.game.scenes
 
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.model.game.ClientGameState
+import it.parttimeteam.view.game.listeners.GameStageListener
 import it.parttimeteam.view.game.scenes.GameScene.BoardListener
 import it.parttimeteam.view.game.scenes.model.{GameCard, GameCardCombination}
 import it.parttimeteam.view.game.scenes.panes.ActionBar.ActionBarImpl
@@ -15,7 +16,7 @@ import scalafx.application.Platform
 import scalafx.scene.layout.{BorderPane, VBox}
 
 /** @inheritdoc*/
-class GameSceneImpl(val parentStage: GameStage) extends GameScene {
+class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) extends GameScene {
   var inTurn = false
 
   val handSelectionManager: SelectionManager[GameCard] = SelectionManager(allowOnlyOne = false)
@@ -25,19 +26,19 @@ class GameSceneImpl(val parentStage: GameStage) extends GameScene {
 
   val gameInfoBarListener: GameInfoBarListener = new GameInfoBarListener {
     /** @inheritdoc */
-    override def endTurn(): Unit = parentStage.endTurn()
+    override def endTurn(): Unit = listener.endTurn()
 
     /** @inheritdoc */
-    override def leaveGame(): Unit = parentStage.leaveGame()
+    override def leaveGame(): Unit = listener.leaveGame()
 
     /** @inheritdoc */
-    override def nextState(): Unit = parentStage.nextState()
+    override def nextState(): Unit = listener.nextState()
 
     /** @inheritdoc */
-    override def previousState(): Unit = parentStage.previousState()
+    override def previousState(): Unit = listener.previousState()
 
     /** @inheritdoc */
-    override def resetState(): Unit = parentStage.resetHistory()
+    override def resetState(): Unit = listener.resetHistory()
   }
 
   val boardListener: BoardListener = new BoardListener {
@@ -55,7 +56,7 @@ class GameSceneImpl(val parentStage: GameStage) extends GameScene {
 
     /** @inheritdoc */
     override def onPickCombinationClick(cardCombination: GameCardCombination): Unit = {
-      parentStage.pickCombination(cardCombination.getCombination.id)
+      listener.pickCombination(cardCombination.getCombination.id)
     }
   }
 
@@ -63,29 +64,29 @@ class GameSceneImpl(val parentStage: GameStage) extends GameScene {
 
     /** @inheritdoc */
     override def pickCombination(combinationId: String): Unit = {
-      parentStage.pickCombination(combinationId)
+      listener.pickCombination(combinationId)
     }
 
     /** @inheritdoc*/
     override def makeCombination(): Unit = {
       val cards: Seq[Card] = handSelectionManager.getSelectedItems.map(p => p.getCard)
-      parentStage.makeCombination(cards)
+      listener.makeCombination(cards)
     }
 
     /** @inheritdoc*/
     override def pickCards(): Unit = {
       val cards: Seq[Card] = boardSelectionManager.getSelectedItems.map(p => p.getCard)
-      parentStage.pickCards(cards)
+      listener.pickCards(cards)
     }
 
     /** @inheritdoc*/
     override def sortHandBySuit(): Unit = {
-      parentStage.sortHandBySuit()
+      listener.sortHandBySuit()
     }
 
     /** @inheritdoc*/
     override def sortHandByRank(): Unit = {
-      parentStage.sortHandByRank()
+      listener.sortHandByRank()
     }
 
     /** @inheritdoc */
@@ -98,7 +99,7 @@ class GameSceneImpl(val parentStage: GameStage) extends GameScene {
     override def updateCombination(): Unit = {
       val combination = combinationSelectionManager.getSelectedItems.head
       val selectedCards = handSelectionManager.getSelectedItems
-      parentStage.updateCardCombination(combination.getCombination.id, selectedCards.map(c => c.getCard))
+      listener.updateCardCombination(combination.getCombination.id, selectedCards.map(c => c.getCard))
     }
   }
 
