@@ -5,75 +5,89 @@ La suddivisione del codice rispecchia fortemente il design architetturale genera
 \end{center}
 Sono stati realizzati 4 moduli:
 \begin{itemize}
-    \item Core: comprende tutte le entità necessarie alla realizzazione del gioco e le regole per poter portare avanti una partita, è l’unico tra i moduli totalmente indipendente dagli altri.
-    \item Common: codice comune alle parti di client e server, per la maggior parte definisce i messaggi utilizzati per lo scambio di informazioni
-    \item Client: contenente tutto ciò che concerne il client, interfaccia utente, parte di comunicazione con il server e di aggiornamento dello stato della partita
-    \item Server: contenente tutta la parte di gestione delle lobby e delle partite in corso
+    \item Core: comprende tutte le entità necessarie alla realizzazione del gioco e le regole per poter portare avanti una partita, è l’unico tra i moduli totalmente indipendente dagli altri;
+    \item Common: codice comune alle parti di client e server, per la maggior parte definisce i messaggi utilizzati per lo scambio di informazioni;
+    \item Client: contenente tutto ciò che concerne il client, interfaccia utente, parte di comunicazione con il server e di aggiornamento dello stato della partita;
+    \item Server: contenente tutta la parte di gestione delle lobby e delle partite in corso.
 \end{itemize}
 
 \subsection{Core}
-Il core modella al suo interno tutte le entità del gioco Machiavelli reale, come le carte, il mazzo e il tavolo da gioco, come anche la GameInterface, cioè un insieme di funzioni che gli altri moduli del progetto devono usare per poter interagire con le entità.
-Tali funzioni infatti modellano tutte le azioni che un giocatore può svolgere nel gioco reale.
+Il core modella al suo interno tutte le entità del gioco Machiavelli reale, come le carte, il mazzo, il tavolo da gioco e la GameInterface, cioè un insieme di funzioni che gli altri moduli del progetto devono usare per poter interagire con le entità. Tali funzioni infatti modellano tutte le azioni che un giocatore può svolgere nel gioco reale.
 \newline
-E’ importante sottolineare il fatto che sia immutabile e quindi non conserva alcuno stato interno.
-Esso deve essere utilizzato all’esterno sfruttando appunto le API messe a disposizione.
+E’ importante sottolineare il fatto che il core sia immutabile e quindi non conserva alcuno stato interno. Esso deve essere utilizzato all’esterno sfruttando appunto le API messe a disposizione.
 
 \subsubsection{Entità}
 \begin{center}
     \includegraphics[width=\textwidth]{classi-Page-1}
 \end{center}
-Le entità di gioco sono elencabili come:
+Le entità di gioco sono:
 \begin{itemize}
-    \item Card, corredata da un Rank (valore nominale), un Seme e un Colore.
-    E’ stato modellato anche il caso del Rank Asso come 14-esimo possibile valore, per poterne effettuare la validazione qualora si trovasse dopo il Re (13-esimo valore) in una combinazione
-    \item Player, composta da un username, un id e una mano
-    \item Hand, che contiene i metodi per poter aggiungere (o rimuovere) carte dal tavolo alla mano (dalla mano al tavolo) e per ordinare le carte
-    \item CardCombination, rappresenta un tris, poker o una scala ordinata
-    \item Deck, rappresenta il mazzo
-    \item Board, rappresenta il tavolo di gioco e contiene un insieme di CardCombination e i relativi metodi per poterle aggiungere, rimuovere e aggiornare
+    \item la card, corredata da tre case class: un rank (valore nominale), un seme e un colore.
+    All’interno del Rank si sono definiti tutti i possibili valori che una carta può assumere (da 1 a 13). Inoltre è’ stato modellato anche il caso del rank asso come 14-esimo valore, chiamato \textit{overflowAce}, per poterne effettuare la validazione qualora si trovasse dopo il Re (13-esimo valore) in una combinazione.
+    All’interno della case class Suit sono stati definiti i quattro semi disponibili (Cuori, Picche, Quadri e Fiori) mentre nel Color abbiamo modellato il colore rosso e blu. Le cards e le relative case class sono contenute nel package \textit{core.cards};
+    \item il Player composto da un username (necessario per essere memorizzato nel server), un id e  una mano di gioco. Tale entità è contenuta nel package \textit{core.player}.
+\end{itemize}
+All’interno del package \textit{core.collections} abbiamo modellato le entità:
+\begin{itemize}
+    \item Hand, cha rappresenta la mano di gioco di un giocatore. Questa entità contiene le funzioni per poter aggiungere (o rimuovere) carte dal tavolo alla mano (o dalla mano al tavolo) e funzioni per ordinare le carte.
+    \item CardCombination, ottenuta da una sequenza di Cards. Tale entità dispone di un id in modo tale da poterla identificare univocamente sul tavolo, da tutte le altre combinazioni. A livello di gioco, una combinazione è rappresentata da un tris, un poker o una scala ordinata. All’interno di questa case class sono stati definite le funzioni:
+    \begin{itemize}
+        \item \textit{isValid}: per poter validare una combinazione;
+        \item \textit{pickCards}: per prendere una combinazione;
+        \item \textit{putCards}: per mettere una combinazione nel tavolo.
+    \end{itemize}
+    \item Deck, costituito da una sequenza di Cards, rappresenta il mazzo. All’interno sono stati definite le funzioni:
+    \begin{itemize}
+        \item \textit{sorted}: per generare il mazzo attraverso prolog;
+        \item \textit{shuffled}: permette di mischiare il mazzo;
+        \item \textit{draw}: restituisce la prima carta partendo dalla cima del mazzo. A livello di gioco rappresenta una pescata;
+        \item \textit{remaining}: ritorna il numero di carte presenti ancora nel mazzo.
+    \end{itemize}
+    \item Board, è costituita da una sequenza di CardCombination valide. A livello di gioco rappresenta il tavolo nella quale sono contenute le combinazioni. Le funzioni definite sono:
+    \begin{itemize}
+        \item \textit{putCombination}: permette di aggiungere una combinazione valida alla Board;
+        \item \textit{pickCards}: permette di prendere delle Cards dalla Board;
+        \item \textit{putCards}: permette di aggiungere una Card alla Board;
+        \item \textit{cardsInBoard}: verifica se è presente almeno una combinazione nella Board.
+    \end{itemize}
 \end{itemize}
 
 \subsubsection{Prolog}
-Per la gestione delle regole di validazione, sii è deciso di utilizzare questo linguaggio in quanto è possibile esprimerle in maniera totalmente dichiarativa conciso ed efficiente.
-La libreria utilizzata è TuProlog.
+Per la gestione delle regole di validazione, si è deciso di utilizzare questo linguaggio poichè è possibile esprimerle in maniera totalmente dichiarativa ed efficiente. La libreria utilizzata è TuProlog.
+\newline
+\newline Tale package è composto dalle classi: \textit{PrologGame}, \textit{PrologGameEngine} e \textit{PrologGameConverter}. La figura mostra le dipendenze tra di esse.
 \begin{center}
     \includegraphics[scale=0.6]{prolog}
 \end{center}
 Di seguito vengono descritte le classi:
 \begin{itemize}
-    \item PrologGame: espone tutte le funzionalità implementate attraverso tale linguaggio.
-    Ogni qualvolta che si deve eseguire una funzionalità in Prolog, è necessario richiamare un metodo di questa classe corrispondente all’azione di Prolog.
-    In particolare permette di creare le carte corredate da un valore, un seme e un colore per formare il deck di gioco, di eseguire la validazione di una sequenza di carte, che sia essa una scala, tris o poker e ne esegue l’ordinamento per seme e per valore.
+    \item \textit{PrologGame}: espone tutte le funzionalità implementate attraverso tale linguaggio. Ogni qualvolta che si deve eseguire una funzionalità in Prolog, è necessario richiamare una funzione di questa classe corrispondente all’azione di Prolog.
+    In particolare permette di creare le carte corredate da un valore, un seme e un colore per formare il deck di gioco, di eseguire la validazione di una combinazione di carte, che sia essa una scala, tris o poker e ne esegue l’ordinamento per seme e per valore.
 
-    \item PrologEngine: esegue effettivamente le azioni di Prolog.
-    Si è deciso di realizzare un piccolo DSL che permettesse di facilitare l’utilizzo della libreria TuProlog e di aumentarne l’espressività del codice.
-    Dopo aver caricato la specifica teoria, il PrologEngine esegue le funzioni in grado di:
+    \item \textit{PrologEngine}: esegue effettivamente le azioni di Prolog.
+    Si è deciso di realizzare un piccolo DSL che permettesse di facilitare l’utilizzo della libreria TuProlog e di aumentarne l’espressività del codice. Dopo aver caricato la specifica teoria, il \textit{PrologEngine} esegue le funzioni in grado di:
     \begin{itemize}
-        \item risolvere un singolo obiettivo o più obiettivi
-        \item verificare se un obiettivo ha successo
-        \item se vi sono altre soluzioni dopo averne trovata almeno una
-        \item estrarre i valori dalle variabili, dopo l’esecuzione di un predicato, tramite il metodo bindingVars
+        \item risolvere un singolo obiettivo o più obiettivi;
+        \item verificare se un obiettivo ha successo;
+        \item se vi sono altre soluzioni dopo averne trovata almeno una;
+        \item estrarre i valori dalle variabili, dopo l’esecuzione di un predicato, tramite la funzione \textit{bindingVars}.
     \end{itemize}
 
-    \item PrologGameConverter: espone funzioni in grado di formulare obiettivi nel giusto ‘formato’ in Prolog e di convertire il risultato ottenuto dal PrologEngine nel tipo corretto, a seconda dell’utilizzo.
-    In particolare, grazie all’utilizzo dell’oggetto PrologUtils, espone funzioni in grado di ‘pulire’ (da caratteri non conformi) il risultato del Prolog dopo averlo convertito in stringa.
-    Questo è stato reso necessario poiché, quando si dava in input un obiettivo che conteneva una lista di tuple (ogni carta è una tupla che contiene nell’ordine valore, seme e colore), il risultato risultava essere ‘sporco’ da caratteri estranei rispetto al predicato dato in input.
-    La classe permette infine di gestire la validazione di specifici casi, ad esempio una combinazione che contiene uno o due assi.
-    Essi, in una combinazione che forma una scala, possono essere posti uno prima del due e l’altro dopo del re, assumendo il valore di 1 o 14 a seconda della posizione inserita in una scala.
-    La funzione OptionalValueAce gestisce i casi appena descritti cambiando il valore dell’asso da 1 a 14.
+    \item \textit{PrologGameConverter}: questa classe espone funzioni in grado di formulare obiettivi nel giusto ‘formato’ in Prolog e di convertire il risultato ottenuto dal PrologEngine nel tipo corretto, a seconda dell’utilizzo. In particolare, grazie all’utilizzo dell’oggetto \textit{PrologUtils}, espone funzioni in grado di ‘pulire’ (da caratteri non conformi) il risultato del Prolog dopo averlo convertito in stringa. Questo è stato reso necessario poiché, quando si dava in input un obiettivo che conteneva una lista di tuple (ogni carta è una tupla che contiene nell’ordine valore, seme e colore), il risultato risultava essere ‘sporco’ da caratteri estranei rispetto al predicato dato in input.
+    La classe permette infine di gestire la validazione di specifici casi, ad esempio  una combinazione che contiene uno o due assi. Essi, in una combinazione che forma una scala, possono essere posti uno prima del due e l’altro dopo del re, assumendo rispettivamente il valore di 1 o 14 a seconda della posizione inserita in una scala. La funzione \textit{OptionalValueAce} gestisce i casi appena descritti cambiando il valore dell’asso da 1 a 14.
 \end{itemize}
 
 \paragraph{Predicati}
 Per ottenere le funzionalità descritte è stato creato il file rules.pl nella cartella delle risorse del modulo \textit{Core}.
-
-\subparagraph{Entità} I predicati che permettono di creare le entità sono:
+\newline
+I predicati che permettono di creare le entità sono:
 \begin{itemize}
-    \item \textit{color}: specifica il tipo di colore di una carta
-    \item \textit{suit}: specifica il tipo di seme di una carta
-    \item \textit{card}: definisce l’entità carta composta da un valore, seme e colore
+    \item \textit{color}: specifica il tipo di colore di una carta;
+    \item \textit{suit}: specifica il tipo di seme di una carta;
+    \item \textit{card}: definisce l’entità carta composta da un valore, seme e colore.
 \end{itemize}
 
-\subparagraph{Combinazioni} I predicati utilizzati per la validazione delle combinazioni sono:
+I predicati utilizzati per la validazione delle combinazioni sono:
 \begin{itemize}
     \item \textit{lengthList}: permette di determinare la lunghezza di una lista
     \item \textit{sameNumber}: verifica se all’interno della lista le carte hanno tutti lo stesso valore
@@ -89,7 +103,6 @@ Per ottenere le funzionalità descritte è stato creato il file rules.pl nella c
     La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: lengthList, sameSuit, endSequence e checkOrderByValue;
 \end{itemize}
 
-\subparagraph{Ordinamento}
 I predicati utilizzati per l’ordinamento delle carte sono:
 \begin{itemize}
     \item \textit{priority}: definisce la priorità dei semi.
@@ -98,8 +111,8 @@ I predicati utilizzati per l’ordinamento delle carte sono:
     Internamente utilizza il predicato compareCard per ordinare per valore tutte le carte dello stesso seme in base alla priorità;
     \item \textit{quickSortValue}: esegue l’ordinamento per valore.
 \end{itemize}
-Gli algoritmi di ordinamento quicksort per valore (o seme) a sua volta implementano il predicato partitionValue (o partitionSuit) che specifica la condizione necessario per ordinare.
-\newline
+Gli algoritmi di ordinamento quicksort per valore (o seme) a sua volta implementano il predicato \textit{partitionValue} (o \textit{partitionSuit}) che specifica la condizione necessario per ordinare.
+\newline \newline
 Descrivere le funzionalità più complesse come composizione di singoli predicati specifici ha permesso una maggiore leggibilità e manutenibilità del codice, in modo da poterli riutilizzare più volte all’interno della teoria.
 
 \subsubsection{Game Interface}
@@ -112,15 +125,13 @@ Queste operazioni comprendono:
     \item Creare uno stato iniziale di una partita dato il numero e il nome dei players da aggiungerci;
     \item Pescare una carta da un mazzo;
     \item Validare una combinazione di carte;
-    \item Validare una Hand e una Board, cioè una mossa effettuata da un giocatore;
-    \item Validare un turno intero, quindi una Hand e una Board attuale con la Hand e la Board di inizio turno;
+    \item Validare una Hand e una Board, cioè una mossa effettuata da un giocatore. Validare una Hand significa controllare che non vi siano carte prese dal tavolo e non più riposte;
+    \item Validare un turno intero, quindi confrontare una Hand e una Board attuale con la Hand e la Board di inizio turno;
     \item Prendere delle carte da una CardCombination in una Board;
     \item Giocare delle carte da una Hand in una Board in una CardCombination esistente;
-    \item Giocare una nuova CardCombination da una Hand su una Board;
+    \item Giocare una nuova CardCombination da una Hand su una Board.
 \end{itemize}
-Il risultato di vari metodi consiste in un oggetto complesso, un Either, che può contenere un valore piuttosto che un altro a seconda del risultato di un’altra funzione.
-Esso viene usato per poter gestire in modo consistente gli errori che eventualmente possono essere lanciati all’interno delle relative funzioni.
-Questo permette di evitare di lanciare delle eccezioni che non sono corrette in un approccio funzionale.
+Il risultato dei vari metodi consiste in un oggetto complesso, un Either, che può contenere un valore piuttosto che un altro a seconda del risultato di un’altra funzione. Esso viene usato per poter gestire in modo consistente gli errori che eventualmente possono essere lanciati all’interno delle relative funzioni. Questo permette di evitare di lanciare delle eccezioni che non sono corrette in un approccio funzionale.
 
 \subsection{Client}
 \begin{center}
@@ -131,107 +142,138 @@ Questo permette di evitare di lanciare delle eccezioni che non sono corrette in 
 Per la parte client dell’applicazione si è scelto di utilizzare una architettura basata sul pattern MVC\@.
 Questa ci ha consentito di tenere, anche all’interno del client, un buon livello di separazione tra le singole classi.
 \newline
-All’avvio dell’applicazione AppLauncher avvia MainController, che istanzia una istanza di View che fa da contenitore per entrambe le due parti di gioco (quella di avvio e quella di partita).
-MainController avvierà prima StartupController per la parte di iscrizione alle lobby, e una volta ricevuto da quest’ultimo l'evento di creazione della partita, avvia il GameController.
+All’avvio dell’applicazione \textit{AppLauncher} avvia \textit{MainController}, che istanzia una istanza di View che fa da contenitore per entrambe le due parti di gioco (quella di avvio e quella di partita).
+\textit{MainController} avvierà prima \textit{StartupController} per la parte di iscrizione alle lobby, e una volta ricevuto da quest’ultimo l'evento di creazione della partita, avvia il \textit{GameController}.
 Ciascun controller setta nella view il proprio Stage e istanzia la classe Service, che nel MVC gioca il ruolo di model.
 \begin{center}
     \includegraphics[scale=0.5]{messaggi_Startup_client}
 \end{center}
-Come si può notare dallo schema, il controller, per notificare eventi alla view, avendo creato il relativo Stage, richiama i metodi che questo espone.
+Come si può notare dallo schema, il controller, per notificare eventi alla view, avendo creato il relativo \textit{Stage}, richiama i metodi che questo espone.
 \newline
-Allo stesso tempo, in creazione passa anche onViewEvent(), una funzione che viene invocata dalla view ogni qualvolta debba notificare un evento al controller.
-Questa funzione prende in input un oggetto di tipo case class/object che estende la sealed class ViewEvent.
-Questa scelta di utilizzare da una parte l’interfaccia e dall’altra un metodo a callback è dovuta al fatto che logicamente, la view può notificare al controller qualsiasi tipo di evento, e sarà il controller a decidere quale di questi gestire;
-al contrario la view espone solamente le funzionalità che espone nella propria interfaccia.
-\newline
-Simile è anche l’interazione tra Service e Controller.
-Il Controller avendo creato il Service ha il suo riferimento ed invoca i metodi che questo espone nella sua interfaccia.
-Allo stesso tempo passa in creazione il metodo notifyEvent() che viene chiamato dal Service quando deve notificare un cambiamento di stato.
+Allo stesso tempo, in creazione passa anche \textit{onViewEvent()}, una funzione che viene invocata dalla view ogni qualvolta debba notificare un evento al controller.
+Questa funzione prende in input un oggetto di tipo case class/object che estende la sealed class \textit{ViewEvent}.\newline
+Questa scelta di utilizzare da una parte l’interfaccia e dall’altra un metodo a callback è dovuta al fatto che logicamente, la view può notificare al controller qualsiasi tipo di evento, e sarà il controller a decidere quale di questi gestire; al contrario la view espone solamente le funzionalità che espone nella propria interfaccia.
+\newline \newline
+Simile è anche l’interazione tra \textit{Service} e \textit{Controller}. Il Controller avendo creato il Service ha il suo riferimento ed invoca i metodi che questo espone nella sua interfaccia. Allo stesso tempo passa in creazione il metodo \textit{notifyEvent()} che viene chiamato dal Service quando deve notificare un cambiamento di stato.
 
 \subsubsection{View}
-In ciascuno Stage vengono caricate le varie scene, ciascuna delle quali ha un interfaccia di metodi che possono essere chiamati dallo Stage che la contiene.
-\newline
+In entrambi gli stage \textit{Stage} vengono caricate le varie scene, ciascuna delle quali ha un interfaccia di metodi che possono essere chiamati dallo Stage che la contiene.
+\newline \newline
 Per velocizzare la creazione degli elementi di view più utilizzati, sono state creati degli object che contengono i factory methods per creare i relativi elementi:
 \begin{itemize}
-    \item ScalavelliButton, factory per gli oggetti Button
-    \item ScalavelliLabel, factory per gli oggetti Label
-    \item ScalavelliAlert, factory per gli oggetti Alert
-    \item ScalavelliTextField, factory per gli oggetti Button
+    \item \textit{ScalavelliButton}, factory per gli oggetti Button;
+    \item \textit{ScalavelliLabel}, factory per gli oggetti Label;
+    \item \textit{ScalavelliAlert}, factory per gli oggetti Alert;
+    \item \textit{ScalavelliTextField}, factory per gli oggetti Button.
 \end{itemize}
-L’object CardUtils è invece una utility che permette di ottenere il percorso dell’immagine raffigurante la carta da gioco a partire dall’entità Card.
-Si è scelto di gestire la visualizzazione degli alert e degli errori direttamente da Stage in quanto deve essere indipendente dalla scena in cui ci si trova.
-Tutti i metodi che agiscono sugli elementi già renderizzati dalla view e gli aggiornamenti di stato hanno l’esigenza di agire sullo stesso thread di ScalaFX. Per poter ottenere questo risultato sono stati eseguiti all’interno della chiamata a Platform.runLater().
+L’object \textit{CardUtils} è invece una utility che permette di ottenere il percorso dell’immagine raffigurante la carta da gioco a partire dall’entità \textit{Card}. \newline \newline
+Si è scelto di gestire la visualizzazione degli alert e degli errori direttamente da \textit{Stage} in quanto questa operazione deve essere indipendente dalla scena in cui ci si trova.
+Tutti i metodi che agiscono sugli elementi già renderizzati dalla view e gli aggiornamenti di stato hanno l’esigenza di agire sullo stesso thread di ScalaFX. Per poter ottenere questo risultato sono stati eseguiti all’interno della chiamata a \textit{Platform.runlater()}. \newline \newline
+Le informazioni e la configurazione comune sia allo StartupStage che al GameStage sono contenute all’interno della classe \textit{BaseStage}.
 
-\subsubsection{Lobby}
-
-\paragraph{Controller}
-StartupController avvia la view che permette all’utente di selezionare la modalità con cui partecipare ad una lobby e l’inserimento dei suoi dati.
-Una volta fatto questo, tramite l’interazione con StartupService comunica al server la scelta dell’utente e attende una risposta.
-
-\paragraph{View}
-%todo: Add Lobby View diagram.
-La parte di view si compone di 4 scene che vengono caricate all’interno di \textit{StartupStage}.
-La scena principale permette di scegliere tra le 3 modalità di iscrizione a disposizione:
-\begin{itemize}
-    \item Iscrizione ad una lobby pubblica, in base al numero di players selezionati.
-    \item Iscrizione ad una lobby privata, inserendo un codice segreto.
+\paragraph{Lobby}
+\begin{center}
+    \includegraphics[scale=0.5]{home}
+\end{center}
+La parte di view si caratterizza di 4 scene che vengono caricate all’interno di \textit{StartupStage}. La scena principale permette di scegliere tra le 3 modalità di iscrizione a disposizione:
+\begin{enumerate}
+    \item Iscrizione ad una lobby pubblica, in base al numero di players selezionati;
+    \item Iscrizione ad una lobby privata, inserendo un codice segreto:
     \item Creazione di una lobby privata, selezionando il numero di membri necessari per questa lobby.
-\end{itemize}
-Alla selezione di una di queste modalità, viene caricata una nuova scena, alla quale viene passato un listener di tipo \textit{StartUpSceneListener} che tramite callback permette di reagire alle azione di submit() e della pressione del tasto back.
-\newline
-Ciascuna scena scena eredita da \textit{StartupBaseScene} e si compone di 3 parti:
+\end{enumerate}
+Alla selezione di una di queste modalità, viene caricata una nuova scena, alla quale viene passato un listener di tipo \textit{StartUpSceneListener} che tramite callback permette di reagire alle azione di \textit{submit()} e della pressione del tasto back.
+\newline \newline
+Tutte le scene estendono la classe astratta \textit{BaseStartupScene} che contiene la configurazione comune a tutte le scene. Questa classe è a sua volta estesa da \textit{BaseStartupFormScene}, la quale aggiunge i metodi comuni a tutte le scene in cui l’utente si iscrive ad una lobby, come ad esempio quelli per mostrare il messaggio di caricamento, per disabilitare i pulsanti e per ripulire gli input digitati.
+\newline \newline
+Ciascuna scena che estende \textit{BaseStartupFormScene} si compone di 3 parti:
 \begin{itemize}
-    \item \textit{StartupSceneTopBar}, che contiene il pulsante per tornare alla schermata precedente
-    \item \textit{StartupSceneBottomBar}, che contiene il pulsante di invio e la rotella di caricamento mentre si è in attesa della creazione di una partita.
-    \item Un nodo centrale in cui è possibile l’inserimento dei dati o, nel caso della creazione di un codice segreto, la visualizzazione di quest’ultimo.
+    \item \textit{StartupSceneTopBar}, che contiene il pulsante per tornare alla schermata precedente;
+    \item \textit{StartupSceneBottomBar}, che contiene il pulsante di invio e la rotella di caricamento mentre si è in attesa della creazione di una partita;
+    \item Un nodo centrale in cui è possibile l’inserimento dei dati (numero dei giocatori e username) o, nel caso della creazione di un codice segreto, la visualizzazione di quest’ultimo.
 \end{itemize}
 
-\subsubsection{Model}
-La parte di model del client è rappresentata dai trait StartupService e GameService con tutte le strutture a loro collegate.
-Rappresentano il punto in cui risiede tutta la business logic del client.
-Sono entrambi delle interfacce che espongono tutte le funzionalità rese disponibili dall’applicazione, su cui in controller si appoggiano per eseguire tutte le operazioni risultanti dalle azioni utente effettuate attraverso l’interazione con la view.
-Permettono quindi di astrarre ai componenti utilizzatori le modalità con cui le varie azioni vengono risolte, ad esempio decidere se risolverle in locale o in remote contattando il server.
-È solamente in questa parte del codice client che sono presenti riferimenti al framework akka.
-A differenza del server, il client non è stato modellato totalmente ad attori, che sono stati invece utilizzati solo per la parte di comunicazione con il server tramite scambio di messaggi.
+\begin{center}
+    \includegraphics[scale=0.3]{create_join_lobby}
+\end{center}
 
+\paragraph{Game}
+\begin{center}
+    \includegraphics[scale=0.4]{game}
+\end{center}
+La view per la parte di Game si compone di una singola scena, GameScene, la quale si aggancia alla View attraverso GameStage.In questa schermata sono visualizzate tutte le informazioni di gioco e viene resa possibile l’interazione del giocatore con la partita. \newline
+\begin{center}
+    \includegraphics[scale=0.5]{viewPanes}
+\end{center}
+La view si compone di diversi Panes che sono stati implementati in classi distinte. Ciascun Pane ha anche la sua interfaccia che descrive i metodi che espone il pannello.
+Ciascun pannello prende in input anche un listener con le callback che vengono istanziate all’interno della GameScene, nella quale vengono creati tutti i Panes.
+\newline \newline
+Ciascun Pane è stato pensato in modo da racchiudere poche funzionalità simili tra loro, in modo da avere un codice più leggibile e riutilizzabile:
+\begin{itemize}
+    \item \textit{BoardPane}: permette di visualizzare la board del gioco, permettendo all’utente di selezionare le singole carte, le combinazioni e di poter raccogliere le intere combinazioni dal tavolo;
+    \item \textit{ActionBar}: contiene tutti i pulsanti tramite i quali l’utente può fare una giocata o riordinare la sua mano;
+    \item \textit{SidePane} invece è il pannello laterale, e contiene a sua volta diversi pannelli:
+    \begin{itemize}
+        \item una label di informazione sul turno corrente;
+        \item \textit{TimerPane}, dove viene mostrato il tempo a disposizione durante il turno del giocatore;
+        \item \textit{OtherPlayersPane}, in cui vengono visualizzate il numero di carte che gli altri giocatori hanno in mano;
+        \item \textit{HistoryNavigationPane} tramite il quale è possibile navigare la history e resettare il proprio turno;
+        \item pulsanti per passare il turno e lasciare la partita.
+    \end{itemize}
+\end{itemize}
+Ciascun \textit{Pane}, sul quale è possibile abilitare o disabilitare le azioni quando non è il turno del giocatore, estende il trait \textit{ActionGamePane}.
+\newline
+\begin{center}
+    \includegraphics[scale=0.2]{gameViewArchitecture}
+\end{center}
+All’interno di \textit{GameScene}, attraverso più istanze della classe SelectionManager, si tiene traccia delle carte e delle combinazioni selezionate e deselezionate.\newline SelectionManager è generico in T, con T che estende SelectableItem, un trait che espone i metodi per settare un oggetto come selezionato o deselezionato.\newline Così facendo, SelectionManager avrà la sola responsabilità di tenere traccia degli elementi selezionati, mentre sarà l’elemento stesso ad implementare cosa avviene al momento della selezione, questo secondo il principio di singola responsabilità. \newline \newline
+\textit{SelectionManager} prende in costruzione il parametro booleano \textit{allowOnlyOne} che indica se è possibile selezionare solamente un elemento per volta (deselezionando quindi quello precedente) o se al contrario, sia possibile selezionare più elementi. \newline Questa classe espone, oltre al metodo per selezionare o meno un elemento, i metodi per ottenere gli elementi selezionati e per pulire la selezione. \newline \newline
+Le azioni che prevedono di avere accesso alle carte selezionate dalla mano o dalla board vengono gestite direttamente all’interno di GameScene, dove si ottengono le carte selezionate e vengono mandate al Controller. \newline \newline
+GameStage espone tutti i metodi per mostrare messaggi di informazione, errore, terminazione della partita, aggiornamento del timer ma soprattutto, il metodo \textit{updateState()} che permette di aggiornare in continuazione lo stato della partita, sia durante il proprio turno, sia durante il turno degli altri giocatori.
+\newline \newline
+Questo metodo prende in input un oggetto di tipo \textit{ClientGameState} che oltre allo stato della board, della mano e degli altri giocatori, contiene anche le info sulla navigabilità della history (se è possibile fare undo/redo/reset) e sul fatto che sia già stata fatta o meno una azione dall’utente, così da poter aggiornare il testo del pulsante per il passaggio del turno.\newline Per togliere questa logica dalla parte di view, sarà comunque responsabilità del controller a controllare se l’utente potrà passare semplicemente o se invece quest’ultimo dovrà pescare una carta.
+\subsubsection{Controller}
+\paragraph{Lobby}
+\textit{StarupController} avvia la view che permette all’utente di selezionare la modalità con cui partecipare ad una lobby e l’inserimento dei suoi dati. Una volta fatto questo, tramite l’interazione con \textit{StartupService} comunica al server la scelta dell’utente. \newline Da questo momento in poi l’utente resta in attesa di ricevere l’avvio del gioco da parte del Service, il quale comunica al Controller l’avvio del match.\newline
+Per poter passare alla parte di Game avendo già il riferimento alla partita, a \textit{StartupController} è stato passato in costruzione la funzione \textit{startGame()} che viene invocata passando come parametro un oggetto di tipo \textit{GameMatchInformations} che contiene l’id dell’utente e il riferimento all’attore del match, il quale è stato costruito da \textit{StartupService}.
+\paragraph{Game}
+\begin{center}
+    \includegraphics[scale=0.5]{gameController}
+\end{center}
+\textit{GameController} viene inizializzato direttamente da \textit{MainController}, il quale gli passa in costruzione anche la funzione da invocare per ricominciare una nuova partita.\newline \textit{GameController} istanzia e comunica con \textit{GameService}, invocandone i metodi esposti dall’interfaccia. In creazione invece passa la funzione \textit{notifyEvent()} che mappa in entrata gli eventi di tipo \textit{GameEvent}.\newline
+Alla ricezione di questi chiama i metodi esposti dall’interfaccia \textit{GameStage}, aggiornando la schermata mostrata al giocatore. \newline \newline
+Anche in questo caso, quando l’utente compie un'azione, viene generato un evento di tipo \textit{ViewGameEvent} e viene chiamata la funzione \textit{onViewEvent()} alla quale viene passato l’evento come parametro. Questo viene gestito da \textit{GameController} che sceglie quali metodi di \textit{GameService} chiamare.
+\newline \newline Oltre a fare da collante tra Service e View, a \textit{GameController} è lasciata la responsabilità della gestione del timer durante il turno del giocatore. \newline Questo timer, per scelta a livello di design è stato lasciato solamente lato client, ed è implementato sfruttando le librerie Timer e TimerTask di java.utils. \newline \newline Espone tramite interfaccia i metodi \textit{start()} e \textit{stop()}, con i quali si avviano i due task che vengono eseguiti per ciascun turno. \newline Il primo task, chiamato tickTask, ha un periodo di 1000ms e permette di notificare un evento ogni secondo. Il secondo invece, chiamato endTask ha il compito di far scattare un evento allo scadere del tempo definito all’interno del file Constants.\newline Quando un utente inizia il proprio turno, il timer viene avviato, mentre sia quando scade, sia quando un utente passa prima del termine del turno, viene stoppato, azione con la quale si fa la \textit{cancel()} di entrambi i task e la \textit{purge()} del timer. \newline \newline
+Al timer vengono passati in costruzione la durata prevista e un listener che contiene le callback che vengono triggerate dai vari task. Tra queste c’è la \textit{onStart()}, che viene chiamata all’avvio del timer, la \textit{onEnd()}, che viene chiamata allo scadere di endTask, e la onTick() che viene invece chiamata a ogni passaggio di tickTask. \newline \newline Il controller ha anche il compito di decidere se al passaggio di turno, l’utente dovrà pescare o passare semplicemente. Per farlo si affida all’ultimo aggiornamento di stato ricevuto, facendone una copia di volta in volta, e controlla se in questo l’utente doveva pescare oppure no.
+\subsubsection{Model}
+La parte di model del client è rappresentata dai trait StartupService e GameService con tutte le strutture a loro collegate. Rappresentano il punto in cui risiede tutta la business logic del client. Sono entrambi delle interfacce che espongono tutte le funzionalità rese disponibili dall’applicazione, su cui in controller si appoggiano per eseguire tutte le operazioni risultanti dalle azioni utente effettuate attraverso l’interazione con la view. \newline Permettono quindi di astrarre ai componenti utilizzatori le modalità con cui le varie azioni vengono risolte, ad esempio decidere se risolverle in locale o in remote contattando il server.
+È solamente in questa parte del codice client che sono presenti riferimenti al framework akka. A differenza del server, il client non è stato modellato totalmente ad attori: questi sono stati utilizzati solo per la parte di comunicazione con il server tramite scambio di messaggi.
 \paragraph{StartupService}
 \begin{center}
     \includegraphics[scale=0.5]{server-startup-service}
 \end{center}
 È il componente che si occupa della gestione della lobby.
-La sua funzione primaria, essendo la lobby gestita totalmente lato server, è quella di comunicare con quest’ultimo.
-La connessione al server viene fatta tramite tramite il metodo actorSelection messo a disposizione dall’unica istanza dell’oggetto ActorSystem presente nell’object ActorSystemManager, in caso di connessione avvenuta, si ottiene il riferimento all’attore remoto serverLobbyRef responsabile per la gestione delle lobby, che viene utilizzato per l’invio dei successivi messaggi di richiesta di aggiunta alla lobby.
-I messaggi di risposta del server vengono invece ricevuti tramite l’attore StartupActor, creato all’inizializzazione dell’oggetto sempre tramite l’istanza di ActorSystem, il cui riferimento viene passato al server al momento della connessione.
-Questo attore ha l’unica funzione di ricevere i messaggi inviati dal server e di redirezionarli tramite il trait StartupServerResponsesListener che richiede in costruzione.
+La sua funzione primaria, essendo la lobby gestita totalmente lato server, è quella di comunicare con quest’ultimo. \newline La connessione al server viene fatta tramite tramite il metodo \textit{actorSelection} messo a disposizione dall’unica istanza dell’oggetto \textit{ActorSystem} presente nell’object \textit{ActorSystemManager}, in caso di connessione avvenuta, si ottiene il riferimento all’attore remoto \textit{serverLobbyRef} responsabile per la gestione delle lobby, che viene utilizzato per l’invio dei successivi messaggi di richiesta di aggiunta alla lobby. \newline
+I messaggi di risposta del server vengono invece ricevuti tramite l’attore \textit{StartupActor}, creato all’inizializzazione dell’oggetto sempre tramite l’istanza di \textit{ActorSystem}, il cui riferimento viene passato al server al momento della connessione.\newline Questo attore ha l’unica funzione di ricevere i messaggi inviati dal server e di redirezionarli tramite il trait \textit{StartupServerResponsesListener} che richiede in costruzione.\newline
 La decisione di comunicare con il server su due vie separate è stata fatta per evitare duplicazione di messaggi: far fare tutto a StartupActor avrebbe richiesto l’invio di messaggi a quest’ultimo che a sua volta avrebbe dovuto inviarli al server.
-I risultati delle varie operazioni vengono poi notificati al controller attraverso la funzione notifyEvent richiesta in costruzione, a cui viene passato un oggetto di tipo GameStartupEvent.
-Il risultato della fase di lobby è l’oggetto GameMatchInformations, che racchiude tutte le informazioni necessarie a poter avviare la partita lato client, come l'id del giocatore e la reference all'attore remoto del server.
-
+I risultati delle varie operazioni vengono poi notificati al controller attraverso la funzione \textit{notifyEvent} richiesta in costruzione, a cui viene passato un oggetto di tipo \textit{GameStartupEvent}.\newline Il risultato della fase di lobby è l’oggetto \textit{GameMatchInformations}, che racchiude tutte le informazioni necessarie a poter avviare la partita lato client, come l'id del giocatore e la reference all'attore remoto del server.
 \paragraph{GameService}
-È il componente che si occupa di gestire lato client tutta la fase di gioco.
-Come il componente descritto in precedenza per la fase di lobby, anche questo consiste in un’interfaccia che espone tutti i metodi corrispondenti alle funzionalità rese disponibili dal client di gioco.
-La sua implementazione GameServiceImpl è poi caratterizzata da diversi elementi, ciascuno dei quali gestisce una componente specifica del gioco.
-Il riferimento all’attore server remoto serverActorRef utilizzato per inviare messaggi al server
-ClientGameActorRef, il riferimento all’attore locale responsabile di ricevere i messaggi inviati dal server, con una struttura analoga a quella descritta precedentemente per la lobby.
-GameStateStore utilizzato per mantenere lo stato locale della partita ed aggiornarlo a seguito delle azioni compiute dall’utente o dagli aggiornamenti ricevuti dal server.
-History, una struttura dati immutabile utilizzata per salvare lo storico degli stati risultanti dalle mosse eseguite dall’utente durante il turno.
-In seguito ad ogni mossa effettuata dal giocatore durante il turno, la History viene aggiornata e utilizzata per ripristinare lo stato delle versioni precedenti a seguito delle azioni di undo/redo.
-GameInterface, l’interfaccia core utilizzata per eseguire in locale le azioni di gioco effettuate durante il turno.
-In costruzione riceve poi una funzione che utilizza per notificare al chiamante (in questo caso il controller) gli aggiornamenti di stato e gli altri eventi di sistema.
 \begin{center}
     \includegraphics[scale=0.5]{server-game-service}
 \end{center}
-%todo: Here is missing the diagram. Was the same as next paragraph.
-Il grafico di cui sopra mostra la sequenza di operazioni che avvengono durante il turno di un giocatore quando quest’ultimo esegue una mossa:
+È il componente che si occupa di gestire lato client tutta la fase di gioco.
+Come il componente descritto in precedenza per la fase di lobby, anche questo consiste in un’interfaccia che espone tutti i metodi corrispondenti alle funzionalità rese disponibili dal client di gioco.\newline La sua implementazione \textit{GameServiceImpl} è poi caratterizzata da diversi elementi, ciascuno dei quali gestisce una componente specifica del gioco.\newline Il riferimento all’attore server remoto \textit{serverActorRef} utilizzato per inviare messaggi al server. \textit{ClientGameActorRef}, il riferimento all’attore locale, responsabile di ricevere i messaggi inviati dal server, con una struttura analoga a quella descritta precedentemente per la lobby.
+\newline GameStateStore utilizzato per mantenere lo stato locale della partita ed aggiornarlo a seguito delle azioni compiute dall’utente o dagli aggiornamenti ricevuti dal server. History, una struttura dati immutabile utilizzata per salvare lo storico degli stati risultanti dalle mosse eseguite dall’utente durante il turno. In seguito ad ogni mossa effettuata dal giocatore durante il turno, la History viene aggiornata e utilizzata per ripristinare lo stato delle versioni precedenti a seguito delle azioni di undo/redo.\newline \textit{GameInterface}, l’interfaccia core utilizzata per eseguire in locale le azioni di gioco effettuate durante il turno. \newline In costruzione riceve poi una funzione che utilizza per notificare al chiamante (in questo caso il controller) gli aggiornamenti di stato e gli altri eventi di sistema.
+\newline
+\newline
+Di seguito la sequenza di operazioni che avvengono durante il turno di un giocatore quando quest’ultimo esegue una mossa:
 \begin{itemize}
-    \item Un chiamante invoca un metodo del \textit{GameService} corrispondente a un’azione di gioco
-    \item \textit{GameService} risolve l’azione per mezzo di \textit{GameInterface}
-    \item Sulla base dell’output della funzione invocata su \textit{GameInterface} viene aggiornato lo stato locale di gioco tramite un metodo di \textit{GameStateStore}
-    \item Il nuovo stato di gioco viene salvato sulla \textit{History}
-    \item Il nuovo stato di gioco viene notificato al componente sottostante per mezzo della funzione notifyEvent ottenuta in costruzione
+    \item Un chiamante invoca un metodo del \textit{GameService} corrispondente a un’azione di gioco;
+    \item \textit{GameService} risolve l’azione per mezzo di \textit{GameInterface};
+    \item Sulla base dell’output della funzione invocata su \textit{GameInterface} viene aggiornato lo stato locale di gioco tramite un metodo di \textit{GameStateStore};
+    \item Il nuovo stato di gioco viene salvato sulla \textit{History};
+    \item Il nuovo stato di gioco viene notificato al componente sottostante per mezzo della funzione notifyEvent ottenuta in costruzione.
 \end{itemize}
 Nel caso di una mossa eseguita in remoto la chiamata al \textit{GameInterface} è sostituita con un messaggio inviato al \textit{Server}, mentre manca l’aggiornamento della \textit{History} che viene utilizzata solamente durante la gestione locale del turno.
-
 \subsection{Server}
 È la componente che permette lo svolgersi del gioco in modalità multiplayer.Ogni sessione utente è possibile distinguerla in 2 fasi principali:
 \begin{itemize}
@@ -292,7 +334,7 @@ Per questioni di sicurezza, ad ogni giocatore non viene inviato lo stato globale
 \begin{center}
     \includegraphics[width=\textwidth]{server-sequence-diagram-inizializzazione-gioco}
 \end{center}
-Una volta creato dall’attore lobby:
+Una volta creato dall’attore lobby, l’attore responsabile della gestione della partita:
 \begin{itemize}
     \item rimane in attesa di un messaggio di inizializzazione (GamePlayers) da parte di quest’ultimo, contenente le informazioni dei giocatori;
     \item notifica i giocatori che la partita è stata trovata tramite il messaggio MatchFound;
@@ -316,8 +358,8 @@ Tutte queste operazioni verranno ripetute ciclicamente fino al verificarsi delle
 
 \subsubsection{Fault Tolerance}
 In entrambe le componenti del server (lobby e gioco) si è cercato di rilevare e gestire al meglio situazioni di errore come la disconnessione improvvisa dei client.
-Per rilevare queste situazioni è stato utilizzata la funzionalità di supervisione e monitoraggio messa a disposizione da akka.
-Conoscendo il riferimento ad un attore è possibile ricevere mettersi in ascolto agli eventi di terminazioni, ricevendoli tramite messaggio il messaggio Terminated.
+Per rilevare queste situazioni è stato utilizzata la funzionalità di supervisione e monitoraggio messa a disposizione da akka.\newline
+Conoscendo il riferimento ad un attore è possibile ricevere gli eventi di terminazione, ricevendoli tramite il messaggio Terminated.\newline
 L’attore lobby sfrutta questa funzionalità per rimuovere gli utenti terminati dalle code.
 L’attore responsabile delle partita invece rileva la terminazione di uno dei giocatori, termina la partita stessa notificandola agli altri.
 
@@ -328,5 +370,4 @@ Option per evitare di avere valori null qualora la funzione non dovesse ritornar
 Either per poter tornare un errore specifico nel caso in cui la funzione andasse in errore.
 A questo scopo abbiamo creato delle classi di errore specifiche nei vari moduli.
 Ad esempio nel metodo playCombination di GameInterface, in caso ci sia un errore nei parametri di input forniti, al posto di lanciare un’eccezione o di tornare un errore generico come Throwable, viene ritornato un oggetto della classe GameError, come CombinationNotValid.
-
 \newpage
