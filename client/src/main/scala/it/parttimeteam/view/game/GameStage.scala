@@ -1,5 +1,6 @@
 package it.parttimeteam.view.game
 
+import it.parttimeteam.controller.ViewMessage
 import it.parttimeteam.controller.game.GameListener
 import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.model.game.ClientGameState
@@ -74,7 +75,7 @@ trait GameStage extends BaseStage {
     *
     * @param message the message to be displayed
     */
-  def setMessage(message: String): Unit
+  def setMessage(message: ViewMessage): Unit
 
   /**
     * Called when the match is ready.

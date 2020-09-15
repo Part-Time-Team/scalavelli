@@ -1,7 +1,7 @@
 package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.view.ViewConfig
-import it.parttimeteam.view.utils.ScalavelliButton
+import it.parttimeteam.view.utils.{ScalavelliButton, Strings}
 import scalafx.geometry.Insets
 import scalafx.scene.layout.HBox
 
@@ -84,12 +84,12 @@ object ActionBar {
     this.spacing = ViewConfig.formSpacing
     this.padding = Insets(5)
 
-    val combinationBtn = ScalavelliButton("Make Combination", () => listener.makeCombination())
-    val clearHandSelectionBtn = ScalavelliButton("Clear Selection", () => listener.clearHandSelection())
-    val pickCardsBtn = ScalavelliButton("Pick Cards", () => listener.pickCards())
-    val updateCombinationBtn = ScalavelliButton("Update Combination", () => listener.updateCombination())
-    val sortBySuitBtn = ScalavelliButton("Sort Suit", () => listener.sortHandBySuit())
-    val sortByRankBtn = ScalavelliButton("Sort Rank", () => listener.sortHandByRank())
+    val combinationBtn = ScalavelliButton(Strings.MAKE_COMBINATION_BTN, () => listener.makeCombination())
+    val clearHandSelectionBtn = ScalavelliButton(Strings.CLEAR_SELECTION_BTN, () => listener.clearHandSelection())
+    val pickCardsBtn = ScalavelliButton(Strings.PICK_CARDS_BTN, () => listener.pickCards())
+    val updateCombinationBtn = ScalavelliButton(Strings.UPDATE_COMBINATION_BTN, () => listener.updateCombination())
+    val sortBySuitBtn = ScalavelliButton(Strings.SORT_SUIT_BTN, () => listener.sortHandBySuit())
+    val sortByRankBtn = ScalavelliButton(Strings.SORT_RANK_BTN, () => listener.sortHandByRank())
 
     combinationBtn.setDisable(true)
     clearHandSelectionBtn.setDisable(true)
@@ -119,7 +119,9 @@ object ActionBar {
     }
 
     /** @inheritdoc */
-    override def enableActions(): Unit = {}
+    override def enableActions(): Unit = {
+
+    }
   }
 
 }

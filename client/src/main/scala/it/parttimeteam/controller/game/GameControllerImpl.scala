@@ -3,11 +3,13 @@ package it.parttimeteam.controller.game
 import java.util.concurrent.TimeUnit
 
 import it.parttimeteam.Constants
+import it.parttimeteam.controller.ViewMessage
 import it.parttimeteam.controller.game.TurnTimer.TurnTimerImpl
-import it.parttimeteam.core.{GameError, GameInterfaceImpl}
+import it.parttimeteam.core.GameInterfaceImpl
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.core.collections.{Board, CardCombination, Hand}
 import it.parttimeteam.gamestate.{Opponent, PlayerGameState}
+import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.model.game._
 import it.parttimeteam.model.startup.GameMatchInformations
 import it.parttimeteam.view.game._
@@ -63,37 +65,21 @@ class GameControllerImpl(playAgain: () => Unit) extends GameController {
       })
     }
 
-    case OpponentInTurnEvent(actualPlayerName) => {
-      gameStage.setMessage(s"It's $actualPlayerName turn")
-    }
+    case OpponentInTurnEvent(actualPlayerName) => gameStage.setMessage(ViewMessage.ActualPlayerTurn(actualPlayerName))
 
-    case InTurnEvent => {
-      gameStage.setInTurn()
-    }
+    case InTurnEvent => gameStage.setInTurn()
 
-    case InfoEvent(message: String) => {
-      gameStage.notifyInfo(message)
-    }
+    case InfoEvent(message: String) => gameStage.notifyInfo(message)
 
-    case GameErrorEvent(reason: GameError) => {
-      gameStage.notifyError(reason)
-    }
+    case GameErrorEvent(error: ErrorEvent) => gameStage.notifyError(error)
 
-    case GameWonEvent => {
-      gameStage.notifyGameEnd(GameWon)
-    }
+    case GameWonEvent => gameStage.notifyGameEnd(GameWon)
 
-    case GameLostEvent(winnerName: String) => {
-      gameStage.notifyGameEnd(GameLost(winnerName))
-    }
+    case GameLostEvent(winnerName: String) => gameStage.notifyGameEnd(GameLost(winnerName))
 
-    case GameEndedWithErrorEvent(reason: String) => {
-      gameStage.notifyGameEnd(GameEndWithError(reason))
-    }
+    case GameEndedBecausePlayerLeft => gameStage.notifyGameEnd(GameEndPlayerLeft)
 
-    case TurnEndedEvent => {
-      gameStage.setTurnEnded()
-    }
+    case TurnEndedEvent => gameStage.setTurnEnded()
 
     case _ =>
   }

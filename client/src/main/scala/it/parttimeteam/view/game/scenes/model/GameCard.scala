@@ -4,7 +4,7 @@ import it.parttimeteam.core.cards.Card
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.game.scenes.GameScene.CardListener
 import it.parttimeteam.view.game.scenes.panes.ActionGamePane
-import it.parttimeteam.view.utils.CardUtils
+import it.parttimeteam.view.utils.{CardUtils, Paths}
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.StackPane
@@ -61,7 +61,7 @@ object GameCard {
       * @inheritdoc
       */
     override def setAsBoardCard(): Unit = {
-      val prohibitionIcon: ImageView = new ImageView(new Image("images/prohibitionSign.png", 15, 15, false, false))
+      val prohibitionIcon: ImageView = new ImageView(new Image(Paths.PROHIBITION_SIGN, 15, 15, false, false))
       prohibitionIcon.margin = Insets(5d)
 
       this.getStyleClass.remove("baseCard")

@@ -1,12 +1,13 @@
 package it.parttimeteam.view.game
 
+import it.parttimeteam.controller.ViewMessage
 import it.parttimeteam.controller.game.GameListener
 import it.parttimeteam.core.cards.Card
 import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.model.game.ClientGameState
 import it.parttimeteam.view.game.listeners.GameStageListener
 import it.parttimeteam.view.game.scenes.{GameScene, GameSceneImpl}
-import it.parttimeteam.view.utils.ScalavelliAlert
+import it.parttimeteam.view.utils.{ScalavelliAlert, StringParser, Strings}
 import scalafx.application.Platform
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.{Alert, ButtonType}
@@ -49,7 +50,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
 
     /** @inheritdoc*/
     override def leaveGame(): Unit = {
-      val alert: Alert = ScalavelliAlert("Leave the game", "Are you sure you want to leave the game? The action cannot be undone.", AlertType.Confirmation)
+      val alert: Alert = ScalavelliAlert(Strings.LEAVE_GAME_DIALOG_TITLE, Strings.LEAVE_GAME_DIALOG_MESSAGE, AlertType.Confirmation)
 
       alert.showAndWait match {
         case Some(b) =>
@@ -74,9 +75,9 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
   onCloseRequest = _ => System.exit(0)
 
   /** @inheritdoc */
-  override def setMessage(message: String): Unit = {
+  override def setMessage(message: ViewMessage): Unit = {
     Platform.runLater({
-      gameScene.setMessage(message)
+      gameScene.setMessage(StringParser.parseMessage(message))
     })
   }
 
@@ -106,16 +107,16 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
   override def notifyGameEnd(gameEndType: GameEndType): Unit = {
     Platform.runLater({
       val message: String = gameEndType match {
-        case GameWon => "Congratulations! You won the game! Do you want to play again?"
+        case GameWon => Strings.GAME_WON_ALERT_MESSAGE
 
-        case GameLost(winnerUsername: String) => s"This game has a winner. And the winner is.. $winnerUsername! Do you want to play again?"
+        case GameLost(winnerUsername: String) => Strings.GAME_LOST_ALERT_MESSAGE(winnerUsername)
 
-        case GameEndWithError(reason: String) => s"The game ended. $reason. Do you want to play again?"
+        case GameEndPlayerLeft => Strings.GAME_END_PLAYER_LEFT_MESSAGE
 
         case _ => ""
       }
 
-      val alert = ScalavelliAlert("Game ended", message, AlertType.Information)
+      val alert = ScalavelliAlert(Strings.GAME_ENDED_ALERT_TITLE, message, AlertType.Information)
       alert.showAndWait match {
         case Some(b) =>
           if (b == ButtonType.OK) {
@@ -144,10 +145,9 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
   }
 
   /** @inheritdoc */
-  override def notifyError(result: ErrorEvent): Unit = {
-    // TODO create string error
+  override def notifyError(error: ErrorEvent): Unit = {
     Platform.runLater({
-      val alert: Alert = ScalavelliAlert("Error", result toString, AlertType.Error)
+      val alert: Alert = ScalavelliAlert(Strings.ERROR_DIALOG_TITLE, error, AlertType.Error)
       alert.showAndWait()
     })
   }
@@ -164,7 +164,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
   override def setInTurn(): Unit = {
     gameScene.setInTurn(true)
     Platform.runLater({
-      val alert = ScalavelliAlert("", "It's your turn", AlertType.Information)
+      val alert = ScalavelliAlert("", Strings.YOUR_TURN_ALERT_MESSAGE, AlertType.Information)
       alert.showAndWait match {
         case Some(b) =>
           if (b == ButtonType.OK) {
@@ -176,7 +176,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
         case None =>
       }
 
-      setMessage("Your turn")
+      setMessage(ViewMessage.YourTurn)
     })
   }
 
@@ -184,7 +184,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
   override def setTurnEnded(): Unit = {
     gameScene.setInTurn(false)
     Platform.runLater({
-      setMessage("")
+      gameScene.setMessage("")
       gameScene.hideTimer()
     })
   }
@@ -207,9 +207,8 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
   override def notifyTimerEnded(): Unit = {
     Platform.runLater({
       gameScene.notifyTimerEnd()
-      notifyInfo("You haven't passed your turn. We will pass and draw a card for you.")
+      notifyInfo(Strings.TIMER_END_INFO_MESSAGE)
     })
   }
-
 
 }

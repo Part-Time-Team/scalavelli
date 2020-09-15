@@ -14,11 +14,11 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 
 /**
- *
- * @param gameInformation information user to participate to a game match
- * @param notifyEvent     function used to notify the external component about game updates
- * @param gameInterface   the game core api
- */
+  *
+  * @param gameInformation information user to participate to a game match
+  * @param notifyEvent     function used to notify the external component about game updates
+  * @param gameInterface   the game core api
+  */
 class GameServiceImpl(private val gameInformation: GameMatchInformations,
                       private val notifyEvent: GameEvent => Unit,
                       private val gameInterface: GameInterface) extends GameService {
@@ -63,7 +63,7 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
 
     override def gameLost(winnerName: String): Unit = notifyEvent(GameLostEvent(winnerName))
 
-    override def gameEndedWithErrorEvent(reason: String): Unit = notifyEvent(GameEndedWithErrorEvent(reason))
+    override def gameEndedBecausePlayerLeft(): Unit = notifyEvent(GameEndedBecausePlayerLeft)
 
     override def invalidPlayerAction(): Unit = notifyEvent(GameErrorEvent(NoValidTurnPlay))
   }
@@ -197,10 +197,10 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
     )
 
   /**
-   * Execute the history method, updates the history and the resulting state
-   *
-   * @param historyUpdate History method to execute.
-   */
+    * Execute the history method, updates the history and the resulting state
+    *
+    * @param historyUpdate History method to execute.
+    */
   private def updateStateThroughHistory(historyUpdate: () => (Option[PlayerGameState], History[PlayerGameState])): Unit = {
     val (optState, updatedHistory) = historyUpdate()
     this.turnHistory = updatedHistory
@@ -211,11 +211,11 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }
 
   /**
-   * Return if Turn is valid or not.
-   *
-   * @param currentState Current Game State.
-   * @return True if the Turn isn't valid, false anywhere.
-   */
+    * Return if Turn is valid or not.
+    *
+    * @param currentState Current Game State.
+    * @return True if the Turn isn't valid, false anywhere.
+    */
   private def isTurnValid(currentState: PlayerGameState) = {
     val startState = turnHistory.headOption
     startState.isDefined && gameInterface.validateTurn(

@@ -2,7 +2,7 @@ package it.parttimeteam.view.game.scenes.panes
 
 import it.parttimeteam.gamestate.Opponent
 import it.parttimeteam.view.ViewConfig
-import it.parttimeteam.view.utils.ScalavelliLabel
+import it.parttimeteam.view.utils.{Paths, ScalavelliLabel, Strings}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{HBox, TilePane, VBox}
 
@@ -22,7 +22,7 @@ trait OtherPlayersPane extends VBox {
 object OtherPlayersPane {
 
   class OtherPlayersPaneImpl extends OtherPlayersPane {
-    var label = ScalavelliLabel("Other players:")
+    var label = ScalavelliLabel(Strings.OTHER_PLAYERS)
     label.getStyleClass.add("boldText")
     var pane: TilePane = new TilePane()
     pane.setPrefColumns(2)
@@ -31,7 +31,7 @@ object OtherPlayersPane {
     this.children.addAll(label, pane)
 
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setOtherPlayers(otherPlayers: Seq[Opponent]): Unit = {
       pane.children.clear()
       pane.hgap = ViewConfig.TILE_GAP
@@ -44,7 +44,7 @@ object OtherPlayersPane {
         val playerInfoContainer: VBox = new VBox()
         val cardInfoContainer: HBox = new HBox()
 
-        val cardImage: ImageView = new ImageView(new Image("images/cards/backBlue.png"))
+        val cardImage: ImageView = new ImageView(new Image(Paths.BLUE_BACK_CARD))
         cardImage.fitWidth = 20d
         cardImage.preserveRatio = true
 

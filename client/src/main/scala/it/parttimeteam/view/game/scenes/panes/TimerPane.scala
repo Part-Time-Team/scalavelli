@@ -1,6 +1,6 @@
 package it.parttimeteam.view.game.scenes.panes
 
-import it.parttimeteam.view.utils.ScalavelliLabel
+import it.parttimeteam.view.utils.{ScalavelliLabel, Strings}
 import scalafx.scene.layout.VBox
 
 /**
@@ -41,7 +41,7 @@ trait TimerPane extends VBox {
 object TimerPane {
 
   class TimerPaneImpl extends TimerPane {
-    val timerLabel = ScalavelliLabel("Timer")
+    val timerLabel = ScalavelliLabel(Strings.TIMER)
     timerLabel.getStyleClass.add("boldText")
 
     val countdownLabel = ScalavelliLabel()

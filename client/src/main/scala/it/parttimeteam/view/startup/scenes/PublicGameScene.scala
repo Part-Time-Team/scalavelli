@@ -1,6 +1,6 @@
 package it.parttimeteam.view.startup.scenes
 
-import it.parttimeteam.GamePreferences
+import it.parttimeteam.Constants
 import it.parttimeteam.view.ViewConfig
 import it.parttimeteam.view.startup.PublicGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartupSceneListener
@@ -25,11 +25,11 @@ class PublicGameScene(val parentStage: Stage, val listener: StartupSceneListener
   val usernameLabel: Label = ScalavelliLabel("Username", ViewConfig.formLabelFontSize)
   val usernameField: TextField = ScalavelliTextField("Username")
 
-  val options: Range = GamePreferences.MIN_PLAYERS_NUM to GamePreferences.MAX_PLAYERS_NUM by 1
+  val options: Range = Constants.Client.MIN_PLAYERS_NUM to Constants.Client.MAX_PLAYERS_NUM by 1
 
   val selectPlayersLabel: Label = ScalavelliLabel("Select players number", ViewConfig.formLabelFontSize)
   val comboBox = new ComboBox(options)
-  comboBox.setValue(GamePreferences.MIN_PLAYERS_NUM)
+  comboBox.setValue(Constants.Client.MIN_PLAYERS_NUM)
 
   val center: VBox = new VBox()
   center.spacing = ViewConfig.formSpacing
@@ -61,7 +61,7 @@ class PublicGameScene(val parentStage: Stage, val listener: StartupSceneListener
     val username: String = usernameField.getText
     val nPlayers: Int = comboBox.getValue
 
-    if (!username.isEmpty && nPlayers >= GamePreferences.MIN_PLAYERS_NUM) {
+    if (!username.isEmpty && nPlayers >= Constants.Client.MIN_PLAYERS_NUM) {
       listener.onSubmit(PublicGameSubmitViewEvent(username, nPlayers))
       bottomBar.showLoading()
       disableActions()

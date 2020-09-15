@@ -12,10 +12,11 @@ import it.parttimeteam.view.game.scenes.panes.InitMatchDialog.InitMatchDialogImp
 import it.parttimeteam.view.game.scenes.panes.SidePane.SidePaneImpl
 import it.parttimeteam.view.game.scenes.panes._
 import it.parttimeteam.view.game.{GameStage, SelectionManager}
+import it.parttimeteam.view.utils.Strings
 import scalafx.application.Platform
 import scalafx.scene.layout.{BorderPane, VBox}
 
-/** @inheritdoc*/
+/** @inheritdoc */
 class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) extends GameScene {
   var inTurn = false
 
@@ -25,36 +26,36 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
   val initMatchDialog = new InitMatchDialogImpl(parentStage)
 
   val gameInfoBarListener: GameInfoBarListener = new GameInfoBarListener {
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def endTurn(): Unit = listener.endTurn()
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def leaveGame(): Unit = listener.leaveGame()
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def nextState(): Unit = listener.nextState()
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def previousState(): Unit = listener.previousState()
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def resetState(): Unit = listener.resetHistory()
   }
 
   val boardListener: BoardListener = new BoardListener {
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def onCombinationClicked(cardCombination: GameCardCombination): Unit = {
       combinationSelectionManager.onItemSelected(cardCombination)
       updateActionBarButtons()
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def onCardClicked(card: GameCard): Unit = {
       boardSelectionManager.onItemSelected(card)
       updateActionBarButtons()
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def onPickCombinationClick(cardCombination: GameCardCombination): Unit = {
       listener.pickCombination(cardCombination.getCombination.id)
     }
@@ -62,40 +63,40 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
 
   var actionBarListener: ActionBarListener = new ActionBarListener {
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def pickCombination(combinationId: String): Unit = {
       listener.pickCombination(combinationId)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def makeCombination(): Unit = {
       val cards: Seq[Card] = handSelectionManager.getSelectedItems.map(p => p.getCard)
       listener.makeCombination(cards)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def pickCards(): Unit = {
       val cards: Seq[Card] = boardSelectionManager.getSelectedItems.map(p => p.getCard)
       listener.pickCards(cards)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def sortHandBySuit(): Unit = {
       listener.sortHandBySuit()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def sortHandByRank(): Unit = {
       listener.sortHandByRank()
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def clearHandSelection(): Unit = {
       handSelectionManager.clearSelection()
       updateActionBarButtons()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def updateCombination(): Unit = {
       val combination = combinationSelectionManager.getSelectedItems.head
       val selectedCards = handSelectionManager.getSelectedItems
@@ -129,7 +130,7 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
 
   root = borderPane
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def setState(clientGameState: ClientGameState): Unit = {
     this.handSelectionManager.clearSelection()
     this.boardSelectionManager.clearSelection()
@@ -142,39 +143,39 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
       rightBar.setRedoEnabled(inTurn && clientGameState.canRedo)
       rightBar.setResetEnabled(inTurn && clientGameState.canReset)
       rightBar.setNextEnabled(inTurn)
-      rightBar.setNextText(if (clientGameState.canDrawCard) "Pass & Draw" else "Pass")
+      rightBar.setNextText(if (clientGameState.canDrawCard) Strings.PASS_AND_DRAW_BTN else Strings.PASS_BTN)
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def showInitMatch(): Unit = {
     Platform.runLater({
       initMatchDialog.showDialog()
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def hideInitMatch(): Unit = {
     Platform.runLater({
       initMatchDialog.hideDialog()
     })
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def setMessage(message: String): Unit = {
     Platform.runLater({
       rightBar.setMessage(message)
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def setInTurn(inTurn: Boolean): Unit = {
     this.inTurn = inTurn
     updateActionBarButtons()
     rightBar.setNextEnabled(inTurn)
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   private def updateActionBarButtons(): Unit = {
     actionBar.enableMakeCombination(!handSelectionManager.isSelectionEmpty && inTurn)
     actionBar.enableClearHandSelection(!handSelectionManager.isSelectionEmpty)
@@ -182,7 +183,7 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
     actionBar.enablePickCards(!boardSelectionManager.isSelectionEmpty && inTurn)
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def disableActions(): Unit = {
     rightBar.disableActions()
     centerPane.disableActions()
@@ -190,7 +191,7 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
     handBar.disableActions()
   }
 
-  /** @inheritdoc*/
+  /** @inheritdoc */
   override def enableActions(): Unit = {
     rightBar.enableActions()
     centerPane.enableActions()
@@ -198,15 +199,15 @@ class GameSceneImpl(val parentStage: GameStage, listener: GameStageListener) ext
     handBar.enableActions()
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def showTimer(minutes: Long, seconds: Long): Unit = rightBar.showTimer(minutes, seconds)
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def updateTimer(minutes: Long, seconds: Long): Unit = rightBar.updateTimer(minutes, seconds)
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def notifyTimerEnd(): Unit = rightBar.notifyTimerEnd()
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def hideTimer(): Unit = rightBar.hideTimer()
 }

@@ -4,7 +4,7 @@ import it.parttimeteam.gamestate.Opponent
 import it.parttimeteam.view.game.scenes.panes.HistoryNavigationPane.HistoryNavigationPaneImpl
 import it.parttimeteam.view.game.scenes.panes.OtherPlayersPane.OtherPlayersPaneImpl
 import it.parttimeteam.view.game.scenes.panes.TimerPane.TimerPaneImpl
-import it.parttimeteam.view.utils.{ScalavelliButton, ScalavelliLabel}
+import it.parttimeteam.view.utils.{ScalavelliButton, ScalavelliLabel, Strings}
 import scalafx.geometry.Insets
 import scalafx.scene.layout.{BorderPane, VBox}
 
@@ -155,8 +155,8 @@ object SidePane {
     timerPane.hide()
     stateContainer.children.addAll(messageLabel, timerPane)
 
-    val nextBtn = ScalavelliButton("Pass", () => listener.endTurn())
-    val leaveBtn = ScalavelliButton("Leave Game", () => listener.leaveGame())
+    val nextBtn = ScalavelliButton(Strings.PASS_BTN, () => listener.endTurn())
+    val leaveBtn = ScalavelliButton(Strings.LEAVE_GAME_BTN, () => listener.leaveGame())
 
     nextBtn.prefWidth <== rightBottom.width
     leaveBtn.prefWidth <== rightBottom.width
@@ -169,51 +169,51 @@ object SidePane {
     top = rightTop
     bottom = rightBottom
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setMessage(message: String): Unit = messageLabel.text = message
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def disableActions(): Unit = {
       historyNavigationPane.disableActions()
       nextBtn.setDisable(true)
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def enableActions(): Unit = {
       nextBtn.setDisable(false)
       historyNavigationPane.enableActions()
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setNextEnabled(enabled: Boolean): Unit = nextBtn.setDisable(!enabled)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setOtherPlayers(opponents: Seq[Opponent]): Unit = otherPlayersPane.setOtherPlayers(opponents)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setResetEnabled(enabled: Boolean): Unit = historyNavigationPane.setResetEnabled(enabled)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setRedoEnabled(enabled: Boolean): Unit = historyNavigationPane.setRedoEnabled(enabled)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def setUndoEnabled(enabled: Boolean): Unit = historyNavigationPane.setUndoEnabled(enabled)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def setNextText(text: String): Unit = {
       nextBtn.setText(text)
     }
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def showTimer(minutes: Long, seconds: Long): Unit = timerPane.show(minutes, seconds)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def updateTimer(minutes: Long, seconds: Long): Unit = timerPane.set(minutes, seconds)
 
-    /** @inheritdoc */
-    override def notifyTimerEnd(): Unit = timerPane.displayMessage("Your time is up!")
+    /** @inheritdoc*/
+    override def notifyTimerEnd(): Unit = timerPane.displayMessage(Strings.TIME_IS_UP)
 
-    /** @inheritdoc */
+    /** @inheritdoc*/
     override def hideTimer(): Unit = timerPane.hide()
   }
 

@@ -88,6 +88,4 @@ class StartupServiceImpl(private val notifyEvent: GameStartupEvent => Unit) exte
       case None => this.notifyEvent(LobbyJoinErrorEvent(ErrorEvent.ServerNotFound))
     }
   }
-
-
 }

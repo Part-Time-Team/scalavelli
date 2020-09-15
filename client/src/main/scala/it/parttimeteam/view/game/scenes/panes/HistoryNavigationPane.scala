@@ -1,6 +1,6 @@
 package it.parttimeteam.view.game.scenes.panes
 
-import it.parttimeteam.view.utils.ScalavelliButton
+import it.parttimeteam.view.utils.{Paths, ScalavelliButton, Strings}
 import scalafx.geometry.Pos
 import scalafx.scene.layout.HBox
 
@@ -56,9 +56,9 @@ trait HistoryNavigationListener {
 object HistoryNavigationPane {
 
   class HistoryNavigationPaneImpl(listener: HistoryNavigationListener) extends HistoryNavigationPane {
-    val undoBtn = ScalavelliButton("", () => listener.onUndoClick(), "images/undo.png", 15d, 30d)
-    val redoBtn = ScalavelliButton("", () => listener.onRedoClick(), "images/redo.png", 15d, 30d)
-    val resetBtn = ScalavelliButton("Reset", () => listener.onResetClick(), 60d)
+    val undoBtn = ScalavelliButton("", () => listener.onUndoClick(), Paths.UNDO_BTN, 15d, 30d)
+    val redoBtn = ScalavelliButton("", () => listener.onRedoClick(), Paths.REDO_BTN, 15d, 30d)
+    val resetBtn = ScalavelliButton(Strings.RESET_BTN, () => listener.onResetClick(), 60d)
 
     this.alignment = Pos.Center
     this.spacing = 5d
