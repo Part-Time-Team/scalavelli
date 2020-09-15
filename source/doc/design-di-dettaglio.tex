@@ -10,12 +10,8 @@ Sono stati realizzati 4 moduli:
     \item Client: contenente tutto ciò che concerne il client, interfaccia utente, parte di comunicazione con il server e di aggiornamento dello stato della partita;
     \item Server: contenente tutta la parte di gestione delle lobby e delle partite in corso.
 \end{itemize}
-
 \subsection{Core}
-Il core modella al suo interno tutte le entità del gioco Machiavelli reale, come le carte, il mazzo, il tavolo da gioco e la GameInterface, cioè un insieme di funzioni che gli altri moduli del progetto devono usare per poter interagire con le entità. Tali funzioni infatti modellano tutte le azioni che un giocatore può svolgere nel gioco reale.
-\newline
-E’ importante sottolineare il fatto che il core sia immutabile e quindi non conserva alcuno stato interno. Esso deve essere utilizzato all’esterno sfruttando appunto le API messe a disposizione.
-
+Il core modella al suo interno tutte le entità del gioco Machiavelli reale, come le carte, il mazzo, il tavolo da gioco e la \textit{GameInterface}, cioè un insieme di funzioni che gli altri moduli del progetto devono usare per poter interagire con le entità. Tali funzioni infatti modellano tutte le azioni che un giocatore può svolgere nel gioco reale.
 \subsubsection{Entità}
 \begin{center}
     \includegraphics[width=\textwidth]{classi-Page-1}
@@ -23,7 +19,7 @@ E’ importante sottolineare il fatto che il core sia immutabile e quindi non co
 Le entità di gioco sono:
 \begin{itemize}
     \item la card, corredata da tre case class: un rank (valore nominale), un seme e un colore.
-    All’interno del Rank si sono definiti tutti i possibili valori che una carta può assumere (da 1 a 13). Inoltre è’ stato modellato anche il caso del rank asso come 14-esimo valore, chiamato \textit{overflowAce}, per poterne effettuare la validazione qualora si trovasse dopo il Re (13-esimo valore) in una combinazione.
+    All’interno del Rank si sono definiti tutti i possibili valori che una carta può assumere (da 1 a 13). Inoltre è stato modellato anche il caso del rank asso come 14-esimo valore, chiamato \textit{overflowAce}, per poterne effettuare la validazione qualora si trovasse dopo il Re (13-esimo valore) in una combinazione.
     All’interno della case class Suit sono stati definiti i quattro semi disponibili (Cuori, Picche, Quadri e Fiori) mentre nel Color abbiamo modellato il colore rosso e blu. Le cards e le relative case class sono contenute nel package \textit{core.cards};
     \item il Player composto da un username (necessario per essere memorizzato nel server), un id e  una mano di gioco. Tale entità è contenuta nel package \textit{core.player}.
 \end{itemize}
@@ -55,14 +51,14 @@ All’interno del package \textit{core.collections} abbiamo modellato le entità
 \subsubsection{Prolog}
 Per la gestione delle regole di validazione, si è deciso di utilizzare questo linguaggio poichè è possibile esprimerle in maniera totalmente dichiarativa ed efficiente. La libreria utilizzata è TuProlog.
 \newline
-\newline Tale package è composto dalle classi: \textit{PrologGame}, \textit{PrologGameEngine} e \textit{PrologGameConverter}. La figura mostra le dipendenze tra di esse.
+\newline Tale package è composto dalle classi: \textit{PrologGame}, \textit{PrologGameEngine} e \textit{PrologGameConverter}. La figura mostra le dipendenze tra di esse.\newline
 \begin{center}
     \includegraphics[scale=0.6]{prolog}
 \end{center}
 Di seguito vengono descritte le classi:
 \begin{itemize}
     \item \textit{PrologGame}: espone tutte le funzionalità implementate attraverso tale linguaggio. Ogni qualvolta che si deve eseguire una funzionalità in Prolog, è necessario richiamare una funzione di questa classe corrispondente all’azione di Prolog.
-    In particolare permette di creare le carte corredate da un valore, un seme e un colore per formare il deck di gioco, di eseguire la validazione di una combinazione di carte, che sia essa una scala, tris o poker e ne esegue l’ordinamento per seme e per valore.
+    In particolare permette di creare le carte corredate da un valore, un seme e un colore per formare il deck di gioco, di eseguire la validazione di una combinazione di carte, che sia essa una scala, un tris o un poker e ne esegue l’ordinamento per seme e per valore.
 
     \item \textit{PrologEngine}: esegue effettivamente le azioni di Prolog.
     Si è deciso di realizzare un piccolo DSL che permettesse di facilitare l’utilizzo della libreria TuProlog e di aumentarne l’espressività del codice. Dopo aver caricato la specifica teoria, il \textit{PrologEngine} esegue le funzioni in grado di:
@@ -79,7 +75,7 @@ Di seguito vengono descritte le classi:
 
 \paragraph{Predicati}
 Per ottenere le funzionalità descritte è stato creato il file rules.pl nella cartella delle risorse del modulo \textit{Core}.
-\newline
+\newline \newline
 I predicati che permettono di creare le entità sono:
 \begin{itemize}
     \item \textit{color}: specifica il tipo di colore di una carta;
@@ -89,18 +85,18 @@ I predicati che permettono di creare le entità sono:
 
 I predicati utilizzati per la validazione delle combinazioni sono:
 \begin{itemize}
-    \item \textit{lengthList}: permette di determinare la lunghezza di una lista
-    \item \textit{sameNumber}: verifica se all’interno della lista le carte hanno tutti lo stesso valore
-    \item \textit{sameSuit}: verifica se all’interno della lista le carte hanno tutti lo stesso seme
+    \item \textit{lengthList}: permette di determinare la lunghezza di una lista;
+    \item \textit{sameNumber}: verifica se all’interno della lista le carte hanno tutti lo stesso valore;
+    \item \textit{sameSuit}: verifica se all’interno della lista le carte hanno tutti lo stesso seme;
     \item \textit{differentSuit}: verifica se all’interno di una lista è presente più volte lo stesso seme.
-    Tale predicato ne utilizza internamente un altro chiamato sameElementList che mantiene memorizzato il seme della prima carta per poter confrontarlo con tutte le altre carte della lista
+    Tale predicato ne utilizza internamente un altro chiamato \textit{sameElementList} che mantiene memorizzato il seme della prima carta per poter confrontarlo con tutte le altre carte della lista;
     \item \textit{endSequence}: verifica la giusta terminazione di una scala che termina con un asso posto dopo il re.
-    Questo significa che non è possibile continuare la scala aggiungendo un due e via di seguito
-    \item \textit{checkOrderByValue}: in caso di una scala verifica se le carte sono in ordine di valore
+    Questo significa che non è possibile continuare la scala aggiungendo un due e via di seguito;
+    \item \textit{checkOrderByValue}: in caso di una scala verifica se le carte sono in ordine di valore;
     \item \textit{validationQuarter}: verifica se una combinazione è un tris o un poker.
-    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: lengthList, sameNumber e differentSuit
+    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: \textit{lengthList}, \textit{sameNumber} e \textit{differentSuit};
     \item \textit{validationChain}: verifica se una combinazione è una scala.
-    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: lengthList, sameSuit, endSequence e checkOrderByValue;
+    La funzionalità di questo predicato è ottenuta grazie alla composizione dei predicati precedentemente descritti, posti nel seguente ordine: \textit{lengthList}, \textit{sameSuit}, \textit{endSequence} e \textit{checkOrderByValue}.
 \end{itemize}
 
 I predicati utilizzati per l’ordinamento delle carte sono:
@@ -108,7 +104,7 @@ I predicati utilizzati per l’ordinamento delle carte sono:
     \item \textit{priority}: definisce la priorità dei semi.
     L’ordine utilizzato è: cuori, quadri, fiori e picche;
     \item \textit{quickSortSuit}: esegue l’ordinamento per seme.
-    Internamente utilizza il predicato compareCard per ordinare per valore tutte le carte dello stesso seme in base alla priorità;
+    Internamente utilizza il predicato \textit{compareCard} per ordinare per valore tutte le carte dello stesso seme in base alla priorità;
     \item \textit{quickSortValue}: esegue l’ordinamento per valore.
 \end{itemize}
 Gli algoritmi di ordinamento quicksort per valore (o seme) a sua volta implementano il predicato \textit{partitionValue} (o \textit{partitionSuit}) che specifica la condizione necessario per ordinare.
