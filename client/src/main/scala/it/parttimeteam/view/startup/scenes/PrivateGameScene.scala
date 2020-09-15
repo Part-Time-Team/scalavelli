@@ -5,7 +5,7 @@ import it.parttimeteam.view.startup.PrivateGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartupSceneListener
 import it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl
 import it.parttimeteam.view.startup.scenes.StartupSceneTopBar.StartupSceneTopBarImpl
-import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField}
+import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField, Strings}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
@@ -21,8 +21,8 @@ class PrivateGameScene(val parentStage: Stage, val listener: StartupSceneListene
   val topBar: StartupSceneTopBar = new StartupSceneTopBarImpl(listener)
   val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBarImpl(() => submit())
 
-  val usernameLabel: Label = ScalavelliLabel("Username", ViewConfig.formLabelFontSize)
-  val usernameField: TextField = ScalavelliTextField("Username")
+  val usernameLabel: Label = ScalavelliLabel(Strings.USERNAME, ViewConfig.formLabelFontSize)
+  val usernameField: TextField = ScalavelliTextField(Strings.USERNAME)
 
   val codeLabel: Label = ScalavelliLabel("Code", ViewConfig.formLabelFontSize)
   val codeField: TextField = ScalavelliTextField("Code")
@@ -47,7 +47,8 @@ class PrivateGameScene(val parentStage: Stage, val listener: StartupSceneListene
   bottomBar.hideLoading()
   bottomBar.hideMessage()
 
-  val alert: Alert = ScalavelliAlert("Input missing", "You must enter username and code.", AlertType.Warning)
+  val alert: Alert = ScalavelliAlert(Strings.INPUT_MISSING_DIALOG_TITLE, Strings.INPUT_MISSING_USER_CODE_DIALOG_MESSAGE, AlertType.Warning, parentStage)
+
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 

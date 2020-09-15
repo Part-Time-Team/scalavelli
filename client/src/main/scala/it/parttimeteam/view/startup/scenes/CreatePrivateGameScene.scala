@@ -6,7 +6,7 @@ import it.parttimeteam.view.startup.CreatePrivateGameSubmitViewEvent
 import it.parttimeteam.view.startup.listeners.StartupSceneListener
 import it.parttimeteam.view.startup.scenes.StartupSceneBottomBar.StartupSceneBottomBarImpl
 import it.parttimeteam.view.startup.scenes.StartupSceneTopBar.StartupSceneTopBarImpl
-import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField}
+import it.parttimeteam.view.utils.{ScalavelliAlert, ScalavelliLabel, ScalavelliTextField, Strings}
 import javafx.scene.text.Font
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Alert.AlertType
@@ -33,12 +33,12 @@ class CreatePrivateGameStartupSceneImpl(val parentStage: Stage, val listener: St
   val topBar: StartupSceneTopBar = new StartupSceneTopBarImpl(listener)
   val bottomBar: StartupSceneBottomBar = new StartupSceneBottomBarImpl(() => submit())
 
-  val usernameLabel: Label = ScalavelliLabel("Username", ViewConfig.formLabelFontSize)
-  val usernameField: TextField = ScalavelliTextField("Username")
+  val usernameLabel: Label = ScalavelliLabel(Strings.USERNAME, ViewConfig.formLabelFontSize)
+  val usernameField: TextField = ScalavelliTextField(Strings.USERNAME)
 
   val options: Range = Constants.Client.MIN_PLAYERS_NUM to Constants.Client.MAX_PLAYERS_NUM by 1
 
-  val selectPlayersLabel: Label = ScalavelliLabel("Select players number", ViewConfig.formLabelFontSize)
+  val selectPlayersLabel: Label = ScalavelliLabel(Strings.SELECT_PLAYERS_NUM, ViewConfig.formLabelFontSize)
   val comboBox = new ComboBox(options)
   comboBox.setValue(Constants.Client.MIN_PLAYERS_NUM)
 
@@ -58,7 +58,7 @@ class CreatePrivateGameStartupSceneImpl(val parentStage: Stage, val listener: St
   mainContent.bottom = bottomBar
 
   val codeContainer: VBox = new VBox()
-  val codeLabel: Label = ScalavelliLabel("Here is your code")
+  val codeLabel: Label = ScalavelliLabel(Strings.HERE_IS_YOUR_CODE)
   val codeValue: Label = ScalavelliLabel(ViewConfig.titleFontSize)
   codeValue.setFont(new Font(100))
   codeContainer.getChildren.addAll(codeLabel, codeValue)
@@ -69,7 +69,7 @@ class CreatePrivateGameStartupSceneImpl(val parentStage: Stage, val listener: St
 
   center.getChildren.addAll(usernameLabel, usernameField, selectPlayersLabel, comboBox, codeContainer)
 
-  val alert: Alert = ScalavelliAlert("Input missing", "You must enter username and select players number.", AlertType.Warning)
+  val alert: Alert = ScalavelliAlert(Strings.INPUT_MISSING_DIALOG_TITLE, Strings.INPUT_MISSING_USER_NUM_DIALOG_MESSAGE, AlertType.Warning, parentStage)
 
   override def showMessage(message: String): Unit = bottomBar.showMessage(message)
 

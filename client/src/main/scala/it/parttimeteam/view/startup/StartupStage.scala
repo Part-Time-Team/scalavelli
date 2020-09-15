@@ -4,7 +4,7 @@ import it.parttimeteam.controller.startup.StartupListener
 import it.parttimeteam.model.ErrorEvent
 import it.parttimeteam.view.startup.listeners._
 import it.parttimeteam.view.startup.scenes._
-import it.parttimeteam.view.utils.ScalavelliAlert
+import it.parttimeteam.view.utils.{ScalavelliAlert, Strings}
 import it.parttimeteam.view.{BaseStage, ViewConfig}
 import scalafx.application.Platform
 import scalafx.scene.control.Alert
@@ -71,13 +71,15 @@ object StartupStage {
         gameStartupListener.onViewEvent(viewEvent)
       }
     }
+
+    scene = mainScene
+
     val publicGameScene: PublicGameScene = new PublicGameScene(this, listener)
     val privateGameScene: PrivateGameScene = new PrivateGameScene(this, listener)
     val createPrivateGame: CreatePrivateGameStartupSceneImpl = new CreatePrivateGameStartupSceneImpl(this, listener)
 
     var currentInnerScene: StartupFormScene = _
 
-    scene = mainScene
 
     onCloseRequest = _ => {
       System.exit(0)
@@ -95,12 +97,12 @@ object StartupStage {
     }
 
     override def notifyLobbyJoined(): Unit = {
-      Platform.runLater(currentInnerScene.showMessage("Waiting for other players"))
+      Platform.runLater(currentInnerScene.showMessage(Strings.WAITING_FOR_PLAYERS))
     }
 
     override def notifyError(error: ErrorEvent): Unit = {
       Platform.runLater {
-        val alert: Alert = ScalavelliAlert("Error", error, AlertType.Error)
+        val alert: Alert = ScalavelliAlert(Strings.ERROR_DIALOG_TITLE, error, AlertType.Error, stage)
         alert.showAndWait()
       }
     }

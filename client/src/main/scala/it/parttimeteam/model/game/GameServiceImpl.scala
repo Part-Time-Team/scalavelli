@@ -132,15 +132,15 @@ class GameServiceImpl(private val gameInformation: GameMatchInformations,
   }
 
   override def undoTurn(): Unit = {
-    this.updateStateThroughHistory(turnHistory.previous)
+    this.updateStateThroughHistory(() => turnHistory.previous())
   }
 
   override def redoTurn(): Unit = {
-    this.updateStateThroughHistory(turnHistory.next)
+    this.updateStateThroughHistory(() => turnHistory.next())
   }
 
   override def resetTurnState(): Unit = {
-    this.updateStateThroughHistory(turnHistory.reset)
+    this.updateStateThroughHistory(() => turnHistory.reset())
   }
 
   override def pickCardCombination(combinationId: String): Unit = {

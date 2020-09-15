@@ -1,6 +1,6 @@
 package it.parttimeteam.view.startup.scenes
 
-import it.parttimeteam.view.utils.{ScalavelliButton, ScalavelliLabel}
+import it.parttimeteam.view.utils.{ScalavelliButton, ScalavelliLabel, Strings}
 import scalafx.application.Platform
 import scalafx.geometry.Pos.BottomRight
 import scalafx.scene.control.{Button, Label, ProgressIndicator}
@@ -26,7 +26,7 @@ object StartupSceneBottomBar {
   class StartupSceneBottomBarImpl(onSubmit: () => Unit) extends StartupSceneBottomBar {
     alignment = BottomRight
 
-    val btnSubmit: Button = ScalavelliButton("Send", () => onSubmit())
+    val btnSubmit: Button = ScalavelliButton(Strings.SEND, () => onSubmit())
     val progress: ProgressIndicator = new ProgressIndicator()
     val messageContainer: Label = ScalavelliLabel()
 

@@ -21,36 +21,36 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
   val stage: GameStage = this
 
   val listener: GameStageListener = new GameStageListener() {
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def pickCombination(combinationId: String): Unit = gameListener.onViewEvent(PickCardCombinationEvent(combinationId))
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def endTurn(): Unit = gameListener.onViewEvent(EndTurnEvent)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def nextState(): Unit = gameListener.onViewEvent(RedoEvent)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def previousState(): Unit = gameListener.onViewEvent(UndoEvent)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def makeCombination(cards: Seq[Card]): Unit = gameListener.onViewEvent(MakeCombinationEvent(cards))
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def pickCards(cards: Seq[Card]): Unit = gameListener.onViewEvent(PickCardsEvent(cards))
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def sortHandBySuit(): Unit = gameListener.onViewEvent(SortHandBySuitEvent)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def sortHandByRank(): Unit = gameListener.onViewEvent(SortHandByRankEvent)
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def updateCardCombination(combinationId: String, cards: Seq[Card]): Unit = gameListener.onViewEvent(UpdateCardCombinationEvent(combinationId, cards))
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def leaveGame(): Unit = {
-      val alert: Alert = ScalavelliAlert(Strings.LEAVE_GAME_DIALOG_TITLE, Strings.LEAVE_GAME_DIALOG_MESSAGE, AlertType.Confirmation)
+      val alert: Alert = ScalavelliAlert(Strings.LEAVE_GAME_DIALOG_TITLE, Strings.LEAVE_GAME_DIALOG_MESSAGE, AlertType.Confirmation, stage)
 
       alert.showAndWait match {
         case Some(b) =>
@@ -63,7 +63,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
       }
     }
 
-    /** @inheritdoc*/
+    /** @inheritdoc */
     override def resetHistory(): Unit = gameListener.onViewEvent(ResetEvent)
 
   }
@@ -74,21 +74,21 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
 
   onCloseRequest = _ => System.exit(0)
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def setMessage(message: ViewMessage): Unit = {
     Platform.runLater({
       gameScene.setMessage(StringParser.parseMessage(message))
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def updateState(viewGameState: ClientGameState): Unit = {
     Platform.runLater({
       gameScene.setState(viewGameState)
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def initMatch(): Unit = {
     Platform.runLater({
       gameScene.disableActions()
@@ -96,14 +96,14 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def matchReady(): Unit = {
     Platform.runLater({
       gameScene.hideInitMatch()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def notifyGameEnd(gameEndType: GameEndType): Unit = {
     Platform.runLater({
       val message: String = gameEndType match {
@@ -116,7 +116,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
         case _ => ""
       }
 
-      val alert = ScalavelliAlert(Strings.GAME_ENDED_ALERT_TITLE, message, AlertType.Information)
+      val alert = ScalavelliAlert(Strings.GAME_ENDED_ALERT_TITLE, message, AlertType.Information, this)
       alert.showAndWait match {
         case Some(b) =>
           if (b == ButtonType.OK) {
@@ -130,41 +130,41 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def enableActions(): Unit = {
     Platform.runLater({
       gameScene.enableActions()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def disableActions(): Unit = {
     Platform.runLater({
       gameScene.disableActions()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def notifyError(error: ErrorEvent): Unit = {
     Platform.runLater({
-      val alert: Alert = ScalavelliAlert(Strings.ERROR_DIALOG_TITLE, error, AlertType.Error)
+      val alert: Alert = ScalavelliAlert(Strings.ERROR_DIALOG_TITLE, error, AlertType.Error, this)
       alert.showAndWait()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def notifyInfo(message: String): Unit = {
     Platform.runLater({
-      val alert: Alert = ScalavelliAlert("", message, AlertType.Information)
+      val alert: Alert = ScalavelliAlert("", message, AlertType.Information, this)
       alert.showAndWait()
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def setInTurn(): Unit = {
     gameScene.setInTurn(true)
     Platform.runLater({
-      val alert = ScalavelliAlert("", Strings.YOUR_TURN_ALERT_MESSAGE, AlertType.Information)
+      val alert = ScalavelliAlert("", Strings.YOUR_TURN_ALERT_MESSAGE, AlertType.Information, this)
       alert.showAndWait match {
         case Some(b) =>
           if (b == ButtonType.OK) {
@@ -180,7 +180,7 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def setTurnEnded(): Unit = {
     gameScene.setInTurn(false)
     Platform.runLater({
@@ -189,21 +189,21 @@ class GameStageImpl(gameListener: GameListener) extends GameStage {
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def showTimer(minutes: Long, seconds: Long): Unit = {
     Platform.runLater({
       gameScene.showTimer(minutes, seconds)
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def updateTimer(minutes: Long, seconds: Long): Unit = {
     Platform.runLater({
       gameScene.updateTimer(minutes, seconds)
     })
   }
 
-  /** @inheritdoc */
+  /** @inheritdoc*/
   override def notifyTimerEnded(): Unit = {
     Platform.runLater({
       gameScene.notifyTimerEnd()

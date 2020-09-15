@@ -1,6 +1,7 @@
 package it.parttimeteam.view.startup.scenes
 
 import it.parttimeteam.view.ViewConfig
+import it.parttimeteam.view.utils.Paths
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
 import scalafx.scene.image.{Image, ImageView}
@@ -14,7 +15,7 @@ import scalafx.stage.Stage
   */
 abstract class BaseStartupScene(parentStage: Stage) extends Scene() {
 
-  val background: ImageView = new ImageView(new Image("/images/background.png")) {
+  val background: ImageView = new ImageView(new Image(Paths.STARTUP_BACKGROUND)) {
     fitWidth <== parentStage.width
     fitHeight <== parentStage.height
   }
